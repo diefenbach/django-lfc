@@ -12,7 +12,7 @@
     <div class="site-actions">
 
         {% if display_content_menu %}
-            <ul class="sf-menu">
+            <ul class="sf-menu sf-sub-menu">
                 <li>
                     <a>{% trans "Add" %}</a>
                     <ul>
@@ -23,19 +23,20 @@
                     {% endfor %}
                     </ul>
                 </li>
+                <li>
+                    <a href="{% url lfc_portal %}">{% trans 'View portal' %}</a>
+                </li>
             </ul>
+
         {% else %}
             {% for content_type in content_types %}
-                <a class="add"
-                   href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">Add {{ content_type.name }}</a>
+                <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">Add {{ content_type.name }}</a>
             {% endfor %}
         {% endif %}
 
-        <a class="view"
-           href="{% url lfc_portal %}">{% trans 'View portal' %}</a>
     </div>
 
-    <div id="manage-tabs">
+    <div style="clear:both" id="manage-tabs">
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Portal' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
