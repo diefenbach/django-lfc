@@ -310,3 +310,8 @@ div.overlay div.close {
     height:35px;
     width:35px;
 }
+
+.translate-form .errorlist,
+.translate-form .errorlist li {
+    display: inline;
+}

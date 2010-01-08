@@ -27,7 +27,7 @@ from portlets.models import Slot
 # lfc imports
 from lfc.models import BaseContent
 from lfc.manage.forms import PageCommentsForm
-from lfc.manage.forms import PageMetaDataForm
+from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import PageSEOForm
 from lfc.manage.forms import PortalCoreForm
 from lfc.models import File
@@ -500,7 +500,7 @@ def page_meta_data(request, id, template_name="lfc/manage/object_meta_data.html"
     """
     """
     obj = BaseContent.objects.get(pk=id)
-    Form = PageMetaDataForm
+    Form = MetaDataForm
 
     if request.method == "POST":
 
@@ -883,24 +883,8 @@ def _navigation_children(request, current_pages, page, start_level, level=3):
 
     return result
 
-def _update_positions(obj):
-    """Updates position of top pages or given page.
-    """
-    if obj.parent:
-        objs = obj.parent.sub_objects.all()
-    else:
-        objs = BaseContent.objects.filter(parent=None)
-
-    for i, p in enumerate(objs):
-        p.position = (i+1)*10
-        p.save()
-        if obj.id == p.id:
-            obj = p
-
-    return obj
-
 @login_required
-def translate_object(request, language, id=None, template_name="lfc/manage/object_translate.html"):
+def translate_object(request, language, id=None, form_translation=None, template_name="lfc/manage/object_translate.html"):
     """
     """
     obj = get_object_or_404(BaseContent, pk=id)
@@ -922,7 +906,9 @@ def translate_object(request, language, id=None, template_name="lfc/manage/objec
 
     if translation:
         translation = translation.get_specific_type()
-    form_translation = canonical.get_specific_type().form(instance=translation, prefix = "translation")
+
+    if form_translation is None:
+        form_translation = canonical.get_specific_type().form(instance=translation, prefix = "translation")
 
     return render_to_response(template_name, RequestContext(request, {
         "canonical" : canonical,
@@ -937,12 +923,18 @@ def translate_object(request, language, id=None, template_name="lfc/manage/objec
 def save_translation(request):
     """Adds or edits a translation.
     """
+
     canonical_id = request.POST.get("canonical_id")
+
+    if request.POST.get("cancel"):
+        url = reverse("lfc_manage_page", kwargs={"id" : canonical_id})
+        return set_message_cookie(url, _(u"Translation has been canceled."))
+
     canonical = BaseContent.objects.get(pk=canonical_id)
     canonical = canonical.get_specific_type()
 
     translation_language = request.POST.get("translation_language")
-    
+
     try:
         translation_id = request.POST.get("translation_id")
         translation = BaseContent.objects.get(pk=translation_id)
@@ -991,8 +983,26 @@ def save_translation(request):
         translation.creator = request.user
         translation.save()
 
-        url = reverse("lfc_manage_page", kwargs={"id" : translation.id})
-    else:
-        url = reverse("lfc_translate_object", kwargs={"id" : canonical.id, "language" : canonical.language})
+        _update_positions(translation)
 
-    return HttpResponseRedirect(url)
+        url = reverse("lfc_manage_page", kwargs={"id" : translation.id})
+        return set_message_cookie(url, _(u"Translation has been added."))
+
+    else:
+        return translate_object(request, translation_language, canonical.id, form_translation)
+
+def _update_positions(obj):
+    """Updates position of top pages or given page.
+    """
+    if obj.parent:
+        objs = obj.parent.sub_objects.all()
+    else:
+        objs = BaseContent.objects.filter(parent=None)
+
+    for i, p in enumerate(objs):
+        p.position = (i+1)*10
+        p.save()
+        if obj.id == p.id:
+            obj = p
+
+    return obj
