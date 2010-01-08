@@ -1,21 +1,17 @@
 # django imports
 from django import forms
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-from django.utils import translation
-
 
 # tagging imports
 from tagging.forms import TagField
 
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
-from lfc.fields.autocomplete import ForeignKeySearchInput
 from lfc.models import Page
 from lfc.models import BaseContent
 from lfc.models import Portal
-from lfc.models import ContentTypeRegistration
 from lfc.utils.registration import get_allowed_subtypes
+from lfc.utils.registration import get_info_for
 
 class PageCommentsForm(forms.ModelForm):
     """
@@ -64,41 +60,27 @@ class PageSEOForm(forms.ModelForm):
         model = Page
         fields = ( "meta_keywords", "meta_description")
 
-class PageMetaDataForm(forms.ModelForm):
+class MetaDataForm(forms.ModelForm):
     """
     """
     def __init__(self, *args, **kwargs):
-        super(PageMetaDataForm, self).__init__(*args, **kwargs)
+        super(MetaDataForm, self).__init__(*args, **kwargs)
 
-        if hasattr(settings, "LFC_MULTILANGUAGE") and \
-            settings.LFC_MULTILANGUAGE == False:
+        instance = kwargs.get("instance").get_specific_type()
+        language = instance.language
+        ctr = get_info_for(instance)
+
+        if not getattr(settings, "LFC_MULTILANGUAGE"):
             del self.fields["canonical"]
-
-        if hasattr(settings, "LFC_MULTILANGUAGE") and \
-            settings.LFC_MULTILANGUAGE == False:
             del self.fields["language"]
 
-        instance = kwargs.get("instance")
-
-        # Display only parents within the current instance is allowed
-        base_instance = instance.get_specific_type()
-        ctr = ContentTypeRegistration.objects.get(type = base_instance.__class__.__name__.lower())
-
-        if instance:
-            language = instance.language
-
-            # Display only for this instance registered templates
-            obj = instance.get_specific_type()
-
-            if len(ctr.templates.all()) < 2:
-                del self.fields["template"]
-            else:                
-                self.fields["template"].choices = [(template.id, template.name) for template in ctr.templates.all()]
+        # Templates - display only registered templates for this instance
+        if len(ctr.templates.all()) < 2:
+            del self.fields["template"]
         else:
-            language = translation.get_language()
+            self.fields["template"].choices = [(template.id, template.name) for template in ctr.templates.all()]
 
-        # Choices for canonical
-        # Show only pages with the default language.
+        # Canonical - display only pages with default language
         if settings.LFC_MULTILANGUAGE:
             if instance.is_canonical():
                 del self.fields["canonical"]
@@ -107,13 +89,10 @@ class PageMetaDataForm(forms.ModelForm):
                 canonicals.insert(0, ("", "----------"))
                 self.fields["canonical"].choices = canonicals
 
-        if instance:
-            exclude = [p.id for p in instance.sub_objects.all()]
-            exclude.append(instance.id)
-        else:
-            exclude = []
+        # Parents - display only objects in the same or neutral language
+        exclude = [p.id for p in instance.sub_objects.all()]
+        exclude.append(instance.id)
 
-        # Display only neutral objects or objects in the same language
         parents = BaseContent.objects.exclude(pk__in=exclude)
         if not language == "0":
             parents = parents.filter(language__in=(language, "0"))
@@ -123,35 +102,34 @@ class PageMetaDataForm(forms.ModelForm):
             if ctr in get_allowed_subtypes(parent.get_specific_type()):
                 parent_choices.append((parent.id, parent.title))
 
-        if len(parent_choices) < 0:
+        if len(parent_choices) < 1:
             del self.fields["parent"]
-        else:    
+        else:
             parent_choices = sorted(parent_choices, lambda a, b: cmp(a[1], b[1]))
             parent_choices.insert(0, ("", "----------"))
             self.fields["parent"].choices = parent_choices
 
-        # Choices for standard objects. Display only children
-        if instance:
-            if not ctr.display_select_standard:
+        # Standard - display only children of the current instance
+        if not ctr.display_select_standard:
+            del self.fields["standard"]
+        else:
+            children = instance.sub_objects.all()
+            if len(children) == 0:
                 del self.fields["standard"]
             else:
-                children = instance.sub_objects.all()
-                if len(children) == 0:
-                    del self.fields["standard"]
+                if not language == "0":
+                    children = instance.sub_objects.filter(language__in=(language, "0"))
                 else:
-                    if not language == "0":
-                        children = instance.sub_objects.filter(language__in=(language, "0"))
-                    else:
-                        children = instance.sub_objects.all()
+                    children = instance.sub_objects.all()
 
-                    standards = [(p.id, p.title) for p in children]
-                    standards = sorted(standards, lambda a, b: cmp(a[1], b[1]))
-                    standards.insert(0, ("", "----------"))
-                    self.fields["standard"].choices = standards
-                    
-        if instance:
-            if not ctr.display_position:
-                del self.fields["position"]
+                standards = [(p.id, p.title) for p in children]
+                standards = sorted(standards, lambda a, b: cmp(a[1], b[1]))
+                standards.insert(0, ("", "----------"))
+                self.fields["standard"].choices = standards
+
+        # Position
+        if not ctr.display_position:
+            del self.fields["position"]
 
     class Meta:
         model = Page
