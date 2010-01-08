@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce_popup.js"></script>
+<script language="javascript" type="text/javascript" src="{{ MEDIA_URL }}lfc/js/fb_tinymce.js"></script>
+
+{% for file in files %}
+    <div>
+        <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
+            {{ file.title }}"
+        </a>
+    </div>
+{% endfor %}
+</table>
+
+<h1>{% trans "Upload files" %}</h1>
+<form action="{% url lfc_fb_upload_file %}"
+      method="post"
+      enctype="multipart/form-data">
+    <input type="hidden" name="obj_id" value="{{ obj_id }}">
+    <input type="file" name="file" />
+    <input type="submit" />
+</form>

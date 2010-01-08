@@ -1,0 +1,46 @@
+{% load i18n %}
+<form action="{% url lfc_edit_portlet portletassigment_id %}"
+      method="post">
+    <h1 class="first-heading">
+        {% trans 'Add new portlet' %}
+    </h1>
+
+    <div class="field">
+        <div class="label">
+            <label>{% trans 'Position' %}:</label>
+        </div>
+
+        <div>
+            <input type="text"
+                   name="position"
+                   value="1">
+        </div>
+    </div>
+    <div class="field">
+        <div class="label">
+            <label>{% trans 'Slot' %}:</label>
+        </div>
+
+        <div>
+            <select name="slot">
+                {% for slot in slots %}
+                    <option {% if slot.selected %}selected="selected"{% endif %}value="{{ slot.id }}">
+                        {{ slot.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {% include "lfc/manage/lfc_form.html" %}
+
+    <div class="buttons">
+        <input type="hidden"
+               name="portlet_type"
+               value="{{ portlet_type }}" />
+
+        <input class="ajax-portlet-save-button"
+               type="submit"
+               value="{% trans 'Save portlet' %}" />
+    </div>
+</form>

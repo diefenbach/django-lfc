@@ -1,0 +1,10 @@
+{% load i18n %}
+<form action="{% url lfc_save_portal_core %}"
+      method="POST">
+    <table>
+        {% include "lfc/manage/lfc_form.html" %}
+    </table>
+    <input class="ajax-save-button"
+           type="submit"
+           value="{% trans 'Save core data' %}" />
+</form>

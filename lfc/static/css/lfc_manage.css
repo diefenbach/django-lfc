@@ -1,0 +1,311 @@
+/* ui-tabs overwrites */
+body {
+    font-size: 77% !important;
+    background-color: white;
+    font-family: Verdana;
+}
+
+/* General */
+textarea {
+    width: 672px;
+    height: 100px;
+}
+
+select {
+    width: 200px;
+}
+
+input[type='text'] {
+    width: 200px;
+}
+
+img {
+    border: none;
+}
+
+a  {
+    text-decoration: none;
+}
+
+.selected {
+    font-weight: bold;
+}
+
+.lfc-header {
+    background: url("../img/header_bg.jpg") repeat-x;
+    padding: 0 20px;
+}
+
+.username {
+    float:right;
+    padding-right: 30px;
+    padding-top: 30px;
+}
+
+
+h1 {
+    font-size: 131%;
+    font-weight: bold;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+}
+
+
+h2 {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    font-size: 123.1%;
+    font-weight: bold;
+}
+
+h2.manage-title {
+    padding-top: 10px;
+    border:none;
+}
+
+h3 {
+    font-size: 100.1%;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.first-heading {
+    margin-top: 0;
+}
+
+.middle-heading {
+    margin-top: 20px;
+}
+
+/* Images */
+img.icon-padding {
+    position:relative; top:3px;
+}
+
+.logo {
+    float:left;
+    padding: 0 0 15px 60px;
+    height: 93px;
+}
+
+/* Tables */
+table.main {
+    width: 100%;
+    padding: 0 20px;
+}
+
+table.main td {
+    vertical-align: top;
+}
+
+td.left-slot {
+  padding: 0 20px;
+  width: 200px;
+}
+
+th, td {
+    text-align:left
+}
+
+th.last, td.last {
+    text-align: right !important;
+    padding-right: 10px;
+}
+
+table.lfs-manage-table {
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+.lfs-manage-table th {
+    min-height: 30px;
+    height: 30px;
+    background-color: #ede9e8;
+    text-align: left;
+    padding-left: 10px;
+}
+
+.lfs-manage-table td {
+    padding: 4px 10px
+}
+
+.lfs-manage-table td.last {
+    padding-right: 0;
+    padding-left: 20px;
+}
+
+/* Navigation */
+.navigation-manage ul {
+    margin:0;
+    padding:0;
+    list-style: none;
+}
+
+.navigation-manage a {
+    color: black;
+    text-decoration: none;
+    border: none;
+    display:block;
+    padding: 5px 5px;
+}
+
+.navigation-manage a:hover {
+    background-color: #ede9e8;
+    color: black;
+}
+
+li.current a {
+    background-color: #ede9e8;
+}
+
+.navigation-manage .level-2 a {
+    padding-left: 20px;
+}
+
+.navigation-manage .level-3 a {
+    padding-left: 40px;
+}
+
+div.site-actions {
+    margin: 20px 0;
+}
+
+div.site-actions img {
+    position: relative; top: 3px;
+}
+
+a {
+    color: black;
+}
+
+a:hover {
+    color: blue;
+}
+
+/* Buttons */
+.add {
+    margin: 0 10px;
+    padding-left: 18px;
+    background: url(/media/lfc/icons/add.png) no-repeat;
+    text-decoration: none;
+}
+
+.delete {
+    margin: 0 10px;
+    padding-left: 20px;
+    background: url(/media/lfc/icons/delete.png) no-repeat;
+    text-decoration: none;
+}
+
+.edit {
+    margin: 0 10px;
+    padding-left: 20px;
+    background: url(/media/lfc/icons/edit.png) no-repeat;
+    text-decoration: none;
+}
+
+.view {
+    margin: 0 10px;
+    padding-left: 18px;
+    background: url(/media/lfc/icons/zoom.png) no-repeat;
+    text-decoration: none;
+}
+
+.language {
+    margin: 0 10px;
+    padding: 0 0 2px 20px;
+    background: url(/media/lfc/icons/world.png) no-repeat;
+    text-decoration: none;        
+}
+
+.translate {
+    margin: 0 10px;
+    padding: 0 0 2px 20px;
+    background: url(/media/lfc/icons/world_edit.png) no-repeat;
+    text-decoration: none;        
+}
+
+div.footer {
+    color: #58585a;
+    background-color: #f5f5f5;
+    margin-top: 50px;
+    padding: 10px 0;
+}
+
+div.footer a {
+    color: #58585a;
+}
+
+div.footer p {
+    text-align: center;
+}
+
+table.lfc-main {
+    width: 100%;
+}
+
+.lfc-left-slot {
+    width: 16em;
+}
+
+.lfc-right-slot {
+    width: 16em;
+}
+
+.lfc-main td {
+    vertical-align: top;
+}
+
+.manage-form-buttons {
+    padding-top: 20px;
+}
+
+.field {
+    padding-bottom: 10px;
+}
+
+div.label {
+    margin-bottom: 4px;
+}
+
+label {
+    font-weight: bold;
+}
+
+.portlet-form td.label {
+    padding-right: 40px;
+}
+
+.portlet-form .buttons {
+    padding-top: 10px;
+}
+
+.portlets-blocking {
+    margin-bottom: 5px;
+}
+
+.no-portlets {
+    padding: 10px 0;
+}
+
+.middle {
+    padding: 10px 0;
+}
+
+div.overlay {
+    background-image:url(../img/gray.gif);
+    width:800px;
+    height:800px;
+    display:none;
+    padding:55px;
+}
+
+div.overlay div.close {
+    background-image:url(../img/close.png);
+    position:absolute;
+    right:5px;
+    top:5px;
+    cursor:pointer;
+    height:35px;
+    width:35px;
+}

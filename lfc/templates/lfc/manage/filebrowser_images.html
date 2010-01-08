@@ -1,0 +1,34 @@
+{% load i18n %}
+
+<script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce_popup.js"></script>
+<script language="javascript" type="text/javascript" src="{{ MEDIA_URL }}lfc/js/fb_tinymce.js"></script>
+
+<table>
+    {% for image in images %}
+        <tr>
+            <td valign="top">
+                <img src="{{ image.image.url_60x60 }}" />
+            </td>
+            <td valign="top">
+                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_60x60 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                    60 x 60
+                </a>
+                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_200x200 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                    200 x 200
+                </a>
+                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_400x400 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                    400 x 400
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<h1>Upload images</h1>
+<form action="{% url lfc_fb_upload_image %}"
+      method="post"
+      enctype="multipart/form-data">
+    <input type="hidden" name="obj_id" value="{{ obj_id }}">
+    <input type="file" name="image" />
+    <input type="submit" />
+</form>

@@ -1,0 +1,88 @@
+{% load i18n %}
+
+<h2>
+    {{ form.allow_comments.label_tag }}
+</h2>
+
+<form action="{% url lfc_update_comments page.id %}"
+      method="POST">
+    <div class="field">
+        <div>
+            {{ form.allow_comments }}
+            <input class="ajax-save-button"
+                   name="allow_comments"
+                   type="submit"
+                   value="{% trans 'Save' %}" />
+        </div>
+    </div>
+</form>
+
+<h2 class="heading-middle">
+    {% trans 'Comments' %}
+</h2>
+
+{% if comments %}
+    <form action="{% url lfc_update_comments page.slug %}"
+          method="post">
+
+        <table class="lfs-manage-table">
+            <tr>
+                <th>
+                    <input type="checkbox"
+                           class="select-all-1" />
+                </th>
+                <th>
+                    {% trans 'SNR' %}
+                </th>
+                <th>
+                    {% trans 'Name' %}
+                </th>
+                <th>
+                    {% trans 'Public' %}
+                </th>
+                <th>
+                    {% trans 'Edit' %}
+                </th>
+            </tr>
+            {% for comment in comments %}
+                <tr>
+                    <td>
+                        <input type="hidden"
+                               name="comment_id-{{ comment.id }}" />
+                        <input type="checkbox"
+                               class="select-1"
+                               name="delete-{{comment.id}}"
+                               style="float:left" />
+                    </td>
+                    <td>
+                        {{ forloop.counter }}.
+                    </td>
+                    <td>
+						{{comment.name}}
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                               name="is_public-{{comment.id}}"
+                               style="float:left"
+                               {% if comment.is_public %}checked="checked"{% endif %} />
+                    </td>
+                    <td>
+                        <a href="/admin/comments/comment/{{comment.id}}">
+                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                 alt="{% trans 'Edit' %}"
+                                 title="{% trans 'Edit page' %}" />
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="manage-form-buttons">
+            <input class="ajax-save-button"
+                   type="submit" name="update" value="{% trans 'Update comments' %}" />
+            <input class="ajax-save-button"
+                   type="submit" name="delete" value="{% trans 'Delete comments' %}" />
+        </div>
+    </form>
+{% else %}
+    <span>{% trans 'There are no comments' %}</span>
+{% endif %}

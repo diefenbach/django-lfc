@@ -1,0 +1,119 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left_slot %}
+    <div id="navigation">
+        {{ navigation }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div class="site-actions">
+        {% if display_content_menu %}
+            <ul class="sf-menu">
+                <li>
+                    <a>{% trans "Add" %}</a>
+                    <ul>
+                    {% for content_type in content_types %}
+                        <li>
+                            <a href="{% url lfc_add_object page.id %}?type={{content_type.type}}">Add {{content_type.name}}</a>
+                       </li>
+                    {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+        {% else %}
+            {% for content_type in content_types %}
+                <a class="add"
+                   href="{% url lfc_add_object page.id %}?type={{content_type.type}}">Add {{content_type.name}}</a>
+            {% endfor %}
+        {% endif %}
+            <a class="delete confirmation-link"
+               data="{% trans 'Delete?' %}"
+               href="{% url lfc_delete_object page.id %}">{% trans 'Delete' %}</a>
+
+        <a accesskey="v"
+           class="view"
+           href="{{ page.get_absolute_url }}">{% trans 'View' %}</a>
+
+        {% if LFC_MULTILANGUAGE %}
+            {% if translations %}
+                <span class="language">{% trans 'Available in' %}:</span>
+
+                <a {% ifequal canonical.language page.language %}class="selected"{% endifequal %}
+                   href="{% url lfc_manage_page canonical.id %}">
+                    {{ canonical.get_language_display }}
+                </a>
+
+                {% for translation in translations %}
+                    <a {% ifequal translation.language page.language %}class="selected"{% endifequal %}
+                        href="{% url lfc_manage_page translation.id %}">
+                        {{ translation.get_language_display }}
+                    </a>
+                {% endfor %}
+            {% endif %}
+
+            {% if page.is_canonical %}
+                <span class="translate">{% trans 'Add/Edit translation' %}:</span>
+                {% for language in languages %}
+                    <a href="{% url lfc_translate_object page.id language.code %}">{{ language.name }}</a>
+                {% endfor %}
+            {% else %}
+                {% if page.canonical %}
+                    <span class="translate">{% trans 'Add/Edit translation' %}:</span>
+                    {% for language in languages %}
+                        <a href="{% url lfc_translate_object page.canonical.id language.code %}">{{ language.name }}</a>
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+    </div>
+
+    <div id="manage-tabs">
+
+        <ul>
+            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Page' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#meta_data">{% trans 'Metadata' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#seo">{% trans 'SEO' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
+            {% if not page.special %}
+                <li class="ui-tabs-nav-item"><a href="#comments">{% trans 'Comments' %}</a></li>
+            {% endif %}
+        </ul>
+
+        <div id="data">
+            {{ core_data|safe }}
+        </div>
+        <div id="meta_data">
+            {{ meta_data|safe }}
+        </div>
+        <div id="seo">
+            {{ seo_data|safe }}
+        </div>
+        <div id="images">
+            {{ images }}
+        </div>
+        <div id="files">
+            {{ files }}
+        </div>
+        <div id="portlets">
+            {{ portlets }}
+        </div>
+        {% if not page.special %}
+            <div id="comments">
+                {{ comments }}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        tinyMCE.execCommand('mceAddControl', true, 'id_text');
+        tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
+    </script>
+
+{% endblock %}

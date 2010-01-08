@@ -1,0 +1,318 @@
+# python imports
+import datetime
+import sys
+import traceback
+
+# django imports
+from django import template
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import EmailMessage
+from django.core.urlresolvers import reverse
+from django.db.models import Q
+from django.http import Http404
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template import loader
+from django.template.loader import render_to_string
+from django.utils import translation
+from django.utils.translation import ugettext_lazy as _
+
+# contact_form imports
+from contact_form.forms import ContactForm
+
+# lfc imports
+import lfc.utils
+from lfc.models import File
+from lfc.models import Page
+from lfc.models import BaseContent
+
+# tagging imports
+from tagging.models import TaggedItem
+from tagging.utils import get_tag
+
+def traverse_object(request, slug):
+    """Traverses to given slug to get the object.
+    """
+    paths = slug.split("/")
+
+    language = translation.get_language()
+    paths = slug.split("/")
+
+    if paths[0] == language:
+        path = paths[1]
+    else:
+        path = paths[0]
+
+    try:
+        if request.user.is_superuser:
+            obj = BaseContent.objects.get(slug=path, language__in = ("0", language))
+        else:
+            obj = BaseContent.objects.get(slug=path, language__in = ("0", language), active=True)
+    except BaseContent.DoesNotExist:
+        raise Http404
+
+    for path in paths[1:]:
+        try:
+            if request.user.is_superuser:
+                obj = obj.sub_objects.filter(slug=path)[0]
+            else:
+                obj = obj.sub_objects.filter(slug=path, active=True)[0]
+        except IndexError:
+            raise Http404
+
+    return obj
+
+def portal(request, language=None, template_name="lfc/portal.html"):
+    """Displays the default object of the portal.
+    """
+    # If the given language is the default language redirect to the url without
+    # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
+    if language == settings.LANGUAGE_CODE:
+        return HttpResponseRedirect(reverse("lfc_portal"))
+
+    obj = lfc.utils.get_portal().standard
+
+    if obj is None:
+        return render_to_response(template_name, RequestContext(request, {
+            "portal" : lfc.utils.get_portal()
+        }))
+
+    # if a language is passed and the language of the default object is not
+    # neutral we try to get the translation of the default object.
+    if language and obj.language != "0":
+        t = obj.get_translation(language)
+        if t:
+            slug = t.slug
+            language = t.language
+        else:
+            slug = obj.slug
+            language = obj.language
+    else:
+        slug = obj.slug
+
+    return base_view(request, language=language, slug=slug)
+
+def base_view(request, language=None, slug=None):
+    """Displays the page for given language and slug.
+    """
+    # If the given language is the default language redirect to the url without
+    # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
+    if language == settings.LANGUAGE_CODE:
+        return HttpResponseRedirect(reverse("lfc_base_view", kwargs={"slug" : slug}))
+
+    # If no language is given we assume the default language
+    elif language is None:
+        language = settings.LANGUAGE_CODE
+
+    # Activate the given language, this will show the UI in the same language as
+    # the content
+    translation.activate(language)
+
+    cache_key = "object-%s-%s" % (language, slug)
+    obj = None #cache.get(cache_key)
+
+    if obj is not None:
+        return obj
+
+    obj = traverse_object(request, slug)
+
+    # Get the template of the object
+    obj_template = obj.get_template()
+
+    # Redirect to standard object unless superuser is asking
+    if obj.standard and request.user.is_superuser == False:
+        url = obj.get_absolute_url()
+        return HttpResponseRedirect(url)
+
+    # Get sub objects (as LOL if requested)
+    if obj_template.subpages_columns == 0:
+        sub_objects = obj.get_sub_objects()
+    else:
+        sub_objects = lfc.utils.getLOL(obj.get_sub_objects(), obj_template.subpages_columns)
+
+    # Get images (as LOL if requested)
+    temp_images = list(obj.images.all())
+    if temp_images:
+        if obj_template.images_columns == 0:
+            images = temp_images
+            image = images[0]
+            subimages = temp_images[1:]
+        else:
+            images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
+            subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
+            image = images[0][0]
+    else:
+        image = None
+        images = []
+        subimages = []
+
+    # Get files
+    files = obj.files.all()
+
+    c = RequestContext(request, {
+        "lfc_object" : obj.get_specific_type(),
+        "images" : images,
+        "image" : image,
+        "subimages" : subimages,
+        "files" : files,
+        "sub_objects" : sub_objects,
+        "portal" : lfc.utils.get_portal(),
+    })
+
+    # Render twice. This makes tags within text / short_text possible.
+    result = render_to_string("lfc/templates/%s" % obj_template.file_name, c)
+    result = template.Template("{% load lfc_tags %} " + result).render(c)
+    cache.set(cache_key, result)
+    return HttpResponse(result)
+
+def file(request, language=None, id=None):
+    """Delivers files to the browser
+    """
+    file = get_object_or_404(File, pk=id)
+    response = HttpResponse(file.file, mimetype='application/binary')
+    response['Content-Disposition'] = 'attachment; filename=%s' % file.title
+
+    return response
+
+def search_results(request, language, template_name="lfc/search_results.html"):
+    """
+    """
+    query = request.GET.get("q")
+    language = translation.get_language()
+
+    f = Q(exclude_from_search=False) & \
+        Q(active=True) & \
+        (Q(language = language) | Q(language="0")) & \
+        (Q(title__icontains=query) | Q(tags__icontains=query))
+
+    try:
+        obj = BaseContent.objects.get(slug="search-results")
+    except BaseContent.DoesNotExist:
+        obj = None
+
+    results = BaseContent.objects.filter(f)
+    return render_to_response(template_name, RequestContext(request, {
+        "lfc_object" : obj,
+        "query" : query,
+        "results" : results,
+    }))
+
+def set_language(request, language, id=None):
+    """Sets the language to the given language
+
+    parameters:
+
+        - language
+          the requested language
+
+        - id:
+          the id of the current displayed object
+    """
+    translation.activate(language)
+
+    url = None
+    if id:
+        obj = BaseContent.objects.get(pk=id)
+
+        # If the language of the current page same as the requested language we
+        # just stay on the page.
+        if obj.language == language:
+            url = obj.get_absolute_url()
+
+        # Coming from a page with neutral language, we stay on this page
+        elif obj.language == "0":
+            url = obj.get_absolute_url()
+
+        # Coming from a canonical page, we try to get the translation for the
+        # given language
+        elif obj.is_canonical():
+            t = obj.get_translation(language)
+            if t:
+                url = t.get_absolute_url()
+
+        # Coming from a translation, we try to get the canonical and display
+        # the given language
+        else:
+            canonical = obj.canonical
+            if canonical:
+                if language == settings.LANGUAGE_CODE:
+                    url = canonical.get_absolute_url()
+                else:
+                    t = canonical.get_translation(language)
+                    if t:
+                        url = t.get_absolute_url()
+
+    else:
+        url = request.META.get("HTTP_REFERER")
+
+    if url is None:
+        portal = lfc.utils.get_portal()
+        if language == settings.LANGUAGE_CODE:
+            url = reverse("lfc_portal")
+        else:
+            url = reverse("lfc_portal", kwargs={"language" : language})
+
+    response = HttpResponseRedirect(url)
+
+    if translation.check_for_language(language):
+        if hasattr(request, 'session'):
+            request.session['django_language'] = language
+        else:
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+
+    return response
+
+def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):
+    """
+    """
+    if tag is None:
+        raise AttributeError(_('tagged_object_list must be called with a tag.'))
+
+    tag_instance = get_tag(tag)
+    if tag_instance is None:
+        raise Http404(_('No Tag found matching "%s".') % tag)
+
+    try:
+        obj = BaseContent.objects.get(slug=slug)
+    except Page.DoesNotExist:
+        raise Http404()
+    else:
+        queryset = BaseContent.objects.filter(parent=page)
+        objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
+
+    return render_to_response(template_name, RequestContext(request, {
+        "slug" : slug,
+        "lfc_object" : obj.get_specific_type(),
+        "objs" : objs,
+        "tag" : tag,
+    }));
+
+def fiveohoh(request, template_name="500.html"):
+    """Handler for 500 server errors.
+    """
+    exc_type, exc_info, tb = sys.exc_info()
+    response = "%s\n" % exc_type.__name__
+    response += "%s\n" % exc_info
+    response += "TRACEBACK:\n"
+    for tb in traceback.format_tb(tb):
+        response += "%s\n" % tb
+
+    response += "\nREQUEST:\n%s" % request
+
+    try:
+        from_email = settings.ADMINS[0][1]
+        to_emails = [a[1] for a in settings.ADMINS]
+    except IndexError:
+        pass
+    else:
+        mail = EmailMessage(
+            subject="Error LFC", body=response, from_email=from_email, to=to_emails)
+        mail.send(fail_silently=True)
+
+    return base_view(request, slug="500")
