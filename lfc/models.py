@@ -556,4 +556,4 @@ def register_portlets(sender, **kwargs):
 post_syncdb.connect(register_portlets)
 
 from lfc.utils.registration import register_content_type
-register_content_type(Page, name="Page", sub_types=["Page", "Blog"], templates=["Article", "Plain", "Gallery"], default_template="Article")
+register_content_type(Page, name="Page", sub_types=["Page", "Blog"], templates=["Article", "Plain", "Gallery", "Overview"], default_template="Article")
