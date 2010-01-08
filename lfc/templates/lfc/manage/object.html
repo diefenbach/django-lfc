@@ -24,8 +24,7 @@
 
             {% else %}
                 {% for content_type in content_types %}
-                    <a class="add"
-                       href="{% url lfc_add_object page.id %}?type={{content_type.type}}">{{content_type.name}}</a>
+                    <a href="{% url lfc_add_object page.id %}?type={{content_type.type}}">{% trans "Add" %} {{content_type.name}}</a>
                 {% endfor %}
             {% endif %}
             </li>
