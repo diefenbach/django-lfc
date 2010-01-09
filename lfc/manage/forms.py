@@ -13,7 +13,7 @@ from lfc.models import Portal
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info_for
 
-class PageCommentsForm(forms.ModelForm):
+class CommentsForm(forms.ModelForm):
     """
     """
     class Meta:

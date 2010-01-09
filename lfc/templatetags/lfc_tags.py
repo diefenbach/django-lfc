@@ -312,7 +312,7 @@ def previous_next_by_position(page):
 def image(context, ord):
     """Returns an image with given ord for the current page.
     """
-    page = context.get("lfcpage")
+    page = context.get("lfc_object")
     return {
         "image" : page.images.all()[ord-1],
     }

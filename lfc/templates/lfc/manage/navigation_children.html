@@ -1,14 +1,14 @@
 {% load lfc_tags %}
 
-{% if pages %}
+{% if objs %}
     <ul class="level-{{ level }}">
-        {% for page in pages %}
-            <li {% if page.is_current %}class="current"{% endif %}>
-                <a href="{% url lfc_manage_page page.id %}">
-                    {{ page.title }}
+        {% for obj in objs %}
+            <li {% if obj.is_current %}class="current"{% endif %}>
+                <a href="{% url lfc_manage_object obj.id %}">
+                    {{ obj.title }}
                 </a>
             </li>
-            {{ page.children }}
+            {{ obj.children }}
         {% endfor %}
     </ul>
 {% endif %}

@@ -26,7 +26,7 @@ from portlets.models import Slot
 
 # lfc imports
 from lfc.models import BaseContent
-from lfc.manage.forms import PageCommentsForm
+from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import PageSEOForm
 from lfc.manage.forms import PortalCoreForm
@@ -66,7 +66,7 @@ def fb_upload_image(request):
 
     if request.method == "POST":
         for file_content in request.FILES.values():
-            image = Image(page=obj, title=file_content.name)
+            image = Image(content=obj, title=file_content.name)
             image.image.save(file_content.name, file_content, save=True)
 
     # Refresh positions
@@ -84,7 +84,7 @@ def fb_upload_file(request):
     obj = BaseContent.objects.get(pk=obj_id)
 
     for file_content in request.FILES.values():
-        file = File(page=obj, title=file_content.name)
+        file = File(content=obj, title=file_content.name)
         file.file.save(file_content.name, file_content, save=True)
 
     # Refresh positions
@@ -325,9 +325,9 @@ def add_object(request, language=None, id=None):
     form = mc().form
 
     try:
-        parent_page = BaseContent.objects.get(pk=id)
+        parent_object = BaseContent.objects.get(pk=id)
     except (BaseContent.DoesNotExist, ValueError):
-        parent_page = None
+        parent_object = None
 
     if language is None:
         language = settings.LANGUAGE_CODE
@@ -336,22 +336,22 @@ def add_object(request, language=None, id=None):
         form = form(data=request.POST, initial={"creator" : request.user})
         if request.POST.get("save"):
             if form.is_valid():
-                new_page = form.save()
-                new_page.parent = parent_page
-                new_page.content_type = type
-                new_page.creator = request.user
-                new_page.language = settings.LANGUAGE_CODE
-                new_page.save()
+                new_object = form.save()
+                new_object.parent = parent_object
+                new_object.content_type = type
+                new_object.creator = request.user
+                new_object.language = settings.LANGUAGE_CODE
+                new_object.save()
 
-                _update_positions(new_page)
-                url = reverse("lfc_manage_page", kwargs={"id": new_page.id})
+                _update_positions(new_object)
+                url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
                 return set_message_cookie(url, msg = _(u"Page has been added."))
         else:
             referer = request.POST.get("referer")
             return HttpResponseRedirect(referer)
     else:
-        if parent_page is not None:
-            form = form(initial={"parent" : parent_page.id})
+        if parent_object is not None:
+            form = form(initial={"parent" : parent_object.id})
         else:
             form = form()
 
@@ -362,7 +362,7 @@ def add_object(request, language=None, id=None):
         "language" : language,
         "id" : id,
         "referer" : request.POST.get("referer", request.META.get("HTTP_REFERER")),
-        "navigation" : navigation(request, parent_page)
+        "navigation" : navigation(request, parent_object)
     }))
 
 @login_required
@@ -370,59 +370,58 @@ def delete_object(request, id):
     """Deletes object with given id.
     """
     try:
-        page = BaseContent.objects.get(pk = id)
+        obj = BaseContent.objects.get(pk = id)
     except BaseContent.DoesNotExist:
         pass
     else:
-        # Remove the page from the parent's standard in order not to delete the
-        # parent
-
-        parent = page.parent
+        # First remove the object from the parent's standard in order not to
+        # delete the parent
+        parent = obj.parent
 
         if parent is None:
             parent = get_portal()
 
-        if parent.standard == page:
+        if parent.standard == obj:
             parent.standard = None
             parent.save()
 
-        page.delete()
+        obj.delete()
 
     if parent:
-        url = reverse("lfc_manage_page", kwargs={"id": parent.id})
+        url = reverse("lfc_manage_object", kwargs={"id": parent.id})
     else:
-        url = reverse("lfc_manage_pages")
+        url = reverse("lfc_manage_objects")
 
     return set_message_cookie(url, msg = _(u"Page has been deleted."))
 
 @login_required
-def manage_pages(request):
+def manage_objects(request):
     """
     """
     try:
-        page = BaseContent.objects.filter(parent=None)[0]
+        obj = BaseContent.objects.filter(parent=None)[0]
     except IndexError:
         url = reverse("lfc_add_object", kwargs={"id" : None})
     else:
-        url = reverse("lfc_manage_page", kwargs={"id" : page.id})
+        url = reverse("lfc_manage_object", kwargs={"id" : obj.id})
     return HttpResponseRedirect(url)
 
 @login_required
-def manage_page(request, id, template_name="lfc/manage/object.html"):
+def manage_object(request, id, template_name="lfc/manage/object.html"):
     """
     """
     try:
         obj = BaseContent.objects.get(pk=id)
     except BaseContent.DoesNotExist:
-        return manage_pages(request)
+        return manage_objects(request)
 
-    page = obj.get_specific_type()
-    pages = BaseContent.objects.filter(parent=None)
+    obj = obj.get_specific_type()
+    objs = BaseContent.objects.filter(parent=None)
 
-    if page.is_canonical():
-        canonical = page
+    if obj.is_canonical():
+        canonical = obj
     else:
-        canonical = page.canonical
+        canonical = obj.canonical
 
     languages = []
     for language in settings.LANGUAGES:
@@ -437,47 +436,47 @@ def manage_page(request, id, template_name="lfc/manage/object.html"):
     else:
         translations = None
 
-    content_types = get_allowed_subtypes(page)
+    content_types = get_allowed_subtypes(obj)
     return render_to_response(template_name, RequestContext(request, {
         "content_types" : content_types,
         "display_content_menu" : len(content_types) > 1,
-        "page" : page,
-        "pages" : pages,
+        "obj" : obj,
+        "objs" : objs,
         "translations" : translations,
         "canonical" : canonical,
         "languages" : languages,
-        "navigation" : navigation(request, page),
-        "core_data" : page_core_data(request, id),
-        "meta_data" : page_meta_data(request, id),
+        "navigation" : navigation(request, obj),
+        "core_data" : core_data(request, id),
+        "meta_data" : meta_data(request, id),
         "seo_data" : manage_seo(request, id),
-        "images" : page_images(request, id, as_string=True),
-        "files" : page_files(request, id),
-        "comments" : page_comments(request, page),
-        "portlets" : portlets_inline(request, page),
+        "images" : images(request, id, as_string=True),
+        "files" : files(request, id),
+        "comments" : comments(request, obj),
+        "portlets" : portlets_inline(request, obj),
     }))
 
 @login_required
-def page_core_data(request, id, as_string=True, template_name="lfc/manage/object_data.html"):
+def core_data(request, id, as_string=True, template_name="lfc/manage/object_data.html"):
     """
     """
     base_content = BaseContent.objects.get(pk=id)
     obj_ct = ContentType.objects.filter(model=base_content.content_type)[0]
-    page = base_content.get_specific_type()
-    Form = page.form
+    obj = base_content.get_specific_type()
+    Form = obj.form
 
     if request.method == "POST":
-        form = Form(instance=page, data=request.POST)
+        form = Form(instance=obj, data=request.POST)
         if form.is_valid():
             form.save()
 
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
-            "page" : page,
+            "obj" : obj,
         }))
 
         html = (
             ("#data", html),
-            ("#navigation", navigation(request, page)),
+            ("#navigation", navigation(request, obj)),
         )
 
         result = simplejson.dumps({
@@ -486,17 +485,17 @@ def page_core_data(request, id, as_string=True, template_name="lfc/manage/object
         }, cls = LazyEncoder)
         result = HttpResponse(result)
     else:
-        form = Form(instance=page)
+        form = Form(instance=obj)
 
         result = render_to_string(template_name, RequestContext(request, {
             "form" : form,
-            "page" : page,
+            "obj" : obj,
         }))
 
     return result
 
 @login_required
-def page_meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
+def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
     """
     """
     obj = BaseContent.objects.get(pk=id)
@@ -509,10 +508,6 @@ def page_meta_data(request, id, template_name="lfc/manage/object_meta_data.html"
         if form.is_valid():
             form.save()
             form = Form(instance=_update_positions(obj))
-
-        # if not page.special and \
-        #    (page.language == settings.LANGUAGE_CODE or page.language == "0"):
-        #     del form.fields["canonical"]
 
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -532,9 +527,6 @@ def page_meta_data(request, id, template_name="lfc/manage/object_meta_data.html"
 
     else:
         form = Form(instance=obj)
-        # if not page.special and \
-        #    (page.language == settings.LANGUAGE_CODE or page.language == "0"):
-        #     del form.fields["canonical"]
 
         result = render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -576,14 +568,14 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
 
 # Comments
 @login_required
-def page_comments(request, page, template_name="lfc/manage/object_comments.html"):
+def comments(request, obj, template_name="lfc/manage/object_comments.html"):
     """
     """
-    form = PageCommentsForm(instance=page)
-    comments = Comment.objects.filter(object_pk = page.id)
+    form = CommentsForm(instance=obj)
+    comments = Comment.objects.filter(object_pk = obj.id)
 
     return render_to_string(template_name, RequestContext(request, {
-        "page" : page,
+        "obj" : obj,
         "comments" : comments,
         "form" : form,
     }))
@@ -592,11 +584,11 @@ def page_comments(request, page, template_name="lfc/manage/object_comments.html"
 def update_comments(request, id, template_name="lfc/manage/object_comments.html"):
     """Deletes comments with given ids (passed by request body).
     """
-    page = get_object_or_404(BaseContent, pk=id)
+    obj = get_object_or_404(BaseContent, pk=id)
 
     action = request.POST.get("action")
     if action == "allow_comments":
-        form = PageCommentsForm(instance=page, data=request.POST)
+        form = CommentsForm(instance=obj, data=request.POST)
         form.save()
         message = _(u"Allow comments state has been saved.")
     elif action == "delete":
@@ -623,7 +615,7 @@ def update_comments(request, id, template_name="lfc/manage/object_comments.html"
                     comment.save()
 
     html = (
-        ("#comments", page_comments(request, page)),
+        ("#comments", comments(request, obj)),
     )
 
     result = simplejson.dumps({
@@ -635,17 +627,17 @@ def update_comments(request, id, template_name="lfc/manage/object_comments.html"
 
 # Files
 @login_required
-def page_files(request, id, template_name="lfc/manage/object_files.html"):
+def files(request, id, template_name="lfc/manage/object_files.html"):
     """
     """
-    page = BaseContent.objects.get(pk=id)
+    obj = BaseContent.objects.get(pk=id)
     return render_to_string(template_name, RequestContext(request, {
-        "page" : page,
+        "obj" : obj,
     }))
 
 @login_required
 def add_files(request, id):
-    """Adds a file to page with passed id.
+    """Adds a file to obj with passed id.
     """
     obj = get_object_or_404(BaseContent, pk=id)
     if request.method == "POST":
@@ -658,7 +650,7 @@ def add_files(request, id):
         file.position = i+1
         file.save()
 
-    return HttpResponse(page_files(request, id))
+    return HttpResponse(files(request, id))
 
 @login_required
 def update_files(request, id):
@@ -672,8 +664,8 @@ def update_files(request, id):
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 try:
-                    id = key.split("-")[1]
-                    image = File.objects.get(pk=id).delete()
+                    temp_id = key.split("-")[1]
+                    image = File.objects.get(pk=temp_id).delete()
                 except (IndexError, File.DoesNotExist):
                     pass
 
@@ -681,9 +673,9 @@ def update_files(request, id):
         message = _(u"Files has been updated.")
         for key, value in request.POST.items():
             if key.startswith("title-"):
-                id = key.split("-")[1]
+                temp_id = key.split("-")[1]
                 try:
-                    file = File.objects.get(pk=id)
+                    file = File.objects.get(pk=temp_id)
                 except File.DoesNotExist:
                     pass
                 else:
@@ -692,8 +684,8 @@ def update_files(request, id):
 
             elif key.startswith("position-"):
                 try:
-                    id = key.split("-")[1]
-                    file = File.objects.get(pk=id)
+                    temp_id = key.split("-")[1]
+                    file = File.objects.get(pk=temp_id)
                 except (IndexError, File.DoesNotExist):
                     pass
                 else:
@@ -706,7 +698,7 @@ def update_files(request, id):
         file.save()
 
     result = simplejson.dumps({
-        "files" : page_files(request, id),
+        "files" : files(request, id),
         "message" : message,
     }, cls = LazyEncoder)
 
@@ -714,13 +706,13 @@ def update_files(request, id):
 
 # Images
 @login_required
-def page_images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
+def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
     """
     """
-    page = BaseContent.objects.get(pk=id)
+    obj = BaseContent.objects.get(pk=id)
 
     result = render_to_string(template_name, RequestContext(request, {
-        "page" : page,
+        "obj" : obj,
     }))
 
     if as_string:
@@ -734,7 +726,7 @@ def page_images(request, id, as_string=False, template_name="lfc/manage/object_i
         return HttpResponse(result)
 
 def add_images(request, id):
-    """Adds images to page with passed id.
+    """Adds images to obj with passed id.
     """
     obj = get_object_or_404(BaseContent, pk=id)
     if request.method == "POST":
@@ -747,13 +739,13 @@ def add_images(request, id):
         image.position = i+1
         image.save()
 
-    return HttpResponse(page_images(request, id, as_string=True))
+    return HttpResponse(images(request, id, as_string=True))
 
 @login_required
 def update_images(request, id):
     """Saves/deletes images with given ids (passed by request body).
     """
-    page = get_object_or_404(BaseContent, id=id)
+    obj = get_object_or_404(BaseContent, id=id)
 
     action = request.POST.get("action")
     if action == "delete":
@@ -790,12 +782,12 @@ def update_images(request, id):
                     image.save()
 
     # Refresh positions
-    for i, image in enumerate(page.images.all()):
+    for i, image in enumerate(obj.images.all()):
         image.position = i+1
         image.save()
 
     result = simplejson.dumps({
-        "images" : page_images(request, id, as_string=True),
+        "images" : images(request, id, as_string=True),
         "message" : message,
     }, cls = LazyEncoder)
 
@@ -803,22 +795,22 @@ def update_images(request, id):
 
 # Navigation
 @login_required
-def navigation(request, page, start_level=1, template_name="lfc/manage/navigation.html"):
+def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation.html"):
     """
     """
     language = translation.get_language()
 
-    if page is None:
-        current_pages = []
+    if obj is None:
+        current_objs = []
     else:
-        if page.is_translation() and page.canonical:
-            page = page.canonical.get_specific_type()
+        if obj.is_translation() and obj .canonical:
+            obj = obj.canonical.get_specific_type()
 
-        current_pages = [page]
-        current_pages.extend(page.get_ancestors())
+        current_objs = [obj]
+        current_objs.extend(obj.get_ancestors())
 
-    # Display all pages which are neutral or in default language or
-    # which have no canonical page
+    # Display all objs which are neutral or in default language or
+    # which have no canonical obj
     q = Q(parent = None) & \
         (
             Q(language__in = ("0", settings.LANGUAGE_CODE)) |
@@ -826,57 +818,57 @@ def navigation(request, page, start_level=1, template_name="lfc/manage/navigatio
         )
     temp = BaseContent.objects.filter(q)
 
-    pages = []
-    for page in temp:
-        page = page.get_specific_type()
+    objs = []
+    for obj in temp:
+        obj = obj.get_specific_type()
 
-        if page in current_pages:
-            children = _navigation_children(request, current_pages, page, start_level)
+        if obj in current_objs:
+            children = _navigation_children(request, current_objs, obj, start_level)
             is_current = True
         else:
             children = ""
             is_current = False
 
-        pages.append({
-            "id" : page.id,
-            "title" : page.title,
+        objs.append({
+            "id" : obj.id,
+            "title" : obj.title,
             "is_current" : is_current,
             "children" : children,
             "level" : 2
         })
 
     return render_to_string(template_name, RequestContext(request, {
-        "pages" : pages,
+        "objs" : objs,
         "show_level" : start_level==2,
         "level" : 2,
     }))
 
-def _navigation_children(request, current_pages, page, start_level, level=3):
+def _navigation_children(request, current_objs, obj, start_level, level=3):
     """
     """
-    page = page.get_specific_type()
-    temp = page.sub_objects.filter(language__in = ("0", settings.LANGUAGE_CODE))
+    obj = obj.get_specific_type()
+    temp = obj.sub_objects.filter(language__in = ("0", settings.LANGUAGE_CODE))
 
-    pages = []
-    for page in temp:
-        page = page.get_specific_type()
-        if page in current_pages:
-            children = _navigation_children(request, current_pages, page, start_level, level+1)
+    objs = []
+    for obj in temp:
+        obj = obj.get_specific_type()
+        if obj in current_objs:
+            children = _navigation_children(request, current_objs, obj, start_level, level+1)
             is_current = True
         else:
             children = ""
             is_current = False
 
-        pages.append({
-            "id" : page.id,
-            "title" : page.title,
+        objs.append({
+            "id" : obj.id,
+            "title" : obj.title,
             "is_current" : is_current,
             "children" : children,
             "level" : level,
         })
 
     result = render_to_string("lfc/manage/navigation_children.html", {
-        "pages" : pages,
+        "objs" : objs,
         "show_level" : level >= start_level,
         "level" : level,
     })
@@ -884,7 +876,7 @@ def _navigation_children(request, current_pages, page, start_level, level=3):
     return result
 
 @login_required
-def translate_object(request, language, id=None, form_translation=None, template_name="lfc/manage/object_translate.html"):
+def translate_object(request, language, id=None, form_translation=None, form_canonical=None, template_name="lfc/manage/object_translate.html"):
     """
     """
     obj = get_object_or_404(BaseContent, pk=id)
@@ -902,7 +894,8 @@ def translate_object(request, language, id=None, form_translation=None, template
         canonical = obj.canonical
         translation_id = translation.id
 
-    form_canonical = canonical.get_specific_type().form(instance=canonical.get_specific_type(), prefix="canonical")
+    if form_canonical is None:
+        form_canonical = canonical.get_specific_type().form(instance=canonical.get_specific_type(), prefix="canonical")
 
     if translation:
         translation = translation.get_specific_type()
@@ -923,26 +916,27 @@ def translate_object(request, language, id=None, form_translation=None, template
 def save_translation(request):
     """Adds or edits a translation.
     """
-
     canonical_id = request.POST.get("canonical_id")
 
     if request.POST.get("cancel"):
-        url = reverse("lfc_manage_page", kwargs={"id" : canonical_id})
+        url = reverse("lfc_manage_object", kwargs={"id" : canonical_id})
         return set_message_cookie(url, _(u"Translation has been canceled."))
 
     canonical = BaseContent.objects.get(pk=canonical_id)
     canonical = canonical.get_specific_type()
 
-    translation_language = request.POST.get("translation_language")
-
     try:
         translation_id = request.POST.get("translation_id")
         translation = BaseContent.objects.get(pk=translation_id)
         translation = translation.get_specific_type()
+        translation_language = translation.language
+        msg = _(u"Translation has been updated.")
     except (BaseContent.DoesNotExist, ValueError):
         translation = None
+        translation_language = request.POST.get("translation_language")
+        msg = _(u"Translation has been added.")
 
-    # Get parent page
+    # Get parent obj
     # 1. Take the translatino of the parent if it available in requested language
     # 2. If not, take the parent of the canonical if it's in neutral language
     # 3. If not, don't take a parent at all
@@ -958,12 +952,19 @@ def save_translation(request):
             else:
                 parent_translation = None
 
-    # get standard page
+    # Get standard obj
     try:
         standard = canonical.standard
         standard_translation = standard.translations.filter(language=translation_language)[0]
     except (AttributeError, IndexError):
         standard_translation = None
+
+    form_canonical = canonical.form(
+        prefix="canonical",
+        instance = canonical,
+        data=request.POST,
+        files=request.FILES,
+    )
 
     form_translation = canonical.form(
         prefix="translation",
@@ -972,7 +973,7 @@ def save_translation(request):
         files=request.FILES,
     )
 
-    if form_translation.is_valid():
+    if form_canonical.is_valid() and form_translation.is_valid():
         translation = form_translation.save()
         translation.language = translation_language
         translation.canonical = canonical
@@ -985,14 +986,14 @@ def save_translation(request):
 
         _update_positions(translation)
 
-        url = reverse("lfc_manage_page", kwargs={"id" : translation.id})
-        return set_message_cookie(url, _(u"Translation has been added."))
+        url = reverse("lfc_manage_object", kwargs={"id" : translation.id})
+        return set_message_cookie(url, msg=msg)
 
     else:
-        return translate_object(request, translation_language, canonical.id, form_translation)
+        return translate_object(request, translation_language, canonical.id, form_translation, form_canonical)
 
 def _update_positions(obj):
-    """Updates position of top pages or given page.
+    """Updates position of top objs or given obj.
     """
     if obj.parent:
         objs = obj.parent.sub_objects.all()

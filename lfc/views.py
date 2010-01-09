@@ -51,9 +51,9 @@ def traverse_object(request, slug):
 
     try:
         if request.user.is_superuser:
-            obj = BaseContent.objects.get(slug=path, language__in = ("0", language))
+            obj = BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language))
         else:
-            obj = BaseContent.objects.get(slug=path, language__in = ("0", language), active=True)
+            obj = BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language), active=True)
     except BaseContent.DoesNotExist:
         raise Http404
 
@@ -99,7 +99,7 @@ def portal(request, language=None, template_name="lfc/portal.html"):
     return base_view(request, language=language, slug=slug)
 
 def base_view(request, language=None, slug=None):
-    """Displays the page for given language and slug.
+    """Displays the object for given language and slug.
     """
     # If the given language is the default language redirect to the url without
     # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
@@ -220,16 +220,16 @@ def set_language(request, language, id=None):
     if id:
         obj = BaseContent.objects.get(pk=id)
 
-        # If the language of the current page same as the requested language we
-        # just stay on the page.
+        # If the language of the current object same as the requested language we
+        # just stay on the object.
         if obj.language == language:
             url = obj.get_absolute_url()
 
-        # Coming from a page with neutral language, we stay on this page
+        # Coming from a object with neutral language, we stay on this object
         elif obj.language == "0":
             url = obj.get_absolute_url()
 
-        # Coming from a canonical page, we try to get the translation for the
+        # Coming from a canonical object, we try to get the translation for the
         # given language
         elif obj.is_canonical():
             t = obj.get_translation(language)
@@ -280,10 +280,10 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
 
     try:
         obj = BaseContent.objects.get(slug=slug)
-    except Page.DoesNotExist:
+    except BaseContent.DoesNotExist:
         raise Http404()
     else:
-        queryset = BaseContent.objects.filter(parent=page)
+        queryset = BaseContent.objects.filter(parent=obj)
         objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
 
     return render_to_response(template_name, RequestContext(request, {

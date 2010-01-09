@@ -31,6 +31,21 @@ def get_allowed_subtypes(obj=None):
     else:
         return []
 
+def register_sub_type_to(name, obj):
+    """
+    """
+    try:
+        base_ctr = ContentTypeRegistration.objects.get(name=name)
+    except ContentTypeRegistration.DoesNotExist:
+        pass
+
+    try:
+        sub_ctr = ContentTypeRegistration.objects.get(type =  obj.__name__.lower())
+    except ContentTypeRegistration.DoesNotExist:
+        pass
+
+    base_ctr.subtypes.add(sub_ctr)
+
 def register_content_type(obj, name, sub_types=[], templates=[], default_template=None):
     """Registers a content type. If a content type is already registered it
     updates it.
@@ -64,7 +79,7 @@ def register_content_type(obj, name, sub_types=[], templates=[], default_templat
                     ctr.save()
 
 def get_registered_content_types():
-    """Returns all registered content types types as list of dicts.    
+    """Returns all registered content types types as list of dicts.
     """
     conent_types = []
     for ct in ContentTypeRegistration.objects.all():

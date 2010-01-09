@@ -6,15 +6,15 @@
         <li>
             <a href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
             <ul class="level-{{ level }}">
-                {% for page in pages %}
-                    <li {% if page.is_current %}class="current"{% endif %}>
+                {% for obj in objs %}
+                    <li {% if obj.is_current %}class="current"{% endif %}>
                         <span>
-                            <a href="{% url lfc_manage_page page.id %}">
-                                {{ page.title }}
+                            <a href="{% url lfc_manage_object obj.id %}">
+                                {{ obj.title }}
                             </a>
                         </span>
                     </li>
-                    {{ page.children }}
+                    {{ obj.children }}
                 {% endfor %}
             </ul>
         </li>    

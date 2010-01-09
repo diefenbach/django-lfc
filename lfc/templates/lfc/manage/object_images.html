@@ -1,8 +1,8 @@
 {% load i18n %}
 
-{% if page.images.all %}
-    <form id="page-images-update-form"
-          action="{% url lfc_update_images page.id %}"
+{% if obj.images.all %}
+    <form id="object-images-update-form"
+          action="{% url lfc_update_images obj.id %}"
           method="post">
 
         <table class="lfs-manage-table">
@@ -21,7 +21,7 @@
                     {% trans 'Position' %}
                 </th>
             </tr>
-            {% for image in page.images.all %}
+            {% for image in obj.images.all %}
                 <tr>
                     <td>
                         <input type="checkbox"
@@ -46,9 +46,9 @@
             {% endfor %}
         </table>
         <div class="manage-form-buttons">
-            <input class="page-images-update-button"
+            <input class="object-images-update-button"
                    type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="page-images-update-button"
+            <input class="object-images-update-button"
                    type="submit" name="delete" value="{% trans 'Delete' %}" />
         </div>
     </form>
@@ -61,7 +61,7 @@
 <div id="content">
     <form id="images-form"
           action="."
-          data="{% url lfc_page_images page.id %}"
+          data="{% url lfc_images obj.id %}"
           method="post"
           enctype="multipart/form-data">
 
@@ -89,7 +89,7 @@
 
     var settings = {
         flash_url : "{{ MEDIA_URL }}lfc/swfupload/swfupload.swf",
-        upload_url: "{% url lfc_add_images page.id %}",
+        upload_url: "{% url lfc_add_images obj.id %}",
         file_size_limit : "100 MB",
         file_types : "*.*",
         file_types_description : "All Files",

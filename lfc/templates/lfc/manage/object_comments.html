@@ -4,7 +4,7 @@
     {{ form.allow_comments.label_tag }}
 </h2>
 
-<form action="{% url lfc_update_comments page.id %}"
+<form action="{% url lfc_update_comments obj.id %}"
       method="POST">
     <div class="field">
         <div>
@@ -22,7 +22,7 @@
 </h2>
 
 {% if comments %}
-    <form action="{% url lfc_update_comments page.slug %}"
+    <form action="{% url lfc_update_comments obj.id %}"
           method="post">
 
         <table class="lfs-manage-table">
@@ -58,7 +58,7 @@
                         {{ forloop.counter }}.
                     </td>
                     <td>
-						{{comment.name}}
+                        {{comment.name}}
                     </td>
                     <td>
                         <input type="checkbox"
@@ -70,7 +70,7 @@
                         <a href="/admin/comments/comment/{{comment.id}}">
                             <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
                                  alt="{% trans 'Edit' %}"
-                                 title="{% trans 'Edit page' %}" />
+                                 title="{% trans 'Edit object' %}" />
                         </a>
                     </td>
                 </tr>

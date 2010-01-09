@@ -17,35 +17,35 @@
                 <ul>
                 {% for content_type in content_types %}
                     <li>
-                        <a href="{% url lfc_add_object page.id %}?type={{content_type.type}}">{{content_type.name}}</a>
+                        <a href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{{ content_type.name }}</a>
                    </li>
                 {% endfor %}
                 </ul>
 
             {% else %}
                 {% for content_type in content_types %}
-                    <a href="{% url lfc_add_object page.id %}?type={{content_type.type}}">{% trans "Add" %} {{content_type.name}}</a>
+                    <a href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans "Add" %} {{ content_type.name }}</a>
                 {% endfor %}
             {% endif %}
             </li>
             <li>
-                <a href="{% url lfc_delete_object page.id %}">{% trans 'Delete' %}</a>
+                <a href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
             </li>
             {% if LFC_MULTILANGUAGE %}
             <li>
                 {% if translations %}
-                    <a>{{ page.get_language_display }}</a>
+                    <a>{{ obj.get_language_display }}</a>
                     <ul>
                         <li>
-                            <a {% ifequal canonical.language page.language %}class="selected"{% endifequal %}
-                               href="{% url lfc_manage_page canonical.id %}">
+                            <a {% ifequal canonical.language obj.language %}class="selected"{% endifequal %}
+                               href="{% url lfc_manage_object canonical.id %}">
                                 {{ canonical.get_language_display }}
                             </a>
                         </li>
                         {% for translation in translations %}
                             <li>
-                                <a {% ifequal translation.language page.language %}class="selected"{% endifequal %}
-                                    href="{% url lfc_manage_page translation.id %}">
+                                <a {% ifequal translation.language obj.language %}class="selected"{% endifequal %}
+                                    href="{% url lfc_manage_object translation.id %}">
                                     {{ translation.get_language_display }}
                                 </a>
                             </li>
@@ -54,22 +54,22 @@
                 {% endif %}
             </li>
             <li>
-                {% if page.is_canonical %}
+                {% if obj.is_canonical %}
                     <a>{% trans 'Translate to' %}</a>
                     <ul>
                         {% for language in languages %}
                             <li>
-                                <a href="{% url lfc_translate_object page.id language.code %}">{{ language.name }}</a>
+                                <a href="{% url lfc_translate_object obj.id language.code %}">{{ language.name }}</a>
                             </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    {% if page.canonical %}
+                    {% if obj.canonical %}
                         <a>{% trans 'Translate to' %}</a>
                         <ul>
                             {% for language in languages %}
                             <li>
-                                <a href="{% url lfc_translate_object page.canonical.id language.code %}">{{ language.name }}</a>
+                                <a href="{% url lfc_translate_object obj.canonical.id language.code %}">{{ language.name }}</a>
                             </li>
                             {% endfor %}
                         </ul>
@@ -78,7 +78,7 @@
             </li>
             <li>
                 <a accesskey="v"
-                   href="{{ page.get_absolute_url }}">{% trans 'View' %}</a>
+                   href="{{ obj.get_absolute_url }}">{% trans 'View' %}</a>
             </li>
 
             {% endif %}
@@ -94,7 +94,7 @@
             <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
-            {% if not page.special %}
+            {% if not obj.special %}
                 <li class="ui-tabs-nav-item"><a href="#comments">{% trans 'Comments' %}</a></li>
             {% endif %}
         </ul>
@@ -117,7 +117,7 @@
         <div id="portlets">
             {{ portlets }}
         </div>
-        {% if not page.special %}
+        {% if not obj.special %}
             <div id="comments">
                 {{ comments }}
             </div>

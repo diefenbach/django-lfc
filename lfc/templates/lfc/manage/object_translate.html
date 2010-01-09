@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-    <h2>{% trans 'Translate page' %} "{{canonical.title}}"</h2>
+    <h2>{% trans 'Translate object' %} "{{canonical.title}}"</h2>
 
     <form action="{% url lfc_save_translation %}"
           method="post"

@@ -17,8 +17,8 @@ msgstr ""
 
 #: models.py:37 models.py:73 migrations/0001_initial.py:74
 #: migrations/0003_extend_portlets.py:29
-#: templates/lfc/manage/page_files.html:15
-#: templates/lfc/manage/page_images.html:18
+#: templates/lfc/manage/files.html:15
+#: templates/lfc/manage/images.html:18
 #: templates/lfc/manage/portlets_inline.html:85
 msgid "Title"
 msgstr "Titel"
@@ -45,8 +45,8 @@ msgid "Slug"
 msgstr "URL"
 
 #: models.py:78 migrations/0001_initial.py:28
-#: templates/lfc/manage/page_files.html:18
-#: templates/lfc/manage/page_images.html:21
+#: templates/lfc/manage/files.html:18
+#: templates/lfc/manage/images.html:21
 #: templates/lfc/manage/portlet_add.html:11
 #: templates/lfc/manage/portlet_edit.html:10
 msgid "Position"
@@ -339,7 +339,7 @@ msgid "Portlets"
 msgstr "Portlets"
 
 #: templates/lfc/manage/page.html:49
-#: templates/lfc/manage/page_comments.html:21
+#: templates/lfc/manage/comments.html:21
 msgid "Comments"
 msgstr "Kommentare"
 
@@ -348,7 +348,7 @@ msgid "Add new page"
 msgstr "Seite hinzufügen"
 
 #: templates/lfc/manage/page_add.html:43
-#: templates/lfc/manage/page_comments.html:15
+#: templates/lfc/manage/comments.html:15
 #: templates/lfc/manage/page_translate.html:66
 msgid "Save"
 msgstr "Speichern"
@@ -358,77 +358,77 @@ msgstr "Speichern"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: templates/lfc/manage/page_comments.html:35
+#: templates/lfc/manage/comments.html:35
 msgid "SNR"
 msgstr "LFD"
 
-#: templates/lfc/manage/page_comments.html:38
+#: templates/lfc/manage/comments.html:38
 msgid "Name"
 msgstr "Name"
 
-#: templates/lfc/manage/page_comments.html:41
+#: templates/lfc/manage/comments.html:41
 msgid "Public"
 msgstr "Öffentlich"
 
-#: templates/lfc/manage/page_comments.html:44
-#: templates/lfc/manage/page_comments.html:72
+#: templates/lfc/manage/comments.html:44
+#: templates/lfc/manage/comments.html:72
 #: templates/lfc/manage/portlets_inline.html:105
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: templates/lfc/manage/page_comments.html:73
+#: templates/lfc/manage/comments.html:73
 msgid "Edit page"
 msgstr "Seite bearbeiten"
 
-#: templates/lfc/manage/page_comments.html:81
+#: templates/lfc/manage/comments.html:81
 msgid "Delete comments"
 msgstr "Kommentare löschen"
 
-#: templates/lfc/manage/page_comments.html:83
+#: templates/lfc/manage/comments.html:83
 msgid "Update comments"
 msgstr "Kommentare aktualisieren"
 
-#: templates/lfc/manage/page_comments.html:87
+#: templates/lfc/manage/comments.html:87
 msgid "There are no comments"
 msgstr "Es sind keine Kommentare vorhanden"
 
-#: templates/lfc/manage/page_core_data.html:107
+#: templates/lfc/manage/core_data.html:107
 #: templates/lfc/manage/portal_core.html:9
 msgid "Save core data"
 msgstr "Stammdaten speichern"
 
-#: templates/lfc/manage/page_files.html:40
-#: templates/lfc/manage/page_images.html:52
+#: templates/lfc/manage/files.html:40
+#: templates/lfc/manage/images.html:52
 #: templates/lfc/manage/portlets_inline.html:102
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/lfc/manage/page_files.html:42
-#: templates/lfc/manage/page_images.html:50
+#: templates/lfc/manage/files.html:42
+#: templates/lfc/manage/images.html:50
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: templates/lfc/manage/page_files.html:46
+#: templates/lfc/manage/files.html:46
 msgid "There are no files"
 msgstr "Es sind keine Dateien vorhanden."
 
-#: templates/lfc/manage/page_files.html:49
+#: templates/lfc/manage/files.html:49
 msgid "Add files"
 msgstr "Dateien hinzufügen"
 
-#: templates/lfc/manage/page_files.html:64
+#: templates/lfc/manage/files.html:64
 msgid "Save files"
 msgstr "Dateien speichern"
 
-#: templates/lfc/manage/page_images.html:15
+#: templates/lfc/manage/images.html:15
 msgid "File"
 msgstr "Datei"
 
-#: templates/lfc/manage/page_images.html:56
+#: templates/lfc/manage/images.html:56
 msgid "There are no images"
 msgstr "Es sind keine Bilder vorhanden."
 
-#: templates/lfc/manage/page_images.html:59
+#: templates/lfc/manage/images.html:59
 msgid "Add images"
 msgstr "Bilder hinzufügen"
 
@@ -436,7 +436,7 @@ msgstr "Bilder hinzufügen"
 msgid "Save layout"
 msgstr "Layout speichern"
 
-#: templates/lfc/manage/page_meta_data.html:9
+#: templates/lfc/manage/meta_data.html:9
 msgid "Save metadata"
 msgstr "Metadaten speichern"
 

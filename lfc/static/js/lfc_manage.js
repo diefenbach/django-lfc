@@ -123,9 +123,9 @@ $(function() {
         return false;
     });
 
-    $(".page-images-update-button").livequery("click", function() {
+    $(".object-images-update-button").livequery("click", function() {
         var action = $(this).attr("name")
-        $("#page-images-update-form").ajaxSubmit({
+        $("#object-images-update-form").ajaxSubmit({
             data : {"action" : action},
             success : function(data) {
                 var data = JSON.parse(data)
@@ -139,16 +139,16 @@ $(function() {
     // Page / Files
     // Todo: merge this with Pages / Images
 
-    $("#page-files-save-button").livequery("click", function() {
-        $("#page-files-form").ajaxSubmit({
+    $("#object-files-save-button").livequery("click", function() {
+        $("#object-files-form").ajaxSubmit({
             target : "#files"
         });
         return false;
     });
 
-    $(".page-files-update-button").livequery("click", function() {
+    $(".object-files-update-button").livequery("click", function() {    
         var action = $(this).attr("name")
-        $("#page-files-update-form").ajaxSubmit({
+        $("#object-files-update-form").ajaxSubmit({
             data : {"action" : action},
             success : function(data) {
                 var data = JSON.parse(data)
