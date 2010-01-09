@@ -1,14 +1,11 @@
 # python imports
-import datetime
 import sys
 import traceback
 
 # django imports
 from django import template
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -18,55 +15,19 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.template import loader
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-# contact_form imports
-from contact_form.forms import ContactForm
-
 # lfc imports
 import lfc.utils
+from lfc.utils import traverse_object
 from lfc.models import File
-from lfc.models import Page
 from lfc.models import BaseContent
 
 # tagging imports
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
-
-def traverse_object(request, slug):
-    """Traverses to given slug to get the object.
-    """
-    paths = slug.split("/")
-
-    language = translation.get_language()
-    paths = slug.split("/")
-
-    if paths[0] == language:
-        path = paths[1]
-    else:
-        path = paths[0]
-
-    try:
-        if request.user.is_superuser:
-            obj = BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language))
-        else:
-            obj = BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language), active=True)
-    except BaseContent.DoesNotExist:
-        raise Http404
-
-    for path in paths[1:]:
-        try:
-            if request.user.is_superuser:
-                obj = obj.sub_objects.filter(slug=path)[0]
-            else:
-                obj = obj.sub_objects.filter(slug=path, active=True)[0]
-        except IndexError:
-            raise Http404
-
-    return obj
 
 def portal(request, language=None, template_name="lfc/portal.html"):
     """Displays the default object of the portal.

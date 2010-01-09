@@ -3,6 +3,7 @@ import datetime
 import urllib
 
 # django settings
+from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
 from django.utils.functional import Promise
@@ -104,4 +105,37 @@ def get_related_pages_by_tags(page, num=None):
     cache.set(cache_key, related_pages)
 
     return {"related_pages" : related_pages}
-    
+
+def traverse_object(request, slug):
+    """Traverses to given slug to get the object.
+    """
+    paths = slug.split("/")
+
+    language = translation.get_language()
+    paths = slug.split("/")
+
+    if paths[0] == language:
+        path = paths[1]
+        start_index = 2
+    else:
+        path = paths[0]
+        start_index = 1
+
+    try:
+        if request.user.is_superuser:
+            obj = lfc.models.BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language))
+        else:
+            obj = lfc.models.BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language), active=True)
+    except lfc.models.BaseContent.DoesNotExist:
+        raise Http404
+
+    for path in paths[start_index:]:
+        try:
+            if request.user.is_superuser:
+                obj = obj.sub_objects.filter(slug=path)[0]
+            else:
+                obj = obj.sub_objects.filter(slug=path, active=True)[0]
+        except IndexError:
+            raise Http404
+
+    return obj
