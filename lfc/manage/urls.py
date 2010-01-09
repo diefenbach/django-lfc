@@ -7,9 +7,9 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^fb-upload-image$', "fb_upload_image", name="lfc_fb_upload_image"),
     url(r'^fb-upload-file$', "fb_upload_file", name="lfc_fb_upload_file"),
     
-    url(r'^add-object/(?P<id>\d+)$', "add_object", name="lfc_add_object"),
+    url(r'^add-object/(?P<id>\w+)$', "add_object", name="lfc_add_object"),
     url(r'^add-object$', "add_object", name="lfc_add_top_object"),
-    url(r'^add-object/(?P<language>\d+)/(?P<id>\d+)$', "add_object", name="lfc_add_object"),
+    url(r'^add-object/(?P<language>\w+)/(?P<id>\w+)$', "add_object", name="lfc_add_object"),
     
     url(r'^delete-object/(?P<id>\d+)$', "delete_object", name="lfc_delete_object"),
     url(r'^save-core-data/(?P<id>\d+)$', "core_data", name="lfc_save_core_data"),
@@ -36,7 +36,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
     
     url(r'^save-translation', "save_translation", name="lfc_save_translation"),
-    url(r'^(?P<id>\d+)/translate/(?P<language>[-\w]{2})', "translate_object", name="lfc_translate_object"),
+    url(r'^(?P<id>\d+)/translate/(?P<language>\w{2})', "translate_object", name="lfc_translate_object"),
 
     url(r'^$', "manage_objects", name="lfc_manage_objects"),
     url(r'^pages/?$', "manage_objects", name="lfc_manage_objects"),
