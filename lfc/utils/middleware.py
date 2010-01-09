@@ -2,11 +2,13 @@ import sys
 import tempfile
 import hotshot
 import hotshot.stats
-from django.conf import settings
 from cStringIO import StringIO
 
+# django imports
 from django.conf import settings
+from django.core.cache import cache
 from django.http import HttpResponseServerError
+from django.utils import translation
 
 class ProfileMiddleware(object):
     """
@@ -63,3 +65,21 @@ class AJAXSimpleExceptionResponse:
                 for tb in traceback.format_tb(tb):
                     response += "%s\n" % tb
                 return HttpResponseServerError(response)
+
+class MultiLanguageMiddleware:
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        path = request.path
+        try:
+            first_node = path.split("/")[1]
+        except IndexError:
+            translation.activate(settings.LANGUAGE_CODE)
+        else:
+            language_ids = cache.get("language-ids")
+            if language_ids is None:
+                language_ids = [l[0] for l in settings.LANGUAGES]
+                cache.set("language_ids-ids", language_ids)
+
+            if first_node in language_ids:
+                translation.activate(first_node)
+            else:
+                translation.activate(settings.LANGUAGE_CODE)
