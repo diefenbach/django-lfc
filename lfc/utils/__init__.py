@@ -5,6 +5,7 @@ import urllib
 # django settings
 from django.http import Http404
 from django.http import HttpResponseRedirect
+from django.conf import settings
 from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
@@ -70,16 +71,16 @@ def set_message_cookie(url, msg):
     response.set_cookie("message", lfc_quote(msg), max_age=max_age, expires=expires)
 
     return response
-    
+
 def get_top_page(page):
-    """Returns the top page (The page which is a parent of the given page and 
+    """Returns the top page (The page which is a parent of the given page and
     direct children of the portal.
     """
     while page.parent is not None:
         page = page.parent
     return page
 
-# TODO: Not used at the moment - what to do?    
+# TODO: Not used at the moment - what to do?
 def get_related_pages_by_tags(page, num=None):
     """Returns a dict with related products by tags.
 
@@ -108,13 +109,12 @@ def get_related_pages_by_tags(page, num=None):
 
 def traverse_object(request, slug):
     """Traverses to given slug to get the object.
-    """
+    """    
     paths = slug.split("/")
-
     language = translation.get_language()
-    paths = slug.split("/")
-
-    if paths[0] == language:
+    
+    language_ids = [l[0] for l in settings.LANGUAGES]
+    if paths[0] in language_ids:
         path = paths[1]
         start_index = 2
     else:

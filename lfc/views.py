@@ -71,10 +71,6 @@ def base_view(request, language=None, slug=None):
     elif language is None:
         language = settings.LANGUAGE_CODE
 
-    # Activate the given language, this will show the UI in the same language as
-    # the content
-    translation.activate(language)
-
     cache_key = "object-%s-%s" % (language, slug)
     obj = None #cache.get(cache_key)
 
