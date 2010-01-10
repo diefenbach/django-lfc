@@ -55,6 +55,8 @@ register.tag('contact_form', do_contact_form)
 def tabs(context, page=None):
     """Returns the top level pages as tabs
     """
+    page = page.get_specific_type()
+
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
 
@@ -77,7 +79,7 @@ def tabs(context, page=None):
     else:
         current_pages = [page]
         current_pages.extend(page.get_ancestors())
-    
+
     pages = []
     for page in temp:
         page.current = page.get_specific_type() in current_pages
@@ -152,6 +154,7 @@ def navigation(context, page=None, start_level=1):
     """
     """
     request = context.get("request")
+    page = request.META.get("lfc_context")
 
     temp = BaseContent.objects.filter(
         parent = None,
@@ -193,6 +196,7 @@ def navigation(context, page=None, start_level=1):
 def _navigation_children(request, current_pages, page, start_level, level=2):
     """
     """
+    page = page.get_specific_type()
     temp = page.sub_objects.filter(
         active = True,
         exclude_from_navigation = False,
