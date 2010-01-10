@@ -29,7 +29,7 @@ from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import MetaDataForm
-from lfc.manage.forms import PageSEOForm
+from lfc.manage.forms import SEOForm
 from lfc.manage.forms import PortalCoreForm
 from lfc.manage.forms import ContentTypeRegistrationForm
 from lfc.models import File
@@ -567,7 +567,7 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
     """
     obj = BaseContent.objects.get(pk=id)
     if request.method == "POST":
-        form = PageSEOForm(instance=obj, data=request.POST)
+        form = SEOForm(instance=obj, data=request.POST)
         if form.is_valid():
             form.save()
 
@@ -586,7 +586,7 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
 
         return HttpResponse(result)
     else:
-        form = PageSEOForm(instance=obj)
+        form = SEOForm(instance=obj)
         return render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "obj" : obj,

@@ -28,31 +28,7 @@ class CommentsForm(forms.ModelForm):
         model = Page
         fields = ("allow_comments", )
 
-class PageTranslationForm(forms.ModelForm):
-    """
-    """
-    class Meta:
-        model = Page
-        fields = ("title", "display_title", "slug", "text", "meta_keywords",
-                  "meta_description", "tags")
-
-class PageAddForm(forms.ModelForm):
-    """
-    """
-    class Meta:
-        model = Page
-        fields = ("title", "slug", "text", "parent", "position")
-
-    def __init__(self, *args, **kwargs):
-        super(PageAddForm, self).__init__(*args, **kwargs)
-
-        parents = Page.objects.exclude(special=True)
-        parents = [(p.id, p.title) for p in parents]
-        parents = sorted(parents, lambda a, b: cmp(a[1], b[1]))
-        parents.insert(0, ("", "----------"))
-        self.fields["parent"].choices = parents
-
-class PageCoreDataForm(forms.ModelForm):
+class CoreDataForm(forms.ModelForm):
     """Core date form for pages.
     """
     tags = TagField(widget=AutoCompleteTagInput(), required=False)
@@ -61,7 +37,7 @@ class PageCoreDataForm(forms.ModelForm):
         model = Page
         fields = ("title", "display_title", "slug", "description", "text", "tags")
 
-class PageSEOForm(forms.ModelForm):
+class SEOForm(forms.ModelForm):
     """
     """
     class Meta:

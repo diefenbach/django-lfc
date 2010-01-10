@@ -142,7 +142,7 @@ class BaseContent(models.Model):
 
     slug = models.SlugField(_(u"Slug"))
 
-    description = models.TextField(_(u"Short text"), blank=True)
+    description = models.TextField(_(u"Description"), blank=True)
 
     position = models.PositiveSmallIntegerField(_(u"Position"), default=1)
 
@@ -321,8 +321,8 @@ class Page(BaseContent):
     def form(self, **kwargs):
         """
         """
-        from lfc.manage.forms import PageCoreDataForm
-        return PageCoreDataForm(**kwargs)
+        from lfc.manage.forms import CoreDataForm
+        return CoreDataForm(**kwargs)
 
 class Image(models.Model):
     """An image. Generates automatically various sizes.
