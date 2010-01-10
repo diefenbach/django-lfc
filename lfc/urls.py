@@ -54,6 +54,9 @@ urlpatterns += patterns('lfc.views',
     
     url(r'^file/(?P<id>[-\w]*)', "file", name="lfc_file"),
 
+    url(r'^$', "portal", name="lfc_portal_view"),
+    url(r'^(?P<language>[-\w]{2})/?$', "portal", name="lfc_portal_view"),
+    
     url(r'^(?P<language>[-\w]{2})/(?P<slug>.+)', "base_view", name="lfc_base_view"),
     url(r'^(?P<slug>.*)$', "base_view", name="lfc_base_view"),
 )
