@@ -937,7 +937,7 @@ def save_translation(request):
         msg = _(u"Translation has been added.")
 
     # Get parent obj
-    # 1. Take the translatino of the parent if it available in requested language
+    # 1. Take the translation of the parent if it available in requested language
     # 2. If not, take the parent of the canonical if it's in neutral language
     # 3. If not, don't take a parent at all
     parent = canonical.parent
@@ -945,7 +945,7 @@ def save_translation(request):
         parent_translation = None
     else:
         try:
-            parent_translation = parent.translations.get(language="en")
+            parent_translation = parent.translations.get(language=translation_language)
         except (BaseContent.DoesNotExist):
             if parent.language == "0":
                 parent_translation = parent
