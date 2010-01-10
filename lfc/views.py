@@ -29,55 +29,25 @@ from lfc.models import BaseContent
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 
-def portal(request, language=None, template_name="lfc/portal.html"):
+def portal(request, template_name="lfc/portal.html"):
     """Displays the default object of the portal.
     """
-    # If the given language is the default language redirect to the url without
-    # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
-    if language == settings.LANGUAGE_CODE:
-        return HttpResponseRedirect(reverse("lfc_portal"))
-
-    obj = lfc.utils.get_portal().standard
-
-    if obj is None:
-        return render_to_response(template_name, RequestContext(request, {
-            "portal" : lfc.utils.get_portal()
-        }))
-
-    # if a language is passed and the language of the default object is not
-    # neutral we try to get the translation of the default object.
-    if language and obj.language != "0":
-        t = obj.get_translation(language)
-        if t:
-            slug = t.slug
-            language = t.language
-        else:
-            slug = obj.slug
-            language = obj.language
-    else:
-        slug = obj.slug
-
-    return base_view(request, language=language, slug=slug)
+    return render_to_response(template_name, RequestContext(request, {
+        "portal" : lfc.utils.get_portal()
+    }))
 
 def base_view(request, language=None, slug=None):
     """Displays the object for given language and slug.
     """
+    language = translation.get_language()
     # If the given language is the default language redirect to the url without
     # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
-    if language == settings.LANGUAGE_CODE:
-        return HttpResponseRedirect(reverse("lfc_base_view", kwargs={"slug" : slug}))
 
-    # If no language is given we assume the default language
-    elif language is None:
-        language = settings.LANGUAGE_CODE
+    # Get the obj (passed my LFC Middleware)
+    obj = request.META.get("lfc_context")
 
-    cache_key = "object-%s-%s" % (language, slug)
-    obj = None #cache.get(cache_key)
-
-    if obj is not None:
-        return obj
-
-    obj = traverse_object(request, slug)
+    if obj is None:
+        return portal(request)
 
     # Get the template of the object
     obj_template = obj.get_template()
@@ -125,7 +95,6 @@ def base_view(request, language=None, slug=None):
     # Render twice. This makes tags within text / short_text possible.
     result = render_to_string("lfc/templates/%s" % obj_template.file_name, c)
     result = template.Template("{% load lfc_tags %} " + result).render(c)
-    cache.set(cache_key, result)
     return HttpResponse(result)
 
 def file(request, language=None, id=None):
@@ -206,14 +175,11 @@ def set_language(request, language, id=None):
                         url = t.get_absolute_url()
 
     else:
-        url = request.META.get("HTTP_REFERER")
-
-    if url is None:
         portal = lfc.utils.get_portal()
         if language == settings.LANGUAGE_CODE:
-            url = reverse("lfc_portal")
+            url = "/"
         else:
-            url = reverse("lfc_portal", kwargs={"language" : language})
+            url = "/" + language
 
     response = HttpResponseRedirect(url)
 
