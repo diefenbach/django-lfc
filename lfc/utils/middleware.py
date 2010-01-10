@@ -10,6 +10,9 @@ from django.core.cache import cache
 from django.http import HttpResponseServerError
 from django.utils import translation
 
+# lfc imports
+from lfc.utils import traverse_object
+
 class ProfileMiddleware(object):
     """
     Displays hotshot profiling for any view.
@@ -67,6 +70,8 @@ class AJAXSimpleExceptionResponse:
                 return HttpResponseServerError(response)
 
 class MultiLanguageMiddleware:
+    """Traverses to the requested object and sets the correct language.
+    """
     def process_view(self, request, view_func, view_args, view_kwargs):
         path = request.path
         try:
@@ -83,3 +88,9 @@ class MultiLanguageMiddleware:
                 translation.activate(first_node)
             else:
                 translation.activate(settings.LANGUAGE_CODE)
+        try:
+            obj = traverse_object(request, view_kwargs.get("slug"))
+        except:
+            pass
+        else:    
+            request.META["lfc_context"] = obj.get_specific_type()
