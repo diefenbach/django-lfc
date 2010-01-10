@@ -164,8 +164,8 @@ class BaseContent(models.Model):
     modification_date = models.DateTimeField(_(u"Modification date"), auto_now=True, auto_now_add=True)
     publication_date = models.DateTimeField(_(u"Publication date"), default=datetime.datetime.now())
 
-    meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<title>")
-    meta_description = models.TextField(_(u"Meta description"), blank=True, default="<title>")
+    meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
+    meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
 
     allow_comments = models.PositiveSmallIntegerField(_(u"Commentable"),
         choices=ALLOW_COMMENTS_CHOICES, default=ALLOW_COMMENTS_DEFAULT)
@@ -247,6 +247,7 @@ class BaseContent(models.Model):
         """Returns the meta keywords of the page.
         """
         keywords = self.meta_keywords.replace("<title>", self.title)
+        keywords = keywords.replace("<description>", self.description)
         keywords = keywords.replace("<tags>", self.tags)
         return keywords
 
@@ -254,6 +255,7 @@ class BaseContent(models.Model):
         """Returns the meta description of the page.
         """
         description = self.meta_description.replace("<title>", self.title)
+        description = description.replace("<description>", self.description)
         description = description.replace("<tags>", self.tags)
         return description
 
