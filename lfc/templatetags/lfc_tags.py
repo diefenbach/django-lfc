@@ -151,81 +151,97 @@ def twitter(context, url):
     }
 
 @register.inclusion_tag('lfc/tags/navigation.html', takes_context=True)
-def navigation(context, page=None, start_level=1):
-    """
+def navigation(context, start_level=1, expand_level=0):
+    """Tag to render a navigation tree. This is also reused by the navigation
+    portlet.
     """
     request = context.get("request")
-    page = request.META.get("lfc_context")
+    obj = request.META.get("lfc_context")
+
+    language = translation.get_language()
 
     temp = BaseContent.objects.filter(
         parent = None,
         active = True,
-        language__in = (translation.get_language(), "0"),
+        language__in = (language, "0"),
         exclude_from_navigation=False)
-
-    if page is None:
-        current_pages = []
+    
+    # Add portal's standard to current_objs    
+    if obj is None:
+        current_objs = []
+        standard = lfc.utils.get_portal().standard
+        if standard:
+            if language != standard.language:
+                standard = standard.get_translation(language)
+            if standard:
+                current_objs.append(standard.get_specific_type())
     else:
-        current_pages = [page]
-        current_pages.extend(page.get_ancestors())
+        current_objs = [obj]
+        current_objs.extend(obj.get_ancestors())
 
-    pages = []
-    for page in temp:
-        page = page.get_specific_type()
-        if page in current_pages:
-            children = _navigation_children(request, current_pages, page, start_level)
+    objs = []
+    for obj in temp:
+        obj = obj.get_specific_type()
+        if obj in current_objs:
+            children = _navigation_children(request, current_objs, obj, start_level, expand_level)
             is_current = True
+        elif expand_level >= 1:
+            children = _navigation_children(request, current_objs, obj, start_level, expand_level)
+            is_current = False
         else:
             children = ""
             is_current = False
 
-        pages.append({
-            "id" : page.id,
-            "slug" : page.slug,
-            "title" : page.title,
-            "url" : page.get_absolute_url(),
+        objs.append({
+            "id" : obj.id,
+            "slug" : obj.slug,
+            "title" : obj.title,
+            "url" : obj.get_absolute_url(),
             "is_current" : is_current,
             "children" : children,
             "level" : 1
         })
 
     return {
-        "pages" : pages,
+        "objs" : objs,
         "show_level" : start_level==1
     }
 
-def _navigation_children(request, current_pages, page, start_level, level=2):
+def _navigation_children(request, current_objs, obj, start_level, expand_level, level=2):
     """
     """
-    page = page.get_specific_type()
-    temp = page.sub_objects.filter(
+    obj = obj.get_specific_type()
+    temp = obj.sub_objects.filter(
         active = True,
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
     )
 
-    pages = []
-    for page in temp:
-        page = page.get_specific_type()
-        if page in current_pages:
-            children = _navigation_children(request, current_pages, page, start_level, level+1)
+    objs = []
+    for obj in temp:
+        obj = obj.get_specific_type()
+        if obj in current_objs:
+            children = _navigation_children(request, current_objs, obj, start_level, level+1)
+            is_current = True
+        elif level <= expand_level:
+            children = _navigation_children(request, current_objs, obj, start_level)
             is_current = True
         else:
             children = ""
             is_current = False
 
-        pages.append({
-            "id" : page.id,
-            "slug" : page.slug,
-            "title" : page.title,
-            "url" : page.get_absolute_url(),
+        objs.append({
+            "id" : obj.id,
+            "slug" : obj.slug,
+            "title" : obj.title,
+            "url" : obj.get_absolute_url(),
             "is_current" : is_current,
             "children" : children,
             "level" : level,
         })
 
     result = render_to_string("lfc/tags/navigation_children.html", {
-        "pages" : pages,
+        "objs" : objs,
         "show_level" : level >= start_level,
     })
 

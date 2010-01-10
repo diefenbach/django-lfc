@@ -46,14 +46,14 @@ def content_types(request):
     ctr = ContentTypeRegistration.objects.filter()[0]
     url = reverse("lfc_content_type", kwargs={"id" : ctr.id })
     return HttpResponseRedirect(url)
-    
+
 def content_type(request, id, template_name="lfc/manage/content_types.html"):
     """Displays a form to edit registered content types
     """
     ctr = ContentTypeRegistration.objects.get(pk=id)
 
     if request.method == "POST":
-        form = ContentTypeRegistrationForm(data = request.POST, instance=ctr)        
+        form = ContentTypeRegistrationForm(data = request.POST, instance=ctr)
         if form.is_valid():
             form.save()
     else:

@@ -8,8 +8,6 @@ import portlets
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_syncdb
@@ -22,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 import tagging.utils
 import tagging.models
 from tagging import fields
+from tagging.forms import TagField
 
 # portlets imports
 import portlets
@@ -32,6 +31,7 @@ from portlets.utils import register_portlet
 import lfc.utils
 import lfc.settings
 from lfc.fields.thumbs import ImageWithThumbsField
+from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
@@ -415,30 +415,29 @@ class File(models.Model):
 ###############################################################################
 
 class NavigationPortlet(Portlet):
-    """A portlet to display navigation.
+    """A portlet to display the navigation tree.
+
+    Note: this reuses mainly the navigation inclusion tag.
+
+    Parameters:
+
+        - start_level:
+            The tree is displayed from this level 1. The tree starts with 1
+
+        - expand_level:
+            The tree is expanded up this level. Default is 0, which means the
+            tree is not expanded at all but the current node.
     """
-    start_level = models.IntegerField(default=1)
+    start_level = models.PositiveSmallIntegerField(default=1)
+    expand_level = models.PositiveSmallIntegerField(default=0)
 
     def render(self, context):
         """Renders the portlet as html.
         """
-        page = context.get("lfc_object")
-        pages = Page.objects.filter(
-            parent=page,
-            active=True,
-            exclude_from_navigation=False,
-            language__in=("0", translation.get_language()))
-
-        if len(pages) or page.parent:
-            show = True
-        else:
-            show = False
-
         request = context.get("request")
         return render_to_string("lfc/portlets/navigation_portlet.html", RequestContext(request, {
             "start_level" : self.start_level,
-            "page" : page,
-            "show" : show,
+            "expand_level" : self.expand_level,
             "title" : self.title,
         }))
 
@@ -448,15 +447,16 @@ class NavigationPortlet(Portlet):
         return NavigationPortletForm(instance=self, **kwargs)
 
 class NavigationPortletForm(forms.ModelForm):
-    """
+    """The form for the navigation portlet.
     """
     class Meta:
         model = NavigationPortlet
 
+# TODO: Rename as it is able to display all content types. ContentPortlet, DocumentPortlet, ...?
 class PagesPortlet(Portlet):
-    """A portlet to display pages.
+    """A portlet to display arbitrary objects.
     """
-    quantity = models.IntegerField(default=5)
+    limit = models.PositiveSmallIntegerField(default=5)
     tags = models.CharField(blank=True, max_length=100)
 
     def __unicode__(self):
@@ -465,18 +465,16 @@ class PagesPortlet(Portlet):
     def render(self, context):
         """Renders the portlet as html.
         """
-        pages = BaseContent.objects.filter(
+        objs = BaseContent.objects.filter(
             active = True,
             language__in=("0", translation.get_language()))
 
         if self.tags:
-            pages = tagging.managers.ModelTaggedItemManager().with_all(self.tags, pages)[:self.quantity]
-        else:
-            pages = []
+            objs = tagging.managers.ModelTaggedItemManager().with_all(self.tags, objs)[:self.limit]
 
         return render_to_string("lfc/portlets/pages_portlet.html", {
             "title" : self.title,
-            "pages" : pages,
+            "objs" : objs,
         })
 
     def form(self, **kwargs):
@@ -487,20 +485,26 @@ class PagesPortlet(Portlet):
 class PagesPortletForm(forms.ModelForm):
     """
     """
+    tags = TagField(widget=AutoCompleteTagInput(), required=False)
+
     class Meta:
         model = PagesPortlet
 
 class RandomPortlet(Portlet):
-    """A portlet to display random pages.
+    """A portlet to display random objects.
     """
+    limit = models.PositiveSmallIntegerField(default=1)
     tags = models.CharField(blank=True, max_length=100)
-    limit = models.IntegerField(default=1)
 
     def render(self, context):
         """Renders the portlet as html.
         """
-        items = Page.objects.filter(
+        items = BaseContent.objects.filter(
+            active = True,
             language__in=("0", translation.get_language()))
+
+        if self.tags:
+            items = tagging.managers.ModelTaggedItemManager().with_all(self.tags, items)[:self.quantity]
 
         items = list(items)
         random.shuffle(items)
@@ -518,6 +522,8 @@ class RandomPortlet(Portlet):
 class RandomPortletForm(forms.ModelForm):
     """Form for the RandomPortlet.
     """
+    tags = TagField(widget=AutoCompleteTagInput(), required=False)
+
     class Meta:
         model = RandomPortlet
 

@@ -66,6 +66,11 @@ def base_view(request, language=None, slug=None, obj=None):
     if obj is None:
         obj = request.META.get("lfc_context")
 
+    cache_key = "view-%s-%s-%s" % (language, obj.content_type, obj.id)
+    result = cache.get(cache_key)
+    if result is not None:
+        return HttpResponse(result)
+
     # Get the template of the object
     obj_template = obj.get_template()
 
@@ -112,10 +117,12 @@ def base_view(request, language=None, slug=None, obj=None):
     # Render twice. This makes tags within text / short_text possible.
     result = render_to_string("lfc/templates/%s" % obj_template.file_name, c)
     result = template.Template("{% load lfc_tags %} " + result).render(c)
+    
+    cache.set(cache_key, result)    
     return HttpResponse(result)
 
 def file(request, language=None, id=None):
-    """Delivers files to the browser
+    """Delivers files to the browser.
     """
     file = get_object_or_404(File, pk=id)
     response = HttpResponse(file.file, mimetype='application/binary')
@@ -238,7 +245,7 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
     }));
 
 def fiveohoh(request, template_name="500.html"):
-    """Handler for 500 server errors.
+    """Handler for 500 server errors. Mails the error to ADMINS.
     """
     exc_type, exc_info, tb = sys.exc_info()
     response = "%s\n" % exc_type.__name__
