@@ -11,7 +11,7 @@ setup(name='django-lfc',
       description='Generic reviews for Django.',
       long_description=README,
       classifiers=[
-          'Development Status :: 5 - Alpha',
+          'Development Status :: 3 - Alpha',
           'Environment :: Web Environment',
           'Framework :: Django',
           'License :: OSI Approved :: BSD License',
