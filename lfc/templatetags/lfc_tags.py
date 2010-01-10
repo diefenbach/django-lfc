@@ -55,7 +55,8 @@ register.tag('contact_form', do_contact_form)
 def tabs(context, page=None):
     """Returns the top level pages as tabs
     """
-    page = page.get_specific_type()
+    if page:
+        page = page.get_specific_type()
 
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
