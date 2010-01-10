@@ -66,6 +66,9 @@ def base_view(request, language=None, slug=None, obj=None):
     if obj is None:
         obj = request.META.get("lfc_context")
 
+    if obj is None:
+        raise Http404()
+
     cache_key = "view-%s-%s-%s" % (language, obj.content_type, obj.id)
     result = cache.get(cache_key)
     if result is not None:
@@ -117,8 +120,8 @@ def base_view(request, language=None, slug=None, obj=None):
     # Render twice. This makes tags within text / short_text possible.
     result = render_to_string("lfc/templates/%s" % obj_template.file_name, c)
     result = template.Template("{% load lfc_tags %} " + result).render(c)
-    
-    cache.set(cache_key, result)    
+
+    cache.set(cache_key, result)
     return HttpResponse(result)
 
 def file(request, language=None, id=None):
