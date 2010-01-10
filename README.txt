@@ -20,13 +20,9 @@ Features:
 Installation
 =============
 
-0. Prequisites
+0. Install mercurial
 
-   a. Install pysqlite http://pypi.python.org/pypi/pysqlite
-      For any reason easy_install pysqlite doesn't work at the moment
-
-   b. Install mercurial
-      $ easy_install mercurial"
+   $ easy_install mercurial"
 
 1. Get the buildout
 
