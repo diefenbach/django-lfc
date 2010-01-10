@@ -13,6 +13,7 @@ from django.contrib.contenttypes import generic
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_syncdb
+from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
@@ -142,7 +143,7 @@ class BaseContent(models.Model):
     slug = models.SlugField(_(u"Slug"))
 
     description = models.TextField(_(u"Short text"), blank=True)
-    
+
     position = models.PositiveSmallIntegerField(_(u"Position"), default=1)
 
     language = models.CharField(_(u"Language"), max_length=10, choices=LANGUAGE_CHOICES, default="0")
@@ -180,11 +181,11 @@ class BaseContent(models.Model):
                 obj = obj.parent
 
             slugs.reverse()
-        
+
             slug =  "/".join(slugs)
         else:
             slug = page.slug
-        
+
         if page.language == settings.LANGUAGE_CODE:
             return ("lfc_base_view", (), {"slug" : slug})
         elif page.language == "0":
@@ -195,7 +196,7 @@ class BaseContent(models.Model):
                 return ("lfc_base_view", (), {"slug" : slug, "language" : language})
         else:
             return ("lfc_base_view", (), {"slug" : slug, "language" : page.language})
-            
+
     get_absolute_url = models.permalink(get_absolute_url)
 
     def form(self, **kwargs):
@@ -282,7 +283,7 @@ class BaseContent(models.Model):
         """Returns True if the page is a translation.
         """
         return not self.is_canonical()
-    
+
     def get_translation(self, language):
         """Returns translation for given language.
         """
@@ -433,12 +434,13 @@ class NavigationPortlet(Portlet):
         else:
             show = False
 
-        return render_to_string("lfc/portlets/navigation_portlet.html", {
+        request = context.get("request")
+        return render_to_string("lfc/portlets/navigation_portlet.html", RequestContext(request, {
             "start_level" : self.start_level,
             "page" : page,
             "show" : show,
             "title" : self.title,
-        })
+        }))
 
     def form(self, **kwargs):
         """
