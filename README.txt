@@ -52,7 +52,7 @@ Installation
 Changes
 =======
 
-0.1.0 alpha 1 (2010-01-09)
---------------------------
+1.0 alpha 1 (2010-01-10)
+------------------------
 
 * Initial public release
