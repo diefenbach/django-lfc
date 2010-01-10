@@ -10,9 +10,17 @@ from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.models import Page
 from lfc.models import BaseContent
 from lfc.models import Portal
+from lfc.models import ContentTypeRegistration
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info_for
 
+class ContentTypeRegistrationForm(forms.ModelForm):
+    """
+    """
+    class Meta:
+        model = ContentTypeRegistration
+        exclude = ("type", "name")
+        
 class CommentsForm(forms.ModelForm):
     """
     """

@@ -1,0 +1,31 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left_slot %}
+    {% for type in types %}
+        <div>
+            <a {% ifequal type.id ctr.id %}class="selected"{% endifequal %}
+               href="{% url lfc_content_type type.id %}">
+            {{ type.name }}
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block content %}
+    <div style="clear:both; padding:20px 20px 0 0" id="manage-tabs">
+        <ul>
+            <li class="ui-tabs-nav-item"><a href="#data">{{ ctr.name }}</a></li>
+        </ul>
+
+        <div id="data">
+            <form action="{% url lfc_content_type ctr.id %}"
+                  method="POST">
+
+                {% include "lfc/manage/lfc_form.html" %}
+
+                <input type="submit"
+                       value="{% trans 'Save content_type' %}" />
+            </form>
+        </div>
+    </div>
+{% endblock %}

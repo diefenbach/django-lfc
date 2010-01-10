@@ -3,6 +3,9 @@ from django.conf.urls.defaults import *
 
 # LFC Manage
 urlpatterns = patterns('lfc.manage.views',
+    url(r'^content-types$', "content_types", name="lfc_content_types"),
+    url(r'^content-type/(?P<id>\d+)$', "content_type", name="lfc_content_type"),
+
     url(r'^filebrowser$', "filebrowser", name="lfc_filebrowser"),
     url(r'^fb-upload-image$', "fb_upload_image", name="lfc_fb_upload_image"),
     url(r'^fb-upload-file$', "fb_upload_file", name="lfc_fb_upload_file"),

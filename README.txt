@@ -6,16 +6,15 @@ LFC is a Content Manangement System based on Django
 Features:
 =========
 
-- Variable templates to view the content
+- Variable templates to display the content
 - Variable portlets
 - Multi languages (without pain)
-- Bulk upload of image
-- Automatic scaling of images
+- Bulk upload of images + automatic scaling
 - WYSIWYG-Editor
 - Tagging
 - Commenting
 - RSS Feeds
-- Pluggable (Write content types and portlets)
+- Pluggable (Add own content types and portlets see http://pypi.python.org/pypi/lfc-blog/
 
 Installation
 =============
@@ -35,6 +34,7 @@ Installation
    c. $ bin/buildout -v
 
 3. Start the server
+
    $ bin/django runserver
 
 4. Login

@@ -26,10 +26,12 @@ from portlets.models import Slot
 
 # lfc imports
 from lfc.models import BaseContent
+from lfc.models import ContentTypeRegistration
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import PageSEOForm
 from lfc.manage.forms import PortalCoreForm
+from lfc.manage.forms import ContentTypeRegistrationForm
 from lfc.models import File
 from lfc.models import Image
 from lfc.utils import LazyEncoder
@@ -38,6 +40,30 @@ from lfc.utils import set_message_cookie
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info_for
 
+def content_types(request):
+    """
+    """
+    ctr = ContentTypeRegistration.objects.filter()[0]
+    url = reverse("lfc_content_type", kwargs={"id" : ctr.id })
+    return HttpResponseRedirect(url)
+    
+def content_type(request, id, template_name="lfc/manage/content_types.html"):
+    """Displays a form to edit registered content types
+    """
+    ctr = ContentTypeRegistration.objects.get(pk=id)
+
+    if request.method == "POST":
+        form = ContentTypeRegistrationForm(data = request.POST, instance=ctr)        
+        if form.is_valid():
+            form.save()
+    else:
+        form = ContentTypeRegistrationForm(instance=ctr)
+
+    return render_to_response(template_name, RequestContext(request, {
+        "types" : ContentTypeRegistration.objects.all(),
+        "ctr" : ctr,
+        "form" : form,
+    }))
 def filebrowser(request):
     """Displays files/images of the current object within the file browser
     popup of TinyMCE.

@@ -52,31 +52,33 @@ def register_content_type(obj, name, sub_types=[], templates=[], default_templat
     """
     type = obj.__name__.lower()
     try:
-        ctr, result = ContentTypeRegistration.objects.get_or_create(type=type, name=name)
+        ctr, created = ContentTypeRegistration.objects.get_or_create(type=type, name=name)
         ctr.save()
     except:
         pass
     else:
-        # Add subtypes
-        for sub_type in sub_types:
-            try:
-                sub_ctr = ContentTypeRegistration.objects.get(type = sub_type.lower())
-            except ContentTypeRegistration.DoesNotExist:
-                pass
-            else:
-                ctr.subtypes.add(sub_ctr)
+        # Don't update a content type for now
+        if created:
+            # Add subtypes
+            for sub_type in sub_types:
+                try:
+                    sub_ctr = ContentTypeRegistration.objects.get(type = sub_type.lower())
+                except ContentTypeRegistration.DoesNotExist:
+                    pass
+                else:
+                    ctr.subtypes.add(sub_ctr)
 
-        # Add templates and default template
-        for template_name in templates:
-            try:
-                template = Template.objects.get(name = template_name)
-            except Template.DoesNotExist:
-                pass
-            else:
-                ctr.templates.add(template)
-                if template_name == default_template:
-                    ctr.default_template = template
-                    ctr.save()
+            # Add templates and default template
+            for template_name in templates:
+                try:
+                    template = Template.objects.get(name = template_name)
+                except Template.DoesNotExist:
+                    pass
+                else:
+                    ctr.templates.add(template)
+                    if template_name == default_template:
+                        ctr.default_template = template
+                        ctr.save()
 
 def get_registered_content_types():
     """Returns all registered content types types as list of dicts.
