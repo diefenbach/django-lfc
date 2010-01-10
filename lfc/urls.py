@@ -48,13 +48,12 @@ urlpatterns += patterns('django.views.generic.simple',
 # LFC
 urlpatterns += patterns('lfc.views',
     url(r'^(?P<language>[-\w]{2})/search-results', "search_results", name="lfc_search"),
+
     url(r'^set-language/(?P<language>[-\w]{2})/$', 'set_language', name="lfc_set_language"),
     url(r'^set-language/(?P<language>[-\w]{2})/(?P<id>\d+)/$', 'set_language', name="lfc_set_language"),
+    
     url(r'^file/(?P<id>[-\w]*)', "file", name="lfc_file"),
 
     url(r'^(?P<language>[-\w]{2})/(?P<slug>.+)', "base_view", name="lfc_base_view"),
-    url(r'^(?P<language>[-\w]{2})/', "portal", name="lfc_portal"),
-
-    url(r'^(?P<slug>.+)$', "base_view", name="lfc_base_view"),
-    url(r'^$', "portal", name="lfc_portal"),
+    url(r'^(?P<slug>.*)$', "base_view", name="lfc_base_view"),
 )
