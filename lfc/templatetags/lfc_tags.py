@@ -4,6 +4,7 @@ import datetime
 # django import
 from django import template
 from django.core.cache import cache
+from django.http import Http404
 from django.template import Node, TemplateSyntaxError
 from django.template.loader import render_to_string
 from django.utils import translation
@@ -282,6 +283,20 @@ def page(slug, part):
     """
     page = Page.objects.get(slug=slug)
     return { "page" : page, "part": part }
+
+@register.inclusion_tag('lfc/tags/objects.html', takes_context=True)
+def objects_by_slug(context, slug):
+    """Display all sub objects of the object with given slug
+    """
+    request = context.get("request")
+    try:
+        obj = lfc.utils.traverse_object(request, slug)
+    except Http404:
+        return { "objs" : [] }
+
+    objs = obj.sub_objects.filter(active=True)
+
+    return { "objs" : objs }
 
 @register.inclusion_tag('lfc/tags/previous_next.html')
 def previous_next(page, sorting="creation_date"):
