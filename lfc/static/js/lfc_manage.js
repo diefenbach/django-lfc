@@ -175,7 +175,7 @@ $(function() {
     });
 
     // Portlets
-    var overlay = $("#overlay").overlay({ api:true, speed:100 });
+    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100 });
     $(".portlet-edit-button").livequery("click", function() {
         var url = $(this).attr("href");
         $.get(url, function(data) {
