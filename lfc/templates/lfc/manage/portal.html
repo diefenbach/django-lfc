@@ -10,10 +10,9 @@
 {% block content %}
 
     <div class="site-actions">
-
-        {% if display_content_menu %}
-            <ul class="sf-menu sf-sub-menu">
-                <li>
+        <ul class="sf-menu">
+            <li>
+                {% if display_content_menu %}
                     <a>{% trans "Add" %}</a>
                     <ul>
                     {% for content_type in content_types %}
@@ -22,17 +21,16 @@
                        </li>
                     {% endfor %}
                     </ul>
-                </li>
-                <li>
-                    <a href="/">{% trans 'View portal' %}</a>
-                </li>
-            </ul>
-
-        {% else %}
-            {% for content_type in content_types %}
-                <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">Add {{ content_type.name }}</a>
-            {% endfor %}
-        {% endif %}
+                {% else %}
+                    {% for content_type in content_types %}
+                        <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">Add {{ content_type.name }}</a>
+                    {% endfor %}
+                {% endif %}
+            </li>
+            <li>
+                <a href="/">{% trans 'View' %}</a>
+            </li>
+        </ul>
 
     </div>
 
