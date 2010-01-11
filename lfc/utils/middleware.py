@@ -12,6 +12,8 @@ from django.utils import translation
 
 # lfc imports
 from lfc.utils import traverse_object
+from lfc.utils import get_portal
+
 
 class ProfileMiddleware(object):
     """
@@ -91,6 +93,8 @@ class MultiLanguageMiddleware:
         try:
             obj = traverse_object(request, view_kwargs.get("slug"))
         except:
-            pass
-        else:    
+            portal = get_portal()
+            if portal.standard:
+                request.META["lfc_context"] = portal.standard.get_specific_type()
+        else:
             request.META["lfc_context"] = obj.get_specific_type()
