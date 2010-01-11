@@ -1,0 +1,11 @@
+{% load i18n %}
+<ul>
+    {% for obj in objs %}
+        <li>
+            <a href="javascript:FileBrowserDialogue.fileSubmit('{{ obj.url }}');" title="{% trans 'Select File' %}">
+                {{ obj.title }}
+            </a>
+        </li>
+        {{ obj.children|safe }}
+    {% endfor %}
+</ul>
