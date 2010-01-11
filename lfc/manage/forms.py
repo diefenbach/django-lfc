@@ -127,7 +127,7 @@ class PortalCoreForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(PortalCoreForm, self).__init__(*args, **kwargs)
 
-        children = Page.objects.filter(parent=None).filter(special=False)
+        children = Page.objects.filter(parent=None)
         standards = [(p.id, p.title) for p in children]
         standards = sorted(standards, lambda a, b: cmp(a[1], b[1]))
         standards.insert(0, ("", "----------"))

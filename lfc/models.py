@@ -318,7 +318,6 @@ class Page(BaseContent):
     user.
     """
     text = models.TextField(_(u"Text"), blank=True)
-    special = models.BooleanField(default=False)
 
     def form(self, **kwargs):
         """
