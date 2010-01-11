@@ -93,9 +93,7 @@
             <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
-            {% if not obj.special %}
-                <li class="ui-tabs-nav-item"><a href="#comments">{% trans 'Comments' %}</a></li>
-            {% endif %}
+            <li class="ui-tabs-nav-item"><a href="#comments">{% trans 'Comments' %}</a></li>
         </ul>
 
         <div id="data">
@@ -116,11 +114,9 @@
         <div id="portlets">
             {{ portlets }}
         </div>
-        {% if not obj.special %}
-            <div id="comments">
-                {{ comments }}
+        <div id="comments">
+            {{ comments }}
             </div>
-        {% endif %}
         </div>
     </div>
 
