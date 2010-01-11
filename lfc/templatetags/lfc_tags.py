@@ -165,8 +165,8 @@ def navigation(context, start_level=1, expand_level=0):
         active = True,
         language__in = (language, "0"),
         exclude_from_navigation=False)
-    
-    # Add portal's standard to current_objs    
+
+    # Add portal's standard to current_objs
     if obj is None:
         current_objs = []
         standard = lfc.utils.get_portal().standard
@@ -185,7 +185,7 @@ def navigation(context, start_level=1, expand_level=0):
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, expand_level)
             is_current = True
-        elif expand_level >= 1:
+        elif expand_level >= 1 and start_level <= 1:
             children = _navigation_children(request, current_objs, obj, start_level, expand_level)
             is_current = False
         else:
@@ -221,11 +221,11 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     for obj in temp:
         obj = obj.get_specific_type()
         if obj in current_objs:
-            children = _navigation_children(request, current_objs, obj, start_level, level+1)
+            children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level+1)
             is_current = True
-        elif level <= expand_level:
-            children = _navigation_children(request, current_objs, obj, start_level)
-            is_current = True
+        elif level <= expand_level and level >= start_level:
+            children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level+1)
+            is_current = False
         else:
             children = ""
             is_current = False
