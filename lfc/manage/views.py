@@ -64,25 +64,62 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
         "ctr" : ctr,
         "form" : form,
     }))
+
 def filebrowser(request):
     """Displays files/images of the current object within the file browser
     popup of TinyMCE.
     """
     obj_id = request.GET.get("obj_id")
-    obj = BaseContent.objects.get(pk=obj_id)
-
+    
+    try:
+        obj = BaseContent.objects.get(pk=obj_id)
+    except (BaseContent.DoesNotExist, ValueError):
+        obj = None
+    
     if request.GET.get("type") == "image":
+        if obj:
+            images = obj.images.all()
+        else:
+            images = []
         return render_to_response("lfc/manage/filebrowser_images.html",
             RequestContext(request, {
             "obj_id" : obj_id,
-            "images" : obj.images.all(),
+            "images" : images,
         }))
     else:
+        if obj:
+            files = obj.files.all()
+        else:
+            files = []
+        base_contents = []
+        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", translation.get_language())):
+            base_contents.append({
+                "title" : base_content.title,
+                "url" : base_content.get_absolute_url(),
+                "children" : _get_obj_children(request, base_content),
+            })
+
         return render_to_response("lfc/manage/filebrowser_files.html",
             RequestContext(request, {
             "obj_id" : obj_id,
-            "files" : obj.files.all(),
+            "files" : files,
+            "objs" : base_contents,
         }))
+
+def _get_obj_children(request, obj):
+    """
+    """
+    objs = []
+    for obj in obj.sub_objects.filter(active=True):
+        objs.append({
+            "title" : obj.title,
+            "url" : obj.get_absolute_url(),
+            "children" : _get_obj_children(request, obj),
+        })
+
+    return render_to_string("lfc/manage/filebrowser_files_children.html", RequestContext(request, {
+        "objs" : objs
+    }))
 
 def fb_upload_image(request):
     """Uploads an image within filebrowser.
