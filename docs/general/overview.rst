@@ -11,8 +11,17 @@ Content types
 Within the core of LFC there is only one :term:`content type`: :term:`Page` 
 (more can be added by 3rd-party developers).
 
+Sub pages
+---------
+
 Every instance of a page can have arbitrary sub pages (this will build the
 content structure).
+
+Images and Files
+----------------
+
+Every page can have an arbitrary amount of images and files. How they are
+displayed is up to the selected template.
 
 Templates
 ---------
@@ -32,22 +41,16 @@ a small bunch of templates (more can be added by 3rd-party developers):
 
     - Gallery
 
-      All assigned images are display as gallery (lightbox style)
+      All assigned images are display as 3x3 grid (lightbox style)
 
     - Overview
 
       All assigned sub pages are displayed as a list
 
-Images and Files
-----------------
-
-Every page can have an arbitrary amount of images and files. How they are
-displayed is up to the selected template.
-
 Portlets
 --------
 
-Every page can have so-called :term:`portlets`, which are displayed in a left 
+Every page can have so-called :term:`Portlets`, which are displayed in a left 
 or a right slot. By default there are just a few portlets (more can be added 
 by 3rd-party developers):
 
@@ -78,3 +81,5 @@ different languages
 
 Additionally it is possible to create language neutral objects which are 
 displayed independent on the current language.
+
+.. _Portlets: http://packages.python.org/django-portlets/

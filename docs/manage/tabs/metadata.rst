@@ -36,6 +36,13 @@ the object manually.
 If this field is not displayed then the object is ordered automatically, e.g. 
 by publication date.
 
+Standard
+========
+
+The sub page which should be displayed if the page is viewed.
+
+If this field is not displayed the page has no sub pages.
+
 Active
 ======
 

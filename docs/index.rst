@@ -1,7 +1,4 @@
-.. LFC - Lightning Fast CMS documentation master file, created by
-   sphinx-quickstart on Sun Jan 10 18:03:44 2010.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. _index:
 
 ========================
 LFC - Lightning Fast CMS
@@ -26,13 +23,15 @@ Tabs
 .. toctree::
    :maxdepth: 2
 
+   manage/tabs/data.rst
    manage/tabs/metadata.rst
    manage/tabs/seo.rst
    manage/tabs/images.rst
-
+   
 Indices and tables
 ==================
 
+* :doc:`glossary`
 * :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
+
