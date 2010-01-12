@@ -71,7 +71,7 @@ class AJAXSimpleExceptionResponse:
                     response += "%s\n" % tb
                 return HttpResponseServerError(response)
 
-class MultiLanguageMiddleware:
+class LFCMiddleware:
     """Traverses to the requested object and sets the correct language.
     """
     def process_view(self, request, view_func, view_args, view_kwargs):
