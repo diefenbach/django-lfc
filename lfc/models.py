@@ -170,7 +170,7 @@ class BaseContent(models.Model):
     def __unicode__(self):
         return unicode(self.title)
 
-    def save(self):
+    def save(self, force_insert=False, force_update=False):
         self.searchable_text = self.get_searchable_text()
         super(BaseContent, self).save()
 
