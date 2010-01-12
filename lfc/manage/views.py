@@ -902,12 +902,12 @@ def update_images(request, id=None):
         image.save()
 
     if id is None:
-        images = portal_images(request, as_string=True)
+        images_inline = portal_images(request, as_string=True)
     else:
-        images = images(request, id, as_string=True) 
+        images_inline = images(request, id, as_string=True) 
 
     result = simplejson.dumps({
-        "images" : images,
+        "images" : images_inline,
         "message" : message,
     }, cls = LazyEncoder)
 
