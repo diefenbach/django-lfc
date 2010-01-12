@@ -142,7 +142,7 @@ def search_results(request, language, template_name="lfc/search_results.html"):
     f = Q(exclude_from_search=False) & \
         Q(active=True) & \
         (Q(language = language) | Q(language="0")) & \
-        (Q(title__icontains=query) | Q(tags__icontains=query))
+        (Q(searchable_text__icontains=query))
 
     try:
         obj = BaseContent.objects.get(slug="search-results")

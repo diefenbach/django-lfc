@@ -123,23 +123,6 @@ class Portal(models.Model):
 class BaseContent(models.Model):
     """Base content object. From this model all content types should inherit.
     """
-    class Meta:
-        ordering = ["position"]
-        unique_together = ["parent", "slug", "language"]
-
-    def __unicode__(self):
-        return unicode(self.title)
-
-    def get_specific_type(self):
-        """
-        """
-        # TODO: Ugly but works. There must be a cleaner way. isinstance doesn't
-        # work of course.
-        if self.__class__.__name__.lower() == "basecontent":
-            return getattr(self, self.content_type)
-        else:
-            return self
-
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
 
     title = models.CharField(_(u"Title"), max_length=100)
@@ -178,6 +161,19 @@ class BaseContent(models.Model):
     allow_comments = models.PositiveSmallIntegerField(_(u"Commentable"),
         choices=ALLOW_COMMENTS_CHOICES, default=ALLOW_COMMENTS_DEFAULT)
 
+    searchable_text = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["position"]
+        unique_together = ["parent", "slug", "language"]
+
+    def __unicode__(self):
+        return unicode(self.title)
+
+    def save(self):
+        self.searchable_text = self.get_searchable_text()
+        super(BaseContent, self).save()
+
     def get_absolute_url(self):
         page = self.standard or self
 
@@ -206,6 +202,19 @@ class BaseContent(models.Model):
             return ("lfc_base_view", (), {"slug" : slug, "language" : page.language})
 
     get_absolute_url = models.permalink(get_absolute_url)
+
+    def get_specific_type(self):
+        """
+        """
+        # TODO: Ugly but works. There must be a cleaner way. isinstance doesn't
+        # work of course.
+        if self.__class__.__name__.lower() == "basecontent":
+            return getattr(self, self.content_type)
+        else:
+            return self
+
+    def get_searchable_text(self):
+        return self.title + " " + self.description
 
     def form(self, **kwargs):
         """Returns the form for the object.
@@ -327,6 +336,9 @@ class Page(BaseContent):
     """
     text = models.TextField(_(u"Text"), blank=True)
 
+    def get_searchable_text(self):
+        return self.title + " " + self.description + " " + self.text
+
     def form(self, **kwargs):
         """
         """
@@ -364,7 +376,7 @@ class Image(models.Model):
     """
     title = models.CharField(blank=True, max_length=100)
     slug = models.SlugField()
-    
+
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="image", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
