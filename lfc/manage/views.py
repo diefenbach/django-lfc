@@ -40,15 +40,113 @@ from lfc.utils import set_message_cookie
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info_for
 
-def content_types(request):
+# Dashboard #################################################################
+@login_required
+def dashboard(request, template_name="lfc/manage/dashboard.html"):
     """
+    """
+    return render_to_response(template_name, RequestContext(request, {
+
+    }))
+
+# Portal ####################################################################
+@login_required
+def portal(request, template_name="lfc/manage/portal.html"):
+    """Displays the main screen of the portal management.
+    """
+    content_types = get_allowed_subtypes()
+    return render_to_response(template_name, RequestContext(request, {
+        "display_content_menu" : len(get_allowed_subtypes()) > 1,
+        "content_types" : get_allowed_subtypes(),
+        "core_data" : portal_core(request),
+        "portlets" : portlets_inline(request, get_portal()),
+        "navigation" : navigation(request, None),
+        "images" : portal_images(request, as_string=True),
+    }))
+
+@login_required
+def portal_core(request, template_name="lfc/manage/portal_core.html"):
+    """Displays the core data tab.
+    """
+    portal = get_portal()
+
+    if request.method == "POST":
+        form = PortalCoreForm(instance=portal, data=request.POST)
+        if form.is_valid():
+            form.save()
+
+        html =  render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "portal" : portal,
+        }))
+
+        html = (
+            ("#data", html),
+        )
+
+        result = simplejson.dumps({
+            "html" : html,
+            "message" : _(u"Portal data has been saved.")},
+            cls = LazyEncoder
+        )
+        result = HttpResponse(result)
+    else:
+        form = PortalCoreForm(instance=portal)
+
+        result = render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "portal" : portal,
+        }))
+
+    return result
+
+@login_required
+def portal_images(request, as_string=False, template_name="lfc/manage/portal_images.html"):
+    """Displays the images tab of the portal management screen.
+    """
+    obj = get_portal()
+
+    result = render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+    }))
+
+    if as_string:
+        return result
+    else:
+        result = simplejson.dumps({
+            "images" : result,
+            "message" : _(u"Images has been added."),
+        }, cls = LazyEncoder)
+
+        return HttpResponse(result)
+
+def add_portal_images(request):
+    """Adds images to the portal
+    """
+    obj = get_portal()
+    if request.method == "POST":
+        for file_content in request.FILES.values():
+            image = Image(content=obj, title=file_content.name)
+            image.image.save(file_content.name, file_content, save=True)
+
+    # Refresh positions
+    for i, image in enumerate(obj.images.all()):
+        image.position = i+1
+        image.save()
+
+    return HttpResponse(portal_images(request, id, as_string=True))
+
+# Content types #############################################################
+
+def content_types(request):
+    """Redirects to the first content type.
     """
     ctr = ContentTypeRegistration.objects.filter()[0]
     url = reverse("lfc_content_type", kwargs={"id" : ctr.id })
     return HttpResponseRedirect(url)
 
 def content_type(request, id, template_name="lfc/manage/content_types.html"):
-    """Displays a form to edit registered content types
+    """ Displays the main screen of the content type management.
     """
     ctr = ContentTypeRegistration.objects.get(pk=id)
 
@@ -65,18 +163,21 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
         "form" : form,
     }))
 
+# Filebrowser ################################################################
 def filebrowser(request):
     """Displays files/images of the current object within the file browser
     popup of TinyMCE.
     """
     obj_id = request.GET.get("obj_id")
-    
+
     try:
         obj = BaseContent.objects.get(pk=obj_id)
     except (BaseContent.DoesNotExist, ValueError):
         obj = None
-    
+
     if request.GET.get("type") == "image":
+        portal = get_portal()
+
         if obj:
             images = obj.images.all()
         else:
@@ -85,6 +186,7 @@ def filebrowser(request):
             RequestContext(request, {
             "obj_id" : obj_id,
             "images" : images,
+            "portal_images" : portal.images.all(),
         }))
     else:
         if obj:
@@ -157,6 +259,8 @@ def fb_upload_file(request):
 
     url = "%s?obj_id=%s" % (reverse("lfc_filebrowser"), obj_id)
     return HttpResponseRedirect(url)
+
+# Portlets ###################################################################
 
 @login_required
 def portlets_inline(request, obj, template_name="lfc/manage/portlets_inline.html"):
@@ -320,64 +424,8 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
         )
         return HttpResponse(result)
 
-@login_required
-def portal(request, template_name="lfc/manage/portal.html"):
-    """
-    """
-    content_types = get_allowed_subtypes()
-    return render_to_response(template_name, RequestContext(request, {
-        "display_content_menu" : len(get_allowed_subtypes()) > 1,
-        "content_types" : get_allowed_subtypes(),
-        "core_data" : portal_core(request),
-        "portlets" : portlets_inline(request, get_portal()),
-        "navigation" : navigation(request, None),
-    }))
+# Objects ###################################################################
 
-@login_required
-def portal_core(request, template_name="lfc/manage/portal_core.html"):
-    """Form to edit portal core data.
-    """
-    portal = get_portal()
-
-    if request.method == "POST":
-        form = PortalCoreForm(instance=portal, data=request.POST)
-        if form.is_valid():
-            form.save()
-
-        html =  render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "portal" : portal,
-        }))
-
-        html = (
-            ("#data", html),
-        )
-
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : _(u"Portal data has been saved.")},
-            cls = LazyEncoder
-        )
-        result = HttpResponse(result)
-    else:
-        form = PortalCoreForm(instance=portal)
-
-        result = render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "portal" : portal,
-        }))
-
-    return result
-
-@login_required
-def dashboard(request, template_name="lfc/manage/dashboard.html"):
-    """
-    """
-    return render_to_response(template_name, RequestContext(request, {
-
-    }))
-
-# Objects
 @login_required
 def add_object(request, language=None, id=None):
     """Adds a object to object with given slug.
@@ -471,7 +519,7 @@ def manage_objects(request):
 
 @login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
-    """
+    """Displays the main screen of an object management interface.
     """
     try:
         obj = BaseContent.objects.get(pk=id)
@@ -520,7 +568,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
 
 @login_required
 def core_data(request, id, as_string=True, template_name="lfc/manage/object_data.html"):
-    """
+    """Displays / handles the core data an object.
     """
     base_content = BaseContent.objects.get(pk=id)
     obj_ct = ContentType.objects.filter(model=base_content.content_type)[0]
@@ -559,7 +607,7 @@ def core_data(request, id, as_string=True, template_name="lfc/manage/object_data
 
 @login_required
 def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
-    """
+    """Displays / handles the meta data an object.
     """
     obj = BaseContent.objects.get(pk=id)
     Form = MetaDataForm
@@ -600,7 +648,7 @@ def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
 
 @login_required
 def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
-    """
+    """Displays / handles the seo data an object.
     """
     obj = BaseContent.objects.get(pk=id)
     if request.method == "POST":
@@ -632,7 +680,7 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
 # Comments
 @login_required
 def comments(request, obj, template_name="lfc/manage/object_comments.html"):
-    """
+    """Displays the comments of an object.
     """
     form = CommentsForm(instance=obj)
     comments = Comment.objects.filter(object_pk = obj.id)
@@ -688,10 +736,10 @@ def update_comments(request, id, template_name="lfc/manage/object_comments.html"
 
     return HttpResponse(result)
 
-# Files
+# Files #####################################################################
 @login_required
 def files(request, id, template_name="lfc/manage/object_files.html"):
-    """
+    """Displays the files tab of an object.
     """
     obj = BaseContent.objects.get(pk=id)
     return render_to_string(template_name, RequestContext(request, {
@@ -767,7 +815,8 @@ def update_files(request, id):
 
     return HttpResponse(result)
 
-# Images
+# Images #####################################################################
+
 @login_required
 def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
     """
@@ -789,7 +838,7 @@ def images(request, id, as_string=False, template_name="lfc/manage/object_images
         return HttpResponse(result)
 
 def add_images(request, id):
-    """Adds images to obj with passed id.
+    """Adds images to the object with the given id.
     """
     obj = get_object_or_404(BaseContent, pk=id)
     if request.method == "POST":
@@ -805,10 +854,13 @@ def add_images(request, id):
     return HttpResponse(images(request, id, as_string=True))
 
 @login_required
-def update_images(request, id):
+def update_images(request, id=None):
     """Saves/deletes images with given ids (passed by request body).
     """
-    obj = get_object_or_404(BaseContent, id=id)
+    if id is None:
+        obj = get_portal()
+    else:
+        obj = get_object_or_404(BaseContent, id=id)
 
     action = request.POST.get("action")
     if action == "delete":
@@ -843,23 +895,28 @@ def update_images(request, id):
                 else:
                     image.position = value
                     image.save()
-
+    
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
         image.position = i+1
         image.save()
 
+    if id is None:
+        images = portal_images(request, as_string=True)
+    else:
+        images = images(request, id, as_string=True) 
+
     result = simplejson.dumps({
-        "images" : images(request, id, as_string=True),
+        "images" : images,
         "message" : message,
     }, cls = LazyEncoder)
 
     return HttpResponse(result)
 
-# Navigation
+# Navigation #################################################################
 @login_required
 def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation.html"):
-    """
+    """Displays the content object structure (navigatin tree).
     """
     language = translation.get_language()
 
@@ -907,7 +964,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     }))
 
 def _navigation_children(request, current_objs, obj, start_level, level=3):
-    """
+    """Renders the children of the given obj (recursively)
     """
     obj = obj.get_specific_type()
     temp = obj.sub_objects.filter(language__in = ("0", settings.LANGUAGE_CODE))
@@ -938,9 +995,10 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
 
     return result
 
+# Translation ################################################################
 @login_required
 def translate_object(request, language, id=None, form_translation=None, form_canonical=None, template_name="lfc/manage/object_translate.html"):
-    """
+    """Dislays the translation form for the object with given id and language
     """
     obj = get_object_or_404(BaseContent, pk=id)
 

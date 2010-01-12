@@ -8,6 +8,8 @@ import portlets
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_syncdb
@@ -82,6 +84,9 @@ class Portal(models.Model):
     from_email = models.EmailField(_(u"From e-mail address"))
     notification_emails  = models.TextField(_(u"Notification email addresses"))
     allow_comments = models.BooleanField(_(u"Allow comments"), default=False)
+
+    images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
+        object_id_field="content_id", content_type_field="content_type")
 
     tags = fields.TagField(_(u"Tags"))
 
@@ -166,6 +171,9 @@ class BaseContent(models.Model):
 
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
+
+    images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
+        object_id_field="content_id", content_type_field="content_type")
 
     allow_comments = models.PositiveSmallIntegerField(_(u"Commentable"),
         choices=ALLOW_COMMENTS_CHOICES, default=ALLOW_COMMENTS_DEFAULT)
@@ -356,7 +364,11 @@ class Image(models.Model):
     """
     title = models.CharField(blank=True, max_length=100)
     slug = models.SlugField()
-    content = models.ForeignKey(BaseContent, blank=True, null=True, related_name="images")
+    
+    content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="image", blank=True, null=True)
+    content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
+    content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
+
     position = models.SmallIntegerField(default=999)
     caption = models.CharField(blank=True, max_length=100)
     short_description = models.TextField(blank=True)

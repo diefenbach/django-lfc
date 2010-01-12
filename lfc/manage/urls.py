@@ -22,10 +22,14 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-images/(?P<id>\d+)$', "add_images", name="lfc_add_images"),
     url(r'^page-images/(?P<id>\d+)$', "images", name="lfc_images"),
     url(r'^update-images/(?P<id>\d+)$', "update_images", name="lfc_update_images"),
+    url(r'^update-images$', "update_images", name="lfc_update_images"),
     
     url(r'^add-files/(?P<id>\d+)$', "add_files", name="lfc_add_files"),
     url(r'^page-files/(?P<id>\d+)$', "files", name="lfc_files"),
     url(r'^update-files/(?P<id>\d+)$', "update_files", name="lfc_update_files"),
+
+    url(r'^add-portal-images$', "add_portal_images", name="lfc_add_portal_images"),
+    url(r'^portal-images$', "portal_images", name="lfc_portal_images"),
     
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),
     

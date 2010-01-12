@@ -37,11 +37,15 @@
     <div style="clear:both" id="manage-tabs">
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Portal' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
         </ul>
 
         <div id="data">
             {{ core_data|safe }}
+        </div>
+        <div id="images">
+            {{ images|safe }}
         </div>
         <div id="portlets">
             {{ portlets|safe }}
