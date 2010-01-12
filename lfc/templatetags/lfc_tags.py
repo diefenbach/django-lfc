@@ -15,7 +15,6 @@ from contact_form.forms import ContactForm
 
 # tagging imports
 from tagging.managers import ModelTaggedItemManager
-from tagging.models import TaggedItem
 
 # feedparser imports
 import feedparser
@@ -121,8 +120,8 @@ def recent(context, title=True, text=False):
         "LANGUAGE_CODE" : context.get("LANGUAGE_CODE")
     }
 
-@register.inclusion_tag('lfc/tags/twitter.html', takes_context=True)
-def twitter(context, url):
+@register.inclusion_tag('lfc/tags/rss.html', takes_context=True)
+def rss(context, url, limit=5):
     """
     """
     feed = feedparser.parse(url)
@@ -137,10 +136,11 @@ def twitter(context, url):
         }
 
     entries = []
-    for entry in feed.entries[0:5]:
+    for entry in feed.entries[0:limit]:
         summary = entry.summary.replace("%s: " % name, "")
 
         entries.append({
+            "title" : entry.title,
             "summary" : summary,
             "date" : datetime.datetime(*entry["updated_parsed"][0:6])
         })
@@ -277,11 +277,16 @@ def files(files):
     """
     return { "files" : files }
 
-@register.inclusion_tag('lfc/tags/page.html')
-def page(slug, part):
+@register.inclusion_tag('lfc/tags/page.html', takes_context=True)
+def page(context, slug, part):
     """
     """
-    page = Page.objects.get(slug=slug)
+    request = context.get("request")
+    page = lfc.utils.traverse_object(request, slug)
+
+    if page:
+        page = page.get_specific_type()
+
     return { "page" : page, "part": part }
 
 @register.inclusion_tag('lfc/tags/objects.html', takes_context=True)
