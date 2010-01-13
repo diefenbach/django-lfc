@@ -24,36 +24,18 @@ import lfc.utils
 from lfc.utils import traverse_object
 from lfc.models import File
 from lfc.models import BaseContent
+from lfc.models import Portal
 
 # tagging imports
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 
-def portal(request, language=None, template_name="lfc/portal.html"):
+def portal(request, obj, template_name="lfc/portal.html"):
     """Displays the default object of the portal.
     """
-    portal = lfc.utils.get_portal()
-    obj = portal.standard
-
-    # Display the standard page if there is one
-    if portal.standard:
-        obj = portal.standard
-        if obj.language != language:
-            if obj.is_canonical():
-                translation = obj.get_translation(language)
-                if translation:
-                    obj = translation
-            else:
-                canonical = obj.get_canonical()
-                if canonical:
-                    obj = canonical
-
-        return base_view(request, obj=obj)
-
-    else:
-        return render_to_response(template_name, RequestContext(request, {
-            "portal" : lfc.utils.get_portal()
-        }))
+    return render_to_response(template_name, RequestContext(request, {
+        "portal" : lfc.utils.get_portal()
+    }))
 
 def base_view(request, language=None, slug=None, obj=None):
     """Displays the object for given language and slug.
@@ -63,11 +45,13 @@ def base_view(request, language=None, slug=None, obj=None):
     # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
 
     # Get the obj (passed my LFC Middleware)
-    if obj is None:
-        obj = request.META.get("lfc_context")
+    obj = request.META.get("lfc_context")
 
     if obj is None:
         raise Http404()
+
+    if isinstance(obj, Portal):
+        return portal(obj)
 
     cache_key = "view-%s-%s-%s" % (language, obj.content_type, obj.id)
     result = cache.get(cache_key)

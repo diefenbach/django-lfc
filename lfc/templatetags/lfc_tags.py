@@ -61,19 +61,11 @@ def tabs(context, page=None):
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
 
-    if request.user.is_superuser:
-        temp = BaseContent.objects.filter(
-            language__in=(language, "0"),
-            parent = None,
-            exclude_from_navigation=False,
-        )
-    else:
-        temp = BaseContent.objects.filter(
-            language__in=(language, "0"),
-            active=True,
-            parent = None,
-            exclude_from_navigation=False,
-        )
+    temp = BaseContent.objects.filter(
+        language__in=(language, "0"),
+        parent = None,
+        exclude_from_navigation=False,
+    )
 
     if page is None:
         current_pages = []
@@ -163,7 +155,6 @@ def navigation(context, start_level=1, expand_level=0):
 
     temp = BaseContent.objects.filter(
         parent = None,
-        active = True,
         language__in = (language, "0"),
         exclude_from_navigation=False)
 
@@ -213,7 +204,6 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     """
     obj = obj.get_specific_type()
     temp = obj.sub_objects.filter(
-        active = True,
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
     )

@@ -122,10 +122,7 @@ def traverse_object(request, slug):
         start_index = 1
 
     try:
-        if request.user.is_superuser:
-            obj = lfc.models.BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language))
-        else:
-            obj = lfc.models.BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language), active=True)
+        obj = lfc.models.BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
         raise Http404
 

@@ -8,12 +8,13 @@ from cStringIO import StringIO
 from django.conf import settings
 from django.core.cache import cache
 from django.http import HttpResponseServerError
+from django.shortcuts import get_object_or_404
 from django.utils import translation
 
 # lfc imports
 from lfc.utils import traverse_object
 from lfc.utils import get_portal
-
+from lfc.models import BaseContent
 
 class ProfileMiddleware(object):
     """
@@ -71,30 +72,47 @@ class AJAXSimpleExceptionResponse:
                     response += "%s\n" % tb
                 return HttpResponseServerError(response)
 
+from threading import local
+_thread_locals = local()
+
+def get_current_user():
+    return getattr(_thread_locals, 'user', None)
+
 class LFCMiddleware:
-    """Traverses to the requested object and sets the correct language.
+    """Traverses the requested object, store this within request.META and sets
+    the correct language.
     """
     def process_view(self, request, view_func, view_args, view_kwargs):
-        path = request.path
-        try:
-            first_node = path.split("/")[1]
-        except IndexError:
-            translation.activate(settings.LANGUAGE_CODE)
-        else:
-            language_ids = cache.get("language-ids")
-            if language_ids is None:
-                language_ids = [l[0] for l in settings.LANGUAGES]
-                cache.set("language_ids-ids", language_ids)
+        _thread_locals.user = getattr(request, 'user', None)
 
-            if first_node in language_ids:
-                translation.activate(first_node)
-            else:
-                translation.activate(settings.LANGUAGE_CODE)
-        try:
+        slug = view_kwargs.get("slug")
+        if slug is None:
+            return
+
+        language = view_kwargs.get("language")
+        if language:
+            translation.activate(language)
+        else:
+            translation.activate(settings.LANGUAGE_CODE)
+
+        if slug != "":
             obj = traverse_object(request, view_kwargs.get("slug"))
-        except:
+        else:
             portal = get_portal()
             if portal.standard:
-                request.META["lfc_context"] = portal.standard.get_specific_type()
-        else:
-            request.META["lfc_context"] = obj.get_specific_type()
+                # using BaseContentManager
+                obj = get_object_or_404(BaseContent, portal=portal)
+                if obj.language != language:
+                    if obj.is_canonical():
+                        t = obj.get_translation(language)
+                        if t:
+                            obj = t
+                    else:
+                        canonical = obj.get_canonical()
+                        if canonical:
+                            obj = canonical
+                request.META["lfc_context"] = obj.get_specific_type()
+            else:
+                obj = portal
+
+        request.META["lfc_context"] = obj.get_specific_type()

@@ -34,6 +34,7 @@ import lfc.utils
 import lfc.settings
 from lfc.fields.thumbs import ImageWithThumbsField
 from lfc.fields.autocomplete import AutoCompleteTagInput
+from lfc.managers import BaseContentManager
 from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
@@ -163,6 +164,8 @@ class BaseContent(models.Model):
 
     searchable_text = models.TextField(blank=True)
 
+    objects = BaseContentManager()
+
     class Meta:
         ordering = ["position"]
         unique_together = ["parent", "slug", "language"]
@@ -247,7 +250,6 @@ class BaseContent(models.Model):
         """Returns sub objects of an object.
         """
         return self.sub_objects.filter(
-            active = True,
             language__in = (translation.get_language(), "0"),
         )
 
@@ -491,7 +493,6 @@ class PagesPortlet(Portlet):
         """Renders the portlet as html.
         """
         objs = BaseContent.objects.filter(
-            active = True,
             language__in=("0", translation.get_language()))
 
         if self.tags:
@@ -525,7 +526,6 @@ class RandomPortlet(Portlet):
         """Renders the portlet as html.
         """
         items = BaseContent.objects.filter(
-            active = True,
             language__in=("0", translation.get_language()))
 
         if self.tags:
