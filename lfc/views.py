@@ -92,7 +92,7 @@ def base_view(request, language=None, slug=None, obj=None):
     files = obj.files.all()
 
     c = RequestContext(request, {
-        "lfc_object" : obj.get_specific_type(),
+        "lfc_context" : obj,
         "images" : images,
         "image" : image,
         "subimages" : subimages,
@@ -135,7 +135,7 @@ def search_results(request, language, template_name="lfc/search_results.html"):
 
     results = BaseContent.objects.filter(f)
     return render_to_response(template_name, RequestContext(request, {
-        "lfc_object" : obj,
+        "lfc_context" : obj,
         "query" : query,
         "results" : results,
     }))
@@ -216,17 +216,13 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
     if tag_instance is None:
         raise Http404(_('No Tag found matching "%s".') % tag)
 
-    try:
-        obj = BaseContent.objects.get(slug=slug)
-    except BaseContent.DoesNotExist:
-        raise Http404()
-    else:
-        queryset = BaseContent.objects.filter(parent=obj)
-        objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
+    obj = request.META.get("lfc_context")
+    queryset = BaseContent.objects.filter(parent=obj)
+    objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
 
     return render_to_response(template_name, RequestContext(request, {
         "slug" : slug,
-        "lfc_object" : obj.get_specific_type(),
+        "lfc_context" : obj,
         "objs" : objs,
         "tag" : tag,
     }));

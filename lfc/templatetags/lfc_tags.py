@@ -242,7 +242,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
 def breadcrumbs(context):
     """
     """
-    obj = context.get("lfc_object")
+    obj = context.get("lfc_context")
     if obj is None:
         return {
             "obj" : None,
@@ -343,7 +343,7 @@ def previous_next_by_position(page):
 def image(context, ord):
     """Returns an image with given ord for the current page.
     """
-    page = context.get("lfc_object")
+    page = context.get("lfc_context")
     return {
         "image" : page.images.all()[ord-1],
     }
