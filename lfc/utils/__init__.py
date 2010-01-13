@@ -112,9 +112,9 @@ def traverse_object(request, slug):
     """
     paths = slug.split("/")
     language = translation.get_language()
-
+    
     try:
-        obj = lfc.models.BaseContent.objects.get(slug=slug, parent=None, language__in = ("0", language))
+        obj = lfc.models.BaseContent.objects.get(slug=paths[0], parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
         raise Http404
 
