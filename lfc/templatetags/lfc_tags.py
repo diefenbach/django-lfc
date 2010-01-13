@@ -56,7 +56,7 @@ def tabs(context, page=None):
     """Returns the top level pages as tabs
     """
     if page:
-        page = page.get_specific_type()
+        page = page.get_content_object()
 
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
@@ -75,7 +75,7 @@ def tabs(context, page=None):
 
     pages = []
     for page in temp:
-        page.current = page.get_specific_type() in current_pages
+        page.current = page.get_content_object() in current_pages
         pages.append(page)
 
     return {
@@ -166,14 +166,14 @@ def navigation(context, start_level=1, expand_level=0):
             if language != standard.language:
                 standard = standard.get_translation(language)
             if standard:
-                current_objs.append(standard.get_specific_type())
+                current_objs.append(standard.get_content_object())
     else:
         current_objs = [obj]
         current_objs.extend(obj.get_ancestors())
 
     objs = []
     for obj in temp:
-        obj = obj.get_specific_type()
+        obj = obj.get_content_object()
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, expand_level)
             is_current = True
@@ -202,7 +202,7 @@ def navigation(context, start_level=1, expand_level=0):
 def _navigation_children(request, current_objs, obj, start_level, expand_level, level=2):
     """
     """
-    obj = obj.get_specific_type()
+    obj = obj.get_content_object()
     temp = obj.sub_objects.filter(
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
@@ -210,7 +210,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
 
     objs = []
     for obj in temp:
-        obj = obj.get_specific_type()
+        obj = obj.get_content_object()
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level+1)
             is_current = True
@@ -275,7 +275,7 @@ def page(context, slug, part):
     page = lfc.utils.traverse_object(request, slug)
 
     if page:
-        page = page.get_specific_type()
+        page = page.get_content_object()
 
     return { "page" : page, "part": part }
 

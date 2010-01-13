@@ -50,7 +50,7 @@ class MetaDataForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(MetaDataForm, self).__init__(*args, **kwargs)
 
-        instance = kwargs.get("instance").get_specific_type()
+        instance = kwargs.get("instance").get_content_object()
         language = instance.language
         ctr = get_info_for(instance)
 
@@ -83,7 +83,7 @@ class MetaDataForm(forms.ModelForm):
 
         parent_choices = []
         for parent in parents:
-            if ctr in get_allowed_subtypes(parent.get_specific_type()):
+            if ctr in get_allowed_subtypes(parent.get_content_object()):
                 parent_choices.append((parent.id, parent.title))
 
         if len(parent_choices) < 1:

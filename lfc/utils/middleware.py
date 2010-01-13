@@ -104,7 +104,7 @@ class LFCMiddleware:
 
         if slug:
             obj = traverse_object(request, view_kwargs.get("slug"))
-            request.META["lfc_context"] = obj.get_specific_type()
+            request.META["lfc_context"] = obj.get_content_object()
         else:
             portal = get_portal()
             if portal.standard:
@@ -119,6 +119,6 @@ class LFCMiddleware:
                         canonical = obj.get_canonical()
                         if canonical:
                             obj = canonical
-                request.META["lfc_context"] = obj.get_specific_type()
+                request.META["lfc_context"] = obj.get_content_object()
             else:
                 request.META["lfc_context"] = portal

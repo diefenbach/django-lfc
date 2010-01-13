@@ -203,8 +203,8 @@ class BaseContent(models.Model):
 
     get_absolute_url = models.permalink(get_absolute_url)
 
-    def get_specific_type(self):
-        """
+    def get_content_object(self):
+        """Returns the specific content object of this base content instance.
         """
         # TODO: Ugly but works. There must be a cleaner way. isinstance doesn't
         # work of course.
@@ -230,7 +230,7 @@ class BaseContent(models.Model):
         page = self
         while page.parent is not None:
             temp = page.parent
-            temp = temp.get_specific_type()
+            temp = temp.get_content_object()
             ancestors.append(temp)
             page = page.parent
 
@@ -327,7 +327,7 @@ class BaseContent(models.Model):
     def get_parent_for_portlets(self):
         """Returns the parent for inheriting portlets.
         """
-        return self.parent and self.parent.get_specific_type() or lfc.utils.get_portal()
+        return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
 class Page(BaseContent):
     """A page is the foremost object within lfc which shows information to the

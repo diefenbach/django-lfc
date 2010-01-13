@@ -6,6 +6,7 @@ import urllib
 from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.conf import settings
+from django.shortcuts import _get_queryset
 from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
@@ -112,7 +113,7 @@ def traverse_object(request, slug):
     """
     paths = slug.split("/")
     language = translation.get_language()
-    
+
     try:
         obj = lfc.models.BaseContent.objects.get(slug=paths[0], parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
@@ -125,3 +126,10 @@ def traverse_object(request, slug):
             raise Http404
 
     return obj
+
+def get_content_object(*args, **kwargs):
+    """Returns the specific content object based on given parameters.
+    """
+    queryset = _get_queryset(lfc.models.BaseContent)
+    object = queryset.get(*args, **kwargs)
+    return object.get_content_object()

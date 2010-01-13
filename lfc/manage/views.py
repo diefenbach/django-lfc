@@ -25,6 +25,7 @@ from portlets.models import PortletRegistration
 from portlets.models import Slot
 
 # lfc imports
+import lfc.utils
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.manage.forms import CommentsForm
@@ -522,11 +523,10 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     """Displays the main screen of an object management interface.
     """
     try:
-        obj = BaseContent.objects.get(pk=id)
+        obj = lfc.utils.get_content_object(pk=id)
     except BaseContent.DoesNotExist:
         return manage_objects(request)
 
-    obj = obj.get_specific_type()
     objs = BaseContent.objects.filter(parent=None)
 
     if obj.is_canonical():
@@ -572,7 +572,7 @@ def core_data(request, id, as_string=True, template_name="lfc/manage/object_data
     """
     base_content = BaseContent.objects.get(pk=id)
     obj_ct = ContentType.objects.filter(model=base_content.content_type)[0]
-    obj = base_content.get_specific_type()
+    obj = base_content.get_content_object()
     Form = obj.form
 
     if request.method == "POST":
@@ -609,16 +609,15 @@ def core_data(request, id, as_string=True, template_name="lfc/manage/object_data
 def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
     """Displays / handles the meta data an object.
     """
-    obj = BaseContent.objects.get(pk=id)
-    Form = MetaDataForm
+    obj = lfc.utils.get_content_object(pk=id)
 
     if request.method == "POST":
 
-        form = Form(instance=obj, data=request.POST)
+        form = MetaDataForm(instance=obj, data=request.POST)
 
         if form.is_valid():
             form.save()
-            form = Form(instance=_update_positions(obj))
+            form = MetaDataForm(instance=_update_positions(obj))
 
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -637,7 +636,7 @@ def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
         result = HttpResponse(result)
 
     else:
-        form = Form(instance=obj)
+        form = MetaDataForm(instance=obj)
 
         result = render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -651,6 +650,8 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
     """Displays / handles the seo data an object.
     """
     obj = BaseContent.objects.get(pk=id)
+    obj = obj.get_content_object()
+
     if request.method == "POST":
         form = SEOForm(instance=obj, data=request.POST)
         if form.is_valid():
@@ -895,7 +896,7 @@ def update_images(request, id=None):
                 else:
                     image.position = value
                     image.save()
-    
+
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
         image.position = i+1
@@ -904,7 +905,7 @@ def update_images(request, id=None):
     if id is None:
         images_inline = portal_images(request, as_string=True)
     else:
-        images_inline = images(request, id, as_string=True) 
+        images_inline = images(request, id, as_string=True)
 
     result = simplejson.dumps({
         "images" : images_inline,
@@ -923,8 +924,8 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     if obj is None:
         current_objs = []
     else:
-        if obj.is_translation() and obj .canonical:
-            obj = obj.canonical.get_specific_type()
+        if obj.is_translation() and obj.canonical:
+            obj = obj.canonical.get_content_object()
 
         current_objs = [obj]
         current_objs.extend(obj.get_ancestors())
@@ -940,7 +941,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
 
     objs = []
     for obj in temp:
-        obj = obj.get_specific_type()
+        obj = obj.get_content_object()
 
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level)
@@ -966,12 +967,12 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
 def _navigation_children(request, current_objs, obj, start_level, level=3):
     """Renders the children of the given obj (recursively)
     """
-    obj = obj.get_specific_type()
+    obj = obj.get_content_object()
     temp = obj.sub_objects.filter(language__in = ("0", settings.LANGUAGE_CODE))
 
     objs = []
     for obj in temp:
-        obj = obj.get_specific_type()
+        obj = obj.get_content_object()
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, level+1)
             is_current = True
@@ -1016,13 +1017,13 @@ def translate_object(request, language, id=None, form_translation=None, form_can
         translation_id = translation.id
 
     if form_canonical is None:
-        form_canonical = canonical.get_specific_type().form(instance=canonical.get_specific_type(), prefix="canonical")
+        form_canonical = canonical.get_content_object().form(instance=canonical.get_content_object(), prefix="canonical")
 
     if translation:
-        translation = translation.get_specific_type()
+        translation = translation.get_content_object()
 
     if form_translation is None:
-        form_translation = canonical.get_specific_type().form(instance=translation, prefix = "translation")
+        form_translation = canonical.get_content_object().form(instance=translation, prefix = "translation")
 
     return render_to_response(template_name, RequestContext(request, {
         "canonical" : canonical,
@@ -1044,12 +1045,12 @@ def save_translation(request):
         return set_message_cookie(url, _(u"Translation has been canceled."))
 
     canonical = BaseContent.objects.get(pk=canonical_id)
-    canonical = canonical.get_specific_type()
+    canonical = canonical.get_content_object()
 
     try:
         translation_id = request.POST.get("translation_id")
         translation = BaseContent.objects.get(pk=translation_id)
-        translation = translation.get_specific_type()
+        translation = translation.get_content_object()
         translation_language = translation.language
         msg = _(u"Translation has been updated.")
     except (BaseContent.DoesNotExist, ValueError):
@@ -1116,15 +1117,14 @@ def save_translation(request):
 def _update_positions(obj):
     """Updates position of top objs or given obj.
     """
-    if obj.parent:
-        objs = obj.parent.sub_objects.all()
-    else:
-        objs = BaseContent.objects.filter(parent=None)
+    for language in settings.LANGUAGES:
+        if language[0] == settings.LANGUAGE_CODE:
+            objs = BaseContent.objects.filter(parent=obj.parent, language__in=("0", language[0]))
+        else:
+            objs = BaseContent.objects.filter(parent=obj.parent, language = language[0])
 
-    for i, p in enumerate(objs):
-        p.position = (i+1)*10
-        p.save()
-        if obj.id == p.id:
-            obj = p
+        for i, p in enumerate(objs):
+            p.position = (i+1)*10
+            p.save()
 
     return obj
