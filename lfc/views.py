@@ -51,7 +51,7 @@ def base_view(request, language=None, slug=None, obj=None):
         raise Http404()
 
     if isinstance(obj, Portal):
-        return portal(obj)
+        return portal(request, obj)
 
     cache_key = "view-%s-%s-%s" % (language, obj.content_type, obj.id)
     result = cache.get(cache_key)

@@ -7,6 +7,7 @@ from cStringIO import StringIO
 # django imports
 from django.conf import settings
 from django.core.cache import cache
+from django.http import Http404
 from django.http import HttpResponseServerError
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -87,20 +88,27 @@ class LFCMiddleware:
 
         language = view_kwargs.get("language")
         slug = view_kwargs.get("slug")
+
         if slug is None and language is None:
             return
 
         if language:
+            if settings.LFC_MULTILANGUAGE == False:
+                raise Http404
+            if language not in settings.LFC_LANGUAGE_IDS:
+                raise Http404
+
             translation.activate(language)
         else:
             translation.activate(settings.LANGUAGE_CODE)
 
         if slug:
             obj = traverse_object(request, view_kwargs.get("slug"))
+            request.META["lfc_context"] = obj.get_specific_type()
         else:
             portal = get_portal()
             if portal.standard:
-                # using BaseContentManager
+                # using BaseContentManager (to check permissions)
                 obj = get_object_or_404(BaseContent, portal=portal)
                 if obj.language != language:
                     if obj.is_canonical():
@@ -113,6 +121,4 @@ class LFCMiddleware:
                             obj = canonical
                 request.META["lfc_context"] = obj.get_specific_type()
             else:
-                obj = portal
-
-        request.META["lfc_context"] = obj.get_specific_type()
+                request.META["lfc_context"] = portal

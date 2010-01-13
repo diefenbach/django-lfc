@@ -180,18 +180,15 @@ class BaseContent(models.Model):
     def get_absolute_url(self):
         page = self.standard or self
 
-        if settings.LFC_TRAVERSING:
-            obj = page
-            slugs = []
-            while obj is not None:
-                slugs.append(obj.slug)
-                obj = obj.parent
+        obj = page
+        slugs = []
+        while obj is not None:
+            slugs.append(obj.slug)
+            obj = obj.parent
 
-            slugs.reverse()
+        slugs.reverse()
 
-            slug =  "/".join(slugs)
-        else:
-            slug = page.slug
+        slug =  "/".join(slugs)
 
         if page.language == settings.LANGUAGE_CODE:
             return ("lfc_base_view", (), {"slug" : slug})
