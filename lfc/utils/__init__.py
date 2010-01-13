@@ -109,29 +109,18 @@ def get_related_pages_by_tags(page, num=None):
 
 def traverse_object(request, slug):
     """Traverses to given slug to get the object.
-    """    
+    """
     paths = slug.split("/")
     language = translation.get_language()
-    
-    language_ids = [l[0] for l in settings.LANGUAGES]
-    if paths[0] in language_ids:
-        path = paths[1]
-        start_index = 2
-    else:
-        path = paths[0]
-        start_index = 1
 
     try:
-        obj = lfc.models.BaseContent.objects.get(slug=path, parent=None, language__in = ("0", language))
+        obj = lfc.models.BaseContent.objects.get(slug=slug, parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
         raise Http404
 
-    for path in paths[start_index:]:
+    for path in paths[1:]:
         try:
-            if request.user.is_superuser:
-                obj = obj.sub_objects.filter(slug=path)[0]
-            else:
-                obj = obj.sub_objects.filter(slug=path, active=True)[0]
+            obj = obj.sub_objects.filter(slug=path)[0]
         except IndexError:
             raise Http404
 

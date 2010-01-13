@@ -85,17 +85,17 @@ class LFCMiddleware:
     def process_view(self, request, view_func, view_args, view_kwargs):
         _thread_locals.user = getattr(request, 'user', None)
 
+        language = view_kwargs.get("language")
         slug = view_kwargs.get("slug")
-        if slug is None:
+        if slug is None and language is None:
             return
 
-        language = view_kwargs.get("language")
         if language:
             translation.activate(language)
         else:
             translation.activate(settings.LANGUAGE_CODE)
 
-        if slug != "":
+        if slug:
             obj = traverse_object(request, view_kwargs.get("slug"))
         else:
             portal = get_portal()
