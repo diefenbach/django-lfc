@@ -58,16 +58,16 @@ class Template(models.Model):
 class ContentTypeRegistration(models.Model):
     """
     """
-    type = models.CharField(blank=True, max_length=100, unique=True)
-    name = models.CharField(blank=True, max_length=100, unique=True)
-    display_select_standard = models.BooleanField(default=True)
-    display_position = models.BooleanField(default=True)
-    global_addable = models.BooleanField(default=True)
+    type = models.CharField(_(u"Type"), blank=True, max_length=100, unique=True)
+    name = models.CharField(_(u"Name"), blank=True, max_length=100, unique=True)
+    display_select_standard = models.BooleanField(_(u"Display select standard"), default=True)
+    display_position = models.BooleanField(_(u"Display position"), default=True)
 
-    subtypes = models.ManyToManyField("self", symmetrical=False, blank=True, null=True)
-    templates = models.ManyToManyField("Template", related_name="content_type_registrations")
-    default_template = models.ForeignKey("Template", blank=True, null=True)
+    global_addable = models.BooleanField(_(u"Global addable"), default=True)
 
+    subtypes = models.ManyToManyField("self", verbose_name=_(u"Allowed sub types"), symmetrical=False, blank=True, null=True)
+    templates = models.ManyToManyField("Template", verbose_name=_(u"Templates"), related_name="content_type_registrations")
+    default_template = models.ForeignKey("Template", verbose_name=_(u"Default template"), blank=True, null=True)
 
     class Meta:
         ordering = ("name", )
@@ -127,7 +127,7 @@ class BaseContent(models.Model):
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
 
     title = models.CharField(_(u"Title"), max_length=100)
-    display_title = models.BooleanField(default=True)
+    display_title = models.BooleanField(_(u"Display title"), default=True)
 
     slug = models.SlugField(_(u"Slug"))
 
@@ -301,6 +301,27 @@ class BaseContent(models.Model):
         """Returns True if the page is a translation.
         """
         return not self.is_canonical()
+
+    def has_language(self, language):
+        """Returns true if self has an object for given language.
+        """
+        if self.language == "0":
+            return True
+
+        if self.language == language:
+            return True
+        
+        if self.is_translation():
+            if self.canonical and self.canonical.language == language:
+                return True
+            if self.canonical and self.canonical.get_translation(language):
+                return True
+
+        if self.is_canonical():
+            if self.get_translation(language):
+                return True
+
+        return False
 
     def get_translation(self, language):
         """Returns translation for given language.
