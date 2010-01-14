@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 16:12+0100\n"
+"POT-Creation-Date: 2010-01-13 17:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,38 @@ msgstr "Spalten Unterseiten"
 msgid "Images columns"
 msgstr "Spalten Bilder"
 
+#: models.py:61 templates/lfc/manage/portlets_inline.html:39
+msgid "Type"
+msgstr "Typ"
+
+#: models.py:62 templates/lfc/manage/object_comments.html:38
+msgid "Name"
+msgstr "Name"
+
+#: models.py:63
+msgid "Display select standard"
+msgstr "Standard auswählen anzeigen"
+
+#: models.py:64
+msgid "Display position"
+msgstr "Position anzeigen"
+
+#: models.py:66
+msgid "Global addable"
+msgstr "Global hinzufügbar"
+
+#: models.py:68
+msgid "Allowed sub types"
+msgstr "Erlaubte Inhaltstypen"
+
+#: models.py:69
+msgid "Templates"
+msgstr "Schablonen"
+
+#: models.py:70
+msgid "Default template"
+msgstr "Standardschablone"
+
 #: models.py:82 models.py:129 templates/lfc/manage/object_files.html:15
 #: templates/lfc/manage/object_images.html:18
 #: templates/lfc/manage/portal_images.html:18
@@ -30,7 +62,7 @@ msgstr "Spalten Bilder"
 msgid "Title"
 msgstr "Titel"
 
-#: models.py:83 templates/lfc/manage/object_add.html:32
+#: models.py:83
 msgid "Page"
 msgstr "Seite"
 
@@ -46,7 +78,7 @@ msgstr "Empfänger Benachrichtigungen"
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
-#: models.py:89 models.py:159 templates/lfc/manage/object.html:93
+#: models.py:89 models.py:159 templates/lfc/manage/object.html:92
 #: templates/lfc/manage/portal.html:40
 msgid "Images"
 msgstr "Bilder"
@@ -58,6 +90,10 @@ msgstr "Tags"
 #: models.py:127 models.py:379
 msgid "Content type"
 msgstr "Inhaltstyp"
+
+#: models.py:130
+msgid "Display title"
+msgstr "Titel anzeigen"
 
 #: models.py:132
 msgid "Slug"
@@ -267,7 +303,7 @@ msgstr "Inhalte"
 
 #: templates/lfc/manage/base.html:76
 msgid "Content Types"
-msgstr "Inhaltestypen"
+msgstr "Inhaltstypen"
 
 #: templates/lfc/manage/base.html:100
 msgid "Powered by"
@@ -291,7 +327,7 @@ msgstr "BSD-Lizenz"
 
 #: templates/lfc/manage/content_types.html:27
 msgid "Save content type"
-msgstr "Inhaltestyp gespeichert"
+msgstr "Inhaltstyp speichern"
 
 #: templates/lfc/manage/filebrowser_files.html:10
 #: templates/lfc/manage/filebrowser_files.html:26
@@ -329,12 +365,12 @@ msgstr "Lokale Bilder"
 msgid "Portal"
 msgstr "Portal"
 
-#: templates/lfc/manage/object.html:16 templates/lfc/manage/object.html:27
+#: templates/lfc/manage/object.html:16 templates/lfc/manage/object.html:26
 #: templates/lfc/manage/object_add.html:26 templates/lfc/manage/portal.html:16
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: templates/lfc/manage/object.html:32
+#: templates/lfc/manage/object.html:31
 #: templates/lfc/manage/object_files.html:42
 #: templates/lfc/manage/object_images.html:52
 #: templates/lfc/manage/portal_images.html:52
@@ -342,35 +378,35 @@ msgstr "Hinzufügen"
 msgid "Delete"
 msgstr "Löschen"
 
-#: templates/lfc/manage/object.html:58 templates/lfc/manage/object.html:68
+#: templates/lfc/manage/object.html:57 templates/lfc/manage/object.html:67
 msgid "Translate to"
 msgstr "Übersetzen zu"
 
-#: templates/lfc/manage/object.html:82 templates/lfc/manage/portal.html:31
+#: templates/lfc/manage/object.html:81 templates/lfc/manage/portal.html:31
 msgid "View"
 msgstr "Ansehen"
 
-#: templates/lfc/manage/object.html:90
+#: templates/lfc/manage/object.html:89 templates/lfc/manage/object_add.html:32
 msgid "Data"
 msgstr "Daten"
 
-#: templates/lfc/manage/object.html:91
+#: templates/lfc/manage/object.html:90
 msgid "Metadata"
 msgstr "Metadaten"
 
-#: templates/lfc/manage/object.html:92
+#: templates/lfc/manage/object.html:91
 msgid "SEO"
 msgstr "SEO"
 
-#: templates/lfc/manage/object.html:94
+#: templates/lfc/manage/object.html:93
 msgid "Files"
 msgstr "Dateien"
 
-#: templates/lfc/manage/object.html:95 templates/lfc/manage/portal.html:41
+#: templates/lfc/manage/object.html:94 templates/lfc/manage/portal.html:41
 msgid "Portlets"
 msgstr "Portlets"
 
-#: templates/lfc/manage/object.html:96
+#: templates/lfc/manage/object.html:95
 #: templates/lfc/manage/object_comments.html:21
 msgid "Comments"
 msgstr "Kommentare"
@@ -389,10 +425,6 @@ msgstr "Abbrechen"
 #: templates/lfc/manage/object_comments.html:35
 msgid "SNR"
 msgstr "LFD"
-
-#: templates/lfc/manage/object_comments.html:38
-msgid "Name"
-msgstr "Name"
 
 #: templates/lfc/manage/object_comments.html:41
 msgid "Public"
@@ -503,10 +535,6 @@ msgstr "Geblockte Eltern-Slots speichern"
 #: templates/lfc/manage/portlets_inline.html:27
 msgid "Slots"
 msgstr "Slots"
-
-#: templates/lfc/manage/portlets_inline.html:39
-msgid "Type"
-msgstr "Typ"
 
 #: templates/lfc/manage/portlets_inline.html:45
 msgid "Modify"
