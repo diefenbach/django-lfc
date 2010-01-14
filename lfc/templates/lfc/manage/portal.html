@@ -17,13 +17,13 @@
                     <ul>
                     {% for content_type in content_types %}
                         <li>
-                            <a href="{% url lfc_add_top_object %}?type={{content_type.type}}">Add {{content_type.name}}</a>
+                            <a href="{% url lfc_add_top_object %}?type={{content_type.type}}">{{ content_type.name }}</a>
                        </li>
                     {% endfor %}
                     </ul>
                 {% else %}
                     {% for content_type in content_types %}
-                        <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">Add {{ content_type.name }}</a>
+                        <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">{{ content_type.name }}</a>
                     {% endfor %}
                 {% endif %}
             </li>

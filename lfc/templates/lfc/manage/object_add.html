@@ -23,13 +23,13 @@
 {% block content %}
     
     <h2 class="manage-title">
-        {% trans "Add" %} {{ name }}
+        {% trans "Add" %}: {% trans name %}
     </h2>
 
     <div id="manage-tabs">
 
         <ul>
-            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Page' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Data' %}</a></li>
         </ul>
         
         <div id="data">

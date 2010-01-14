@@ -6,7 +6,7 @@
         <div>
             <a {% ifequal type.id ctr.id %}class="selected"{% endifequal %}
                href="{% url lfc_content_type type.id %}">
-            {{ type.name }}
+            {% trans type.name %}
         </div>
     {% endfor %}
 {% endblock %}
