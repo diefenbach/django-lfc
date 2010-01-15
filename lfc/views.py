@@ -68,9 +68,9 @@ def base_view(request, language=None, slug=None, obj=None):
 
     # Get sub objects (as LOL if requested)
     if obj_template.subpages_columns == 0:
-        sub_objects = obj.get_sub_objects()
+        sub_objects = obj.sub_objects.restricted(request)
     else:
-        sub_objects = lfc.utils.getLOL(obj.get_sub_objects(), obj_template.subpages_columns)
+        sub_objects = lfc.utils.getLOL(obj.sub_objects.restricted(request), obj_template.subpages_columns)
 
     # Get images (as LOL if requested)
     temp_images = list(obj.images.all())
@@ -124,16 +124,15 @@ def search_results(request, language, template_name="lfc/search_results.html"):
     language = translation.get_language()
 
     f = Q(exclude_from_search=False) & \
-        Q(active=True) & \
         (Q(language = language) | Q(language="0")) & \
         (Q(searchable_text__icontains=query))
 
     try:
-        obj = BaseContent.objects.get(slug="search-results")
+        obj = BaseContent.objects.restricted(request).get(slug="search-results")
     except BaseContent.DoesNotExist:
         obj = None
 
-    results = BaseContent.objects.filter(f)
+    results = BaseContent.objects.restricted(request).filter(f)
     return render_to_response(template_name, RequestContext(request, {
         "lfc_context" : obj,
         "query" : query,
@@ -155,7 +154,7 @@ def set_language(request, language, id=None):
 
     url = None
     if id:
-        obj = BaseContent.objects.get(pk=id)
+        obj = BaseContent.objects.restricted(request).get(pk=id)
 
         # If the language of the current object same as the requested language we
         # just stay on the object.
@@ -169,7 +168,7 @@ def set_language(request, language, id=None):
         # Coming from a canonical object, we try to get the translation for the
         # given language
         elif obj.is_canonical():
-            t = obj.get_translation(language)
+            t = obj.get_translation(request, language)
             if t:
                 url = t.get_absolute_url()
             else:
@@ -181,7 +180,7 @@ def set_language(request, language, id=None):
         # Coming from a translation, we try to get the canonical and display
         # the given language
         else:
-            canonical = obj.canonical
+            canonical = obj.get_canonical(request)
             if canonical:
                 url = canonical.get_absolute_url()
             else:
@@ -217,7 +216,7 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
         raise Http404(_('No Tag found matching "%s".') % tag)
 
     obj = request.META.get("lfc_context")
-    queryset = BaseContent.objects.filter(parent=obj)
+    queryset = BaseContent.objects.restricted(request).filter(parent=obj)
     objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
 
     return render_to_response(template_name, RequestContext(request, {

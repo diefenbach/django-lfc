@@ -34,7 +34,6 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),
     
     url(r'^dashboard$', "dashboard", name="lfc_manage_dashboard"),
-    url(r'^portal$', "portal", name="lfc_manage_portal"),
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
     
     url(r'^add-portlet/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "add_portlet", name="lfc_add_portlet"),
@@ -44,8 +43,9 @@ urlpatterns = patterns('lfc.manage.views',
     
     url(r'^save-translation', "save_translation", name="lfc_save_translation"),
     url(r'^(?P<id>\d+)/translate/(?P<language>\w{2})', "translate_object", name="lfc_translate_object"),
-
-    url(r'^$', "manage_objects", name="lfc_manage_objects"),
-    url(r'^pages/?$', "manage_objects", name="lfc_manage_objects"),
+    
+    url(r'^set-navigation-tree-language/(?P<language>\w{2})', "set_navigation_tree_language", name="lfc_set_navigation_tree_language"),
+    
+    url(r'^$', "portal", name="lfc_manage_portal"),
     url(r'^(?P<id>\d+)$', "manage_object", name="lfc_manage_object"),
 )

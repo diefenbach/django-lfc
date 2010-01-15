@@ -3,9 +3,9 @@ import datetime
 import urllib
 
 # django settings
+from django.conf import settings
 from django.http import Http404
 from django.http import HttpResponseRedirect
-from django.conf import settings
 from django.shortcuts import _get_queryset
 from django.utils import simplejson
 from django.utils.functional import Promise
@@ -115,13 +115,13 @@ def traverse_object(request, slug):
     language = translation.get_language()
 
     try:
-        obj = lfc.models.BaseContent.objects.get(slug=paths[0], parent=None, language__in = ("0", language))
+        obj = lfc.models.BaseContent.objects.restricted(request).get(slug=paths[0], parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
         raise Http404
 
     for path in paths[1:]:
         try:
-            obj = obj.sub_objects.filter(slug=path)[0]
+            obj = obj.sub_objects.restricted(request).filter(slug=path)[0]
         except IndexError:
             raise Http404
 

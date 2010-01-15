@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_syncdb
@@ -243,13 +244,6 @@ class BaseContent(models.Model):
         ancestors.reverse()
         return ancestors
 
-    def get_sub_objects(self):
-        """Returns sub objects of an object.
-        """
-        return self.sub_objects.filter(
-            language__in = (translation.get_language(), "0"),
-        )
-
     def get_image(self):
         """Returns the first image of the page.
         """
@@ -297,12 +291,22 @@ class BaseContent(models.Model):
         """
         return self.language in (settings.LANGUAGE_CODE, "0")
 
+    def get_canonical(self, request):
+        """Returns the canonical object of this object. Takes care of the
+        current user's permission.
+        """
+        if self.is_canonical():
+            return self
+        else:
+            # Send it through the restricted manager
+            return self.canonical and BaseContent.objects.restricted(request).get(pk=self.canonical.id)
+
     def is_translation(self):
         """Returns True if the page is a translation.
         """
         return not self.is_canonical()
 
-    def has_language(self, language):
+    def has_language(self, request, language):
         """Returns true if self has an object for given language.
         """
         if self.language == "0":
@@ -310,26 +314,27 @@ class BaseContent(models.Model):
 
         if self.language == language:
             return True
-        
+
         if self.is_translation():
-            if self.canonical and self.canonical.language == language:
+            canonical = self.get_canonical(request)
+            if canonical and canonical.language == language:
                 return True
-            if self.canonical and self.canonical.get_translation(language):
+            if canonical and canonical.get_translation(request, language):
                 return True
 
         if self.is_canonical():
-            if self.get_translation(language):
+            if self.get_translation(request, language):
                 return True
 
         return False
 
-    def get_translation(self, language):
+    def get_translation(self, request, language):
         """Returns translation for given language.
         """
         if self.is_canonical() == False:
             return None
         try:
-            return self.translations.get(language=language, active=True)
+            return self.translations.restricted(request).get(language=language)
         except BaseContent.DoesNotExist:
             return None
 

@@ -448,11 +448,17 @@ def add_object(request, language=None, id=None):
         form = form(data=request.POST, initial={"creator" : request.user})
         if request.POST.get("save"):
             if form.is_valid():
+                # figure out language for new object
+                if parent_object:
+                    language = parent_object.language
+                else:
+                    language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
+
                 new_object = form.save()
                 new_object.parent = parent_object
                 new_object.content_type = type
                 new_object.creator = request.user
-                new_object.language = settings.LANGUAGE_CODE
+                new_object.language = language
                 new_object.save()
 
                 _update_positions(new_object)
@@ -486,7 +492,7 @@ def delete_object(request, id):
     except BaseContent.DoesNotExist:
         pass
     else:
-        # First remove the object from the parent's standard in order not to
+        # Remove the object from the parent's standard in order not to
         # delete the parent
         parent = obj.parent
 
@@ -497,26 +503,21 @@ def delete_object(request, id):
             parent.standard = None
             parent.save()
 
+        # Remove the object from translations in order not to delete the
+        # translations
+        if obj.is_canonical():
+            for t in obj.translations.all():
+                t.canonical = None
+                t.save()
+
         obj.delete()
 
     if parent:
         url = reverse("lfc_manage_object", kwargs={"id": parent.id})
     else:
-        url = reverse("lfc_manage_objects")
+        url = reverse("lfc_manage_portal")
 
     return set_message_cookie(url, msg = _(u"Page has been deleted."))
-
-@login_required
-def manage_objects(request):
-    """
-    """
-    try:
-        obj = BaseContent.objects.filter(parent=None)[0]
-    except IndexError:
-        url = reverse("lfc_add_object", kwargs={"id" : None})
-    else:
-        url = reverse("lfc_manage_object", kwargs={"id" : obj.id})
-    return HttpResponseRedirect(url)
 
 @login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
@@ -525,7 +526,8 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     try:
         obj = lfc.utils.get_content_object(pk=id)
     except BaseContent.DoesNotExist:
-        return manage_objects(request)
+        url = reverse("lfc_manage_portal")
+        return HttpResponseRedirect(url)
 
     objs = BaseContent.objects.filter(parent=None)
 
@@ -564,6 +566,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "files" : files(request, id),
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
+        "content_type_name" : get_info_for(obj).name,        
     }))
 
 @login_required
@@ -915,28 +918,29 @@ def update_images(request, id=None):
     return HttpResponse(result)
 
 # Navigation #################################################################
+def set_navigation_tree_language(request, language):
+    """Sets the language for the navigation tree.
+    """
+    request.session["nav-tree-lang"] = language
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
 @login_required
 def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation.html"):
     """Displays the content object structure (navigatin tree).
     """
-    language = translation.get_language()
+    translation.activate(settings.LANGUAGE_CODE)
+
+    nav_tree_lang = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
 
     if obj is None:
         current_objs = []
     else:
-        if obj.is_translation() and obj.canonical:
-            obj = obj.canonical.get_content_object()
-
         current_objs = [obj]
         current_objs.extend(obj.get_ancestors())
 
-    # Display all objs which are neutral or in default language or
-    # which have no canonical obj
-    q = Q(parent = None) & \
-        (
-            Q(language__in = ("0", settings.LANGUAGE_CODE)) |
-            Q(canonical = None)
-        )
+    # Display all objs which are neutral or in default language
+    q = Q(parent = None) & Q(language__in = ("0", nav_tree_lang))
+
     temp = BaseContent.objects.filter(q)
 
     objs = []
@@ -950,25 +954,38 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
             children = ""
             is_current = False
 
+        translations = []
         objs.append({
             "id" : obj.id,
             "title" : obj.title,
             "is_current" : is_current,
             "children" : children,
-            "level" : 2
+            "level" : 2,
+            "translations" : obj.translations.all(),
+        })
+
+    languages = []
+    for language in settings.LANGUAGES:
+        if nav_tree_lang == language[0]:
+            current_language = language[1]
+        languages.append({
+            "code" : language[0],
+            "name" : language[1],
         })
 
     return render_to_string(template_name, RequestContext(request, {
         "objs" : objs,
         "show_level" : start_level==2,
         "level" : 2,
+        "languages" : languages,
+        "current_language": current_language,
     }))
 
 def _navigation_children(request, current_objs, obj, start_level, level=3):
     """Renders the children of the given obj (recursively)
     """
     obj = obj.get_content_object()
-    temp = obj.sub_objects.filter(language__in = ("0", settings.LANGUAGE_CODE))
+    temp = obj.sub_objects.all()
 
     objs = []
     for obj in temp:

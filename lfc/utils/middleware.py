@@ -6,7 +6,6 @@ from cStringIO import StringIO
 
 # django imports
 from django.conf import settings
-from django.core.cache import cache
 from django.http import Http404
 from django.http import HttpResponseServerError
 from django.shortcuts import get_object_or_404
@@ -73,19 +72,11 @@ class AJAXSimpleExceptionResponse:
                     response += "%s\n" % tb
                 return HttpResponseServerError(response)
 
-from threading import local
-_thread_locals = local()
-
-def get_current_user():
-    return getattr(_thread_locals, 'user', None)
-
 class LFCMiddleware:
     """Traverses the requested object, store this within request.META and sets
     the correct language.
     """
     def process_view(self, request, view_func, view_args, view_kwargs):
-        _thread_locals.user = getattr(request, 'user', None)
-
         language = view_kwargs.get("language")
         slug = view_kwargs.get("slug")
 
@@ -112,11 +103,11 @@ class LFCMiddleware:
                 obj = get_object_or_404(BaseContent, portal=portal)
                 if obj.language != language:
                     if obj.is_canonical():
-                        t = obj.get_translation(language)
+                        t = obj.get_translation(request, language)
                         if t:
                             obj = t
                     else:
-                        canonical = obj.get_canonical()
+                        canonical = obj.get_canonical(request)
                         if canonical:
                             obj = canonical
                 request.META["lfc_context"] = obj.get_content_object()

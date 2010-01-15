@@ -1,8 +1,8 @@
 function CustomFileBrowser(field_name, url, type, win) {
-    
+
     url = "/manage/filebrowser?obj_id=" + $("#obj-id").attr("data"),
     url = url + "&type=" + type;
-    
+
     tinyMCE.activeEditor.windowManager.open({
         file: url,
         width: 820,  // Your dimensions may differ - toy around with them!
@@ -146,7 +146,7 @@ $(function() {
         return false;
     });
 
-    $(".object-files-update-button").livequery("click", function() {    
+    $(".object-files-update-button").livequery("click", function() {
         var action = $(this).attr("name")
         $("#object-files-update-form").ajaxSubmit({
             data : {"action" : action},
@@ -175,8 +175,9 @@ $(function() {
     });
 
     // Portlets
-    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100 });
+    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100, expose: {color: '#eee', loadSpeed:100 } });
     $(".portlet-edit-button").livequery("click", function() {
+        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
         var url = $(this).attr("href");
         $.get(url, function(data) {
             $("#overlay .content").html(data);
@@ -187,6 +188,7 @@ $(function() {
     });
 
     $(".portlet-add-button").livequery("click", function() {
+        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
         $(this).parents("form:first").ajaxSubmit({
             success : function(data) {
                 $("#overlay .content").html(data);
@@ -207,6 +209,25 @@ $(function() {
             }
         })
         return false;
+    });
+    
+    // Delete dialog
+    var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, expose: {color: '#eee', loadSpeed:100 } });
+    $(".modalInput").livequery("click", function() {
+        $("#delete-url").html($(this).attr("href"));
+        delete_dialog.load();
+        return false;
+    });
+    
+    var buttons = $("#yesno button").click(function(e) {
+        delete_dialog.close();
+        var yes = buttons.index(this) === 0;
+        var url = $("#delete-url").html();
+        if (yes) {
+            window.location.href = url;
+        }
+        
+        
     });
 
 });

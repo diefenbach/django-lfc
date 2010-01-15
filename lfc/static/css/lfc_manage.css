@@ -294,24 +294,40 @@ label {
 }
 
 div.overlay {
-    background-image:url(../img/gray.gif);
-    width:800px;
-    height:800px;
-    display:none;
-    padding:55px;
+    background-color:#eee;
+    display:none; 
+    padding:15px 50px 15px 15px; 
+    text-align:left; 
+    border:2px solid #333; 
+    z-index:1000; 
 }
+
 
 div.overlay div.close {
     background-image:url(../img/close.png);
     position:absolute;
     right:5px;
-    top:5px;
+    top:0px;
     cursor:pointer;
     height:35px;
     width:35px;
 }
 
+div.modal { 
+    background-color:#eee; 
+    display:none; 
+    padding:15px; 
+    text-align:left; 
+    border:2px solid #333; 
+    z-index:1000; 
+} 
+
 .translate-form .errorlist,
 .translate-form .errorlist li {
     display: inline;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px;
 }

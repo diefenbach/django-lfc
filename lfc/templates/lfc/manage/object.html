@@ -28,7 +28,7 @@
             {% endif %}
             </li>
             <li>
-                <a href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                <a class="modalInput" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
             </li>
             {% if LFC_MULTILANGUAGE %}
             <li>
@@ -86,7 +86,7 @@
     <div style="clear:both" id="manage-tabs">
 
         <ul>
-            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Data' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#data">{% trans content_type_name %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#meta_data">{% trans 'Metadata' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#seo">{% trans 'SEO' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>

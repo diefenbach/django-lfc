@@ -20,7 +20,7 @@
         <script type="text/javascript" src="{% admin_media_prefix %}js/urlify.js"></script>
 
         <script type="text/javascript" src="{{MEDIA_URL}}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.pack.js"></script>
+        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.tools.min.js"></script>
         <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.livequery.pack.js"></script>
         <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.form.pack.js"></script>
@@ -70,7 +70,7 @@
                         <ul class="sf-menu"
                             width="100%">
                             <li>
-                                <a href="{% url lfc_manage_objects %}">{% trans 'Content' %}</a>
+                                <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
                             <li>
                                 <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
@@ -110,6 +110,17 @@
             <div class="content"></div>
         </div>
 
+        <div class="modal" id="yesno"> 
+            <p> 
+                {% trans "Do you really want to delete this object?" %}
+            </p> 
+
+            <button> Yes </button> 
+            <button> No </button> 
+            
+            <div style="display:none" id="delete-url">url</div>
+        </div> 
+        
         <span id="obj-id"
               data="{{ obj.id }}" />
 

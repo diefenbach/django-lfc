@@ -7,7 +7,7 @@ from tagging.managers import ModelTaggedItemManager
 
 # lfc imports
 import lfc.utils
-from lfc.models import Page
+from lfc.models import BaseContent
 
 class PageTagFeed(Feed):
     """Provides a feed for a given page and a given tag passed by the bits of an
@@ -21,7 +21,7 @@ class PageTagFeed(Feed):
             self.tag = bits[1]
         else:
             self.tag = None
-        return Page.objects.get(slug__exact=bits[0])
+        return BaseContent.objects.get(slug__exact=bits[0])
 
     def title(self, obj):
         portal = lfc.utils.get_portal()
@@ -34,8 +34,8 @@ class PageTagFeed(Feed):
     #     return obj.description
 
     def items(self, obj):
-        pages = obj.sub_objects.filter(active=True)
+        objs = obj.sub_objects.filter(active=True)
         if self.tag:
-            pages = ModelTaggedItemManager().with_all(self.tag, pages)
+            objs = ModelTaggedItemManager().with_all(self.tag, objs)
 
-        return pages
+        return objs

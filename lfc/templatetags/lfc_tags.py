@@ -33,10 +33,13 @@ class LanguagesNode(Node):
     """
     def render(self, context):
         lfc_context = context.get("lfc_context")
+        request = context.get("request")
 
         languages = []
         for language in settings.LANGUAGES:
-            if lfc_context.has_language(language[0]):
+            if lfc_context is None:
+                is_available = True
+            elif lfc_context.has_language(request, language[0]):
                 is_available = True
             else:
                 is_available = False
@@ -97,7 +100,7 @@ def tabs(context, page=None):
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
 
-    temp = BaseContent.objects.filter(
+    temp = BaseContent.objects.restricted(request).filter(
         language__in=(language, "0"),
         parent = None,
         exclude_from_navigation=False,
@@ -124,7 +127,7 @@ def tabs(context, page=None):
 def scrollable(context, tags=None, title=False, text=True, limit=5):
     """Displays objects with given tabs as scrollable
     """
-    items = BaseContent.objects.all()
+    items = BaseContent.objects.restricted(request)
 
     if tags:
         items = ModelTaggedItemManager().with_all(tags, items)
@@ -176,7 +179,7 @@ def navigation(context, start_level=1, expand_level=0):
 
     language = translation.get_language()
 
-    temp = BaseContent.objects.filter(
+    temp = BaseContent.objects.restricted(request).filter(
         parent = None,
         language__in = (language, "0"),
         exclude_from_navigation=False)
@@ -187,7 +190,7 @@ def navigation(context, start_level=1, expand_level=0):
         standard = lfc.utils.get_portal().standard
         if standard:
             if language != standard.language:
-                standard = standard.get_translation(language)
+                standard = standard.get_translation(request, language)
             if standard:
                 current_objs.append(standard.get_content_object())
     else:
@@ -226,7 +229,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     """Renders the children of given object as sub navigation tree.
     """
     obj = obj.get_content_object()
-    temp = obj.sub_objects.filter(
+    temp = obj.sub_objects.restricted(request).filter(
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
     )
@@ -306,7 +309,7 @@ def objects_by_slug(context, slug):
     except Http404:
         return { "objs" : [] }
 
-    objs = obj.sub_objects.filter(active=True)
+    objs = obj.sub_objects.restricted(request)
 
     return { "objs" : objs }
 
@@ -329,11 +332,12 @@ def previous_next_by_date(obj):
         "next" : next,
     }
 
-@register.inclusion_tag('lfc/tags/previous_next.html')
-def previous_next_by_position(obj):
+@register.inclusion_tag('lfc/tags/previous_next.html', takes_context=True)
+def previous_next_by_position(context, obj):
     """Displays previous/links by position for the given object.
     """
-    siblings = [o.get_content_object() for o in obj.parent.get_sub_objects()]
+    request = context.get("request")
+    siblings = [o.get_content_object() for o in obj.parent.sub_objects.restricted(request)]
     current_position = siblings.index(obj)
     next_position = current_position + 1
     previous_position = current_position - 1

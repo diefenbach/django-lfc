@@ -1,8 +1,22 @@
 {% load i18n %}
 {% load lfc_tags %}
 
-<div class="navigation-manage">
-    <ul class="level-1">
+    <ul class="sf-menu">
+        <li>
+            <a>{% trans current_language %}</a>
+            <ul>
+                {% for language in languages %}    
+                    <li>
+                        <a href="{% url lfc_set_navigation_tree_language language.code %}">{% trans language.name %}</a>
+                    </li>
+                {% endfor %}                
+            </ul>
+        </li>
+    </ul>
+
+
+<div class="navigation-manage">    
+    <ul style="clear:both" class="level-1">
         <li>
             <a href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
             <ul class="level-{{ level }}">
@@ -11,7 +25,7 @@
                         <span>
                             <a href="{% url lfc_manage_object obj.id %}">
                                 {{ obj.title }}
-                            </a>
+                            </a>                            
                         </span>
                     </li>
                     {{ obj.children }}
