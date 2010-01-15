@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-13 17:42+0100\n"
+"POT-Creation-Date: 2010-01-15 08:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -87,7 +87,7 @@ msgstr "Bilder"
 msgid "Tags"
 msgstr "Tags"
 
-#: models.py:127 models.py:379
+#: models.py:127 models.py:404
 msgid "Content type"
 msgstr "Inhaltstyp"
 
@@ -171,17 +171,33 @@ msgstr "Meta Description"
 msgid "Commentable"
 msgstr "Kommentare erlauben"
 
-#: models.py:336 models.py:555
+#: models.py:361 models.py:580
 msgid "Text"
 msgstr "Text"
 
-#: models.py:380
+#: models.py:405
 msgid "Content id"
 msgstr "ID"
 
-#: models.py:387
+#: models.py:412
 msgid "Image"
 msgstr "Bild"
+
+#: models.py:614
+msgid "Plain"
+msgstr "Einfach"
+
+#: models.py:615
+msgid "Article"
+msgstr "Artikel"
+
+#: models.py:616
+msgid "Gallery"
+msgstr "Gallerie"
+
+#: models.py:617
+msgid "Overview"
+msgstr "Übersicht"
 
 #: settings.py:8
 msgid "Default"
@@ -199,11 +215,11 @@ msgstr "Nein"
 msgid "Neutral"
 msgstr "Neutral"
 
-#: views.py:213
+#: views.py:212
 msgid "tagged_object_list must be called with a tag."
 msgstr ""
 
-#: views.py:217
+#: views.py:216
 #, python-format
 msgid "No Tag found matching \"%s\"."
 msgstr ""
@@ -212,7 +228,7 @@ msgstr ""
 msgid "Portal data has been saved."
 msgstr "Portletdaten wurden gespeichert."
 
-#: manage/views.py:119 manage/views.py:836
+#: manage/views.py:119 manage/views.py:839
 msgid "Images has been added."
 msgstr "Bilder wurden hinzugefügt."
 
@@ -232,63 +248,63 @@ msgstr "Portlet wurde gelöscht"
 msgid "Portlet has been saved."
 msgstr "Portlet wurde gespeichert"
 
-#: manage/views.py:460
+#: manage/views.py:466
 msgid "Page has been added."
 msgstr "Seite wurde hinzugefügt."
 
-#: manage/views.py:507
+#: manage/views.py:520
 msgid "Page has been deleted."
 msgstr "Seite wurde gelöscht."
 
-#: manage/views.py:595
+#: manage/views.py:598
 msgid "Data has been saved."
 msgstr "Daten wurden gespeichert."
 
-#: manage/views.py:633
+#: manage/views.py:636
 msgid "Meta data has been saved."
 msgstr "Metadaten wurden gespeichert."
 
-#: manage/views.py:670
+#: manage/views.py:673
 msgid "SEO has been saved."
 msgstr "SEO Daten wurden gespeichert."
 
-#: manage/views.py:705
+#: manage/views.py:708
 msgid "Allow comments state has been saved."
 msgstr "Kommentarstatus wurden gespeichert."
 
-#: manage/views.py:707
+#: manage/views.py:710
 msgid "Comments has been deleted."
 msgstr "Kommentare wurden gelöscht."
 
-#: manage/views.py:717
+#: manage/views.py:720
 msgid "Comments has been updated."
 msgstr "Kommentare wurden aktualisiert."
 
-#: manage/views.py:775
+#: manage/views.py:778
 msgid "Files has been deleted."
 msgstr "Dateien wurden gelöscht."
 
-#: manage/views.py:785
+#: manage/views.py:788
 msgid "Files has been updated."
 msgstr "Dateien wurden aktualisiert."
 
-#: manage/views.py:868
+#: manage/views.py:871
 msgid "Images has been deleted."
 msgstr "Bilder wurden gelöscht."
 
-#: manage/views.py:878
+#: manage/views.py:881
 msgid "Images has been updated."
 msgstr "Bilder wurden aktualisiert."
 
-#: manage/views.py:1045
+#: manage/views.py:1060
 msgid "Translation has been canceled."
 msgstr "Übersetzung wurden abgebrochen."
 
-#: manage/views.py:1055
+#: manage/views.py:1070
 msgid "Translation has been updated."
 msgstr "Übersetzung wurde aktualisiert."
 
-#: manage/views.py:1059
+#: manage/views.py:1074
 msgid "Translation has been added."
 msgstr "Übersetzung wurde hinzugefügt."
 
@@ -324,6 +340,10 @@ msgstr "Veröffentlicht unter der"
 #: templates/lfc/manage/base.html:105
 msgid "BSD-License"
 msgstr "BSD-Lizenz"
+
+#: templates/lfc/manage/base.html:115
+msgid "Do you really want to delete this object?"
+msgstr ""
 
 #: templates/lfc/manage/content_types.html:27
 msgid "Save content type"
@@ -361,7 +381,7 @@ msgstr "Globale Bilder"
 msgid "Local images"
 msgstr "Lokale Bilder"
 
-#: templates/lfc/manage/navigation.html:7 templates/lfc/manage/portal.html:39
+#: templates/lfc/manage/navigation.html:21 templates/lfc/manage/portal.html:39
 msgid "Portal"
 msgstr "Portal"
 
@@ -386,10 +406,6 @@ msgstr "Übersetzen zu"
 msgid "View"
 msgstr "Ansehen"
 
-#: templates/lfc/manage/object.html:89 templates/lfc/manage/object_add.html:32
-msgid "Data"
-msgstr "Daten"
-
 #: templates/lfc/manage/object.html:90
 msgid "Metadata"
 msgstr "Metadaten"
@@ -410,6 +426,10 @@ msgstr "Portlets"
 #: templates/lfc/manage/object_comments.html:21
 msgid "Comments"
 msgstr "Kommentare"
+
+#: templates/lfc/manage/object_add.html:32
+msgid "Data"
+msgstr "Daten"
 
 #: templates/lfc/manage/object_add.html:44
 #: templates/lfc/manage/object_comments.html:15
@@ -552,7 +572,7 @@ msgstr "Es sind keine Portlets zugewiesen"
 msgid "Add portlet"
 msgstr "Portlets hinzufügen"
 
-#: templatetags/lfc_tags.py:48
+#: templatetags/lfc_tags.py:62 templatetags/lfc_tags.py:87
 #, python-format
 msgid "%s tag needs no argument"
 msgstr ""
