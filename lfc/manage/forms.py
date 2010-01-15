@@ -1,6 +1,7 @@
 # django imports
 from django import forms
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
 from tagging.forms import TagField
@@ -62,7 +63,7 @@ class MetaDataForm(forms.ModelForm):
         if len(ctr.templates.all()) < 2:
             del self.fields["template"]
         else:
-            self.fields["template"].choices = [(template.id, template.name) for template in ctr.templates.all()]
+            self.fields["template"].choices = [(template.id, _(template.name)) for template in ctr.templates.all()]
 
         # Canonical - display only pages with default language
         if settings.LFC_MULTILANGUAGE:
