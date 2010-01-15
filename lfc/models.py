@@ -41,11 +41,10 @@ from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
 from lfc.settings import LANGUAGE_CHOICES
 
-
 class Template(models.Model):
     """A template displays the content of an object.
     """
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, unique=True)
     file_name = models.CharField(max_length=100)
     subpages_columns = models.IntegerField(verbose_name=_(u"Subpages columns"), default=1)
     images_columns = models.IntegerField(verbose_name=_(u"Images columns"), default=1)
@@ -602,14 +601,29 @@ class TextPortletForm(forms.ModelForm):
     class Meta:
         model = TextPortlet
 
-def register_portlets(sender, **kwargs):
-    # don't register our portlets until the table has been created by syncdb
-    if sender == portlets.models:
-        register_portlet(NavigationPortlet, "Navigation")
-        register_portlet(PagesPortlet, "Pages")
-        register_portlet(RandomPortlet, "Random")
-        register_portlet(TextPortlet, "Text")
-post_syncdb.connect(register_portlets)
+def register(sender, **kwargs):
 
-from lfc.utils.registration import register_content_type
-register_content_type(Page, name="Page", sub_types=["Page"], templates=["Article", "Plain", "Gallery", "Overview"], default_template="Article")
+    # Portlets
+    register_portlet(NavigationPortlet, "Navigation")
+    register_portlet(PagesPortlet, "Pages")
+    register_portlet(RandomPortlet, "Random")
+    register_portlet(TextPortlet, "Text")
+
+    # Register Templates
+    from lfc.utils.registration import register_template
+    register_template(name = _(u"Plain"), file_name="plain.html")
+    register_template(name = _(u"Article"), file_name="article.html")
+    register_template(name = _(u"Gallery"), file_name="gallery.html")
+    register_template(name = _(u"Overview"), file_name="overview.html")
+
+    # Content Types
+    from lfc.utils.registration import register_content_type
+    register_content_type(
+        Page,
+        name="Page",
+        sub_types=["Page"],
+        templates=["Article", "Plain", "Gallery", "Overview"],
+        default_template="Article")
+
+post_syncdb.connect(register)
+
