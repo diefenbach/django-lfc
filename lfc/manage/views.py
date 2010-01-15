@@ -109,6 +109,7 @@ def portal_images(request, as_string=False, template_name="lfc/manage/portal_ima
 
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
+        "images" : obj.images.all(),
     }))
 
     if as_string:
@@ -195,7 +196,7 @@ def filebrowser(request):
         else:
             files = []
         base_contents = []
-        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", translation.get_language())):
+        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", obj.language)):
             base_contents.append({
                 "title" : base_content.title,
                 "url" : base_content.get_absolute_url(),
@@ -566,7 +567,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "files" : files(request, id),
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
-        "content_type_name" : get_info_for(obj).name,        
+        "content_type_name" : get_info_for(obj).name,
     }))
 
 @login_required
@@ -825,7 +826,7 @@ def update_files(request, id):
 def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
     """
     """
-    obj = BaseContent.objects.get(pk=id)
+    obj = BaseContent.objects.get(pk=id).get_content_object()
 
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
@@ -845,6 +846,8 @@ def add_images(request, id):
     """Adds images to the object with the given id.
     """
     obj = get_object_or_404(BaseContent, pk=id)
+    obj = obj.get_content_object()
+
     if request.method == "POST":
         for file_content in request.FILES.values():
             image = Image(content=obj, title=file_content.name)
@@ -865,7 +868,7 @@ def update_images(request, id=None):
         obj = get_portal()
     else:
         obj = get_object_or_404(BaseContent, id=id)
-
+        obj = obj.get_content_object()
     action = request.POST.get("action")
     if action == "delete":
         message = _(u"Images has been deleted.")

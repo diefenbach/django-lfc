@@ -401,7 +401,7 @@ class Image(models.Model):
     title = models.CharField(blank=True, max_length=100)
     slug = models.SlugField()
 
-    content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="image", blank=True, null=True)
+    content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="images", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
 
