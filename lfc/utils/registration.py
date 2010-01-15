@@ -5,6 +5,7 @@ from lfc.models import BaseContent
 
 # django imports
 from django.contrib.contenttypes.models import ContentType
+from django.db import IntegrityError
 
 def get_info_for(obj_or_type):
     """Returns the content type registration for given object.
@@ -80,6 +81,19 @@ def register_content_type(obj, name, sub_types=[], templates=[], default_templat
                         ctr.default_template = template
                         ctr.save()
 
+def register_template(name, file_name, subpages_columns=0, images_columns=0):
+    """Registers a template.
+    """
+    try:
+        name = name._proxy____str_cast()
+    except AttributeError:
+        pass
+    try:
+        Template.objects.create(name = name, file_name=file_name, 
+            subpages_columns=subpages_columns, images_columns=images_columns)
+    except IntegrityError:
+        pass
+    
 def get_registered_content_types():
     """Returns all registered content types types as list of dicts.
     """
