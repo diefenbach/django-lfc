@@ -1,57 +1,78 @@
+{% extends "lfc/manage/filebrowser_base.html" %}
 {% load i18n %}
+{% load pagination_tags %}
 
-<script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce_popup.js"></script>
-<script language="javascript" type="text/javascript" src="{{ MEDIA_URL }}lfc/js/fb_tinymce.js"></script>
-
-<h1>{% trans "Global images" %}</h1>
-<table>
-    {% for image in portal_images %}
+{% block content %}
+    <h1>{% trans "Global images" %}</h1>
+    <table class="lfs-manage-table" width="100%">
         <tr>
-            <td valign="top">
-                <img src="{{ image.image.url_60x60 }}" />
-            </td>
-            <td valign="top">
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_60x60 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
-                    60 x 60
-                </a>
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_200x200 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
-                    200 x 200
-                </a>
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_400x400 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
-                    400 x 400
-                </a>
-            </td>
+            <th width="70px">
+                {% trans "Image" %}
+            </th>
+            <th>
+                {% trans "Sizes" %}
+            </th>
         </tr>
-    {% endfor %}
-</table>
 
-<h1>{% trans "Local images" %}</h1>
-<table>
-    {% for image in images %}
-        <tr>
-            <td valign="top">
-                <img src="{{ image.image.url_60x60 }}" />
-            </td>
-            <td valign="top">
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_60x60 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
-                    60 x 60
-                </a>
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_200x200 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
-                    200 x 200
-                </a>
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_400x400 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
-                    400 x 400
-                </a>
-            </td>
-        </tr>
-    {% endfor %}
-</table>
+        {% for image in portal_images %}
+            <tr>
+                <td valign="top">
+                    <img src="{{ image.image.url_60x60 }}" />
+                </td>
+                <td valign="top">
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_60x60 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        60 x 60
+                    </a>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_200x200 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        / 200 x 200
+                    </a>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_400x400 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        / 400 x 400
+                    </a>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_600x600 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        / 600 x 600
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 
-<h1>Upload images</h1>
-<form action="{% url lfc_fb_upload_image %}"
-      method="post"
-      enctype="multipart/form-data">
-    <input type="hidden" name="obj_id" value="{{ obj_id }}">
-    <input type="file" name="image" />
-    <input type="submit" />
-</form>
+    <h1 class="middle">{% trans "Local images" %}</h1>
+    <table>
+
+        {% autopaginate images %}
+
+        {% for image in images %}
+            <tr>
+                <td valign="top">
+                    <img src="{{ image.image.url_60x60 }}" />
+                </td>
+                <td valign="top">
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_60x60 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        60 x 60
+                    </a>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_200x200 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        / 200 x 200
+                    </a>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_400x400 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        / 400 x 400
+                    </a>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ image.image.url_600x600 }}');" class="fb_selectlink" title="{% trans 'Select File' %}">
+                        / 600 x 600
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            {% trans "There are no local images yet" %}
+        {% endfor %}
+    </table>
+
+    <h1 class="middle">{% trans "Upload local images" %}</h1>
+    <form action="{% url lfc_fb_upload_image %}"
+          method="post"
+          enctype="multipart/form-data">
+        <input type="hidden" name="obj_id" value="{{ obj_id }}">
+        <input type="file" name="image" />
+        <input type="submit" />
+    </form>
+{% endblock %}

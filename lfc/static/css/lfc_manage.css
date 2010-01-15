@@ -331,3 +331,14 @@ button {
     margin-top: 10px;
     padding: 10px;
 }
+
+body.filebrowser {
+    padding: 10px 20px;
+}
+
+.filebrowser ul {
+    padding-left: 10px;    
+}
+.filebrowser li {
+    list-style: square inside;
+}

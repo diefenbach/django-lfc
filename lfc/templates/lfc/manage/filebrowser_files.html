@@ -1,46 +1,46 @@
+{% extends "lfc/manage/filebrowser_base.html" %}
 {% load i18n %}
 
-<script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce_popup.js"></script>
-<script language="javascript" type="text/javascript" src="{{ MEDIA_URL }}lfc/js/fb_tinymce.js"></script>
+{% block content %}
+    <h1 class="middle">{% trans "Content" %}</h1>
+    <ul>
+        {% for obj in objs %}
+            <li>
+                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ obj.url }}');" title="{% trans 'Select content' %}">
+                    {{ obj.title }}
+                </a>
+            </li>
+            {{ obj.children|safe }}
 
-<h1>{% trans "Content" %}</h1>
-<ul>
-    {% for obj in objs %}
-        <li>
-            <a href="javascript:FileBrowserDialogue.fileSubmit('{{ obj.url }}');" title="{% trans 'Select File' %}">
-                {{ obj.title }}
-            </a>
-        </li>
-        {{ obj.children|safe }}
+        {% endfor %}
+    </ul>
 
-    {% endfor %}
-</ul>
+    {% if obj_id %}
+        <h1 class="middle">{% trans "Existing files" %}</h1>
 
-{% if obj_id %}
-    <h1>{% trans "Existing files" %}</h1>
+        {% if files %}
+            <ul>
+                {% for file in files %}
+                    <li>
+                        <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
+                            {{ file.title }}"
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                {% trans "There are no files yet." %}
+            </p>
+        {% endif %}
 
-    {% if files %}
-        <ul>
-            {% for file in files %}
-                <li>
-                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
-                        {{ file.title }}"
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>
-            {% trans "There are no files yet." %}
-        </p>
+        <h1 class="middle">{% trans "Upload files" %}</h1>
+        <form action="{% url lfc_fb_upload_file %}"
+              method="post"
+              enctype="multipart/form-data">
+            <input type="hidden" name="obj_id" value="{{ obj_id }}">
+            <input type="file" name="file" />
+            <input type="submit" />
+        </form>
     {% endif %}
-
-    <h1>{% trans "Upload files" %}</h1>
-    <form action="{% url lfc_fb_upload_file %}"
-          method="post"
-          enctype="multipart/form-data">
-        <input type="hidden" name="obj_id" value="{{ obj_id }}">
-        <input type="file" name="file" />
-        <input type="submit" />
-    </form>    
-{% endif %}
+{% endblock %}
