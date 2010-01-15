@@ -928,8 +928,6 @@ def set_navigation_tree_language(request, language):
 def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation.html"):
     """Displays the content object structure (navigatin tree).
     """
-    translation.activate(settings.LANGUAGE_CODE)
-
     nav_tree_lang = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
 
     if obj is None:
