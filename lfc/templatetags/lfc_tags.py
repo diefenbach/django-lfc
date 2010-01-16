@@ -23,10 +23,42 @@ import feedparser
 
 # lfc imports
 import lfc.utils
+from lfc.utils import registration
 from lfc.models import BaseContent
 from lfc.models import Page
 
 register = template.Library()
+
+@register.inclusion_tag('lfc/manage/templates.html', takes_context=True)
+def templates(context):
+    """
+    """
+    lfc_context = context.get("lfc_context")
+    request = context.get("request")
+
+    if lfc_context is None:
+        return {
+            "display" : False,
+        }
+
+    templates =  registration.get_registered_templates(lfc_context)
+    if templates and len(templates) > 1:
+        display = True
+        template = lfc_context.template or registration.get_default_template(lfc_context)
+        if template:
+            template_id = template.id
+        else:
+            template_id = None
+    else:
+        template_id = None
+        display = False
+
+    return {
+        "display" : display,
+        "templates" : templates,
+        "obj_id" : lfc_context.id,
+        "current_template" : template_id
+    }
 
 class LanguagesNode(Node):
     """

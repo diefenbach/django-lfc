@@ -274,7 +274,7 @@ class BaseContent(models.Model):
         if self.template is not None:
             return self.template
         else:
-            template = lfc.utils.registration.get_default_template_for(self)
+            template = lfc.utils.registration.get_default_template(self)
             if template is not None:
                 return template
             else:

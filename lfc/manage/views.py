@@ -1132,6 +1132,19 @@ def save_translation(request):
     else:
         return translate_object(request, translation_language, canonical.id, form_translation, form_canonical)
 
+# Template
+def set_template(request):
+    """Sets the template of the current object
+    """
+    obj_id = request.POST.get("obj_id")
+    template_id = request.POST.get("template_id")
+    
+    obj = BaseContent.objects.get(pk=obj_id)
+    obj.template_id = template_id
+    obj.save()
+
+    return HttpResponseRedirect(obj.get_absolute_url())
+
 def _update_positions(obj):
     """Updates position of top objs or given obj.
     """

@@ -1,0 +1,18 @@
+{% load i18n %}
+{% if display %}
+    <form action="{% url lfc_set_template %}"
+          method="post">
+        <select name="template_id">
+            {% for template in templates %}
+                <option {% ifequal template.id current_template  %}selected="selected"{% endifequal %}value="{{ template.id }}">
+                    {{ template.name }}
+                </option>
+            {% endfor %}    
+        </select>   
+    
+        <input type="hidden" name="obj_id" value="{{ obj_id }}" />
+        <input type="submit" value="{% trans 'Go!' %}" /> 
+    </form>
+{% else %}
+    &nbsp;
+{% endif %}

@@ -89,11 +89,11 @@ def register_template(name, file_name, subpages_columns=0, images_columns=0):
     except AttributeError:
         pass
     try:
-        Template.objects.create(name = name, file_name=file_name, 
+        Template.objects.create(name = name, file_name=file_name,
             subpages_columns=subpages_columns, images_columns=images_columns)
     except IntegrityError:
         pass
-    
+
 def get_registered_content_types():
     """Returns all registered content types types as list of dicts.
     """
@@ -106,12 +106,22 @@ def get_registered_content_types():
 
     return conent_types
 
-def get_default_template_for(obj):
+def get_default_template(obj):
     """Returns the default template for given object.
     """
     try:
         ctr = ContentTypeRegistration.objects.get(type = obj.content_type)
-    except ContentTypeRegistration.DoesNotExist:
+    except (ContentTypeRegistration.DoesNotExist, AttributeError):
         return None
 
     return ctr.default_template
+
+def get_registered_templates(obj):
+    """Returns registered templates for passed object.
+    """
+    try:
+        ctr = ContentTypeRegistration.objects.get(type = obj.content_type)
+    except (ContentTypeRegistration.DoesNotExist, AttributeError):
+        return None
+
+    return ctr.templates.all()

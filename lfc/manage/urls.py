@@ -45,7 +45,8 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^(?P<id>\d+)/translate/(?P<language>\w{2})', "translate_object", name="lfc_translate_object"),
     
     url(r'^set-navigation-tree-language/(?P<language>\w{2})', "set_navigation_tree_language", name="lfc_set_navigation_tree_language"),
-    
+    url(r'^set-template$', "set_template", name="lfc_set_template"),
+
     url(r'^$', "portal", name="lfc_manage_portal"),
     url(r'^(?P<id>\d+)$', "manage_object", name="lfc_manage_object"),
 )
