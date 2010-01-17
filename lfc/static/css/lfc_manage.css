@@ -90,7 +90,7 @@ img.icon-padding {
 
 /* Tables */
 table.main {
-    width: 100%;
+    width: 99%;
     padding: 0 20px;
 }
 
@@ -164,6 +164,14 @@ li.current a {
 
 .navigation-manage .level-3 a {
     padding-left: 40px;
+}
+
+.navigation-manage .level-4 a {
+    padding-left: 60px;
+}
+
+.navigation-manage .level-5 a {
+    padding-left: 80px;
 }
 
 div.site-actions {

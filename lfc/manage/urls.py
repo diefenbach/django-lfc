@@ -32,6 +32,8 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^portal-images$', "portal_images", name="lfc_portal_images"),
     
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),
+
+    url(r'^update-children/(?P<id>\d+)$', "update_children", name="lfc_update_children"),
     
     url(r'^dashboard$', "dashboard", name="lfc_manage_dashboard"),
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),

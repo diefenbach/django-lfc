@@ -567,6 +567,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "files" : files(request, id),
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
+        "children" : children(request, obj),
         "content_type_name" : get_info_for(obj).name,
     }))
 
@@ -682,6 +683,57 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
             "obj" : obj,
         }))
 
+@login_required
+def children(request, obj, template_name="lfc/manage/object_children.html"):
+    """
+    """
+    children = obj.sub_objects.all()
+    return render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+        "children" : children,
+    }))
+
+@login_required
+def update_children(request, id):
+    """Deletes/Updates children with given ids (passed by request body).
+    """
+    obj = get_object_or_404(BaseContent, pk=id)
+
+    action = request.POST.get("action")
+    if action == "delete":
+        message = _(u"Objects has been deleted.")
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                try:
+                    id = key.split("-")[1]
+                    child = BaseContent.objects.get(pk=id).delete()
+                except (IndexError, BaseContent.DoesNotExist):
+                    pass
+
+    else:
+        message = _(u"Objects has been updated.")
+        for key in request.POST.keys():
+            if key.startswith("obj_id-"):
+                id = key.split("-")[1]
+                try:
+                    child = BaseContent.objects.get(pk=id)
+                except BaseContent.DoesNotExist:
+                    pass
+                else:
+                    child.active = request.POST.get("is_active-%s" % id, 0)
+                    child.save()
+
+    html = (
+        ("#children", children(request, obj)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
 # Comments
 @login_required
 def comments(request, obj, template_name="lfc/manage/object_comments.html"):
@@ -697,8 +749,8 @@ def comments(request, obj, template_name="lfc/manage/object_comments.html"):
     }))
 
 @login_required
-def update_comments(request, id, template_name="lfc/manage/object_comments.html"):
-    """Deletes comments with given ids (passed by request body).
+def update_comments(request, id):
+    """Deletes/Updates comments with given ids (passed by request body).
     """
     obj = get_object_or_404(BaseContent, pk=id)
 
@@ -1138,7 +1190,7 @@ def set_template(request):
     """
     obj_id = request.POST.get("obj_id")
     template_id = request.POST.get("template_id")
-    
+
     obj = BaseContent.objects.get(pk=obj_id)
     obj.template_id = template_id
     obj.save()

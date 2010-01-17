@@ -1,0 +1,71 @@
+{% load i18n %}
+
+<h2 class="heading-middle">
+    {% trans 'Children' %}
+</h2>
+
+{% if children %}
+    <form action="{% url lfc_update_children obj.id %}"
+          method="post">
+
+        <table class="lfs-manage-table" width="60%">
+            <tr>
+                <th>
+                    <input type="checkbox"
+                           class="select-all-1" />
+                </th>
+                <th>
+                    {% trans 'Position' %}
+                </th>
+                <th>
+                    {% trans 'Title' %}
+                </th>
+                <th>
+                    {% trans 'Active' %}
+                </th>
+                <th>
+                    {% trans 'Edit' %}
+                </th>
+            </tr>
+            {% for child in children %}
+                <tr>
+                    <td>
+                        <input type="hidden"
+                               name="obj_id-{{ child.id }}" />
+                        <input type="checkbox"
+                               class="select-1"
+                               name="delete-{{ child.id }}"
+                               style="float:left" />
+                    </td>
+                    <td>
+                        {{ child.position }}
+                    </td>
+                    <td>
+                        {{ child.title }}
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                               name="is_active-{{ child.id }}"
+                               style="float:left"
+                               {% if child.active %}checked="checked"{% endif %} />
+                    </td>
+                    <td>
+                        <a href="{% url lfc_manage_object child.id %}">
+                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                 alt="{% trans 'Edit' %}"
+                                 title="{% trans 'Edit object' %}" />
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <div class="manage-form-buttons">
+            <input class="ajax-save-button"
+                   type="submit" name="update" value="{% trans 'Update children' %}" />
+            <input class="ajax-save-button"
+                   type="submit" name="delete" value="{% trans 'Delete children' %}" />
+        </div>
+    </form>
+{% else %}
+    <span>{% trans 'There are no children' %}</span>
+{% endif %}
