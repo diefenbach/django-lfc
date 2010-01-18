@@ -60,6 +60,7 @@ def portal(request, template_name="lfc/manage/portal.html"):
         "display_content_menu" : len(get_allowed_subtypes()) > 1,
         "content_types" : get_allowed_subtypes(),
         "core_data" : portal_core(request),
+        "children" : portal_children(request),
         "portlets" : portlets_inline(request, get_portal()),
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
@@ -100,6 +101,19 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
         }))
 
     return result
+
+@login_required
+def portal_children(request, as_string=False, template_name="lfc/manage/portal_children.html"):
+    """Displays the portal children tab
+    """
+    children = BaseContent.objects.filter(parent = None)
+    return render_to_string(template_name, RequestContext(request, {
+        "children" : children,
+    }))
+
+def update_portal_children(request):
+    """
+    """
 
 @login_required
 def portal_images(request, as_string=False, template_name="lfc/manage/portal_images.html"):
@@ -689,8 +703,8 @@ def children(request, obj, template_name="lfc/manage/object_children.html"):
     """
     children = obj.sub_objects.all()
     return render_to_string(template_name, RequestContext(request, {
-        "obj" : obj,
         "children" : children,
+        "obj" : obj,
     }))
 
 @login_required
@@ -987,9 +1001,11 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
 
     if obj is None:
         current_objs = []
+        is_portal = True
     else:
         current_objs = [obj]
         current_objs.extend(obj.get_ancestors())
+        is_portal = False
 
     # Display all objs which are neutral or in default language
     q = Q(parent = None) & Q(language__in = ("0", nav_tree_lang))
@@ -1032,6 +1048,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
         "level" : 2,
         "languages" : languages,
         "current_language": current_language,
+        "is_portal" : is_portal,
     }))
 
 def _navigation_children(request, current_objs, obj, start_level, level=3):

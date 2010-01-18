@@ -42,6 +42,9 @@ a  {
     padding-top: 30px;
 }
 
+.right {
+    text-align: right;
+}
 
 h1 {
     font-size: 131%;
@@ -103,10 +106,6 @@ td.left-slot {
   width: 200px;
 }
 
-th, td {
-    text-align:left
-}
-
 th.last, td.last {
     text-align: right !important;
     padding-right: 10px;
@@ -121,7 +120,6 @@ table.lfs-manage-table {
     min-height: 30px;
     height: 30px;
     background-color: #ede9e8;
-    text-align: left;
     padding-left: 10px;
 }
 
@@ -129,12 +127,11 @@ table.lfs-manage-table {
     padding: 4px 10px
 }
 
-.lfs-manage-table td.last {
-    padding-right: 0;
-    padding-left: 20px;
+/* Navigation */
+.navigation-manage {
+    padding-top: 10px;
 }
 
-/* Navigation */
 .navigation-manage ul {
     margin:0;
     padding:0;
@@ -224,14 +221,14 @@ a:hover {
     margin: 0 10px;
     padding: 0 0 2px 20px;
     background: url(/media/lfc/icons/world.png) no-repeat;
-    text-decoration: none;        
+    text-decoration: none;
 }
 
 .translate {
     margin: 0 10px;
     padding: 0 0 2px 20px;
     background: url(/media/lfc/icons/world_edit.png) no-repeat;
-    text-decoration: none;        
+    text-decoration: none;
 }
 
 div.footer {
@@ -303,11 +300,11 @@ label {
 
 div.overlay {
     background-color:#eee;
-    display:none; 
-    padding:15px 50px 15px 15px; 
-    text-align:left; 
-    border:2px solid #333; 
-    z-index:1000; 
+    display:none;
+    padding:15px 50px 15px 15px;
+    text-align:left;
+    border:2px solid #333;
+    z-index:1000;
 }
 
 
@@ -321,14 +318,14 @@ div.overlay div.close {
     width:35px;
 }
 
-div.modal { 
-    background-color:#eee; 
-    display:none; 
-    padding:15px; 
-    text-align:left; 
-    border:2px solid #333; 
-    z-index:1000; 
-} 
+div.modal {
+    background-color:#eee;
+    display:none;
+    padding:15px;
+    text-align:left;
+    border:2px solid #333;
+    z-index:1000;
+}
 
 .translate-form .errorlist,
 .translate-form .errorlist li {
@@ -345,7 +342,7 @@ body.filebrowser {
 }
 
 .filebrowser ul {
-    padding-left: 10px;    
+    padding-left: 10px;
 }
 .filebrowser li {
     list-style: square inside;
