@@ -3,47 +3,20 @@ What is it?
 
 LFC is a Content Manangement System based on Django
 
-Features:
-=========
+Documentation:
+==============
 
-- Variable templates to display the content
-- Variable portlets
-- Multi languages (without pain)
-- Bulk upload of images + automatic scaling
-- WYSIWYG-Editor
-- Tagging
-- Commenting
-- RSS Feeds
-- Pluggable (Add own content types and portlets see http://pypi.python.org/pypi/lfc-blog/
+* http://packages.python.org/django-lfc
 
-Installation
-=============
+Group
+=====
 
-0. Install mercurial
+* http://groups.google.com/group/django-lfc
 
-   $ easy_install mercurial"
+Code
+====
 
-1. Get the buildout
-
-   hg clone http://bitbucket.org/diefenbach/lfc-buildout-development/
-
-2. Execute the buildout
-
-   a. $ cd lfc-buildout-development
-   b. $ python boostrap
-   c. $ bin/buildout -v
-
-3. Start the server
-
-   $ bin/django runserver
-
-4. Login
-
-   http://localhost:8000/login/ (admin/admin)
-
-5. Go to the management interface
-
-   http://localhost:8000/manage/
+* http://bitbucket.org/diefenbach/django-lfc
 
 Changes
 =======
