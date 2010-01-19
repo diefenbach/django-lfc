@@ -89,8 +89,6 @@ class Portal(models.Model):
     images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
         object_id_field="content_id", content_type_field="content_type")
 
-    tags = fields.TagField(_(u"Tags"))
-
     def __unicode__(self):
         return self.title
 
