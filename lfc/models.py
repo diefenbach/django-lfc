@@ -121,7 +121,15 @@ class Portal(models.Model):
         """
         return Template.objects.get(name="Article")
 
-class BaseContent(models.Model):
+class AbstractBaseContent(models.Model):
+    """
+    """
+    objects = BaseContentManager()
+
+    class Meta:
+        abstract = True
+
+class BaseContent(AbstractBaseContent):
     """Base content object. From this model all content types should inherit.
     """
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
@@ -163,8 +171,6 @@ class BaseContent(models.Model):
         choices=ALLOW_COMMENTS_CHOICES, default=ALLOW_COMMENTS_DEFAULT)
 
     searchable_text = models.TextField(blank=True)
-
-    objects = BaseContentManager()
 
     class Meta:
         ordering = ["position"]
@@ -611,10 +617,10 @@ def register(sender, **kwargs):
 
     # Register Templates
     from lfc.utils.registration import register_template
-    register_template(name = _(u"Plain"), file_name="plain.html")
-    register_template(name = _(u"Article"), file_name="article.html")
-    register_template(name = _(u"Gallery"), file_name="gallery.html")
-    register_template(name = _(u"Overview"), file_name="overview.html")
+    register_template(name = _(u"Plain"), file_name="lfc/templates/plain.html")
+    register_template(name = _(u"Article"), file_name="lfc/templates/article.html")
+    register_template(name = _(u"Gallery"), file_name="lfc/templates/gallery.html")
+    register_template(name = _(u"Overview"), file_name="lfc/templates/overview.html")
 
     # Content Types
     from lfc.utils.registration import register_content_type
