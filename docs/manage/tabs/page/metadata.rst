@@ -27,6 +27,8 @@ parent object.
 If this field is not displayed then the current displayed object can not be 
 moved.
 
+.. _page-position-label:
+
 Position
 ========
 
@@ -35,6 +37,8 @@ the object manually.
 
 If this field is not displayed then the object is ordered automatically, e.g. 
 by publication date.
+
+.. _page-standard-label:
 
 Standard
 ========

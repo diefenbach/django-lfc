@@ -2,8 +2,8 @@
 Images
 ======
 
-The images tab handles the images of the content object. These images are local 
-images of the object.
+The images tab handles the images of the page. These images are local 
+images of the image.
 
 Add Images
 ----------
@@ -39,6 +39,4 @@ There are two different ways to use the images:
         1. Within the WYSIWYG editor click on the image button.
         2. Besided the ``Image URL`` field click on the ``Browse`` button 
            and select an image in the size you need it. Fill in ``Image 
-           Description`` and ``Title`` and click the "Insert"-Button.
-         
-
+           Description`` and ``Title`` and click the "Insert"-button.

@@ -2,13 +2,13 @@
 Overview
 ========
 
-LFC is aimed to be small, uncomplicated and fast for both: users and 
-developers.
+LFC - Lightning Fast CMS is a CMS based on Django. LFC is aimed to be simple 
+and fast for both: users and developers.
 
 Content types
 -------------
 
-Within the core of LFC there is only one :term:`content type`: :term:`Page` 
+Within the core of LFC there is only one :term:`content type`: :term:`Page`
 (more can be added by 3rd-party developers).
 
 Sub pages
@@ -26,7 +26,7 @@ displayed is up to the selected template.
 Templates
 ---------
 
-The content of a page is displayed by templates. By default there are just
+The content of a page is displayed by :term:`templates`. By default there are just
 a small bunch of templates (more can be added by 3rd-party developers):
 
     - Plain
@@ -51,8 +51,8 @@ Portlets
 --------
 
 Every page can have so-called :term:`Portlets`, which are displayed in a left 
-or a right slot. By default there are just a few portlets (more can be added 
-by 3rd-party developers):
+or a right :term:`slot`. By default there are just a few portlets (more can be 
+added by 3rd-party developers):
 
     - Text portlet
 
