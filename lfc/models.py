@@ -565,7 +565,7 @@ class RandomPortlet(Portlet):
             language__in=("0", translation.get_language()))
 
         if self.tags:
-            items = tagging.managers.ModelTaggedItemManager().with_all(self.tags, items)[:self.quantity]
+            items = tagging.managers.ModelTaggedItemManager().with_all(self.tags, items)[:self.limit]
 
         items = list(items)
         random.shuffle(items)
