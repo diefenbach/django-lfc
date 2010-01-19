@@ -9,11 +9,17 @@ from django.template import Context
 from django.test import TestCase
 from django.test.client import Client
 
+# portlets imports
+from portlets.utils import get_registered_portlets
+from portlets.models import PortletRegistration
+
 # lfc imports
 from lfc.manage.forms import CoreDataForm
 from lfc.models import BaseContent
 from lfc.models import Page
 from lfc.models import Portal
+from lfc.models import Template
+from lfc.models import ContentTypeRegistration
 
 # Taken from "http://www.djangosnippets.org/snippets/963/"
 class RequestFactory(Client):
@@ -66,8 +72,58 @@ def create_request():
 
     return request
 
-class PageTestCase(TestCase):
+class ManagerTestCase(TestCase):
     """
+    """
+    def setUp(self):
+        self.p1 = Page.objects.create(title="Page 1", slug="page-1")
+        self.p2 = Page.objects.create(title="Page 2", slug="page-2")
+        self.p2.active = True
+        self.p2.save()
+
+    def test_restricted(self):
+        """
+        """
+        request = create_request()
+        pages = Page.objects.restricted(request)
+        self.assertEqual(len(pages), 2)
+
+        request.user.is_superuser = False
+        pages = Page.objects.restricted(request)
+        self.assertEqual(pages[0].title, self.p2.title)
+
+class RegistrationTestCase(TestCase):
+    """Tests for registration related stuff.
+    """
+    def test_default_portlets(self):
+        """Portlets which have to be registered at least.
+        """
+        portlets = ["Pages", "Random", "Text", "Navigation"]
+        registered_portlets = [p.name for p in PortletRegistration.objects.all()]
+
+        for portlet in portlets:
+            self.failUnless(portlet in registered_portlets)
+
+    def test_default_templates(self):
+        """Templates which have to be registered.
+        """
+        templates = ["Plain", "Article", "Gallery", "Overview"]
+        registered_templates = [t.name for t in Template.objects.all()]
+
+        for template in templates:
+            self.failUnless(template in registered_templates)
+
+    def test_default_content_types(self):
+        """ContentTypes which have to be registered.
+        """
+        content_types = ["Page"]
+        registered_content_types = [ct.name for ct in ContentTypeRegistration.objects.all()]
+
+        for content_type in content_types:
+            self.failUnless(content_type in registered_content_types)
+
+class PageTestCase(TestCase):
+    """Tests for Page related stuff.
     """
     def setUp(self):
         """
@@ -236,4 +292,3 @@ class PageTestCase(TestCase):
         """
         """
         self.assertEqual(self.p1.are_comments_allowed(), False)
-
