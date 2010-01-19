@@ -103,7 +103,7 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
     return result
 
 @login_required
-def portal_children(request, as_string=False, template_name="lfc/manage/portal_children.html"):
+def portal_children(request, template_name="lfc/manage/portal_children.html"):
     """Displays the portal children tab
     """
     children = BaseContent.objects.filter(parent = None)
@@ -112,8 +112,43 @@ def portal_children(request, as_string=False, template_name="lfc/manage/portal_c
     }))
 
 def update_portal_children(request):
+    """Deletes/Updates children with given ids (passed by request body).
     """
-    """
+    obj =  get_portal()
+    action = request.POST.get("action")
+    if action == "delete":
+        message = _(u"Objects has been deleted.")
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                try:
+                    id = key.split("-")[1]
+                    child = BaseContent.objects.get(pk=id).delete()
+                except (IndexError, BaseContent.DoesNotExist):
+                    pass
+
+    else:
+        message = _(u"Objects has been updated.")
+        for key in request.POST.keys():
+            if key.startswith("obj_id-"):
+                id = key.split("-")[1]
+                try:
+                    child = BaseContent.objects.get(pk=id)
+                except BaseContent.DoesNotExist:
+                    pass
+                else:
+                    child.active = request.POST.get("is_active-%s" % id, 0)
+                    child.save()
+
+    html = (
+        ("#children", portal_children(request)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
 
 @login_required
 def portal_images(request, as_string=False, template_name="lfc/manage/portal_images.html"):
