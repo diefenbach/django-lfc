@@ -181,6 +181,8 @@ class BaseContent(AbstractBaseContent):
 
     def save(self, force_insert=False, force_update=False):
         self.searchable_text = self.get_searchable_text()
+        if self.content_type == "":
+            self.content_type = self.__class__.__name__.lower()
         super(BaseContent, self).save()
 
     def get_absolute_url(self):
@@ -220,7 +222,11 @@ class BaseContent(AbstractBaseContent):
             return self
 
     def get_searchable_text(self):
-        return self.title + " " + self.description
+        """Returns the searchable test of this content type. Can be overriden
+        by custom content types.
+        """
+        result = self.title + " " + self.description
+        return result.strip()
 
     def form(self, **kwargs):
         """Returns the form for the object.
@@ -347,7 +353,10 @@ class BaseContent(AbstractBaseContent):
         """Returns True if comments for this object are allowed.
         """
         if self.allow_comments == ALLOW_COMMENTS_DEFAULT:
-            return self.parent.are_comments_allowed()
+            if self.parent:
+                return self.parent.are_comments_allowed()
+            else:
+                return lfc.utils.get_portal().are_comments_allowed()
         else:
             if self.allow_comments == ALLOW_COMMENTS_TRUE:
                 return True
@@ -367,7 +376,8 @@ class Page(BaseContent):
     text = models.TextField(_(u"Text"), blank=True)
 
     def get_searchable_text(self):
-        return self.title + " " + self.description + " " + self.text
+        result = self.title + " " + self.description + " " + self.text
+        return result.strip()
 
     def form(self, **kwargs):
         """
