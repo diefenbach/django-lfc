@@ -507,7 +507,6 @@ def add_object(request, language=None, id=None):
 
                 new_object = form.save()
                 new_object.parent = parent_object
-                new_object.content_type = type
                 new_object.creator = request.user
                 new_object.language = language
                 new_object.save()
