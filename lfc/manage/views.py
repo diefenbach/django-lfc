@@ -106,7 +106,8 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
 def portal_children(request, template_name="lfc/manage/portal_children.html"):
     """Displays the portal children tab
     """
-    children = BaseContent.objects.filter(parent = None)
+    language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
+    children = BaseContent.objects.filter(parent = None, language__in=("0", language))
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
     }))
