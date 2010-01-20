@@ -221,11 +221,14 @@ def filebrowser(request):
     popup of TinyMCE.
     """
     obj_id = request.GET.get("obj_id")
-
+    
     try:
         obj = BaseContent.objects.get(pk=obj_id)
     except (BaseContent.DoesNotExist, ValueError):
         obj = None
+        language = translation.get_language()
+    else:
+        language = obj.language
 
     if request.GET.get("type") == "image":
         portal = get_portal()
@@ -246,7 +249,7 @@ def filebrowser(request):
         else:
             files = []
         base_contents = []
-        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", obj.language)):
+        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", language)):
             base_contents.append({
                 "title" : base_content.title,
                 "url" : base_content.get_absolute_url(),
@@ -264,7 +267,7 @@ def _get_obj_children(request, obj):
     """
     """
     objs = []
-    for obj in obj.sub_objects.filter(active=True):
+    for obj in obj.sub_objects.restricted(request):
         objs.append({
             "title" : obj.title,
             "url" : obj.get_absolute_url(),
@@ -509,6 +512,7 @@ def add_object(request, language=None, id=None):
                 new_object.parent = parent_object
                 new_object.creator = request.user
                 new_object.language = language
+                new_object.position = 1000
                 new_object.save()
 
                 _update_positions(new_object)
