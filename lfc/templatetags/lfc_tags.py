@@ -31,7 +31,8 @@ register = template.Library()
 
 @register.inclusion_tag('lfc/manage/templates.html', takes_context=True)
 def templates(context):
-    """
+    """Displays a selection box to select a available template for context 
+    on the fly.
     """
     lfc_context = context.get("lfc_context")
     request = context.get("request")
