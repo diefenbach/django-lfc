@@ -21,6 +21,8 @@
                     {% trans 'Title' %}
                 </th>
                 <th>
+                    <input type="checkbox"
+                           class="select-all-2" />
                     {% trans 'Active' %}
                 </th>
                 <th class="right last">
@@ -47,6 +49,7 @@
                         <input type="checkbox"
                                name="is_active-{{ child.id }}"
                                style="float:left"
+                               class="select-2"
                                {% if child.active %}checked="checked"{% endif %} />
                     </td>
                     <td class="right last">
