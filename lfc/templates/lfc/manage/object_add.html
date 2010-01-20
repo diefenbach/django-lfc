@@ -11,7 +11,7 @@
                 $("#id_slug").val(slug);
             });
         });
-    </script>        
+    </script>
 {% endblock %}
 
 {% block left_slot %}
@@ -21,17 +21,19 @@
 {% endblock %}
 
 {% block content %}
-    
-    <h2 class="manage-title">
-        {% trans "Add" %}: {% trans name %}
-    </h2>
+
+    <div class="site-actions">
+        <ul class="sf-menu">
+            <li><a>{% trans "Add" %}: {% trans name %}</a></li>
+        </ul>
+    </div>
 
     <div id="manage-tabs">
 
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Data' %}</a></li>
         </ul>
-        
+
         <div id="data">
             <form class="lfc-form"
                   method="post"
@@ -48,8 +50,11 @@
     </div>
 
     <script type="text/javascript">
-        tinyMCE.execCommand('mceAddControl', true, 'id_text');
-        tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
+        $(function() {
+            $("#id_title").focus();
+            tinyMCE.execCommand('mceAddControl', true, 'id_text');
+            tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
+        })
     </script>
 
 {% endblock %}
