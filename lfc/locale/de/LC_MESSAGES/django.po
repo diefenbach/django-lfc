@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-01-15 08:27+0100\n"
+"POT-Creation-Date: 2010-01-20 20:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,187 +15,192 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:49
+#: models.py:65
 msgid "Subpages columns"
 msgstr "Spalten Unterseiten"
 
-#: models.py:50
+#: models.py:66
 msgid "Images columns"
 msgstr "Spalten Bilder"
 
-#: models.py:61 templates/lfc/manage/portlets_inline.html:39
+#: models.py:107 templates/lfc/manage/portlets_inline.html:39
 msgid "Type"
 msgstr "Typ"
 
-#: models.py:62 templates/lfc/manage/object_comments.html:38
+#: models.py:108 templates/lfc/manage/object_comments.html:38
 msgid "Name"
 msgstr "Name"
 
-#: models.py:63
+#: models.py:109
 msgid "Display select standard"
 msgstr "Standard auswählen anzeigen"
 
-#: models.py:64
+#: models.py:110
 msgid "Display position"
 msgstr "Position anzeigen"
 
-#: models.py:66
+#: models.py:112
 msgid "Global addable"
 msgstr "Global hinzufügbar"
 
-#: models.py:68
+#: models.py:114
 msgid "Allowed sub types"
 msgstr "Erlaubte Inhaltstypen"
 
-#: models.py:69
+#: models.py:115
 msgid "Templates"
 msgstr "Schablonen"
 
-#: models.py:70
+#: models.py:116
 msgid "Default template"
 msgstr "Standardschablone"
 
-#: models.py:82 models.py:129 templates/lfc/manage/object_files.html:15
+#: models.py:127 models.py:181 templates/lfc/manage/object_children.html:21
+#: templates/lfc/manage/object_files.html:15
 #: templates/lfc/manage/object_images.html:18
+#: templates/lfc/manage/portal_children.html:21
 #: templates/lfc/manage/portal_images.html:18
 #: templates/lfc/manage/portlets_inline.html:42
 msgid "Title"
 msgstr "Titel"
 
-#: models.py:83
+#: models.py:128
 msgid "Page"
 msgstr "Seite"
 
-#: models.py:85
+#: models.py:130
 msgid "From e-mail address"
 msgstr "E-Mail Absender"
 
-#: models.py:86
+#: models.py:131
 msgid "Notification email addresses"
 msgstr "Empfänger Benachrichtigungen"
 
-#: models.py:87
+#: models.py:132
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
-#: models.py:89 models.py:159 templates/lfc/manage/object.html:92
-#: templates/lfc/manage/portal.html:40
+#: models.py:134 models.py:211 templates/lfc/manage/object.html:92
+#: templates/lfc/manage/portal.html:41
 msgid "Images"
 msgstr "Bilder"
 
-#: models.py:92 models.py:141
-msgid "Tags"
-msgstr "Tags"
-
-#: models.py:127 models.py:404
+#: models.py:179 models.py:485
 msgid "Content type"
 msgstr "Inhaltstyp"
 
-#: models.py:130
+#: models.py:182
 msgid "Display title"
 msgstr "Titel anzeigen"
 
-#: models.py:132
+#: models.py:184
 msgid "Slug"
 msgstr "URL"
 
-#: models.py:134
+#: models.py:186
 msgid "Description"
 msgstr "Beschreibung"
 
-#: models.py:136 templates/lfc/manage/object_files.html:18
+#: models.py:188 templates/lfc/manage/object_children.html:18
+#: templates/lfc/manage/object_files.html:18
 #: templates/lfc/manage/object_images.html:21
+#: templates/lfc/manage/portal_children.html:18
 #: templates/lfc/manage/portal_images.html:21
 #: templates/lfc/manage/portlet_add.html:11
 #: templates/lfc/manage/portlet_edit.html:10
 msgid "Position"
 msgstr "Position"
 
-#: models.py:138
+#: models.py:190
 msgid "Language"
 msgstr "Sprache"
 
-#: models.py:139
+#: models.py:191
 msgid "Canonical"
 msgstr "Basis"
 
-#: models.py:143
+#: models.py:193
+msgid "Tags"
+msgstr "Tags"
+
+#: models.py:195
 msgid "Parent"
 msgstr "Vorgänger"
 
-#: models.py:144
+#: models.py:196
 msgid "Template"
 msgstr "Schablone"
 
-#: models.py:145
+#: models.py:197
 msgid "Standard"
 msgstr "Standard"
 
-#: models.py:147
+#: models.py:199 templates/lfc/manage/object_children.html:24
+#: templates/lfc/manage/portal_children.html:24
 msgid "Active"
 msgstr "Aktiv"
 
-#: models.py:148
+#: models.py:200
 msgid "Exclude from navigation"
 msgstr "Von Navigation ausschliessen"
 
-#: models.py:149
+#: models.py:201
 msgid "Exclude from search results"
 msgstr "Von Suchresultaten ausschliessen"
 
-#: models.py:151
+#: models.py:203
 msgid "Creator"
 msgstr "Ersteller"
 
-#: models.py:152
+#: models.py:204
 msgid "Creation date"
 msgstr "Erstellungsdatum"
 
-#: models.py:153
+#: models.py:205
 msgid "Modification date"
 msgstr "Änderungsdatum"
 
-#: models.py:154
+#: models.py:206
 msgid "Publication date"
 msgstr "Veröffentlicht am"
 
-#: models.py:156
+#: models.py:208
 msgid "Meta keywords"
 msgstr "Meta Keywords"
 
-#: models.py:157
+#: models.py:209
 msgid "Meta description"
 msgstr "Meta Description"
 
-#: models.py:162
+#: models.py:214
 msgid "Commentable"
 msgstr "Kommentare erlauben"
 
-#: models.py:361 models.py:580
+#: models.py:438 models.py:664
 msgid "Text"
 msgstr "Text"
 
-#: models.py:405
+#: models.py:486
 msgid "Content id"
 msgstr "ID"
 
-#: models.py:412
+#: models.py:493 templates/lfc/manage/filebrowser_images.html:10
 msgid "Image"
 msgstr "Bild"
 
-#: models.py:614
+#: models.py:697
 msgid "Plain"
 msgstr "Einfach"
 
-#: models.py:615
+#: models.py:698
 msgid "Article"
 msgstr "Artikel"
 
-#: models.py:616
+#: models.py:699
 msgid "Gallery"
 msgstr "Gallerie"
 
-#: models.py:617
+#: models.py:700
 msgid "Overview"
 msgstr "Übersicht"
 
@@ -224,87 +229,95 @@ msgstr ""
 msgid "No Tag found matching \"%s\"."
 msgstr ""
 
-#: manage/views.py:90
+#: manage/views.py:91
 msgid "Portal data has been saved."
 msgstr "Portletdaten wurden gespeichert."
 
-#: manage/views.py:119 manage/views.py:839
+#: manage/views.py:121 manage/views.py:757
+msgid "Objects has been deleted."
+msgstr "Objekte wurden gelöscht."
+
+#: manage/views.py:131 manage/views.py:767
+msgid "Objects has been updated."
+msgstr "Objekte wurden aktualisiert."
+
+#: manage/views.py:170 manage/views.py:945
 msgid "Images has been added."
 msgstr "Bilder wurden hinzugefügt."
 
-#: manage/views.py:318
+#: manage/views.py:372
 msgid "Portlet has been updated."
 msgstr "Das Portlet wurde aktualisiert."
 
-#: manage/views.py:362
+#: manage/views.py:416
 msgid "Portlet has been added."
 msgstr "Das Portlet wurde hinzugefügt."
 
-#: manage/views.py:383
+#: manage/views.py:437
 msgid "Portlet has been deleted."
 msgstr "Portlet wurde gelöscht"
 
-#: manage/views.py:423
+#: manage/views.py:477
 msgid "Portlet has been saved."
 msgstr "Portlet wurde gespeichert"
 
-#: manage/views.py:466
+#: manage/views.py:520
 msgid "Page has been added."
 msgstr "Seite wurde hinzugefügt."
 
-#: manage/views.py:520
+#: manage/views.py:574
 msgid "Page has been deleted."
 msgstr "Seite wurde gelöscht."
 
-#: manage/views.py:598
+#: manage/views.py:653
 msgid "Data has been saved."
 msgstr "Daten wurden gespeichert."
 
-#: manage/views.py:636
+#: manage/views.py:691
 msgid "Meta data has been saved."
 msgstr "Metadaten wurden gespeichert."
 
-#: manage/views.py:673
+#: manage/views.py:728
 msgid "SEO has been saved."
 msgstr "SEO Daten wurden gespeichert."
 
-#: manage/views.py:708
+#: manage/views.py:814
 msgid "Allow comments state has been saved."
 msgstr "Kommentarstatus wurden gespeichert."
 
-#: manage/views.py:710
+#: manage/views.py:816
 msgid "Comments has been deleted."
 msgstr "Kommentare wurden gelöscht."
 
-#: manage/views.py:720
+#: manage/views.py:826
 msgid "Comments has been updated."
 msgstr "Kommentare wurden aktualisiert."
 
-#: manage/views.py:778
+#: manage/views.py:884
 msgid "Files has been deleted."
 msgstr "Dateien wurden gelöscht."
 
-#: manage/views.py:788
+#: manage/views.py:894
 msgid "Files has been updated."
 msgstr "Dateien wurden aktualisiert."
 
-#: manage/views.py:871
+#: manage/views.py:979
 msgid "Images has been deleted."
 msgstr "Bilder wurden gelöscht."
 
-#: manage/views.py:881
+#: manage/views.py:989
 msgid "Images has been updated."
 msgstr "Bilder wurden aktualisiert."
 
-#: manage/views.py:1060
+#: manage/views.py:1171
 msgid "Translation has been canceled."
 msgstr "Übersetzung wurden abgebrochen."
 
-#: manage/views.py:1070
+#: manage/views.py:1181
 msgid "Translation has been updated."
 msgstr "Übersetzung wurde aktualisiert."
 
-#: manage/views.py:1074
+#: manage/views.py:1185
 msgid "Translation has been added."
 msgstr "Übersetzung wurde hinzugefügt."
 
@@ -313,7 +326,7 @@ msgid "Logout"
 msgstr "Abmelden"
 
 #: templates/lfc/manage/base.html:73
-#: templates/lfc/manage/filebrowser_files.html:6
+#: templates/lfc/manage/filebrowser_files.html:5
 msgid "Content"
 msgstr "Inhalte"
 
@@ -343,33 +356,38 @@ msgstr "BSD-Lizenz"
 
 #: templates/lfc/manage/base.html:115
 msgid "Do you really want to delete this object?"
-msgstr ""
+msgstr "Wollen Sie diese Objekt wirklich löschen?"
 
 #: templates/lfc/manage/content_types.html:27
 msgid "Save content type"
 msgstr "Inhaltstyp speichern"
 
-#: templates/lfc/manage/filebrowser_files.html:10
-#: templates/lfc/manage/filebrowser_files.html:26
-#: templates/lfc/manage/filebrowser_files_children.html:5
-#: templates/lfc/manage/filebrowser_images.html:14
-#: templates/lfc/manage/filebrowser_images.html:17
-#: templates/lfc/manage/filebrowser_images.html:20
-#: templates/lfc/manage/filebrowser_images.html:36
-#: templates/lfc/manage/filebrowser_images.html:39
-#: templates/lfc/manage/filebrowser_images.html:42
-msgid "Select File"
-msgstr "Datei auswählen"
+#: templates/lfc/manage/filebrowser_files.html:9
+msgid "Select content"
+msgstr "Inhalt auswählen"
 
-#: templates/lfc/manage/filebrowser_files.html:20
+#: templates/lfc/manage/filebrowser_files.html:19
 msgid "Existing files"
 msgstr "Existierende Dateien"
 
-#: templates/lfc/manage/filebrowser_files.html:34
+#: templates/lfc/manage/filebrowser_files.html:25
+#: templates/lfc/manage/filebrowser_files_children.html:5
+#: templates/lfc/manage/filebrowser_images.html:23
+#: templates/lfc/manage/filebrowser_images.html:26
+#: templates/lfc/manage/filebrowser_images.html:29
+#: templates/lfc/manage/filebrowser_images.html:32
+#: templates/lfc/manage/filebrowser_images.html:51
+#: templates/lfc/manage/filebrowser_images.html:54
+#: templates/lfc/manage/filebrowser_images.html:57
+#: templates/lfc/manage/filebrowser_images.html:60
+msgid "Select File"
+msgstr "Datei auswählen"
+
+#: templates/lfc/manage/filebrowser_files.html:33
 msgid "There are no files yet."
 msgstr "Es sind keine Dateien vorhanden."
 
-#: templates/lfc/manage/filebrowser_files.html:38
+#: templates/lfc/manage/filebrowser_files.html:37
 msgid "Upload files"
 msgstr "Dateien hochladen"
 
@@ -377,16 +395,29 @@ msgstr "Dateien hochladen"
 msgid "Global images"
 msgstr "Globale Bilder"
 
-#: templates/lfc/manage/filebrowser_images.html:28
+#: templates/lfc/manage/filebrowser_images.html:13
+msgid "Sizes"
+msgstr "Größen"
+
+#: templates/lfc/manage/filebrowser_images.html:40
 msgid "Local images"
 msgstr "Lokale Bilder"
 
-#: templates/lfc/manage/navigation.html:21 templates/lfc/manage/portal.html:39
+#: templates/lfc/manage/filebrowser_images.html:66
+msgid "There are no local images yet"
+msgstr "Es sind keine lokalen Bilder vorhanden."
+
+#: templates/lfc/manage/filebrowser_images.html:70
+msgid "Upload local images"
+msgstr "Lokale Bilder hochladen"
+
+#: templates/lfc/manage/navigation.html:22 templates/lfc/manage/portal.html:39
 msgid "Portal"
 msgstr "Portal"
 
 #: templates/lfc/manage/object.html:16 templates/lfc/manage/object.html:26
 #: templates/lfc/manage/object_add.html:26 templates/lfc/manage/portal.html:16
+#: templates/lfc/manage/portal.html:26
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -402,7 +433,10 @@ msgstr "Löschen"
 msgid "Translate to"
 msgstr "Übersetzen zu"
 
-#: templates/lfc/manage/object.html:81 templates/lfc/manage/portal.html:31
+#: templates/lfc/manage/object.html:81
+#: templates/lfc/manage/object_children.html:60
+#: templates/lfc/manage/portal.html:31
+#: templates/lfc/manage/portal_children.html:60
 msgid "View"
 msgstr "Ansehen"
 
@@ -411,14 +445,17 @@ msgid "Metadata"
 msgstr "Metadaten"
 
 #: templates/lfc/manage/object.html:91
-msgid "SEO"
-msgstr "SEO"
+#: templates/lfc/manage/object_children.html:4
+#: templates/lfc/manage/portal.html:40
+#: templates/lfc/manage/portal_children.html:4
+msgid "Children"
+msgstr "Unterseiten"
 
 #: templates/lfc/manage/object.html:93
 msgid "Files"
 msgstr "Dateien"
 
-#: templates/lfc/manage/object.html:94 templates/lfc/manage/portal.html:41
+#: templates/lfc/manage/object.html:94 templates/lfc/manage/portal.html:42
 msgid "Portlets"
 msgstr "Portlets"
 
@@ -426,6 +463,10 @@ msgstr "Portlets"
 #: templates/lfc/manage/object_comments.html:21
 msgid "Comments"
 msgstr "Kommentare"
+
+#: templates/lfc/manage/object.html:96
+msgid "SEO"
+msgstr "SEO"
 
 #: templates/lfc/manage/object_add.html:32
 msgid "Data"
@@ -442,6 +483,45 @@ msgstr "Speichern"
 msgid "Cancel"
 msgstr "Abbrechen"
 
+#: templates/lfc/manage/object_children.html:27
+#: templates/lfc/manage/portal_children.html:27
+msgid "Manage"
+msgstr "Manage"
+
+#: templates/lfc/manage/object_children.html:55
+#: templates/lfc/manage/object_comments.html:44
+#: templates/lfc/manage/object_comments.html:72
+#: templates/lfc/manage/portal_children.html:55
+#: templates/lfc/manage/portlets_inline.html:62
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: templates/lfc/manage/object_children.html:56
+#: templates/lfc/manage/object_comments.html:73
+#: templates/lfc/manage/portal_children.html:56
+msgid "Edit object"
+msgstr "Bearbeiten"
+
+#: templates/lfc/manage/object_children.html:61
+#: templates/lfc/manage/portal_children.html:61
+msgid "View object"
+msgstr "Ansehen"
+
+#: templates/lfc/manage/object_children.html:69
+#: templates/lfc/manage/portal_children.html:69
+msgid "Update children"
+msgstr "Unterseiten aktualisieren"
+
+#: templates/lfc/manage/object_children.html:71
+#: templates/lfc/manage/portal_children.html:71
+msgid "Delete children"
+msgstr "Unterseiten löschen"
+
+#: templates/lfc/manage/object_children.html:75
+#: templates/lfc/manage/portal_children.html:75
+msgid "There are no children"
+msgstr "Es sind keine Unterseiten vorhanden."
+
 #: templates/lfc/manage/object_comments.html:35
 msgid "SNR"
 msgstr "LFD"
@@ -449,16 +529,6 @@ msgstr "LFD"
 #: templates/lfc/manage/object_comments.html:41
 msgid "Public"
 msgstr "Öffentlich"
-
-#: templates/lfc/manage/object_comments.html:44
-#: templates/lfc/manage/object_comments.html:72
-#: templates/lfc/manage/portlets_inline.html:62
-msgid "Edit"
-msgstr "Bearbeiten"
-
-#: templates/lfc/manage/object_comments.html:73
-msgid "Edit object"
-msgstr "Bearbeiten"
 
 #: templates/lfc/manage/object_comments.html:81
 msgid "Update comments"
@@ -572,7 +642,11 @@ msgstr "Es sind keine Portlets zugewiesen"
 msgid "Add portlet"
 msgstr "Portlets hinzufügen"
 
-#: templatetags/lfc_tags.py:62 templatetags/lfc_tags.py:87
+#: templates/lfc/manage/templates.html:14
+msgid "Go!"
+msgstr "Los!"
+
+#: templatetags/lfc_tags.py:94 templatetags/lfc_tags.py:119
 #, python-format
 msgid "%s tag needs no argument"
 msgstr ""
