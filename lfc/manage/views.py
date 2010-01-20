@@ -221,7 +221,7 @@ def filebrowser(request):
     popup of TinyMCE.
     """
     obj_id = request.GET.get("obj_id")
-    
+
     try:
         obj = BaseContent.objects.get(pk=obj_id)
     except (BaseContent.DoesNotExist, ValueError):
@@ -526,6 +526,9 @@ def add_object(request, language=None, id=None):
             form = form(initial={"parent" : parent_object.id})
         else:
             form = form()
+
+    if parent_object:
+        parent_object = parent_object.get_content_object()
 
     return render_to_response("lfc/manage/object_add.html", RequestContext(request, {
         "type" : type,
