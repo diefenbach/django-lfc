@@ -68,7 +68,7 @@ def base_view(request, language=None, slug=None, obj=None):
 
     # Get sub objects (as LOL if requested)
     if obj_template.subpages_columns == 0:
-        sub_objects = obj.sub_objects.restricted(request)
+        sub_objects = lfc.utils.get_content_objects(obj.sub_objects.restricted(request))
     else:
         sub_objects = lfc.utils.getLOL(obj.sub_objects.restricted(request), obj_template.subpages_columns)
 
