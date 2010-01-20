@@ -56,11 +56,22 @@ Content types
 Developer
 =========
 
+How-tos
+-------
 .. toctree::
    :maxdepth: 1
 
    developer/tutorials/application/index.rst
-   
+
+API
+---
+.. toctree::
+   :maxdepth: 1
+
+
+   developer/api/registration.rst
+   developer/api/content.rst
+   developer/api/template.rst
 
 Indices and tables
 ==================
