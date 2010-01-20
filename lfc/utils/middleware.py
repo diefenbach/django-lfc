@@ -84,8 +84,8 @@ class LFCMiddleware:
             return
 
         if language:
-            if settings.LFC_MULTILANGUAGE == False:
-                raise Http404
+            # if settings.LFC_MULTILANGUAGE == False:
+            #     raise Http404
             if language not in settings.LFC_LANGUAGE_IDS:
                 raise Http404
 
