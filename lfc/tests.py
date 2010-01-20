@@ -200,7 +200,7 @@ class PageTestCase(TestCase):
         self.assertEqual(self.p1.get_ancestors(), [])
         self.assertEqual(self.p11.get_ancestors(), [self.p1])
         self.assertEqual(self.p111.get_ancestors(), [self.p11, self.p1])
-        self.assertEqual(self.p111.get_reverse_ancestors(), [self.p1, self.p11])
+        self.assertEqual(self.p111.get_ancestors_reverse(), [self.p1, self.p11])
 
     def test_get_image(self):
         """

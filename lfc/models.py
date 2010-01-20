@@ -43,9 +43,25 @@ from lfc.settings import LANGUAGE_CHOICES
 
 class Template(models.Model):
     """A template displays the content of an object.
+
+    **Attributes:**
+
+    name
+        The name of the template.
+
+    path
+        The path to the template file.
+
+    subpages_columns
+        Stores the amount of columns for sub pages. This can be used for
+        templates which displays the children of an object.
+
+    images_columns
+        Stores the amount of columens for images. This can be used for
+        templates which displays the images of an object.
     """
     name = models.CharField(max_length=50, unique=True)
-    file_name = models.CharField(max_length=100)
+    path = models.CharField(max_length=100)
     subpages_columns = models.IntegerField(verbose_name=_(u"Subpages columns"), default=1)
     images_columns = models.IntegerField(verbose_name=_(u"Images columns"), default=1)
 
@@ -56,7 +72,37 @@ class Template(models.Model):
         return self.name
 
 class ContentTypeRegistration(models.Model):
-    """
+    """Stores all registration relevant information of a registered content
+    type.
+
+    **Attributes:**
+
+    type
+        The type of the registered content type.
+
+    name
+        The name of the registered content type.
+
+    display_select_standard
+        If set to true the user can select a standard page for the instances.
+
+    display_position
+        If set to true the user can set the position of the intances.
+
+    global_addable
+        if set to true instances of the content type can be added to the
+        portal.
+
+    subtypes
+        Allowed sub types which can be added to instances of the content type.
+
+    templates
+        Allowed templates which can be selected for instances of the content
+        type.
+
+    default_template
+        The default template which is assigned when a instance of the content
+        type is created.
     """
     type = models.CharField(_(u"Type"), blank=True, max_length=100, unique=True)
     name = models.CharField(_(u"Name"), blank=True, max_length=100, unique=True)
@@ -78,7 +124,6 @@ class ContentTypeRegistration(models.Model):
 class Portal(models.Model):
     """A portal has content objects.
     """
-
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
     standard = models.ForeignKey("BaseContent", verbose_name = _(u"Page"), blank=True, null=True)
 
@@ -120,7 +165,7 @@ class Portal(models.Model):
         return Template.objects.get(name="Article")
 
 class AbstractBaseContent(models.Model):
-    """
+    """Provides the inheritable BaseContentManager.
     """
     objects = BaseContentManager()
 
@@ -129,6 +174,7 @@ class AbstractBaseContent(models.Model):
 
 class BaseContent(AbstractBaseContent):
     """Base content object. From this model all content types should inherit.
+    This class should never be instantiated.
     """
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
 
@@ -184,6 +230,8 @@ class BaseContent(AbstractBaseContent):
         super(BaseContent, self).save()
 
     def get_absolute_url(self):
+        """Returns the absolute url of the instance.
+        """
         page = self.standard or self
 
         obj = page
@@ -210,7 +258,9 @@ class BaseContent(AbstractBaseContent):
     get_absolute_url = models.permalink(get_absolute_url)
 
     def get_content_object(self):
-        """Returns the specific content object of this base content instance.
+        """Returns the specific content object of the instance. This method 
+        can be called if one has a BaseContent and want the specific content 
+        type e.g. Page.
         """
         # TODO: Ugly but works. There must be a cleaner way. isinstance doesn't
         # work of course.
@@ -220,16 +270,16 @@ class BaseContent(AbstractBaseContent):
             return self
 
     def get_searchable_text(self):
-        """Returns the searchable test of this content type. Can be overriden
-        by custom content types.
+        """Returns the searchable text of this content type. By default it
+        takes the title the description of the instance into account. Sub 
+        classes can overwrite this method in order to add specific data.
         """
         result = self.title + " " + self.description
         return result.strip()
 
     def form(self, **kwargs):
-        """Returns the form for the object.
-
-        Has to be implemented by sub classes.
+        """Returns the add/edit form for the object. This method has to be 
+        overwritten and implemented by sub classes.
         """
         raise NotImplementedError, "form has to be implemented by sub classed"
 
@@ -246,7 +296,7 @@ class BaseContent(AbstractBaseContent):
 
         return ancestors
 
-    def get_reverse_ancestors(self):
+    def get_ancestors_reverse(self):
         """Returns all ancestors of the page in reverse order.
         """
         ancestors = self.get_ancestors()
@@ -263,7 +313,7 @@ class BaseContent(AbstractBaseContent):
             return None
 
     def get_meta_keywords(self):
-        """Returns the meta keywords of the page.
+        """Returns the meta keywords of the instance.
         """
         keywords = self.meta_keywords.replace("<title>", self.title)
         keywords = keywords.replace("<description>", self.description)
@@ -271,7 +321,7 @@ class BaseContent(AbstractBaseContent):
         return keywords
 
     def get_meta_description(self):
-        """Returns the meta description of the page.
+        """Returns the meta description of the instance.
         """
         description = self.meta_description.replace("<title>", self.title)
         description = description.replace("<description>", self.description)
@@ -279,7 +329,7 @@ class BaseContent(AbstractBaseContent):
         return description
 
     def get_template(self):
-        """Returns the selected template.
+        """Returns the current selected template of the instance.
         """
         if self.template is not None:
             return self.template
@@ -291,18 +341,19 @@ class BaseContent(AbstractBaseContent):
                 return lfc.utils.get_portal().get_template()
 
     def get_title(self):
-        """
+        """Returns the title of the instance. Takes display_title into account.
         """
         return self.display_title and self.title or ""
 
     def is_canonical(self):
-        """Returns True if the language of the page is the default language.
+        """Returns true if the language of the page is the default language.
         """
         return self.language in (settings.LANGUAGE_CODE, "0")
 
     def get_canonical(self, request):
-        """Returns the canonical object of this object. Takes care of the
-        current user's permission.
+        """Returns the canonical object of this object. If the instance is the 
+        canonical object it returns itself. Takes care of the current user's 
+        permission.
         """
         if self.is_canonical():
             return self
@@ -311,12 +362,15 @@ class BaseContent(AbstractBaseContent):
             return self.canonical and BaseContent.objects.restricted(request).get(pk=self.canonical.id)
 
     def is_translation(self):
-        """Returns True if the page is a translation.
+        """Returns true if the instance is a translation of another instance.
         """
         return not self.is_canonical()
 
     def has_language(self, request, language):
-        """Returns true if self has an object for given language.
+        """Returns true if the is a translation of the instance in the 
+        requested language. It returns also true if the instance itself is 
+        within the request language or if there is a connected instance with
+        neutral language.
         """
         if self.language == "0":
             return True
@@ -338,9 +392,12 @@ class BaseContent(AbstractBaseContent):
         return False
 
     def get_translation(self, request, language):
-        """Returns translation for given language.
+        """Returns connected translation for requested language. Returns None
+        if the requested language doesn't exist.
         """
-        if self.is_canonical() == False:
+        # TODO: Should there a instance be returned even if the instance is a 
+        #translation?
+        if self.is_translation():
             return None
         try:
             return self.translations.restricted(request).get(language=language)
@@ -348,7 +405,9 @@ class BaseContent(AbstractBaseContent):
             return None
 
     def are_comments_allowed(self):
-        """Returns True if comments for this object are allowed.
+        """Returns true if comments for this instance are allowed. Takes also 
+        the setup of parent objects into account (if the instance' comments 
+        setup is set to "default").
         """
         if self.allow_comments == ALLOW_COMMENTS_DEFAULT:
             if self.parent:
@@ -361,30 +420,38 @@ class BaseContent(AbstractBaseContent):
             else:
                 return False
 
-    # Contract for django-portlets
     def get_parent_for_portlets(self):
-        """Returns the parent for inheriting portlets.
+        """Returns the parent from which portlets should be inherited portlets. 
+        The implementation of this method is a requirement from django-portlets.
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
 class Page(BaseContent):
     """A page is the foremost object within lfc which shows information to the
     user.
+
+    **Attributes**:
+
+    text:
+        The main text of the page.
     """
     text = models.TextField(_(u"Text"), blank=True)
 
     def get_searchable_text(self):
+        """Returns the searchable text of the page.
+        """
         result = self.title + " " + self.description + " " + self.text
         return result.strip()
 
     def form(self, **kwargs):
-        """
+        """Returns the add/edit form of the page.
         """
         from lfc.manage.forms import CoreDataForm
         return CoreDataForm(**kwargs)
 
 class Image(models.Model):
-    """An image. Generates automatically various sizes.
+    """An image which can be displayes within HTML. Generates automatically
+    various sizes.
 
     title
         The title of the image. Used within the title and alt tag
@@ -439,9 +506,12 @@ class Image(models.Model):
 class File(models.Model):
     """A downloadable file.
 
+    **Attributes:**
+
     title
         The title of the image. Used within the title and alt tag
         of the image
+
     slug
         The URL of the image
 
@@ -456,7 +526,7 @@ class File(models.Model):
         (optional)
 
     file
-        The file.
+        The binary file.
     """
     title = models.CharField(blank=True, max_length=100)
     slug = models.SlugField()
@@ -616,7 +686,6 @@ class TextPortletForm(forms.ModelForm):
         model = TextPortlet
 
 def register(sender, **kwargs):
-
     # Portlets
     register_portlet(NavigationPortlet, "Navigation")
     register_portlet(PagesPortlet, "Pages")
@@ -625,10 +694,10 @@ def register(sender, **kwargs):
 
     # Register Templates
     from lfc.utils.registration import register_template
-    register_template(name = _(u"Plain"), file_name="lfc/templates/plain.html")
-    register_template(name = _(u"Article"), file_name="lfc/templates/article.html")
-    register_template(name = _(u"Gallery"), file_name="lfc/templates/gallery.html")
-    register_template(name = _(u"Overview"), file_name="lfc/templates/overview.html")
+    register_template(name = _(u"Plain"), path="lfc/templates/plain.html")
+    register_template(name = _(u"Article"), path="lfc/templates/article.html")
+    register_template(name = _(u"Gallery"), path="lfc/templates/gallery.html")
+    register_template(name = _(u"Overview"), path="lfc/templates/overview.html")
 
     # Content Types
     from lfc.utils.registration import register_content_type
@@ -640,4 +709,3 @@ def register(sender, **kwargs):
         default_template="Article")
 
 post_syncdb.connect(register)
-

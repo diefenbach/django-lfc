@@ -102,7 +102,7 @@ def base_view(request, language=None, slug=None, obj=None):
     })
 
     # Render twice. This makes tags within text / short_text possible.
-    result = render_to_string(obj_template.file_name, c)
+    result = render_to_string(obj_template.path, c)
     result = template.Template("{% load lfc_tags %} " + result).render(c)
 
     cache.set(cache_key, result)

@@ -8,7 +8,14 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
 
 def get_info_for(obj_or_type):
-    """Returns the content type registration for given object.
+    """Returns the ContentTypeRegistration for the passed object or type.
+    Returns None if the content type registry is not found.
+
+    **Parameters:**
+
+    obj_or_type
+        Must be an instance of BaseContent or a String with a valid type name.
+
     """
     if isinstance(obj_or_type, BaseContent):
         type = obj_or_type.__class__.__name__.lower()
@@ -20,38 +27,72 @@ def get_info_for(obj_or_type):
     except ContentTypeRegistration.DoesNotExist:
         return None
 
-def get_allowed_subtypes(obj=None):
+def get_allowed_subtypes(obj_or_type=None):
     """Returns all allowed sub types for given object.
+
+    **Parameters:**
+
+    obj_or_type
+        Must be an instance of BaseContent, a String with a valid type name or
+        None. If it's None the conten type registrations of all global addable
+        content types are returned.
     """
-    if obj is None:
+    if obj_or_type is None:
         return ContentTypeRegistration.objects.filter(global_addable=True)
 
-    ctr = get_info_for(obj)
+    ctr = get_info_for(obj_or_type)
     if ctr:
         return ctr.subtypes.all()
     else:
         return []
 
-def register_sub_type_to(name, obj):
-    """
+def register_sub_type(klass, name):
+    """Registers the content type klass as allowed content type name.
+
+    **Parameters:**
+
+    klass
+        The class which should be registered as valid sub type to an content
+        type.
+
+    name
+        The name of the content type to which klass should be registered.
     """
     try:
         base_ctr = ContentTypeRegistration.objects.get(name=name)
     except ContentTypeRegistration.DoesNotExist:
-        pass
+        return
 
-    try:
-        sub_ctr = ContentTypeRegistration.objects.get(type =  obj.__name__.lower())
-    except ContentTypeRegistration.DoesNotExist:
-        pass
+    sub_ctr = get_info_for(klass.__name__.lower())
 
-    base_ctr.subtypes.add(sub_ctr)
+    if sub_ctr:
+        base_ctr.subtypes.add(sub_ctr)
 
-def register_content_type(obj, name, sub_types=[], templates=[], default_template=None):
-    """Registers a content type. If a content type is already registered it
-    updates it.
+def register_content_type(klass, name, sub_types=[], templates=[], default_template=None):
+    """Registers passed object as a content type.
+
+    **Parameters:**
+
+    klass
+        The klass which should be registered as content type. Must be a sub
+        class of BaseContent.
+
+    name
+        The unique name under which the content type should be registered.
+
+    sub_types
+        Content types which are allowed to be added as children to the
+        registered object. Must be a list of strings with valid names of
+        content types.
+
+    templates
+        Templates which are allowed to be selected for the registered object.
+        Must be a list of strings with valid template names.
+
+    default_template
+        Default template of the registered object.
     """
-    type = obj.__name__.lower()
+    type = klass.__name__.lower()
     try:
         ctr, created = ContentTypeRegistration.objects.get_or_create(type=type, name=name)
         ctr.save()
@@ -81,47 +122,57 @@ def register_content_type(obj, name, sub_types=[], templates=[], default_templat
                         ctr.default_template = template
                         ctr.save()
 
-def register_template(name, file_name, subpages_columns=0, images_columns=0):
+def register_template(name, path, subpages_columns=0, images_columns=0):
     """Registers a template.
+
+    **Parameters:**
+
+    name
+        The name of the template.
+
+    path
+        The path to the template file.
+
+    subpages_columns
+        The amount of columns for sub pages.
+
+    images_columns
+        The amount of columns for images.
     """
     try:
         name = name._proxy____str_cast()
     except AttributeError:
         pass
     try:
-        Template.objects.create(name = name, file_name=file_name,
+        Template.objects.create(name = name, path=path,
             subpages_columns=subpages_columns, images_columns=images_columns)
     except IntegrityError:
         pass
 
-def get_registered_content_types():
-    """Returns all registered content types types as list of dicts.
-    """
-    conent_types = []
-    for ct in ContentTypeRegistration.objects.all():
-        conent_types.append({
-            "type" : ct.type,
-            "name" : ct.name,
-        })
+def get_default_template(obj_or_type):
+    """Returns the default template for given object or type.
 
-    return conent_types
+    **Parameters:**
 
-def get_default_template(obj):
-    """Returns the default template for given object.
+    obj_or_type
+        Must be an instance of BaseContent or a String with a valid type name.
     """
-    try:
-        ctr = ContentTypeRegistration.objects.get(type = obj.content_type)
-    except (ContentTypeRegistration.DoesNotExist, AttributeError):
+    ctr = get_info_for(obj_or_type)
+    if ctr is None:
         return None
+    else:
+        return ctr.default_template
 
-    return ctr.default_template
+def get_templates(obj_or_type):
+    """Returns allowed templates for passed object or type.
 
-def get_registered_templates(obj):
-    """Returns registered templates for passed object.
+    **Parameters:**
+
+    obj_or_type
+        Must be an instance of BaseContent or a String with a valid type name.
     """
-    try:
-        ctr = ContentTypeRegistration.objects.get(type = obj.content_type)
-    except (ContentTypeRegistration.DoesNotExist, AttributeError):
-        return None
-
-    return ctr.templates.all()
+    ctr = get_info_for(obj_or_type)
+    if ctr is None:
+        return []
+    else:
+        return ctr.templates.all()
