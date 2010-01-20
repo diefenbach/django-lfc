@@ -29,13 +29,22 @@ def get_portal(pk=1):
     except lfc.models.Portal.DoesNotExist:
         return lfc.models.Portal.objects.filter()[0]
 
+def get_content_objects(objects):
+    """Returns content object of given BaseContent objects.
+    """
+    result = []
+    for obj in objects:
+        result.append(obj.get_content_object())
+
+    return result
+
 def getLOL(objects, objects_per_row=3):
     """Returns a list of list of given objects.
     """
     result = []
     row = []
     for i, object in enumerate(objects):
-        row.append(object)
+        row.append(object.get_content_object())
         if (i+1) % objects_per_row == 0:
             result.append(row)
             row = []
