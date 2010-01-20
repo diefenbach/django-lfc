@@ -5,7 +5,7 @@
         <select name="template_id">
             {% for template in templates %}
                 <option {% ifequal template.id current_template  %}selected="selected"{% endifequal %}value="{{ template.id }}">
-                    {{ template.name }}
+                    {% trans template.name %}
                 </option>
             {% endfor %}    
         </select>   
