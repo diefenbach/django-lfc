@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+{% if LFC_MULTILANGUAGE %}
     <ul class="sf-menu">
         <li>
             <a>{% trans current_language %}</a>
@@ -12,8 +13,8 @@
                 {% endfor %}
             </ul>
         </li>
-    </ul>
-
+    </ul>    
+{% endif %}
 
 <div class="navigation-manage" style="clear:both">
     <ul class="level-1">
