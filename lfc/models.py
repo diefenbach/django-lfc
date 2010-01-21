@@ -47,18 +47,21 @@ class Template(models.Model):
     **Attributes:**
 
     name
-        The name of the template.
+        The name of the template. This is displayed to the LFC user to select
+        a template. Also used by developers to register a template to a content
+        type.
 
     path
-        The path to the template file.
+        The relative path to the template file according to Django templating
+        engine.
 
     subpages_columns
         Stores the amount of columns for sub pages. This can be used for
-        templates which displays the children of an object.
+        templates which displays the children of an object like overviews.
 
     images_columns
         Stores the amount of columens for images. This can be used for
-        templates which displays the images of an object.
+        templates which displays the images of an object like galleries.
     """
     name = models.CharField(max_length=50, unique=True)
     path = models.CharField(max_length=100)
@@ -81,10 +84,12 @@ class ContentTypeRegistration(models.Model):
         The type of the registered content type.
 
     name
-        The name of the registered content type.
+        The name of the registered content type. This is displayed to the LFC
+        users to add a new content type. Also used by developers for regisration
+        purposed.
 
     display_select_standard
-        If set to true the user can select a standard page for the instances.
+        If set to true the user can select a standard page for the object.
 
     display_position
         If set to true the user can set the position of the intances.
@@ -122,7 +127,27 @@ class ContentTypeRegistration(models.Model):
         return self.name
 
 class Portal(models.Model):
-    """A portal has content objects.
+    """A portal is the root of all content objects. Stores global images and
+    some general data about the site.
+
+    **Attributes:**
+
+    title:
+        The title is displayed within the title tab of the site.
+
+    standard:
+        The object that is displayed if one browses to the root of the
+        portal.
+
+    from_email
+        The e-mail address that is used as sender of outgoing mails.
+
+    notification_emails
+        These e-mail address get all notification mails. For instance all
+        messages which are sent via the contact form to the portal.
+
+    allow_comments
+        Turns comments on/off generally.
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
     standard = models.ForeignKey("BaseContent", verbose_name = _(u"Page"), blank=True, null=True)
@@ -138,6 +163,9 @@ class Portal(models.Model):
         return self.title
 
     def get_absolute_url(self):
+        """Returns the absolute url of the portal. Takes the current language
+        into account.
+        """
         language = translation.get_language()
         if language == settings.LANGUAGE_CODE:
             return reverse("lfc_portal")
@@ -156,16 +184,26 @@ class Portal(models.Model):
         return self.allow_comments
 
     def get_parent_for_portlets(self):
+        """Fullfills the contract of django-portlets. Returns just None as
+        there is no parent for portlets.
+        """
         return None
 
-    # TODO: Define default template in portal
     def get_template(self):
-        """Returns the template of the portal
+        """Returns the template of the portal.
         """
+        # TODO: Define default template in portal
         return Template.objects.get(name="Article")
 
 class AbstractBaseContent(models.Model):
-    """Provides the inheritable BaseContentManager.
+    """The root of all content types. Provides the inheritable
+    BaseContentManager.
+
+    **Attributes:**
+
+    objects
+        The default content manager of LFC. Provides a restricted method which
+        takes care of the current user's permissions.
     """
     objects = BaseContentManager()
 
@@ -175,7 +213,98 @@ class AbstractBaseContent(models.Model):
 class BaseContent(AbstractBaseContent):
     """Base content object. From this model all content types should inherit.
     This class should never be instantiated.
+
+    **Attributes:**
+
+    content_type
+        The content type of the specific content object.
+
+    title
+        The title of the object. By default this displayed on top of very
+        object within the title tag of the HTML page (together with the portal's
+        title).
+
+    display_title
+        Set to false to hide the title within the HTML of the object. This can
+        be helpful to provide a custom title within the text field of an
+        object.
+    slug
+        The part of URL within the parent object. By default the absolute URL
+        of an object is created by all involved content objects.
+
+    description:
+        The description of an object. This is used within the overview
+        template and search results.
+
+    position:
+        The ordinal number of the object within the parent object. This is
+        used to order the child objects of an object.
+
+    language
+        The language of the object's content is in.
+
+    canonical
+        The base object of the object if the object is a translation another
+        object.
+
+    tags
+        The tags of the object. Can be used to select certain objects or
+        display a tag cloud.
+
+    parent
+        The parent object of an object. If set to None the object is a top
+        object.
+
+    template
+        The current selected template of the object.
+
+    standard
+        The current selected standard object of the object. This can be
+        selected out of the children of the object. If there is one, this is
+        displayed instead of the object itself.
+    active
+        If set to False, the object is only displayed to superusers.
+
+    exclude_from_navigation
+         If set to True, the object is not displayed within the navigation (top
+        tabs and navigation tree).
+
+    exclude_from_search
+        If set to True, the object is not displayed within search results.
+
+    creator
+        The user which has created this object.
+
+    creation_date
+        The date the object has been created.
+
+    modification_date
+        The date the object has been modified at last.
+
+    publication_date
+        The date the object has been published (active has been set to True
+        for the first time.) TODO: implement this.
+
+    meta_keywords
+        The meta keywords of the object. This is displayed within the meta
+        keywords tag of the rendered HTML.
+
+    meta_description
+        The meta description of the object. This is displayed within the meta
+        description tag of the rendered HTML.
+
+    images
+        The images of the object.
+
+    allow_comments
+        If set to true, the visitor of the object can leave a comment. If set
+        to default the allow_comments state of the parent object is overtaken.
+
+    searchable_text
+        The content which is searched for this object. This attribute should
+        not get directly. Rather the get_searchable_text method should be used.
     """
+
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
 
     title = models.CharField(_(u"Title"), max_length=100)
@@ -224,13 +353,17 @@ class BaseContent(AbstractBaseContent):
         return unicode(self.title)
 
     def save(self, force_insert=False, force_update=False):
+        """Djangos default save method. This is overwritten to do some LFC
+        related stuff if a content object is saved.
+        """
         self.searchable_text = self.get_searchable_text()
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
         super(BaseContent, self).save()
 
     def get_absolute_url(self):
-        """Returns the absolute url of the instance.
+        """Returns the absolute url of the instance. Takes care of nested
+        content objects.
         """
         page = self.standard or self
 
@@ -258,8 +391,8 @@ class BaseContent(AbstractBaseContent):
     get_absolute_url = models.permalink(get_absolute_url)
 
     def get_content_object(self):
-        """Returns the specific content object of the instance. This method 
-        can be called if one has a BaseContent and want the specific content 
+        """Returns the specific content object of the instance. This method
+        can be called if one has a BaseContent and want the specific content
         type e.g. Page.
         """
         # TODO: Ugly but works. There must be a cleaner way. isinstance doesn't
@@ -271,20 +404,20 @@ class BaseContent(AbstractBaseContent):
 
     def get_searchable_text(self):
         """Returns the searchable text of this content type. By default it
-        takes the title the description of the instance into account. Sub 
+        takes the title the description of the instance into account. Sub
         classes can overwrite this method in order to add specific data.
         """
         result = self.title + " " + self.description
         return result.strip()
 
     def form(self, **kwargs):
-        """Returns the add/edit form for the object. This method has to be 
+        """Returns the add/edit form for the object. This method has to be
         overwritten and implemented by sub classes.
         """
         raise NotImplementedError, "form has to be implemented by sub classed"
 
     def get_ancestors(self):
-        """Returns all ancestors of the page.
+        """Returns all ancestors of a content object.
         """
         ancestors = []
         page = self
@@ -304,7 +437,8 @@ class BaseContent(AbstractBaseContent):
         return ancestors
 
     def get_image(self):
-        """Returns the first image of the page.
+        """Returns the first image of a content object. If there is none it
+        returns None.
         """
         images = self.images.all()
         try:
@@ -313,7 +447,8 @@ class BaseContent(AbstractBaseContent):
             return None
 
     def get_meta_keywords(self):
-        """Returns the meta keywords of the instance.
+        """Returns the meta keywords of the instance. Replaces some
+        placeholders with the according content.
         """
         keywords = self.meta_keywords.replace("<title>", self.title)
         keywords = keywords.replace("<description>", self.description)
@@ -321,7 +456,8 @@ class BaseContent(AbstractBaseContent):
         return keywords
 
     def get_meta_description(self):
-        """Returns the meta description of the instance.
+        """Returns the meta description of the instance. Replaces some
+        placeholders with the according content.
         """
         description = self.meta_description.replace("<title>", self.title)
         description = description.replace("<description>", self.description)
@@ -329,7 +465,7 @@ class BaseContent(AbstractBaseContent):
         return description
 
     def get_template(self):
-        """Returns the current selected template of the instance.
+        """Returns the current selected template of the object.
         """
         if self.template is not None:
             return self.template
@@ -341,7 +477,7 @@ class BaseContent(AbstractBaseContent):
                 return lfc.utils.get_portal().get_template()
 
     def get_title(self):
-        """Returns the title of the instance. Takes display_title into account.
+        """Returns the title of the object. Takes display_title into account.
         """
         return self.display_title and self.title or ""
 
@@ -351,9 +487,9 @@ class BaseContent(AbstractBaseContent):
         return self.language in (settings.LANGUAGE_CODE, "0")
 
     def get_canonical(self, request):
-        """Returns the canonical object of this object. If the instance is the 
-        canonical object it returns itself. Takes care of the current user's 
-        permission.
+        """Returns the canonical object of this instance. If the instance is
+        the canonical object it returns itself. Takes care of the current
+        user's permission (therefore it needs the request).
         """
         if self.is_canonical():
             return self
@@ -367,9 +503,9 @@ class BaseContent(AbstractBaseContent):
         return not self.is_canonical()
 
     def has_language(self, request, language):
-        """Returns true if the is a translation of the instance in the 
-        requested language. It returns also true if the instance itself is 
-        within the request language or if there is a connected instance with
+        """Returns true if there is a translation of the instance in the
+        requested language. It returns also true if the instance itself is
+        within the requested language or if there is a connected instance with
         neutral language.
         """
         if self.language == "0":
@@ -395,7 +531,7 @@ class BaseContent(AbstractBaseContent):
         """Returns connected translation for requested language. Returns None
         if the requested language doesn't exist.
         """
-        # TODO: Should there a instance be returned even if the instance is a 
+        # TODO: Should there a instance be returned even if the instance is a
         #translation?
         if self.is_translation():
             return None
@@ -405,8 +541,8 @@ class BaseContent(AbstractBaseContent):
             return None
 
     def are_comments_allowed(self):
-        """Returns true if comments for this instance are allowed. Takes also 
-        the setup of parent objects into account (if the instance' comments 
+        """Returns true if comments for this instance are allowed. Takes also
+        the setup of parent objects into account (if the instance' comments
         setup is set to "default").
         """
         if self.allow_comments == ALLOW_COMMENTS_DEFAULT:
@@ -421,7 +557,7 @@ class BaseContent(AbstractBaseContent):
                 return False
 
     def get_parent_for_portlets(self):
-        """Returns the parent from which portlets should be inherited portlets. 
+        """Returns the parent from which portlets should be inherited portlets.
         The implementation of this method is a requirement from django-portlets.
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
@@ -438,7 +574,8 @@ class Page(BaseContent):
     text = models.TextField(_(u"Text"), blank=True)
 
     def get_searchable_text(self):
-        """Returns the searchable text of the page.
+        """Returns the searchable text of the page. This adds the text to
+        the default searchable text.
         """
         result = self.title + " " + self.description + " " + self.text
         return result.strip()
@@ -510,20 +647,20 @@ class File(models.Model):
 
     title
         The title of the image. Used within the title and alt tag
-        of the image
+        of the image.
 
     slug
-        The URL of the image
+        The URL of the image.
 
     content
-        The content object the file belongs to (optional)
+        The content object the file belongs to (optional).
 
     position
-        The ord number within the content object
+        The ordinal number within the content object. Used to order the images.
 
     description
         A long description of the image. Can be used within the content
-        (optional)
+        (optional).
 
     file
         The binary file.
@@ -565,7 +702,7 @@ class NavigationPortlet(Portlet):
     expand_level = models.PositiveSmallIntegerField(default=0)
 
     def render(self, context):
-        """Renders the portlet as html.
+        """Renders the portlet as HTML.
         """
         request = context.get("request")
         return render_to_string("lfc/portlets/navigation_portlet.html", RequestContext(request, {
@@ -580,14 +717,23 @@ class NavigationPortlet(Portlet):
         return NavigationPortletForm(instance=self, **kwargs)
 
 class NavigationPortletForm(forms.ModelForm):
-    """The form for the navigation portlet.
+    """Add/edit form for the navigation portlet.
     """
     class Meta:
         model = NavigationPortlet
 
 # TODO: Rename as it is able to display all content types. ContentPortlet, DocumentPortlet, ...?
 class PagesPortlet(Portlet):
-    """A portlet to display arbitrary objects.
+    """A portlet to display arbitrary objects. The objects can be selected by
+    tags.
+
+    **Attributes:**
+
+    limit:
+        The amount of objects which are displayed at maximum.
+
+    tags:
+        The tags an object must have to be displayed.
     """
     limit = models.PositiveSmallIntegerField(default=5)
     tags = models.CharField(blank=True, max_length=100)
@@ -596,7 +742,7 @@ class PagesPortlet(Portlet):
         return "%s" % self.id
 
     def render(self, context):
-        """Renders the portlet as html.
+        """Renders the portlet as HTML.
         """
         objs = BaseContent.objects.filter(
             language__in=("0", translation.get_language()))
@@ -610,12 +756,12 @@ class PagesPortlet(Portlet):
         })
 
     def form(self, **kwargs):
-        """
+        """Returns the add/edit form of the portlet.
         """
         return PagesPortletForm(instance=self, **kwargs)
 
 class PagesPortletForm(forms.ModelForm):
-    """
+    """Add/edit form of the pages portlet.
     """
     tags = TagField(widget=AutoCompleteTagInput(), required=False)
 
@@ -623,13 +769,22 @@ class PagesPortletForm(forms.ModelForm):
         model = PagesPortlet
 
 class RandomPortlet(Portlet):
-    """A portlet to display random objects.
+    """A portlet to display random objects. The objects can be selected by
+    tags.
+
+    **Attributes:**
+
+    limit:
+        The amount of objects which are displayed at maximum.
+
+    tags:
+        The tags an object must have to be displayed.
     """
     limit = models.PositiveSmallIntegerField(default=1)
     tags = models.CharField(blank=True, max_length=100)
 
     def render(self, context):
-        """Renders the portlet as html.
+        """Renders the portlet as HTML.
         """
         items = BaseContent.objects.filter(
             language__in=("0", translation.get_language()))
@@ -651,7 +806,7 @@ class RandomPortlet(Portlet):
         return RandomPortletForm(instance=self, **kwargs)
 
 class RandomPortletForm(forms.ModelForm):
-    """Form for the RandomPortlet.
+    """Add/Edit form for the random portlet.
     """
     tags = TagField(widget=AutoCompleteTagInput(), required=False)
 
@@ -659,15 +814,21 @@ class RandomPortletForm(forms.ModelForm):
         model = RandomPortlet
 
 class TextPortlet(Portlet):
-    """A simple portlet to display some text.
+    """A portlet to display arbitrary HTML text.
+
+    **Attributes:**
+
+    text:
+        The HTML text which is displayed. Can contain any HTML text.
     """
+
     text = models.TextField(_(u"Text"), blank=True)
 
     def __unicode__(self):
         return "%s" % self.id
 
     def render(self, context):
-        """Renders the portlet as html.
+        """Renders the portlet as HTML.
         """
         return render_to_string("lfc/portlets/text_portlet.html", {
             "title" : self.title,
@@ -680,7 +841,7 @@ class TextPortlet(Portlet):
         return TextPortletForm(instance=self, **kwargs)
 
 class TextPortletForm(forms.ModelForm):
-    """Form for the TextPortlet.
+    """Add/Edit form for the text portlet.
     """
     class Meta:
         model = TextPortlet
