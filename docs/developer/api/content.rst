@@ -1,6 +1,6 @@
-=============
-Content Types
-=============
+=======
+Content
+=======
 
 .. autoclass:: lfc.models.BaseContent
     :members: are_comments_allowed, form, get_ancestors, get_ancestors_reverse, 

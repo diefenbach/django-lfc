@@ -2,19 +2,27 @@
 Registration
 ============
 
-:class:`ContentTypeRegistration`
-================================
-
-.. autoclass:: lfc.models.ContentTypeRegistration
-
-:mod:`lfc.utils.registration`
-=============================
+Utilities
+=========
 
 .. automodule:: lfc.utils.registration
 
-  .. autofunction:: get_info_for
-  .. autofunction:: get_allowed_subtypes
-  .. autofunction:: register_sub_type
+Set registration info
+----------------------
+
   .. autofunction:: register_content_type
   .. autofunction:: register_template
+  .. autofunction:: register_sub_type
+
+
+Get registration info
+---------------------
+
+  .. autofunction:: get_info
+  .. autofunction:: get_allowed_subtypes
   .. autofunction:: get_default_template
+
+Classes
+=======
+
+.. autoclass:: lfc.models.ContentTypeRegistration
