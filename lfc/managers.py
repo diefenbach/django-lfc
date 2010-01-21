@@ -34,7 +34,7 @@ class BaseContentManager(models.Manager):
         return BaseContentQuerySet(self.model)
 
     def restricted(self, request):
-        """Returns a query set according to the permissions of the restricted
+        """Returns a query set according to the permissions of the current
         user.
         """
         user = request.user

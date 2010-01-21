@@ -72,6 +72,7 @@ API
    developer/api/registration.rst
    developer/api/content.rst
    developer/api/template.rst
+   developer/api/managers.rst
 
 Indices and tables
 ==================
