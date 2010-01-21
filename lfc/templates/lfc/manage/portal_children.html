@@ -40,7 +40,9 @@
                                style="float:left" />
                     </td>
                     <td>
-                        {{ child.position }}
+                        <input type="text"
+                               name="position-{{ child.id }}"
+                               value="{{ child.position }}" />
                     </td>
                     <td>
                         {{ child.title }}

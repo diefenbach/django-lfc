@@ -62,6 +62,7 @@ class Template(models.Model):
     images_columns
         Stores the amount of columens for images. This can be used for
         templates which displays the images of an object like galleries.
+
     """
     name = models.CharField(max_length=50, unique=True)
     path = models.CharField(max_length=100)
@@ -85,8 +86,8 @@ class ContentTypeRegistration(models.Model):
 
     name
         The name of the registered content type. This is displayed to the LFC
-        users to add a new content type. Also used by developers for regisration
-        purposed.
+        users to add a new content type. Also used by developers for 
+        registration purposes.
 
     display_select_standard
         If set to true the user can select a standard page for the object.
@@ -262,11 +263,12 @@ class BaseContent(AbstractBaseContent):
         The current selected standard object of the object. This can be
         selected out of the children of the object. If there is one, this is
         displayed instead of the object itself.
+
     active
         If set to False, the object is only displayed to superusers.
 
     exclude_from_navigation
-         If set to True, the object is not displayed within the navigation (top
+        If set to True, the object is not displayed within the navigation (top
         tabs and navigation tree).
 
     exclude_from_search

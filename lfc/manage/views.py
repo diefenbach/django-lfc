@@ -39,7 +39,7 @@ from lfc.utils import LazyEncoder
 from lfc.utils import get_portal
 from lfc.utils import set_message_cookie
 from lfc.utils.registration import get_allowed_subtypes
-from lfc.utils.registration import get_info_for
+from lfc.utils.registration import get_info
 
 # Dashboard #################################################################
 @login_required
@@ -137,9 +137,16 @@ def update_portal_children(request):
                 except BaseContent.DoesNotExist:
                     pass
                 else:
+                    position = request.POST.get("position-%s" % id, "")
+                    if position != "":
+                        try:
+                            child.position = position
+                        except ValueError:
+                            pass
                     child.active = request.POST.get("is_active-%s" % id, 0)
                     child.save()
 
+    _update_positions(None)
     html = (
         ("#children", portal_children(request)),
     )
@@ -532,7 +539,7 @@ def add_object(request, language=None, id=None):
 
     return render_to_response("lfc/manage/object_add.html", RequestContext(request, {
         "type" : type,
-        "name" : get_info_for(type).name,
+        "name" : get_info(type).name,
         "form" : form,
         "language" : language,
         "id" : id,
@@ -624,7 +631,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : children(request, obj),
-        "content_type_name" : get_info_for(obj).name,
+        "content_type_name" : get_info(obj).name,
     }))
 
 @login_required
@@ -678,7 +685,7 @@ def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
 
         if form.is_valid():
             form.save()
-            form = MetaDataForm(instance=_update_positions(obj))
+            form = MetaDataForm(instance=_update_positions(obj, True))
 
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -776,10 +783,18 @@ def update_children(request, id):
                 except BaseContent.DoesNotExist:
                     pass
                 else:
+                    position = request.POST.get("position-%s" % id, "")
+                    if position != "":
+                        try:
+                            child.position = position
+                        except ValueError:
+                            pass
                     child.active = request.POST.get("is_active-%s" % id, 0)
                     child.save()
 
+    _update_positions(obj)
     html = (
+        ("#navigation", navigation(request, obj.get_content_object())),
         ("#children", children(request, obj)),
     )
 
@@ -1256,17 +1271,25 @@ def set_template(request):
 
     return HttpResponseRedirect(obj.get_absolute_url())
 
-def _update_positions(obj):
-    """Updates position of top objs or given obj.
+def _update_positions(obj, take_parent=False):
+    """Updates position of given object's children. If take_parent is True
+    the children of the given object's parent are updated.
     """
+    if take_parent == True:
+        parent = obj.parent
+    else:
+        parent = obj
+
     for language in settings.LANGUAGES:
         if language[0] == settings.LANGUAGE_CODE:
-            objs = BaseContent.objects.filter(parent=obj.parent, language__in=("0", language[0]))
+            objs = BaseContent.objects.filter(parent=parent, language__in=("0", language[0]))
         else:
-            objs = BaseContent.objects.filter(parent=obj.parent, language = language[0])
+            objs = BaseContent.objects.filter(parent=parent, language = language[0])
 
         for i, p in enumerate(objs):
             p.position = (i+1)*10
             p.save()
+            if obj and obj.id == p.id:
+                obj = p
 
     return obj

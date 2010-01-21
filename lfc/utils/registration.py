@@ -7,14 +7,15 @@ from lfc.models import BaseContent
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
 
-def get_info_for(obj_or_type):
+def get_info(obj_or_type):
     """Returns the ContentTypeRegistration for the passed object or type.
     Returns None if the content type registry is not found.
 
     **Parameters:**
 
     obj_or_type
-        Must be an instance of BaseContent or a String with a valid type name.
+        The object or type for which the information should be returned. Must
+        be an instance of BaseContent or a String with a valid type name.
 
     """
     if isinstance(obj_or_type, BaseContent):
@@ -28,7 +29,8 @@ def get_info_for(obj_or_type):
         return None
 
 def get_allowed_subtypes(obj_or_type=None):
-    """Returns all allowed sub types for given object.
+    """Returns all allowed sub types for given object. Returns a list of
+    ContentTypeRegistrations.
 
     **Parameters:**
 
@@ -40,36 +42,36 @@ def get_allowed_subtypes(obj_or_type=None):
     if obj_or_type is None:
         return ContentTypeRegistration.objects.filter(global_addable=True)
 
-    ctr = get_info_for(obj_or_type)
+    ctr = get_info(obj_or_type)
     if ctr:
         return ctr.subtypes.all()
     else:
         return []
 
 def register_sub_type(klass, name):
-    """Registers the content type klass as allowed content type name.
+    """Registers a content type as a allowed sub type to another content type.
 
     **Parameters:**
 
     klass
-        The class which should be registered as valid sub type to an content
-        type.
+        The class which should be registered.
 
     name
-        The name of the content type to which klass should be registered.
+        The name of the content type to which the passed content type (klass)
+        should be registered.
     """
     try:
         base_ctr = ContentTypeRegistration.objects.get(name=name)
     except ContentTypeRegistration.DoesNotExist:
         return
 
-    sub_ctr = get_info_for(klass.__name__.lower())
+    sub_ctr = get_info(klass.__name__.lower())
 
     if sub_ctr:
         base_ctr.subtypes.add(sub_ctr)
 
 def register_content_type(klass, name, sub_types=[], templates=[], default_template=None):
-    """Registers passed object as a content type.
+    """Registers a content type.
 
     **Parameters:**
 
@@ -150,14 +152,16 @@ def register_template(name, path, subpages_columns=0, images_columns=0):
         pass
 
 def get_default_template(obj_or_type):
-    """Returns the default template for given object or type.
+    """Returns the default template for given object or type. Returns an
+    instance of Template.
 
     **Parameters:**
 
     obj_or_type
-        Must be an instance of BaseContent or a String with a valid type name.
+        The object or type for which the temlate should be returned. Must be
+        an instance of BaseContent or a String with a valid type name.
     """
-    ctr = get_info_for(obj_or_type)
+    ctr = get_info(obj_or_type)
     if ctr is None:
         return None
     else:
@@ -169,9 +173,11 @@ def get_templates(obj_or_type):
     **Parameters:**
 
     obj_or_type
-        Must be an instance of BaseContent or a String with a valid type name.
+        The object or type for which the temlates should be returned. Must be
+        an instance of BaseContent or a String with a valid type name. Returns
+        a list of Template instances.
     """
-    ctr = get_info_for(obj_or_type)
+    ctr = get_info(obj_or_type)
     if ctr is None:
         return []
     else:

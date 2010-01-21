@@ -13,7 +13,7 @@ from lfc.models import BaseContent
 from lfc.models import Portal
 from lfc.models import ContentTypeRegistration
 from lfc.utils.registration import get_allowed_subtypes
-from lfc.utils.registration import get_info_for
+from lfc.utils.registration import get_info
 
 class ContentTypeRegistrationForm(forms.ModelForm):
     """
@@ -53,7 +53,7 @@ class MetaDataForm(forms.ModelForm):
 
         instance = kwargs.get("instance").get_content_object()
         language = instance.language
-        ctr = get_info_for(instance)
+        ctr = get_info(instance)
 
         if not getattr(settings, "LFC_MULTILANGUAGE"):
             del self.fields["canonical"]
