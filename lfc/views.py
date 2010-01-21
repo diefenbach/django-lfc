@@ -53,11 +53,6 @@ def base_view(request, language=None, slug=None, obj=None):
     if isinstance(obj, Portal):
         return portal(request, obj)
 
-    cache_key = "view-%s-%s-%s" % (language, obj.content_type, obj.id)
-    result = cache.get(cache_key)
-    if result is not None:
-        return HttpResponse(result)
-
     # Get the template of the object
     obj_template = obj.get_template()
 
@@ -67,10 +62,10 @@ def base_view(request, language=None, slug=None, obj=None):
         return HttpResponseRedirect(url)
 
     # Get sub objects (as LOL if requested)
-    if obj_template.subpages_columns == 0:
-        sub_objects = lfc.utils.get_content_objects(obj.sub_objects.restricted(request))
+    if obj_template.children_columns == 0:
+        sub_objects = lfc.utils.get_content_objects(obj.children.restricted(request))
     else:
-        sub_objects = lfc.utils.getLOL(obj.sub_objects.restricted(request), obj_template.subpages_columns)
+        sub_objects = lfc.utils.getLOL(obj.children.restricted(request), obj_template.children_columns)
 
     # Get images (as LOL if requested)
     temp_images = list(obj.images.all())
@@ -105,7 +100,6 @@ def base_view(request, language=None, slug=None, obj=None):
     result = render_to_string(obj_template.path, c)
     result = template.Template("{% load lfc_tags %} " + result).render(c)
 
-    cache.set(cache_key, result)
     return HttpResponse(result)
 
 def file(request, language=None, id=None):

@@ -262,7 +262,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     """Renders the children of given object as sub navigation tree.
     """
     obj = obj.get_content_object()
-    temp = obj.sub_objects.restricted(request).filter(
+    temp = obj.children.restricted(request).filter(
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
     )
@@ -342,7 +342,7 @@ def objects_by_slug(context, slug):
     except Http404:
         return { "objs" : [] }
 
-    objs = obj.sub_objects.restricted(request)
+    objs = obj.children.restricted(request)
 
     return { "objs" : objs }
 
@@ -370,7 +370,7 @@ def previous_next_by_position(context, obj):
     """Displays previous/links by position for the given object.
     """
     request = context.get("request")
-    siblings = [o.get_content_object() for o in obj.parent.sub_objects.restricted(request)]
+    siblings = [o.get_content_object() for o in obj.parent.children.restricted(request)]
     current_position = siblings.index(obj)
     next_position = current_position + 1
     previous_position = current_position - 1

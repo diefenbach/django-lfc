@@ -274,7 +274,7 @@ def _get_obj_children(request, obj):
     """
     """
     objs = []
-    for obj in obj.sub_objects.restricted(request):
+    for obj in obj.children.restricted(request):
         objs.append({
             "title" : obj.title,
             "url" : obj.get_absolute_url(),
@@ -750,7 +750,7 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
 def children(request, obj, template_name="lfc/manage/object_children.html"):
     """
     """
-    children = obj.sub_objects.all()
+    children = obj.children.all()
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
         "obj" : obj,
@@ -1112,7 +1112,7 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
     """Renders the children of the given obj (recursively)
     """
     obj = obj.get_content_object()
-    temp = obj.sub_objects.all()
+    temp = obj.children.all()
 
     objs = []
     for obj in temp:

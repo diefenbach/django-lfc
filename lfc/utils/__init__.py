@@ -44,7 +44,7 @@ def getLOL(objects, objects_per_row=3):
     result = []
     row = []
     for i, object in enumerate(objects):
-        row.append(object.get_content_object())
+        row.append(object)
         if (i+1) % objects_per_row == 0:
             result.append(row)
             row = []
@@ -130,7 +130,7 @@ def traverse_object(request, slug):
 
     for path in paths[1:]:
         try:
-            obj = obj.sub_objects.restricted(request).filter(slug=path)[0]
+            obj = obj.children.restricted(request).filter(slug=path)[0]
         except IndexError:
             raise Http404
 

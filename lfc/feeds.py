@@ -34,7 +34,7 @@ class PageTagFeed(Feed):
     #     return obj.description
 
     def items(self, obj):
-        objs = obj.sub_objects.filter(active=True)
+        objs = obj.children.filter(active=True)
         if self.tag:
             objs = ModelTaggedItemManager().with_all(self.tag, objs)
 

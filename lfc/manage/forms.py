@@ -75,7 +75,7 @@ class MetaDataForm(forms.ModelForm):
                 self.fields["canonical"].choices = canonicals
 
         # Parents - display only objects in the same or neutral language
-        exclude = [p.id for p in instance.sub_objects.all()]
+        exclude = [p.id for p in instance.children.all()]
         exclude.append(instance.id)
 
         parents = BaseContent.objects.exclude(pk__in=exclude)
@@ -98,14 +98,14 @@ class MetaDataForm(forms.ModelForm):
         if not ctr.display_select_standard:
             del self.fields["standard"]
         else:
-            children = instance.sub_objects.all()
+            children = instance.children.all()
             if len(children) == 0:
                 del self.fields["standard"]
             else:
                 if not language == "0":
-                    children = instance.sub_objects.filter(language__in=(language, "0"))
+                    children = instance.children.filter(language__in=(language, "0"))
                 else:
-                    children = instance.sub_objects.all()
+                    children = instance.children.all()
 
                 standards = [(p.id, p.title) for p in children]
                 standards = sorted(standards, lambda a, b: cmp(a[1], b[1]))

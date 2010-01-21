@@ -55,7 +55,7 @@ class Template(models.Model):
         The relative path to the template file according to Django templating
         engine.
 
-    subpages_columns
+    children_columns
         Stores the amount of columns for sub pages. This can be used for
         templates which displays the children of an object like overviews.
 
@@ -66,7 +66,7 @@ class Template(models.Model):
     """
     name = models.CharField(max_length=50, unique=True)
     path = models.CharField(max_length=100)
-    subpages_columns = models.IntegerField(verbose_name=_(u"Subpages columns"), default=1)
+    children_columns = models.IntegerField(verbose_name=_(u"Subpages columns"), default=1)
     images_columns = models.IntegerField(verbose_name=_(u"Images columns"), default=1)
 
     class Meta:
@@ -323,7 +323,7 @@ class BaseContent(AbstractBaseContent):
 
     tags = fields.TagField(_(u"Tags"))
 
-    parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="sub_objects")
+    parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="children")
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
     standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
 
@@ -859,7 +859,7 @@ def register(sender, **kwargs):
     from lfc.utils.registration import register_template
     register_template(name = _(u"Plain"), path="lfc/templates/plain.html")
     register_template(name = _(u"Article"), path="lfc/templates/article.html")
-    register_template(name = _(u"Gallery"), path="lfc/templates/gallery.html")
+    register_template(name = _(u"Gallery"), path="lfc/templates/gallery.html", images_columns=3)
     register_template(name = _(u"Overview"), path="lfc/templates/overview.html")
 
     # Content Types

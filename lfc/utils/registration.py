@@ -124,7 +124,7 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
                         ctr.default_template = template
                         ctr.save()
 
-def register_template(name, path, subpages_columns=0, images_columns=0):
+def register_template(name, path, children_columns=0, images_columns=0):
     """Registers a template.
 
     **Parameters:**
@@ -135,11 +135,13 @@ def register_template(name, path, subpages_columns=0, images_columns=0):
     path
         The path to the template file.
 
-    subpages_columns
-        The amount of columns for sub pages.
+    children_columns
+        The amount of columns for sub pages. This can be used within templates
+        to structure children.
 
     images_columns
-        The amount of columns for images.
+        The amount of columns for images. This can be used within templates
+        to structure images.
     """
     try:
         name = name._proxy____str_cast()
@@ -147,7 +149,7 @@ def register_template(name, path, subpages_columns=0, images_columns=0):
         pass
     try:
         Template.objects.create(name = name, path=path,
-            subpages_columns=subpages_columns, images_columns=images_columns)
+            children_columns=children_columns, images_columns=images_columns)
     except IntegrityError:
         pass
 
