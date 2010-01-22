@@ -164,8 +164,8 @@ class Portal(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        """Returns the absolute url of the portal. Takes the current language
-        into account.
+        """Returns the absolute url of the portal. It takes the current
+        language into account.
         """
         language = translation.get_language()
         if language == settings.LANGUAGE_CODE:
@@ -197,9 +197,9 @@ class Portal(models.Model):
         return Template.objects.get(name="Article")
 
     def get_children(self, request=None, *args, **kwargs):
-        """Returns the children of the portal. If request is passed the
-        permissions of the current user is taken into account. Other valid
-        filters can be passed also, e.g. slug = "page-1" .
+        """Returns the children of the portal. If hte request is passed the
+        permissions of the current user is taken into account. Additionally
+        other valid filters can be passed, e.g. slug = "page-1".
         """
         kwargs["parent"] = None
         if request:
@@ -208,7 +208,7 @@ class Portal(models.Model):
             return BaseContent.objects.filter(**kwargs).content_objects()
 
 class AbstractBaseContent(models.Model):
-    """The root of all content types. Provides the inheritable
+    """The root of all content types. It provides the inheritable
     BaseContentManager.
 
     **Attributes:**
@@ -223,8 +223,8 @@ class AbstractBaseContent(models.Model):
         abstract = True
 
 class BaseContent(AbstractBaseContent):
-    """Base content object. From this model all content types should inherit.
-    This class should never be instantiated.
+    """Base content object. From this class all content types should inherit.
+    It should never be instantiated.
 
     **Attributes:**
 
@@ -450,9 +450,9 @@ class BaseContent(AbstractBaseContent):
         return ancestors
 
     def get_children(self, request=None, *args, **kwargs):
-        """Returns the children of the content object. If request is passed
-        the permissions of the current user is taken into account. Other valid
-        filters can be passed also, e.g. slug = "page-1" .
+        """Returns the children of the content object. If the request is
+        passed the permissions of the current user is taken into account.
+        Other valid filters can be passed also, e.g. slug = "page-1".
         """
         if request:
             query_set = self.children.restricted(request)
@@ -460,9 +460,9 @@ class BaseContent(AbstractBaseContent):
             query_set = self.children.all()
 
         if kwargs:
-            return query_set.filter(**kwargs)
+            return query_set.filter(**kwargs).content_objects()
         else:
-            return query_set
+            return query_set.content_objects()
 
     def get_image(self):
         """Returns the first image of a content object. If there is none it

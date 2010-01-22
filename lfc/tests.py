@@ -394,16 +394,39 @@ class PageTestCase(TestCase):
     def test_get_children(self):
         """
         """
-    def test_get_children(self):
-        """
-        """
         request = create_request()
         children = self.p1.get_children(request)
         self.assertEqual(len(children), 2)
 
         # The cildren have to be specific objects
-        # for child in children:
-        #     self.failUnless(isinstance(child, Page))
+        for child in children:
+            self.failUnless(isinstance(child, Page))
 
         children = self.p1.get_children(request, slug="page-1-1")
         self.assertEqual(len(children), 1)
+
+        request.user.is_superuser = False
+
+        # No page is active
+        children = self.p1.get_children(request)
+        self.assertEqual(len(children), 0)
+
+        children = self.p1.get_children()
+        self.assertEqual(len(children), 2)
+
+        # Only page 1 is active
+        self.p11.active = True
+        self.p11.save()
+
+        children = self.p1.get_children(request)
+        self.assertEqual(len(children), 1)
+
+        children = self.p1.get_children()
+        self.assertEqual(len(children), 2)
+
+        # Page 2 is not active
+        children = self.p1.get_children(slug="page-1-2")
+        self.assertEqual(len(children), 1)
+
+        children = self.p1.get_children(request, slug="page-1-2")
+        self.assertEqual(len(children), 0)
