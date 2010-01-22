@@ -86,7 +86,7 @@ class ContentTypeRegistration(models.Model):
 
     name
         The name of the registered content type. This is displayed to the LFC
-        users to add a new content type. Also used by developers for 
+        users to add a new content type. Also used by developers for
         registration purposes.
 
     display_select_standard
@@ -191,10 +191,21 @@ class Portal(models.Model):
         return None
 
     def get_template(self):
-        """Returns the template of the portal.
+        """Returns the current template of the portal.
         """
         # TODO: Define default template in portal
         return Template.objects.get(name="Article")
+
+    def get_children(self, request=None, *args, **kwargs):
+        """Returns the children of the portal. If request is passed the
+        permissions of the current user is taken into account. Other valid
+        filters can be passed also, e.g. slug = "page-1" .
+        """
+        kwargs["parent"] = None
+        if request:
+            return BaseContent.objects.restricted(request).filter(**kwargs).content_objects()
+        else:
+            return BaseContent.objects.filter(**kwargs).content_objects()
 
 class AbstractBaseContent(models.Model):
     """The root of all content types. Provides the inheritable
@@ -437,6 +448,21 @@ class BaseContent(AbstractBaseContent):
         ancestors = self.get_ancestors()
         ancestors.reverse()
         return ancestors
+
+    def get_children(self, request=None, *args, **kwargs):
+        """Returns the children of the content object. If request is passed
+        the permissions of the current user is taken into account. Other valid
+        filters can be passed also, e.g. slug = "page-1" .
+        """
+        if request:
+            query_set = self.children.restricted(request)
+        else:
+            query_set = self.children.all()
+
+        if kwargs:
+            return query_set.filter(**kwargs)
+        else:
+            return query_set
 
     def get_image(self):
         """Returns the first image of a content object. If there is none it
