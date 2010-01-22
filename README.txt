@@ -21,6 +21,18 @@ Code
 Changes
 =======
 
+1.0 alpha 3 (2010-01-22)
+------------------------
+
+* A lot of cleanups and bugfixes
+* Added on-the-fly template selection
+* Added children tab for portal and content objects
+* Added new logo
+* Added some tests and docs
+* Improved file-/imagebrowser
+* Removed hard coded path to templates
+* Removed tags from portal
+
 1.0 alpha 2 (2010-01-15)
 ------------------------
 

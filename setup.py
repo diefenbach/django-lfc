@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0a2'
+version = '1.0a3'
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
@@ -21,7 +21,7 @@ setup(name='django-lfc',
       keywords='django lfc cms',
       author='Kai Diefenbach',
       author_email='kai.diefenbach@iqpp.de',
-      url='http://www.iqpp.com',
+      url='http://www.iqpp.de',
       license='BSD',
       packages=find_packages(exclude=['ez_setup']),
       include_package_data=True,
