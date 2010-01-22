@@ -41,15 +41,6 @@ from lfc.utils import set_message_cookie
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
-# Dashboard #################################################################
-@login_required
-def dashboard(request, template_name="lfc/manage/dashboard.html"):
-    """
-    """
-    return render_to_response(template_name, RequestContext(request, {
-
-    }))
-
 # Portal ####################################################################
 @login_required
 def portal(request, template_name="lfc/manage/portal.html"):
@@ -490,7 +481,7 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
 
 @login_required
 def add_object(request, language=None, id=None):
-    """Adds a object to object with given slug.
+    """Adds a new content object to the content object with the passed slug.
     """
     type = request.REQUEST.get("type", "page")
     ct = ContentType.objects.filter(model=type)[0]
@@ -549,7 +540,7 @@ def add_object(request, language=None, id=None):
 
 @login_required
 def delete_object(request, id):
-    """Deletes object with given id.
+    """Deletes the content object with given id.
     """
     try:
         obj = BaseContent.objects.get(pk = id)
@@ -585,7 +576,7 @@ def delete_object(request, id):
 
 @login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
-    """Displays the main screen of an object management interface.
+    """Displays the management ui of the content object with passed id.
     """
     try:
         obj = lfc.utils.get_content_object(pk=id)
@@ -635,8 +626,8 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     }))
 
 @login_required
-def core_data(request, id, as_string=True, template_name="lfc/manage/object_data.html"):
-    """Displays / handles the core data an object.
+def core_data(request, id, template_name="lfc/manage/object_data.html"):
+    """Displays/Updates the core data tab of the content object with passed id.
     """
     base_content = BaseContent.objects.get(pk=id)
     obj_ct = ContentType.objects.filter(model=base_content.content_type)[0]
@@ -675,7 +666,7 @@ def core_data(request, id, as_string=True, template_name="lfc/manage/object_data
 
 @login_required
 def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
-    """Displays / handles the meta data an object.
+    """Displays/Updates the meta tab of the content object with passed id.
     """
     obj = lfc.utils.get_content_object(pk=id)
 
@@ -715,7 +706,7 @@ def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
 
 @login_required
 def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
-    """Displays / handles the seo data an object.
+    """Displays/Updates the SEO tab of the content object with passe id.
     """
     obj = BaseContent.objects.get(pk=id)
     obj = obj.get_content_object()
@@ -748,7 +739,7 @@ def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
 
 @login_required
 def children(request, obj, template_name="lfc/manage/object_children.html"):
-    """
+    """Displays the children objects of the passed content object obj.
     """
     children = obj.children.all()
     return render_to_string(template_name, RequestContext(request, {
@@ -947,7 +938,7 @@ def update_files(request, id):
 
 @login_required
 def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
-    """
+    """Displays the images tab of a content object.
     """
     obj = BaseContent.objects.get(pk=id).get_content_object()
 

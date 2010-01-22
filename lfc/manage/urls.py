@@ -36,7 +36,6 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-children/(?P<id>\d+)$', "update_children", name="lfc_update_children"),
     url(r'^update-portal-children$', "update_portal_children", name="lfc_update_portal_children"),
 
-    url(r'^dashboard$', "dashboard", name="lfc_manage_dashboard"),
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
 
     url(r'^add-portlet/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "add_portlet", name="lfc_add_portlet"),
