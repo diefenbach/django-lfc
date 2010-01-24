@@ -127,6 +127,16 @@ class ContentTypeRegistration(models.Model):
     def __unicode__(self):
         return self.name
 
+    def get_subtypes(self):
+        """Returns all allowed sub types for the belonging content type.
+        """
+        return self.subtypes.all()
+
+    def get_templates(self):
+        """Returns all allowed templates for the belonging content type.
+        """
+        return self.templates.all()
+
 class Portal(models.Model):
     """A portal is the root of all content objects. Stores global images and
     some general data about the site.
