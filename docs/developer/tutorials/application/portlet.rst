@@ -46,8 +46,6 @@ Create the class
         class Meta:
             model = EventsPortlet
 
-    register_portlet(EventsPortlet, "Events")
-
 2:
     Import the portlet base class. All portlets should inherit from it.
 
@@ -83,9 +81,6 @@ Create the class
 29:
     Default Django model form to add/edit the Events portlet.
 
-35:
-    Registers the portlet with name "Events".
-    
 Create the template
 ===================
 

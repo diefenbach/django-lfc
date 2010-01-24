@@ -50,24 +50,7 @@ lines of code:
     lfc_context is the current viewed content object. "start" and "end" are 
     the fields we added to our content object.
     
-Register the template
-=====================
-
-In order to register the template just add the following lines to your 
-models.py
-
-.. code-block:: python
-    :linenos:
-
-    from lfc.utils.registration import register_template
-    register_template(name = "Event 1", file_name="lfc_events/event_1.html")
-
-1: 
-    Import the utility method to register a template.
-2:
-    Register the template with name "Event 1".
-
 Create another template
 =======================
 
-Now create another template "Event 2" and register it.
+Now create another template "Event 2".

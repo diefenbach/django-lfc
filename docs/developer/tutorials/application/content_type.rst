@@ -37,11 +37,6 @@ within models.py
             model = Event
             fields = ("title", "slug", "description", "start", "end")
         
-        # register the content type
-        register_content_type(obj = Event, name = "Event",  
-            templates=["Event 1", "Event 2"], default_template="Event 1")
-            
-            
 1-6:
     Default imports from python and django.
 
@@ -68,11 +63,3 @@ within models.py
 23-28
     Default Django model form to add/edit the Event type.
     
-31/32:
-    Registers the content type to LFC's model registration, which means in this
-    case:  
-    
-    * We register the model Event under the name "Event". 
-    * An Event has two possible templates from which the user can choose: 
-      "Event 1" and "Event 2" (which has to be written yet).
-    * The default template is "Event 1".

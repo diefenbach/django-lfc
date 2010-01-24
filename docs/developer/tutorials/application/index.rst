@@ -14,3 +14,4 @@ You can :download:`download the whole application here <lfc_events.tar.gz>`.
    content_type.rst
    template.rst
    portlet.rst
+   registration.rst   
