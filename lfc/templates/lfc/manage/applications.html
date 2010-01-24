@@ -26,11 +26,11 @@
                 {% for application in applications %}
                     <tr>
                         <td>
-                            {{ application.pretty_name }}
+                            {% trans application.pretty_name %}
                         </td>
                         <td>
                             {% if application.description %}
-                                {{ application.description }}
+                                {% trans application.description %}
                             {% endif %}
                         </td>
                         <td>
