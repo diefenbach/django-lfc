@@ -29,13 +29,13 @@ def get_info(obj_or_type):
         return None
 
 def get_allowed_subtypes(obj_or_type=None):
-    """Returns all allowed sub types for given object. Returns a list of
-    ContentTypeRegistrations.
+    """Returns all allowed sub types for given object or type. Returns a list 
+    of ContentTypeRegistrations.
 
     **Parameters:**
 
     obj_or_type
-        Must be an instance of BaseContent, a String with a valid type name or
+        Must be an instance of BaseContent, a string with a valid type name or
         None. If it's None the conten type registrations of all global addable
         content types are returned.
     """
@@ -44,7 +44,7 @@ def get_allowed_subtypes(obj_or_type=None):
 
     ctr = get_info(obj_or_type)
     if ctr:
-        return ctr.subtypes.all()
+        return ctr.get_subtypes()
     else:
         return []
 
@@ -124,6 +124,16 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
                         ctr.default_template = template
                         ctr.save()
 
+def unregister_content_type(name):
+    """Unregisteres content type with passed name
+    """
+    try:
+        ctr = ContentTypeRegistration.objects.get(name=name)
+    except ContentTypeRegistration.DoesNotExist:
+        pass
+
+    ctr.delete()
+
 def register_template(name, path, children_columns=0, images_columns=0):
     """Registers a template.
 
@@ -183,4 +193,4 @@ def get_templates(obj_or_type):
     if ctr is None:
         return []
     else:
-        return ctr.templates.all()
+        return ctr.get_templates()
