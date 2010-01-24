@@ -1,6 +1,7 @@
 # python imports
 import datetime
 import urllib
+import sys
 
 # django settings
 from django.conf import settings
@@ -14,6 +15,16 @@ from django.utils import translation
 
 # lfc imports
 import lfc.models
+
+def import_module(module):
+    """Imports module with given dotted name.
+    """
+    try:
+        module = sys.modules[module]
+    except KeyError:
+        __import__(module)
+        module = sys.modules[module]
+    return module
 
 def get_current_pages(page):
     """

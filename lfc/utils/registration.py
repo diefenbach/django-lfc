@@ -29,7 +29,7 @@ def get_info(obj_or_type):
         return None
 
 def get_allowed_subtypes(obj_or_type=None):
-    """Returns all allowed sub types for given object or type. Returns a list 
+    """Returns all allowed sub types for given object or type. Returns a list
     of ContentTypeRegistrations.
 
     **Parameters:**
@@ -125,14 +125,14 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
                         ctr.save()
 
 def unregister_content_type(name):
-    """Unregisteres content type with passed name
+    """Unregisteres content type with passed name.
     """
     try:
         ctr = ContentTypeRegistration.objects.get(name=name)
     except ContentTypeRegistration.DoesNotExist:
         pass
-
-    ctr.delete()
+    else:
+        ctr.delete()
 
 def register_template(name, path, children_columns=0, images_columns=0):
     """Registers a template.
@@ -162,6 +162,21 @@ def register_template(name, path, children_columns=0, images_columns=0):
             children_columns=children_columns, images_columns=images_columns)
     except IntegrityError:
         pass
+
+def unregister_template(name):
+    """Unregisters the template with the given name.
+
+    **Parameters:**
+
+    name
+        The name of the template.
+    """
+    try:
+        template = Template.objects.get(name = name)
+    except Template.DoesNotExist:
+        pass
+    else:
+        template.delete()
 
 def get_default_template(obj_or_type):
     """Returns the default template for given object or type. Returns an

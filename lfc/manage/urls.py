@@ -3,6 +3,12 @@ from django.conf.urls.defaults import *
 
 # LFC Manage
 urlpatterns = patterns('lfc.manage.views',
+    url(r'^applications$', "applications", name="lfc_applications"),
+    url(r'^application/(?P<name>\w+)$', "application", name="lfc_application"),
+    url(r'^install-application/(?P<name>\w+)$', "install_application", name="lfc_install_application"),
+    url(r'^uninstall-application/(?P<name>\w+)$', "uninstall_application", name="lfc_uninstall_application"),
+    url(r'^reinstall-application/(?P<name>\w+)$', "reinstall_application", name="lfc_reinstall_application"),
+
     url(r'^content-types$', "content_types", name="lfc_content_types"),
     url(r'^content-type/(?P<id>\d+)$', "content_type", name="lfc_content_type"),
 

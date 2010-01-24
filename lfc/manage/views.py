@@ -33,10 +33,12 @@ from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import SEOForm
 from lfc.manage.forms import PortalCoreForm
 from lfc.manage.forms import ContentTypeRegistrationForm
+from lfc.models import Application
 from lfc.models import File
 from lfc.models import Image
 from lfc.utils import LazyEncoder
 from lfc.utils import get_portal
+from lfc.utils import import_module
 from lfc.utils import set_message_cookie
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
@@ -212,6 +214,79 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
         "ctr" : ctr,
         "form" : form,
     }))
+
+# Applications ##############################################################
+def applications(request, template_name="lfc/manage/applications.html"):
+    """Displays install/uninstall applications view.
+    """
+    applications = []
+    for app_name in settings.INSTALLED_APPS:
+        module = import_module(app_name)
+        if hasattr(module, "install"):
+            try:
+                Application.objects.get(name=app_name)
+            except Application.DoesNotExist:
+                installed = False
+            else:
+                installed = True
+
+            applications.append({
+                "name" : app_name,
+                "installed" : installed,
+                "pretty_name" : getattr(module, "name", app_name),
+                "description" : getattr(module, "description", None),
+            })
+
+    url = reverse("lfc_applications")
+    return render_to_response(template_name, RequestContext(request, {
+        "applications" : applications,
+    }))
+
+def install_application(request, name):
+    """Installs LFC application with passed name.
+    """
+    import_module(name).install()
+    try:
+        Application.objects.create(name=name)
+    except Application.DoesNotExist:
+        pass
+
+    url = reverse("lfc_applications")
+    return HttpResponseRedirect(url)
+
+def reinstall_application(request, name):
+    """Reinstalls LFC application with passed name.
+    """
+    import_module(name).uninstall()
+    import_module(name).install()
+    try:
+        Application.objects.create(name=name)
+    except IntegrityError:
+        pass
+
+    url = reverse("lfc_applications")
+    return HttpResponseRedirect(url)
+
+def uninstall_application(request, name):
+    """Uninstalls LFC application with passed name.
+    """
+    import_module(name).uninstall()
+
+    try:
+        application = Application.objects.get(name=name)
+    except Application.DoesNotExist:
+        pass
+    else:
+        application.delete()
+
+    url = reverse("lfc_applications")
+    return HttpResponseRedirect(url)
+
+def application(request, name, template_name="lfc/manage/application.html"):
+    """
+    """
+    url = reverse("lfc_application", kwargs={ "name" : name })
+    return HttpResponseRedirect(url)
 
 # Filebrowser ################################################################
 def filebrowser(request):

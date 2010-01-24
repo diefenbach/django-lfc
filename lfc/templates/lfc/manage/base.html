@@ -73,7 +73,15 @@
                                 <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
                             <li>
-                                <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
+                                <a>{% trans "Applications" %}</a>
+                                <ul>
+                                    <li>
+                                        <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
                     </td>

@@ -41,6 +41,11 @@ from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
 from lfc.settings import LANGUAGE_CHOICES
 
+class Application(models.Model):
+    """
+    """
+    name = models.CharField(max_length=100, unique=True)
+    
 class Template(models.Model):
     """A template displays the content of an object.
 
