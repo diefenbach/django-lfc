@@ -2,7 +2,7 @@
 Create a portlet
 ================
 
-In order to create a own template you need to create two parts: The python 
+In order to create a own template you need to create two parts: The python
 part, which contains the portlet class and the template to present the portlet
 as HTML.
 
@@ -14,7 +14,6 @@ Create the class
 
     # django-portlets imports
     from portlets.models import Portlet
-    from portlets.utils import register_portlet
 
     class EventsPortlet(Portlet):
         """A simple portlet to display Events.
@@ -49,25 +48,22 @@ Create the class
 2:
     Import the portlet base class. All portlets should inherit from it.
 
-3:
-    Import the utility method to register a portlet
-
-5:
+4:
     The new portlet. Inherits from BaseContent.
 
-9:
+8:
     Adds default Django fields to the portlet, in this case an integer field
     to limit the amount displayed events.
 
-14:
-    Gets the current object, which is always within context.get("lfc_context")
-
-15:
-    Gets the request, which is always within context.get("request")
-
-11:
+10:
     The render method must be implemented. It must return the rendered HTML
     content of the portlet.
+
+13:
+    Gets the current object, which is always within context.get("lfc_context")
+
+14:
+    Gets the request, which is always within context.get("request")
 
 17:
     Gets all events limited by the stored limit attribute. Please note, we
@@ -84,7 +80,7 @@ Create the class
 Create the template
 ===================
 
-Create a file called "events_portlet.html" within the template folder and 
+Create a file called "events_portlet.html" within the template folder and
 add the following HTML code:
 
 .. code-block:: html
@@ -105,14 +101,13 @@ add the following HTML code:
             </div>
         {% endfor %}
     {% endblock %}
-    
+
 1:
     Reusing LFC's base template for portlets
-    
+
 3:
-    Fill the block "portlet_name" with the name of the portlet. This can be 
+    Fill the block "portlet_name" with the name of the portlet. This can be
     used within CSS to provide specific formats for the EventsPortlet.
-    
+
 4:
     Fill the block "body" with the content of the portlet.
-        

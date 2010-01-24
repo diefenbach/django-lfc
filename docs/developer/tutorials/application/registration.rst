@@ -25,24 +25,25 @@ like following:
     from lfc_events.models import Event
     from lfc_events.models import EventsPortlet
 
-    # register the template
-    register_template(name = "Event 1", file_name="lfc_events/event_1.html")
+    def install():  
+        register_template(name = "Event 1", file_name="lfc_events/event_1.html")
 
-    # register the content type
-    register_content_type(obj = Event, name = "Event",
-        templates=["Event 1"], default_template="Event 1")
+        register_content_type(obj = Event, name = "Event",
+            templates=["Event 1"], default_template="Event 1")
 
-    # register the portlet
-    register_portlet(EventsPortlet, "Events")
+        register_portlet(EventsPortlet, "Events")
 
 1-13:
     Import all the stuff we need for registration
 
+15:
+    The install method. This *must* exist in order to install a application for 
+    LFC.
+
 16:
     Register the template with name "Event 1".
 
-
-19/20:
+18/19:
     Registers the content type to LFC's model registration, which means in this
     case:
 
@@ -51,7 +52,7 @@ like following:
       "Event 1" and "Event 2" (which has to be written yet).
     * The default template is "Event 1".
 
-23:
+21:
     Registers the portlet with name "Events".
 
 ==============
