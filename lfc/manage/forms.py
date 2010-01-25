@@ -75,24 +75,24 @@ class MetaDataForm(forms.ModelForm):
                 self.fields["canonical"].choices = canonicals
 
         # Parents - display only objects in the same or neutral language
-        exclude = [p.id for p in instance.children.all()]
-        exclude.append(instance.id)
-
-        parents = BaseContent.objects.exclude(pk__in=exclude)
-        if not language == "0":
-            parents = parents.filter(language__in=(language, "0"))
-
-        parent_choices = []
-        for parent in parents:
-            if ctr in get_allowed_subtypes(parent.get_content_object()):
-                parent_choices.append((parent.id, parent.title))
-
-        if len(parent_choices) < 1:
-            del self.fields["parent"]
-        else:
-            parent_choices = sorted(parent_choices, lambda a, b: cmp(a[1], b[1]))
-            parent_choices.insert(0, ("", "----------"))
-            self.fields["parent"].choices = parent_choices
+        # exclude = [p.id for p in instance.children.all()]
+        # exclude.append(instance.id)
+        # 
+        # parents = BaseContent.objects.exclude(pk__in=exclude)
+        # if not language == "0":
+        #     parents = parents.filter(language__in=(language, "0"))
+        # 
+        # parent_choices = []
+        # for parent in parents:
+        #     if ctr in get_allowed_subtypes(parent.get_content_object()):
+        #         parent_choices.append((parent.id, parent.title))
+        # 
+        # if len(parent_choices) < 1:
+        #     del self.fields["parent"]
+        # else:
+        #     parent_choices = sorted(parent_choices, lambda a, b: cmp(a[1], b[1]))
+        #     parent_choices.insert(0, ("", "----------"))
+        #     self.fields["parent"].choices = parent_choices
 
         # Standard - display only children of the current instance
         if not ctr.display_select_standard:
@@ -118,9 +118,8 @@ class MetaDataForm(forms.ModelForm):
 
     class Meta:
         model = Page
-        fields = ("template", "parent", "position", "standard", "active",
-            "exclude_from_navigation", "exclude_from_search", "language",
-            "canonical", "publication_date", )
+        fields = ("template", "standard", "active", "exclude_from_navigation", 
+            "exclude_from_search", "language", "canonical", "publication_date", )
 
 class PortalCoreForm(forms.ModelForm):
     """Form for portal core data.

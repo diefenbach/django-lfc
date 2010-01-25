@@ -28,6 +28,12 @@
                 {% endif %}
             </li>
             <li>
+                {% if display_paste %}
+                    <a href="{% url lfc_paste %}">{% trans 'Paste' %}</a>
+                {% endif %}                
+            </li>
+            </li>            
+            <li>
                 <a href="/">{% trans 'View' %}</a>
             </li>
         </ul>

@@ -1,4 +1,5 @@
 # python imports
+import copy
 import datetime
 import re
 import random
@@ -45,7 +46,7 @@ class Application(models.Model):
     """
     """
     name = models.CharField(max_length=100, unique=True)
-    
+
 class Template(models.Model):
     """A template displays the content of an object.
 
@@ -324,6 +325,9 @@ class BaseContent(AbstractBaseContent):
     images
         The images of the object.
 
+    files
+        The files of the object.
+
     allow_comments
         If set to true, the visitor of the object can leave a comment. If set
         to default the allow_comments state of the parent object is overtaken.
@@ -368,6 +372,9 @@ class BaseContent(AbstractBaseContent):
     images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
         object_id_field="content_id", content_type_field="content_type")
 
+    files = generic.GenericRelation("File", verbose_name=_(u"Files"),
+        object_id_field="content_id", content_type_field="content_type")
+
     allow_comments = models.PositiveSmallIntegerField(_(u"Commentable"),
         choices=ALLOW_COMMENTS_CHOICES, default=ALLOW_COMMENTS_DEFAULT)
 
@@ -379,7 +386,7 @@ class BaseContent(AbstractBaseContent):
 
     def __unicode__(self):
         return unicode(self.title)
-
+    
     def save(self, force_insert=False, force_update=False):
         """Djangos default save method. This is overwritten to do some LFC
         related stuff if a content object is saved.
@@ -463,6 +470,18 @@ class BaseContent(AbstractBaseContent):
         ancestors = self.get_ancestors()
         ancestors.reverse()
         return ancestors
+
+    def get_descendants(self, request=None, result=None):
+        """Returns all descendants of the content object. If the request is
+        passed the permissions of the current user is taken into account.
+        """
+        if result is None:
+            result = []
+        for child in self.get_children(request):
+            result.append(child)
+            child.get_descendants(request, result)
+
+        return result
 
     def get_children(self, request=None, *args, **kwargs):
         """Returns the children of the content object. If the request is
@@ -710,7 +729,11 @@ class File(models.Model):
     """
     title = models.CharField(blank=True, max_length=100)
     slug = models.SlugField()
-    content = models.ForeignKey(BaseContent, blank=True, null=True, related_name="files")
+
+    content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="files", blank=True, null=True)
+    content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
+    content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
+
     position = models.SmallIntegerField(default=999)
     description = models.CharField(blank=True, max_length=100)
     file = models.FileField(upload_to="files")

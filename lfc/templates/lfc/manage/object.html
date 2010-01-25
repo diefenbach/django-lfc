@@ -28,7 +28,23 @@
             {% endif %}
             </li>
             <li>
-                <a class="modalInput" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                <a>{% trans "Actions" %}</a>
+                <ul>
+                    <li>
+                        <a href="{% url lfc_copy obj.id %}">{% trans 'Copy' %}</a>
+                    </li>
+                    <li>
+                        <a href="{% url lfc_cut obj.id %}">{% trans 'Cut' %}</a>
+                    </li>
+                    {% if display_paste %}
+                        <li>
+                            <a href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
+                        </li>                        
+                    {% endif %}
+                    <li>
+                        <a class="modalInput" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                    </li>                    
+                </ul>                        
             </li>
             {% if LFC_MULTILANGUAGE %}
             <li>

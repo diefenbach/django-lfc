@@ -1,3 +1,6 @@
+# python 
+import copy
+
 # django imports
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -72,6 +75,22 @@ def create_request():
     request.user = user
 
     return request
+
+class CopyTestCase(TestCase):
+    """
+    """
+    def setUp(self):
+        self.p1 = Page.objects.create(title="Page 1", slug="page-1")
+        self.p2 = Page.objects.create(title="Page 2", slug="page-2")
+
+    def test_copy(self):
+        """
+        """
+        page_copy = copy.deepcopy(self.p1)
+        page_copy.id = None
+        page_copy.pk = None        
+        page_copy.parent = self.p2
+        page_copy.save()
 
 class ManagerTestCase(TestCase):
     """
@@ -230,7 +249,7 @@ class PortalTestCase(TestCase):
         self.p111 = Page.objects.create(title="Page 1-1-1", slug="page-1-1-1", parent=self.p11)
         self.p12 = Page.objects.create(title="Page 1-2", slug="page-1-2", parent=self.p1)
         self.p12 = Page.objects.create(title="Page 2", slug="page-2")
-
+    
     def test_get_children(self):
         """
         """
@@ -465,6 +484,20 @@ class PageTestCase(TestCase):
         """
         """
         self.assertEqual(self.p1.are_comments_allowed(), False)
+
+    def test_get_descendants(self):
+        """
+        """
+        descendants = self.p1.get_descendants()
+        self.assertEqual(len(descendants), 3)
+
+        self.failUnless(self.p11 in descendants)
+        self.failUnless(self.p111 in descendants)
+        self.failUnless(self.p12 in descendants)
+
+        descendants = self.p11.get_descendants()
+        self.assertEqual(len(descendants), 1)
+        self.failUnless(self.p111 in descendants)
 
     def test_get_children(self):
         """

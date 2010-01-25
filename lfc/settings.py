@@ -12,3 +12,6 @@ ALLOW_COMMENTS_CHOICES = (
 
 LANGUAGE_CHOICES = [("0", _(u"Neutral"),)]
 LANGUAGE_CHOICES.extend(settings.LANGUAGES)
+
+COPY = 1
+CUT = 2

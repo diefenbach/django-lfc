@@ -9,6 +9,11 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^uninstall-application/(?P<name>\w+)$', "uninstall_application", name="lfc_uninstall_application"),
     url(r'^reinstall-application/(?P<name>\w+)$', "reinstall_application", name="lfc_reinstall_application"),
 
+    url(r'^copy/(?P<id>\d+)$', "lfc_copy", name="lfc_copy"),
+    url(r'^cut/(?P<id>\d+)$', "cut", name="lfc_cut"),
+    url(r'^paste/(?P<id>\d+)$', "paste", name="lfc_paste"),
+    url(r'^paste$', "paste", name="lfc_paste"),
+
     url(r'^content-types$', "content_types", name="lfc_content_types"),
     url(r'^content-type/(?P<id>\d+)$', "content_type", name="lfc_content_type"),
 
