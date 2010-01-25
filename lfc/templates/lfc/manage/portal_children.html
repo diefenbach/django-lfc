@@ -8,13 +8,13 @@
     <form action="{% url lfc_update_portal_children %}"
           method="post">
 
-        <table class="lfs-manage-table" width="60%">
+        <table class="lfs-manage-table" width="100%">
             <tr>
-                <th>
+                <th class="mini">
                     <input type="checkbox"
                            class="select-all-1" />
                 </th>
-                <th>
+                <th class="mini">
                     {% trans 'Position' %}
                 </th>
                 <th>
@@ -25,7 +25,7 @@
                            class="select-all-2" />
                     {% trans 'Active' %}
                 </th>
-                <th class="right last">
+                <th class="right last small">
                     {% trans 'Manage' %}
                 </th>
             </tr>
@@ -41,6 +41,7 @@
                     </td>
                     <td>
                         <input type="text"
+                               class="position"
                                name="position-{{ child.id }}"
                                value="{{ child.position }}" />
                     </td>
