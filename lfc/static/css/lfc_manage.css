@@ -19,6 +19,11 @@ input[type='text'] {
     width: 200px;
 }
 
+input.position {
+    width: 50px;
+    size: 5;
+}
+
 img {
     border: none;
 }
@@ -45,6 +50,16 @@ a  {
 .right {
     text-align: right;
 }
+
+.mini {
+    width: 1px;
+    padding: 0 5px;
+}
+
+.small {
+    width: 50px;
+}
+
 
 h1 {
     font-size: 131%;
