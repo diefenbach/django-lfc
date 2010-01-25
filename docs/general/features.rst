@@ -14,6 +14,7 @@ For users
 * Commenting
 * RSS Feeds
 * Search
+* Cut/Copy'n Paste
 
 For developers
 ==============

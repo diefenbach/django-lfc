@@ -16,6 +16,14 @@ General
    general/installation.rst
    general/features.rst
 
+Features
+========
+
+.. toctree::
+   :maxdepth: 1
+
+   features/copy.rst
+
 Management Interface
 ====================
 
@@ -67,7 +75,6 @@ API
 ---
 .. toctree::
    :maxdepth: 1
-
 
    developer/api/registration.rst
    developer/api/content.rst
