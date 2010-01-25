@@ -342,6 +342,7 @@ def update_portal_children(request):
     _update_positions(None)
     html = (
         ("#children", portal_children(request)),
+        ("#navigation", navigation(request, None)),
     )
 
     result = simplejson.dumps({
@@ -829,7 +830,7 @@ def delete_object(request, id):
         if parent is None:
             parent = get_portal()
 
-        if parent.standard == obj:
+        if parent.standard.get_content_object() == obj:
             parent.standard = None
             parent.save()
 
