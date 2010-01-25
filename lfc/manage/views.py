@@ -56,7 +56,9 @@ def lfc_copy(request, id):
     request.session["clipboard_action"] = COPY
 
     url = reverse("lfc_manage_object", kwargs = { "id" : id })
-    return HttpResponseRedirect(url)
+    return set_message_cookie(
+        url,
+        msg = _(u"The object has been put to the clipboard."))
 
 def cut(request, id):
     """Puts the object within passed id into the clipboard and marks action
@@ -66,7 +68,10 @@ def cut(request, id):
     request.session["clipboard_action"] = CUT
 
     url = reverse("lfc_manage_object", kwargs = { "id" : id })
-    return HttpResponseRedirect(url)
+
+    return set_message_cookie(
+        url,
+        msg = _(u"The object has been put to the clipboard."))
 
 def paste(request, id=None):
     """paste the object in the clipboard to object with given id.
@@ -80,6 +85,7 @@ def paste(request, id=None):
     action = request.session.get("clipboard_action", "")
     if action == "":
         _reset_clipboard(request)
+
         return HttpResponseRedirect(url)
 
     # Try to get the source obj
@@ -91,7 +97,8 @@ def paste(request, id=None):
         source_obj = BaseContent.objects.get(pk=source_id)
     except BaseContent.DoesNotExist:
         _reset_clipboard(request)
-        return HttpResponseRedirect(url)
+        return set_message_cookie(url,
+            msg = _(u"The object doesn't exists anymore."))
 
     # Try to get parent if an id has been passed. If no id is passed the
     # parent is the portal.
@@ -108,11 +115,16 @@ def paste(request, id=None):
     ctr_source = get_info(source_obj)
 
     if ctr_source not in allowed_subtypes:
-        return HttpResponseRedirect(url)
+        return set_message_cookie(url,
+            msg = _(u"The object isn't allowed to be pasted here."))
 
     # Don't copy to own descendants
     descendants = source_obj.get_descendants()
     if parent in descendants or parent == source_obj:
+        return set_message_cookie(
+            url,
+            msg = _(u"The object can't be pasted in own descendants."))
+
         return HttpResponseRedirect(url)
 
     if action == CUT:
@@ -130,14 +142,17 @@ def paste(request, id=None):
         target_obj.slug = _generate_slug(source_obj, parent)
         target_obj.save()
 
-        # copy children
         _copy_images(source_obj, target_obj)
         _copy_files(source_obj, target_obj)
         _copy_portlets(source_obj, target_obj)
         _copy_descendants(source_obj, target_obj)
+        _copy_translations(source_obj, target_obj)
 
     _update_positions(parent)
-    return HttpResponseRedirect(url)
+
+    return set_message_cookie(
+        url,
+        msg = _(u"The object has been pasted."))
 
 def _generate_slug(source_obj, parent):
     """Generates a unique slug for passed source_obj in passed parent
@@ -182,6 +197,7 @@ def _copy_descendants(source_obj, target_obj):
         _copy_files(child, new_child)
         _copy_portlets(child, new_child)
         _copy_descendants(child, new_child)
+        _copy_translations(child, new_child)
 
 def _copy_images(source_obj, target_obj):
     """Copies all images from source_obj to target_obj.
@@ -200,7 +216,7 @@ def _copy_files(source_obj, target_obj):
         new_file.save()
 
 def _copy_portlets(source_obj, target_obj):
-    """Copies all portlets from source_obj to target_obj
+    """Copies all portlets from source_obj to target_obj.
     """
     ct = ContentType.objects.get_for_model(source_obj)
     for pa in PortletAssignment.objects.filter(content_id=source_obj.id, content_type=ct):
@@ -209,7 +225,23 @@ def _copy_portlets(source_obj, target_obj):
         new_pa.id = None
         new_pa.content_id = target_obj.id
         new_pa.save()
-    
+
+def _copy_translations(source_obj, target_obj):
+    """Copies all translations from source_obj to target_obj.
+    """
+    for translation in source_obj.translations.all().content_objects():
+        new_translation = copy.deepcopy(translation)
+        new_translation.pk = None
+        new_translation.id = None
+        new_translation.slug = _generate_slug(translation, translation.parent)
+        new_translation.canonical = target_obj
+        new_translation.save()
+
+        _copy_images(translation, new_translation)
+        _copy_files(translation, new_translation)
+        _copy_portlets(translation, new_translation)
+        _copy_descendants(translation, new_translation)
+
 # Portal ####################################################################
 @login_required
 def portal(request, template_name="lfc/manage/portal.html"):
@@ -756,7 +788,7 @@ def add_object(request, language=None, id=None):
                 new_object.position = 1000
                 new_object.save()
 
-                _update_positions(new_object)
+                _update_positions(new_object, True)
                 url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
                 return set_message_cookie(url, msg = _(u"Page has been added."))
         else:
