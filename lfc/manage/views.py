@@ -131,6 +131,7 @@ def paste(request, id=None):
         source_obj.parent_id = id
         source_obj.slug = _generate_slug(source_obj, parent)
         source_obj.save()
+        _reset_clipboard(request)
     else:
         # Here we go ...
         target_obj = copy.deepcopy(source_obj)
@@ -830,7 +831,7 @@ def delete_object(request, id):
         if parent is None:
             parent = get_portal()
 
-        if parent.standard.get_content_object() == obj:
+        if parent.standard and parent.standard.get_content_object() == obj:
             parent.standard = None
             parent.save()
 
