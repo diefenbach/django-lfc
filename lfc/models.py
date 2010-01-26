@@ -921,10 +921,10 @@ def register(sender, **kwargs):
 
     # Register Templates
     from lfc.utils.registration import register_template
-    register_template(name = _(u"Plain"), path="lfc/templates/plain.html")
-    register_template(name = _(u"Article"), path="lfc/templates/article.html")
-    register_template(name = _(u"Gallery"), path="lfc/templates/gallery.html", images_columns=3)
-    register_template(name = _(u"Overview"), path="lfc/templates/overview.html")
+    register_template(name = "Plain", path="lfc/templates/plain.html")
+    register_template(name = "Article", path="lfc/templates/article.html")
+    register_template(name = "Gallery", path="lfc/templates/gallery.html", images_columns=3)
+    register_template(name = "Overview", path="lfc/templates/overview.html")
 
     # Content Types
     from lfc.utils.registration import register_content_type
