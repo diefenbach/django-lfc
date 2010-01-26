@@ -21,6 +21,14 @@ Code
 Changes
 =======
 
+1.0 alpha 4 (2010-01-26)
+------------------------
+
+* Added methods to unregister content/templates
+* Added application installer
+* Added cut/copy'n paste
+* Added more docs
+
 1.0 alpha 3 (2010-01-22)
 ------------------------
 
