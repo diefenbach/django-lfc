@@ -2,26 +2,26 @@
 Cut, Copy and Paste
 ===================
 
-LFC provides a cut/copy and paste of objects. Here is a short description what 
-happens if you use it.
+LFC provides Cut/Copy and Paste of objects. Here is a short description on how
+to use it.
 
-Cut'n Paste
-===========
+Cut and Paste
+=============
 
-To cut'n paste an object just browse to it and select "Cut" from the "Actions" 
-menu. You will get a message that the object is now put to the clipboard.
+To Cut'n Paste an object just browse to it and select "Cut" from the "Actions" 
+menu. The object is now put to the clipboard and ready to paste.
 
 Now browse to the new location to which you want to paste the object and
-select "Paste" from the "Actions" menu.
+select "Paste" from the "Actions" menu
 
-The object is now added to the new location and remove from the old location.
-Moreover it is removed from the clipboad so that you can't move to another 
-location accidently. 
+The object is now added to the new and remove from the old location. Moreover 
+it is removed from the clipboad so that you cannot move it to another location 
+accidently.
 
-Copy'n Paste
-============
-To copy'n paste an object just browse to it and select "Copy" from the "Actions" 
-menu. You will get a message that the object is now put to the clipboard.
+Copy and Paste
+==============
+To Copy'n Paste an object just browse to it and select "Copy" from the "Actions" 
+menu. The object is now put to the clipboard and ready to paste.
 
 Now browse to the new location to which you want to paste the object and 
 select "Paste" from the "Actions" menu.
@@ -39,8 +39,8 @@ If you copy an object following related objects are also copied:
 * Translations
 * Portlets
 
-Generally
-=========
+Miscellaneous
+=============
 
 * Objects can only pasted to parent objects within the object is an allowed 
   sub type. You will get a proper error message if you try it.
