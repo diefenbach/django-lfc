@@ -41,9 +41,9 @@ from lfc.models import File
 from lfc.models import Image
 from lfc.settings import COPY, CUT
 from lfc.utils import LazyEncoder
+from lfc.utils import MessageHttpResponseRedirect
 from lfc.utils import get_portal
 from lfc.utils import import_module
-from lfc.utils import set_message_cookie
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
@@ -56,9 +56,9 @@ def lfc_copy(request, id):
     request.session["clipboard_action"] = COPY
 
     url = reverse("lfc_manage_object", kwargs = { "id" : id })
-    return set_message_cookie(
-        url,
-        msg = _(u"The object has been put to the clipboard."))
+    msg = _(u"The object has been put to the clipboard.")
+
+    return MessageHttpResponseRedirect(url, msg)
 
 def cut(request, id):
     """Puts the object within passed id into the clipboard and marks action
@@ -68,10 +68,9 @@ def cut(request, id):
     request.session["clipboard_action"] = CUT
 
     url = reverse("lfc_manage_object", kwargs = { "id" : id })
+    msg = _(u"The object has been put to the clipboard.")
 
-    return set_message_cookie(
-        url,
-        msg = _(u"The object has been put to the clipboard."))
+    return MessageHttpResponseRedirect(url, msg)
 
 def paste(request, id=None):
     """paste the object in the clipboard to object with given id.
@@ -97,8 +96,8 @@ def paste(request, id=None):
         source_obj = BaseContent.objects.get(pk=source_id)
     except BaseContent.DoesNotExist:
         _reset_clipboard(request)
-        return set_message_cookie(url,
-            msg = _(u"The object doesn't exists anymore."))
+        msg = _(u"The object doesn't exists anymore.")
+        return MessageHttpResponseRedirect(url, msg)
 
     # Try to get parent if an id has been passed. If no id is passed the
     # parent is the portal.
@@ -115,17 +114,14 @@ def paste(request, id=None):
     ctr_source = get_info(source_obj)
 
     if ctr_source not in allowed_subtypes:
-        return set_message_cookie(url,
-            msg = _(u"The object isn't allowed to be pasted here."))
+        msg = _(u"The object isn't allowed to be pasted here.")
+        return MessageHttpResponseRedirect(url, msg)
 
     # Don't copy to own descendants
     descendants = source_obj.get_descendants()
     if parent in descendants or parent == source_obj:
-        return set_message_cookie(
-            url,
-            msg = _(u"The object can't be pasted in own descendants."))
-
-        return HttpResponseRedirect(url)
+        msg = _(u"The object can't be pasted in own descendants.")
+        return MessageHttpResponseRedirect(url, msg)
 
     if action == CUT:
         source_obj.parent_id = id
@@ -150,10 +146,8 @@ def paste(request, id=None):
         _copy_translations(source_obj, target_obj)
 
     _update_positions(parent)
-
-    return set_message_cookie(
-        url,
-        msg = _(u"The object has been pasted."))
+    msg = _(u"The object has been pasted.")
+    return MessageHttpResponseRedirect(url, msg)
 
 def _generate_slug(source_obj, parent):
     """Generates a unique slug for passed source_obj in passed parent
@@ -707,9 +701,9 @@ def delete_portlet(request, portletassignment_id):
         pass
     else:
         pa.delete()
-        return set_message_cookie(
-            request.META.get("HTTP_REFERER"),
-            msg = _(u"Portlet has been deleted."))
+        url = request.META.get("HTTP_REFERER")
+        msg = _(u"Portlet has been deleted.")
+        return MessageHttpResponseRedirect(url, msg)
 
 @login_required
 def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portlet_edit.html"):
@@ -792,7 +786,9 @@ def add_object(request, language=None, id=None):
 
                 _update_positions(new_object, True)
                 url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
-                return set_message_cookie(url, msg = _(u"Page has been added."))
+                msg = _(u"Page has been added.")
+                return MessageHttpResponseRedirect(url, msg)
+
         else:
             referer = request.POST.get("referer")
             return HttpResponseRedirect(referer)
@@ -849,7 +845,8 @@ def delete_object(request, id):
     else:
         url = reverse("lfc_manage_portal")
 
-    return set_message_cookie(url, msg = _(u"Page has been deleted."))
+    msg = _(u"Page has been deleted.")
+    return MessageHttpResponseRedirect(url, msg)
 
 @login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
@@ -1455,7 +1452,8 @@ def save_translation(request):
 
     if request.POST.get("cancel"):
         url = reverse("lfc_manage_object", kwargs={"id" : canonical_id})
-        return set_message_cookie(url, _(u"Translation has been canceled."))
+        _(u"Translation has been canceled.")
+        return MessageHttpResponseRedirect(url, msg)
 
     canonical = BaseContent.objects.get(pk=canonical_id)
     canonical = canonical.get_content_object()
@@ -1522,8 +1520,7 @@ def save_translation(request):
         _update_positions(translation)
 
         url = reverse("lfc_manage_object", kwargs={"id" : translation.id})
-        return set_message_cookie(url, msg=msg)
-
+        return MessageHttpResponseRedirect(url, msg)
     else:
         return translate_object(request, translation_language, canonical.id, form_translation, form_canonical)
 
