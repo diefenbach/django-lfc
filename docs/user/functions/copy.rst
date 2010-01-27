@@ -3,7 +3,7 @@ Cut, Copy and Paste
 ===================
 
 LFC provides Cut/Copy and Paste of objects. Here is a short description on how
-to use it.
+to use it and how it works.
 
 Cut and Paste
 =============
@@ -42,8 +42,11 @@ If you copy an object following related objects are also copied:
 Miscellaneous
 =============
 
-* Objects can only pasted to parent objects within the object is an allowed 
-  sub type. You will get a proper error message if you try it.
-* Objects cannot pasted to it's own descendants. You will get a proper 
+* Objects can only pasted to objects for which the object is an allowed
+  sub type. You will get a proper error message if you try to paste a
+  disallowed type.
+* Objects cannot be pasted to it's own descendants. You will get a proper
   error message if you try it.
-* Objects will automatically get a unique slug within the parent object.
+* Objects will automatically get a unique slug within the parent object. That 
+  means if an object with the slug "my-object" already exists the object will 
+  get the slug "my-object-1".

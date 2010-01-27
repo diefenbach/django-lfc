@@ -7,7 +7,7 @@ Glossary
 
   Content type
      Content types represents the content of the site. By default there is only
-     Page. 3rd-party developers can add more content types.
+     Page. Developers can add more content types.
 
   Page
      The default content type of LFC.

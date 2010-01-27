@@ -6,80 +6,36 @@ LFC - Lightning Fast CMS
 
 LFC is a CMS based on Django.
 
-General
-=======
+Introduction
+============
 
 .. toctree::
-   :maxdepth: 1
+   :numbered:
+   :maxdepth: 3
 
-   general/overview.rst
-   general/installation.rst
-   general/features.rst
+   introduction/overview.rst
+   introduction/concepts.rst
+   introduction/installation.rst
 
-Features
-========
-
-.. toctree::
-   :maxdepth: 1
-
-   features/copy.rst
-
-Management Interface
-====================
-
-Portal
-======
+Users
+=====
 
 .. toctree::
-   :maxdepth: 1
+   :numbered:
+   :maxdepth: 2
 
-   manage/tabs/portal/data.rst
-   manage/tabs/portal/children.rst
-   manage/tabs/portal/images.rst
-   manage/tabs/portal/portlets.rst
+   user/manage/index.rst
+   user/functions/index.rst
 
-Page
-====
-
-.. toctree::
-   :maxdepth: 1
-
-   manage/tabs/page/data.rst
-   manage/tabs/page/metadata.rst
-   manage/tabs/page/children.rst
-   manage/tabs/page/seo.rst
-   manage/tabs/page/images.rst
-   manage/tabs/page/files.rst
-   manage/tabs/page/portlets.rst
-   manage/tabs/page/comments.rst
-
-Content types
-=============
+Developers
+==========
 
 .. toctree::
-   :maxdepth: 1
+   :numbered:
+   :maxdepth: 2
 
-   manage/tabs/content_types/data.rst
-
-Developer
-=========
-
-How-tos
--------
-.. toctree::
-   :maxdepth: 1
-
-   developer/tutorials/application/index.rst
-
-API
----
-.. toctree::
-   :maxdepth: 1
-
-   developer/api/registration.rst
-   developer/api/content.rst
-   developer/api/template.rst
-   developer/api/managers.rst
+   developer/tutorials/index.rst
+   developer/api/index.rst
 
 Indices and tables
 ==================
