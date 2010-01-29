@@ -34,6 +34,9 @@ class MessageHttpResponseRedirect(HttpResponseRedirect):
 
 class LazyEncoder(simplejson.JSONEncoder):
     """JSONEncoder which encodes django's lazy i18n strings.
+    
+    This is mainly used to return status messages along with content to ajax
+    calls.
     """
     def default(self, obj):
         if isinstance(obj, Promise):
@@ -41,10 +44,12 @@ class LazyEncoder(simplejson.JSONEncoder):
         return obj
 
 def get_content_object(request=None, *args, **kwargs):
-    """Returns specific content object based on passed parameters. 
-    
-    This method should be used if one wants want the specific content object 
+    """Returns specific content object based on passed parameters.
+
+    This method should be used if one wants the specific content object
     instead of the BaseContent object.
+
+    You can consider this as the equivalent to Django's get method.
     """
     if request:
         obj = lfc.models.BaseContent.objects.restricted(request).get(*args, **kwargs)
@@ -56,11 +61,13 @@ def get_content_object(request=None, *args, **kwargs):
 def get_content_objects(request=None, *args, **kwargs):
     """Returns specific content objects based on passed parameters.
 
-    This method should be used if one wants want the specific content objects 
+    This method should be used if one wants the specific content objects
     instead of the BaseContent objects.
+
+    You can consider this as the equivalent to Django's filter method.
     """
-    
-    if request:        
+
+    if request:
         objs = lfc.models.BaseContent.objects.restricted(request).filter(*args, **kwargs)
     else:
         objs = lfc.models.BaseContent.objects.filter(*args, **kwargs)
@@ -100,7 +107,7 @@ def traverse_object(request, path):
     language = translation.get_language()
 
     try:
-        obj = lfc.utils.get_content_object(request, slug=paths[0], 
+        obj = lfc.utils.get_content_object(request, slug=paths[0],
             parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
         raise Http404
