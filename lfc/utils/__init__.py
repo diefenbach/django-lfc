@@ -40,18 +40,33 @@ class LazyEncoder(simplejson.JSONEncoder):
             return force_unicode(obj)
         return obj
 
-def get_content_object(*args, **kwargs):
-    """Returns the specific content object based on given parameters.
+def get_content_object(request=None, *args, **kwargs):
+    """Returns specific content object based on passed parameters. 
+    
+    This method should be used if one wants want the specific content object 
+    instead of the BaseContent object.
     """
-    queryset = _get_queryset(lfc.models.BaseContent)
-    object = queryset.get(*args, **kwargs)
-    return object.get_content_object()
+    if request:
+        obj = lfc.models.BaseContent.objects.restricted(request).get(*args, **kwargs)
+    else:
+        obj = lfc.models.BaseContent.objects.get(*args, **kwargs)
 
-def get_content_objects(objects):
-    """Returns content object of given BaseContent objects.
+    return obj.get_content_object()
+
+def get_content_objects(request=None, *args, **kwargs):
+    """Returns specific content objects based on passed parameters.
+
+    This method should be used if one wants want the specific content objects 
+    instead of the BaseContent objects.
     """
+    
+    if request:        
+        objs = lfc.models.BaseContent.objects.restricted(request).filter(*args, **kwargs)
+    else:
+        objs = lfc.models.BaseContent.objects.filter(*args, **kwargs)
+
     result = []
-    for obj in objects:
+    for obj in objs:
         result.append(obj.get_content_object())
 
     return result
@@ -62,7 +77,7 @@ def get_portal(pk=1):
     # At the moment the default portal should always exist.
     cache_key = "portal-%s" % pk
     portal = cache.get(cache_key)
-    if portal: 
+    if portal:
         return portal
 
     try:
@@ -85,13 +100,14 @@ def traverse_object(request, path):
     language = translation.get_language()
 
     try:
-        obj = lfc.models.BaseContent.objects.restricted(request).get(slug=paths[0], parent=None, language__in = ("0", language))
+        obj = lfc.utils.get_content_object(request, slug=paths[0], 
+            parent=None, language__in = ("0", language))
     except lfc.models.BaseContent.DoesNotExist:
         raise Http404
 
     for path in paths[1:]:
         try:
-            obj = obj.children.restricted(request).get(slug=path, language__in = ("0", obj.language))
+            obj = obj.children.restricted(request).get(slug=path, language__in = ("0", obj.language)).get_content_object()
         except lfc.models.BaseContent.DoesNotExist:
             raise Http404
 
@@ -105,7 +121,7 @@ def clear_cache():
     try:
         cache._cache.flush_all()
     except AttributeError:
-        pass            
+        pass
     else:
         return
 
@@ -117,7 +133,7 @@ def clear_cache():
         cache._expire_info.clear()
     except AttributeError:
         pass
-        
+
 def import_module(module):
     """Imports module with given dotted name.
     """

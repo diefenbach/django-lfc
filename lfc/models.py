@@ -217,11 +217,7 @@ class Portal(models.Model):
         permissions of the current user is taken into account. Additionally
         other valid filters can be passed, e.g. slug = "page-1".
         """
-        kwargs["parent"] = None
-        if request:
-            return BaseContent.objects.restricted(request).filter(**kwargs).content_objects()
-        else:
-            return BaseContent.objects.filter(**kwargs).content_objects()
+        return lfc.utils.get_content_objects(request, parent=None, **kwargs)
 
 class AbstractBaseContent(models.Model):
     """The root of all content types. It provides the inheritable
@@ -458,8 +454,7 @@ class BaseContent(AbstractBaseContent):
         ancestors = []
         page = self
         while page.parent is not None:
-            temp = page.parent
-            temp = temp.get_content_object()
+            temp = page.parent.get_content_object()
             ancestors.append(temp)
             page = page.parent
 
@@ -489,15 +484,7 @@ class BaseContent(AbstractBaseContent):
         passed the permissions of the current user is taken into account.
         Other valid filters can be passed also, e.g. slug = "page-1".
         """
-        if request:
-            query_set = self.children.restricted(request)
-        else:
-            query_set = self.children.all()
-
-        if kwargs:
-            return query_set.filter(**kwargs).content_objects()
-        else:
-            return query_set.content_objects()
+        return lfc.utils.get_content_objects(request, parent=self, **kwargs)
 
     def get_image(self):
         """Returns the first image of a content object. If there is none it
@@ -595,11 +582,11 @@ class BaseContent(AbstractBaseContent):
         if the requested language doesn't exist.
         """
         # TODO: Should there a instance be returned even if the instance is a
-        #translation?
+        # translation?
         if self.is_translation():
             return None
         try:
-            return self.translations.restricted(request).get(language=language)
+            return self.translations.restricted(request).get(language=language).get_content_object()
         except BaseContent.DoesNotExist:
             return None
 

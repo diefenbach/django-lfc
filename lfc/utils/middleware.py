@@ -14,6 +14,8 @@ from django.utils import translation
 # lfc imports
 from lfc.utils import traverse_object
 from lfc.utils import get_portal
+from lfc.utils import get_content_object
+
 from lfc.models import BaseContent
 
 class ProfileMiddleware(object):
@@ -99,8 +101,7 @@ class LFCMiddleware:
         else:
             portal = get_portal()
             if portal.standard:
-                # using BaseContentManager (to check permissions)
-                obj = get_object_or_404(BaseContent, portal=portal)
+                obj = get_content_object(portal=portal)
                 if obj.language != language:
                     if obj.is_canonical():
                         t = obj.get_translation(request, language)

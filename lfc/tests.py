@@ -1,4 +1,4 @@
-# python 
+# python
 import copy
 
 # django imports
@@ -76,6 +76,48 @@ def create_request():
 
     return request
 
+class UtilsTestCase(TestCase):
+    """
+    """
+    def setUp(self):
+        self.p1 = Page.objects.create(title="Page 1", slug="page-1")
+        self.p2 = Page.objects.create(title="Page 2", slug="page-2")
+
+    def test_get_content_object(self):
+        """
+        """
+        # As superuser
+        ct = lfc.utils.get_content_object(slug="page-1")
+        self.assertEqual(ct.title, "Page 1")
+
+        request = create_request()
+        request.user.is_superuser = False
+
+        # Without passed request
+        ct = lfc.utils.get_content_object(slug="page-1")
+        self.assertEqual(ct.title, "Page 1")
+
+        # With passed request
+        self.assertRaises(BaseContent.DoesNotExist, lfc.utils.get_content_object, request, slug="page-1")
+
+    def test_get_content_objects(self):
+        """
+        """
+        # As superuser
+        ct = lfc.utils.get_content_objects(slug="page-1")
+        self.assertEqual(ct[0].title, "Page 1")
+
+        request = create_request()
+        request.user.is_superuser = False
+
+        # Without passed request
+        ct = lfc.utils.get_content_objects(slug="page-1")
+        self.assertEqual(ct[0].title, "Page 1")
+
+        # With passed request
+        ct = lfc.utils.get_content_objects(request, slug="page-1")
+        self.assertEqual(ct, [])
+
 class CopyTestCase(TestCase):
     """
     """
@@ -88,7 +130,7 @@ class CopyTestCase(TestCase):
         """
         page_copy = copy.deepcopy(self.p1)
         page_copy.id = None
-        page_copy.pk = None        
+        page_copy.pk = None
         page_copy.parent = self.p2
         page_copy.save()
 
@@ -105,13 +147,25 @@ class ManagerTestCase(TestCase):
         """
         """
         obj = BaseContent.objects.get(pk=1)
+        self.failUnless(isinstance(obj, BaseContent))
+
+    def test_get_content_object(self):
+        """
+        """
+        obj = BaseContent.objects.get(pk=1).get_content_object()
         self.failUnless(isinstance(obj, Page))
+
+    def test_get_content_objects(self):
+        """
+        """
+        obj = BaseContent.objects.filter(pk=1).get_content_objects()
+        self.failUnless(isinstance(obj[0], Page))
 
     def test_restricted_content_objects(self):
         """
         """
         request = create_request()
-        pages = BaseContent.objects.restricted(request).content_objects()
+        pages = Page.objects.restricted(request)
         self.assertEqual(len(pages), 2)
 
         for page in pages:
@@ -249,7 +303,7 @@ class PortalTestCase(TestCase):
         self.p111 = Page.objects.create(title="Page 1-1-1", slug="page-1-1-1", parent=self.p11)
         self.p12 = Page.objects.create(title="Page 1-2", slug="page-1-2", parent=self.p1)
         self.p12 = Page.objects.create(title="Page 2", slug="page-2")
-    
+
     def test_get_children(self):
         """
         """

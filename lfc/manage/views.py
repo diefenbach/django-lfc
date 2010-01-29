@@ -93,7 +93,7 @@ def paste(request, id=None):
         _reset_clipboard(request)
         return HttpResponseRedirect(url)
     try:
-        source_obj = BaseContent.objects.get(pk=source_id)
+        source_obj = lfc.utils.get_content_object(pk=source_id)
     except BaseContent.DoesNotExist:
         _reset_clipboard(request)
         msg = _(u"The object doesn't exists anymore.")
@@ -103,7 +103,7 @@ def paste(request, id=None):
     # parent is the portal.
     if id:
         try:
-            parent = BaseContent.objects.get(pk=id)
+            parent = lfc.utils.get_content_object(pk=id)
         except BaseContent.DoesNotExist:
             return HttpResponseRedirect(url)
     else:
@@ -181,7 +181,7 @@ def _reset_clipboard(request):
 def _copy_descendants(source_obj, target_obj):
     """Copies all descendants of the passed object.
     """
-    for child in source_obj.children.all().content_objects():
+    for child in source_obj.children.all().get_content_objects():
         new_child = copy.deepcopy(child)
         new_child.pk = None
         new_child.id = None
@@ -224,7 +224,7 @@ def _copy_portlets(source_obj, target_obj):
 def _copy_translations(source_obj, target_obj):
     """Copies all translations from source_obj to target_obj.
     """
-    for translation in source_obj.translations.all().content_objects():
+    for translation in source_obj.translations.all().get_content_objects():
         new_translation = copy.deepcopy(translation)
         new_translation.pk = None
         new_translation.id = None
@@ -295,7 +295,7 @@ def portal_children(request, template_name="lfc/manage/portal_children.html"):
     """Displays the portal children tab
     """
     language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
-    children = BaseContent.objects.filter(parent = None, language__in=("0", language))
+    children = lfc.utils.get_content_objects(parent = None, language__in=("0", language))
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
     }))
@@ -614,7 +614,7 @@ def update_portlets(request, object_type_id, object_id):
     """
     # Get content type to which the portlet should be added
     object_ct = ContentType.objects.get(pk=object_type_id)
-    object = object_ct.get_object_for_this_type(pk=object_id)
+    obj = object_ct.get_object_for_this_type(pk=object_id)
 
     blocked_slots = request.POST.getlist("block_slot")
 
@@ -634,7 +634,7 @@ def update_portlets(request, object_type_id, object_id):
             except PortletBlocking.DoesNotExist:
                 pass
 
-        html = portlets_inline(request, object)
+        html = portlets_inline(request, obj)
 
     result = simplejson.dumps({
         "html" : html,
@@ -649,7 +649,7 @@ def add_portlet(request, object_type_id, object_id, template_name="lfc/manage/po
     """
     # Get content type to which the portlet should be added
     object_ct = ContentType.objects.get(pk=object_type_id)
-    object = object_ct.get_object_for_this_type(pk=object_id)
+    obj = object_ct.get_object_for_this_type(pk=object_id)
 
     # Get the portlet type
     portlet_type = request.REQUEST.get("portlet_type", "")
@@ -678,10 +678,10 @@ def add_portlet(request, object_type_id, object_id, template_name="lfc/manage/po
             slot_id = request.POST.get("slot")
             position = request.POST.get("position")
             PortletAssignment.objects.create(
-                slot_id=slot_id, content=object, portlet=portlet, position=position)
+                slot_id=slot_id, content=obj, portlet=portlet, position=position)
 
             result = simplejson.dumps({
-                "html" : portlets_inline(request, object),
+                "html" : portlets_inline(request, obj),
                 "message" : _(u"Portlet has been added.")},
                 cls = LazyEncoder
             )
@@ -760,7 +760,7 @@ def add_object(request, language=None, id=None):
     form = mc().form
 
     try:
-        parent_object = BaseContent.objects.get(pk=id)
+        parent_object = lfc.utils.get_content_object(pk=id)
     except (BaseContent.DoesNotExist, ValueError):
         parent_object = None
 
@@ -816,7 +816,7 @@ def delete_object(request, id):
     """Deletes the content object with given id.
     """
     try:
-        obj = BaseContent.objects.get(pk = id)
+        obj = lfc.utils.get_content_object(pk = id)
     except BaseContent.DoesNotExist:
         pass
     else:
@@ -858,7 +858,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
-    objs = BaseContent.objects.filter(parent=None)
+    objs = lfc.utils.get_content_objects(parent=None)
 
     if obj.is_canonical():
         canonical = obj
@@ -904,9 +904,9 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
 def core_data(request, id, template_name="lfc/manage/object_data.html"):
     """Displays/Updates the core data tab of the content object with passed id.
     """
-    base_content = BaseContent.objects.get(pk=id)
-    obj_ct = ContentType.objects.filter(model=base_content.content_type)[0]
-    obj = base_content.get_content_object()
+    obj = lfc.utils.get_content_object(pk=id)
+    obj_ct = ContentType.objects.filter(model=obj.content_type)[0]
+
     Form = obj.form
 
     if request.method == "POST":
@@ -983,8 +983,7 @@ def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
 def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
     """Displays/Updates the SEO tab of the content object with passe id.
     """
-    obj = BaseContent.objects.get(pk=id)
-    obj = obj.get_content_object()
+    obj = lfc.utils.get_content_object(pk=id)
 
     if request.method == "POST":
         form = SEOForm(instance=obj, data=request.POST)
@@ -1215,7 +1214,7 @@ def update_files(request, id):
 def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
     """Displays the images tab of a content object.
     """
-    obj = BaseContent.objects.get(pk=id).get_content_object()
+    obj = BaseContent.objects.get(pk=id)
 
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,

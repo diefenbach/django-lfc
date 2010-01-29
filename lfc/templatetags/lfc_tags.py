@@ -124,42 +124,44 @@ def do_contact_form(parser, token):
 register.tag('contact_form', do_contact_form)
 
 @register.inclusion_tag('lfc/tags/tabs.html', takes_context=True)
-def tabs(context, page=None):
+def tabs(context):
     """Returns the top level pages as tabs (aka horizontal menu bar).
     """
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
 
-    if page:
-        cache_key = "tabs-%s-%s" % (page.content_type, page.id)
+    lfc_context = context.get("lfc_context")
+
+    if lfc_context:
+        cache_key = "tabs-%s-%s" % (lfc_context.content_type, lfc_context.id)
     else:
         cache_key = "tabs-portal"
 
     pages = cache.get(cache_key)
 
     if pages is None:
-        temp = BaseContent.objects.restricted(request).filter(
+        tl_objs = lfc.utils.get_content_objects(request,
             language__in=(language, "0"),
             parent = None,
             exclude_from_navigation=False,
         )
 
-        if page is None:
+        if lfc_context is None:
             current_pages = []
         else:
-            current_pages = [page]
-            current_pages.extend(page.get_ancestors())
+            current_pages = [lfc_context]
+            current_pages.extend(lfc_context.get_ancestors())
 
-        pages = []
-        for page in temp:
-            page.current = page.get_content_object() in current_pages
-            pages.append(page)
+        tabs = []
+        for obj in tl_objs:
+            obj.current = obj in current_pages
+            tabs.append(obj)
 
         cache.set(cache_key, pages)
 
     return {
         "language" : language,
-        "pages" : pages,
+        "tabs" : tabs,
         "portal" : lfc.utils.get_portal(),
     }
 
@@ -167,7 +169,7 @@ def tabs(context, page=None):
 def scrollable(context, tags=None, title=False, text=True, limit=5):
     """Displays objects with given tabs as scrollable
     """
-    items = BaseContent.objects.restricted(request)
+    items = lfc.utils.get_content_object(request)
 
     if tags:
         items = ModelTaggedItemManager().with_all(tags, items)
@@ -218,8 +220,8 @@ def navigation(context, start_level=1, expand_level=0):
     obj = request.META.get("lfc_context")
 
     language = translation.get_language()
-
-    temp = BaseContent.objects.restricted(request).filter(
+    
+    temp = lfc.utils.get_content_objects(request,
         parent = None,
         language__in = (language, "0"),
         exclude_from_navigation=False)
@@ -239,7 +241,6 @@ def navigation(context, start_level=1, expand_level=0):
 
     objs = []
     for obj in temp:
-        obj = obj.get_content_object()
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, expand_level)
             is_current = True
@@ -268,15 +269,14 @@ def navigation(context, start_level=1, expand_level=0):
 def _navigation_children(request, current_objs, obj, start_level, expand_level, level=2):
     """Renders the children of given object as sub navigation tree.
     """
-    obj = obj.get_content_object()
+    obj = obj
     temp = obj.children.restricted(request).filter(
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
-    )
-
+    ).get_content_objects()
+    
     objs = []
     for obj in temp:
-        obj = obj.get_content_object()
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level+1)
             is_current = True
