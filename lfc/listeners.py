@@ -3,14 +3,16 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.comments.signals import comment_was_posted
 from django.core.mail import EmailMessage
+from django.db.models.signals import post_save
 
 # lfc imports
-from lfc.utils import get_portal
+import lfc.utils
+from lfc.models import BaseContent
 
 def comment_was_posted_listener(sender, **kwargs):
     """Listen to order submitted signal
     """
-    portal = get_portal()
+    portal = lfc.utils.get_portal()
     site = Site.objects.get(id=settings.SITE_ID)
     comment = kwargs.get("comment")
 

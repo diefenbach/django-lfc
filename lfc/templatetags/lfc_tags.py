@@ -31,7 +31,7 @@ register = template.Library()
 
 @register.inclusion_tag('lfc/manage/templates.html', takes_context=True)
 def templates(context):
-    """Displays a selection box to select a available template for context 
+    """Displays a selection box to select a available template for context
     on the fly.
     """
     lfc_context = context.get("lfc_context")
@@ -127,28 +127,35 @@ register.tag('contact_form', do_contact_form)
 def tabs(context, page=None):
     """Returns the top level pages as tabs (aka horizontal menu bar).
     """
-    if page:
-        page = page.get_content_object()
-
     request = context.get("request")
     language = context.get("LANGUAGE_CODE")
 
-    temp = BaseContent.objects.restricted(request).filter(
-        language__in=(language, "0"),
-        parent = None,
-        exclude_from_navigation=False,
-    )
-
-    if page is None:
-        current_pages = []
+    if page:
+        cache_key = "tabs-%s-%s" % (page.content_type, page.id)
     else:
-        current_pages = [page]
-        current_pages.extend(page.get_ancestors())
+        cache_key = "tabs-portal"
 
-    pages = []
-    for page in temp:
-        page.current = page.get_content_object() in current_pages
-        pages.append(page)
+    pages = cache.get(cache_key)
+
+    if pages is None:
+        temp = BaseContent.objects.restricted(request).filter(
+            language__in=(language, "0"),
+            parent = None,
+            exclude_from_navigation=False,
+        )
+
+        if page is None:
+            current_pages = []
+        else:
+            current_pages = [page]
+            current_pages.extend(page.get_ancestors())
+
+        pages = []
+        for page in temp:
+            page.current = page.get_content_object() in current_pages
+            pages.append(page)
+
+        cache.set(cache_key, pages)
 
     return {
         "language" : language,

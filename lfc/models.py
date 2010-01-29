@@ -395,6 +395,7 @@ class BaseContent(AbstractBaseContent):
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
         super(BaseContent, self).save()
+        lfc.utils.clear_cache()
 
     def get_absolute_url(self):
         """Returns the absolute url of the instance. Takes care of nested

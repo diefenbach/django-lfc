@@ -53,37 +53,60 @@ def base_view(request, language=None, slug=None, obj=None):
     if isinstance(obj, Portal):
         return portal(request, obj)
 
-    # Get the template of the object
-    obj_template = obj.get_template()
-
     # Redirect to standard object unless superuser is asking
     if obj.standard and request.user.is_superuser == False:
         url = obj.get_absolute_url()
         return HttpResponseRedirect(url)
 
-    # Get sub objects (as LOL if requested)
-    if obj_template.children_columns == 0:
-        sub_objects = lfc.utils.get_content_objects(obj.children.restricted(request))
-    else:
-        sub_objects = lfc.utils.getLOL(obj.children.restricted(request), obj_template.children_columns)
+    # Template
+    template_cache_key = "template-%s-%s" % (obj.content_type, obj.id)
+    obj_template = cache.get(template_cache_key)
+    if obj_template is None:
+        obj_template = obj.get_template()
+        cache.set(template_cache_key, obj_template)
 
-    # Get images (as LOL if requested)
-    temp_images = list(obj.images.all())
-    if temp_images:
-        if obj_template.images_columns == 0:
-            images = temp_images
-            image = images[0]
-            subimages = temp_images[1:]
+    # Children
+    children_cache_key = "children-%s-%s" % (obj.content_type, obj.id)
+    sub_objects = cache.get(children_cache_key)
+    if sub_objects is None:
+        # Get sub objects (as LOL if requested)
+        if obj_template.children_columns == 0:
+            sub_objects = lfc.utils.get_content_objects(obj.children.restricted(request))
         else:
-            images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
-            subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
-            image = images[0][0]
-    else:
-        image = None
-        images = []
-        subimages = []
+            sub_objects = lfc.utils.getLOL(obj.children.restricted(request), obj_template.children_columns)
 
-    # Get files
+        cache.set(children_cache_key, sub_objects)
+
+    # Images
+    images_cache_key = "images-%s-%s" % (obj.content_type, obj.id)
+    cached_images = cache.get(images_cache_key)
+    if cached_images:
+        image     = cached_images["image"]
+        images    = cached_images["images"]
+        subimages = cached_images["subimages"]
+    else:
+        temp_images = list(obj.images.all())
+        if temp_images:
+            if obj_template.images_columns == 0:
+                images = temp_images
+                image = images[0]
+                subimages = temp_images[1:]
+            else:
+                images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
+                subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
+                image = images[0][0]
+        else:
+            image = None
+            images = []
+            subimages = []
+
+        cache.set(images_cache_key, {
+            "image" : image,
+            "images" :  images,
+            "subimages" : subimages
+        })
+
+    # Files
     files = obj.files.all()
 
     c = RequestContext(request, {

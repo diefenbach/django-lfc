@@ -3,6 +3,7 @@ import datetime
 import urllib
 import sys
 
+
 # django settings
 from django.core.cache import cache
 from django.http import Http404
@@ -90,13 +91,33 @@ def traverse_object(request, path):
 
     for path in paths[1:]:
         try:
-            obj = obj.children.restricted(request).filter(slug=path)[0]
-        except IndexError:
+            obj = obj.children.restricted(request).get(slug=path, language__in = ("0", obj.language))
+        except lfc.models.BaseContent.DoesNotExist:
             raise Http404
 
     cache.set(cache_key, obj)
     return obj
 
+def clear_cache():
+    """Clears the complete cache.
+    """
+    # memcached
+    try:
+        cache._cache.flush_all()
+    except AttributeError:
+        pass            
+    else:
+        return
+
+    try:
+        cache._cache.clear()
+    except AttributeError:
+        pass
+    try:
+        cache._expire_info.clear()
+    except AttributeError:
+        pass
+        
 def import_module(module):
     """Imports module with given dotted name.
     """
