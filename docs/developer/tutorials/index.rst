@@ -8,3 +8,4 @@ Here you will find some tutorials and how-tos for developers.
    :maxdepth: 1
 
    application/index.rst
+   get_content_types.rst
