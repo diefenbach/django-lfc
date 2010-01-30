@@ -2,20 +2,32 @@
 from django.conf.urls.defaults import *
 
 # LFC Manage
-urlpatterns = patterns('lfc.manage.views',
+urlpatterns = patterns('lfc.manage.views.applications',
     url(r'^applications$', "applications", name="lfc_applications"),
     url(r'^application/(?P<name>\w+)$', "application", name="lfc_application"),
     url(r'^install-application/(?P<name>\w+)$', "install_application", name="lfc_install_application"),
     url(r'^uninstall-application/(?P<name>\w+)$', "uninstall_application", name="lfc_uninstall_application"),
     url(r'^reinstall-application/(?P<name>\w+)$', "reinstall_application", name="lfc_reinstall_application"),
+)
 
+urlpatterns += patterns('lfc.manage.views.cutnpaste',
     url(r'^copy/(?P<id>\d+)$', "lfc_copy", name="lfc_copy"),
     url(r'^cut/(?P<id>\d+)$', "cut", name="lfc_cut"),
     url(r'^paste/(?P<id>\d+)$', "paste", name="lfc_paste"),
     url(r'^paste$', "paste", name="lfc_paste"),
+)
 
+urlpatterns += patterns('lfc.manage.views.content_types',
     url(r'^content-types$', "content_types", name="lfc_content_types"),
     url(r'^content-type/(?P<id>\d+)$', "content_type", name="lfc_content_type"),
+)
+
+urlpatterns += patterns('lfc.manage.views.translations',
+    url(r'^save-translation', "save_translation", name="lfc_save_translation"),
+    url(r'^(?P<id>\d+)/translate/(?P<language>\w{2})', "translate_object", name="lfc_translate_object"),
+)
+
+urlpatterns += patterns('lfc.manage.views.misc',
 
     url(r'^filebrowser$', "filebrowser", name="lfc_filebrowser"),
     url(r'^fb-upload-image$', "fb_upload_image", name="lfc_fb_upload_image"),
@@ -53,9 +65,6 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-portlets/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets", name="lfc_update_portlets"),
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
-
-    url(r'^save-translation', "save_translation", name="lfc_save_translation"),
-    url(r'^(?P<id>\d+)/translate/(?P<language>\w{2})', "translate_object", name="lfc_translate_object"),
 
     url(r'^set-navigation-tree-language/(?P<language>\w{2})', "set_navigation_tree_language", name="lfc_set_navigation_tree_language"),
     url(r'^set-template$', "set_template", name="lfc_set_template"),
