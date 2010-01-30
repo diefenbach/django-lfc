@@ -311,7 +311,9 @@ def update_portal_children(request):
             if key.startswith("delete-"):
                 try:
                     id = key.split("-")[1]
-                    child = BaseContent.objects.get(pk=id).delete()
+                    child = lfc.utils.get_content_object(pk=id)
+                    _remove_fks(child)
+                    child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
 
@@ -820,24 +822,9 @@ def delete_object(request, id):
     except BaseContent.DoesNotExist:
         pass
     else:
-        # Remove the object from the parent's standard in order not to
-        # delete the parent
         parent = obj.parent
-
-        if parent is None:
-            parent = get_portal()
-
-        if parent.standard and parent.standard.get_content_object() == obj:
-            parent.standard = None
-            parent.save()
-
-        # Remove the object from translations in order not to delete the
-        # translations
-        if obj.is_canonical():
-            for t in obj.translations.all():
-                t.canonical = None
-                t.save()
-
+        # Removes the object from foreign keys of other objects
+        _remove_fks(obj)
         obj.delete()
 
     if parent:
@@ -1034,7 +1021,9 @@ def update_children(request, id):
             if key.startswith("delete-"):
                 try:
                     id = key.split("-")[1]
-                    child = BaseContent.objects.get(pk=id).delete()
+                    child = lfc.utils.get_content_object(pk=id)
+                    _remove_fks(child)
+                    child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
 
@@ -1214,7 +1203,7 @@ def update_files(request, id):
 def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
     """Displays the images tab of a content object.
     """
-    obj = BaseContent.objects.get(pk=id)
+    obj = lfc.utils.get_content_object(pk=id)
 
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
@@ -1535,6 +1524,23 @@ def set_template(request):
     obj.save()
 
     return HttpResponseRedirect(obj.get_absolute_url())
+
+def _remove_fks(obj):
+    """Removes the objects from foreign key fields (in order to not delete
+    these related objects)
+    """
+    parent = obj.parent
+    if parent is None:
+        parent = get_portal()
+
+    if parent.standard and parent.standard.get_content_object() == obj:
+        parent.standard = None
+        parent.save()
+
+    if obj.is_canonical():
+        for t in obj.translations.all():
+            t.canonical = None
+            t.save()
 
 def _update_positions(obj, take_parent=False):
     """Updates position of given object's children. If take_parent is True
