@@ -13,7 +13,7 @@ Sub objects
 
 Every instance of an content object can have arbitrary sub objects which will
 build the content structure. Every content type can restrict the type of
-allowed sub types, though.
+allowed sub types.
 
 Images and Files
 ----------------
@@ -43,8 +43,9 @@ are  just a small bunch of templates (more can be added by developers):
 
 * Overview
 
-  All assigned sub objects are displayed as a list. The first image of the
-  sub objects (if there is one) is displayed.
+  All sub pages are displayed as a list. The first image of the sub pages 
+  (if there is one) is displayed as thumbnail top left, the text flows aroung
+  the image.
 
 Portlets
 --------
@@ -73,7 +74,7 @@ Translations
 
 Every page can have multiple translations.
 
-By default all new pages are created in the default language and all
+By default all new objects are created in the default language and all
 translations are assigned automatically to the base canonical object, which has
 the advantage that the user is automatically redirected to the correct 
 translation if he changes the language. But it is also possible to create 

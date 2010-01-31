@@ -34,13 +34,27 @@
                     </a>
                 </td>
             </tr>
+        {% empty %}
+            <tr>
+                <td colspan="2">
+                    {% trans "There are no global images." %}
+                </td>
+            </tr>
         {% endfor %}
     </table>
+    
+    {% autopaginate images %}
 
     <h1 class="middle">{% trans "Local images" %}</h1>
-    <table>
-
-        {% autopaginate images %}
+    <table class="lfs-manage-table" width="100%">
+        <tr>
+            <th width="70px">
+                {% trans "Image" %}
+            </th>
+            <th>
+                {% trans "Sizes" %}
+            </th>
+        </tr>
 
         {% for image in images %}
             <tr>
@@ -63,7 +77,12 @@
                 </td>
             </tr>
         {% empty %}
-            {% trans "There are no local images yet" %}
+            <tr>
+                <td colspan="2">
+                    {% trans "There are no local images yet" %}
+                </td>
+            </tr>
+            
         {% endfor %}
     </table>
 

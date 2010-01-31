@@ -52,7 +52,7 @@ There are several ways to get around that:
     objs = lfc.utils.get_content_objects(pk=1)
 
   You can also pass the request in order to take care of the current users'
-  permissons::
+  permissions::
 
     obj = lfc.utils.get_content_object(request, pk=1)
     objs = lfc.utils.get_content_objects(request, pk=1)

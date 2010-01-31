@@ -4,7 +4,11 @@ Glossary
 ========
 
 .. glossary::
-
+    
+  Clipboard
+     The clipboard is a place where content objects are stored temporary
+     between cut/copy and paste operations.
+     
   Content type
      Content types represents the content of the site. By default there is only
      Page. Developers can add more content types.
@@ -15,9 +19,12 @@ Glossary
   Portal
     The portal is the root of a the content structure. It manages some global
     data like e-mail addresses, global images and portlets.
+  
+  Portlet
+     A portlet is a piece of content which are managed in :term:`Slots`.
 
   Portlets
-    Portlets are pieces of content which are managed in :term:`Slots`.
+    see :term:`Portlet`
 
   Slot
     Slots can be freely defined and placed anywhere within a HTML page. LFC 

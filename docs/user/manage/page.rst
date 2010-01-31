@@ -65,7 +65,7 @@ objects he gets a page not found disclaimer (404).
 **Exclude from navigation**
 
 If checked this object is not displayed within the tabs or the navigation
-portlet.
+:term:`portlet`.
 
 **Exclude from search results**
 
@@ -84,7 +84,7 @@ The publication date of the object
 Children
 ========
 
-Displays the direct children (sub pages) of an object as a list. Here one can 
+Displays the direct children (sub pages) of an object as a list. Here you can 
 bulk edit (change position, active state, etc.) or delete objects.
 
 Images
@@ -121,10 +121,10 @@ There are two different ways to use the images:
         - "Gallery"
            All images are displayed as a 3 x 3 grid.
 
-2. Within the text field of the content object
+2. Within the text field of the content object. Just follow these steps:
 
         1. Within the WYSIWYG editor click on the image button.
-        2. Besided the ``Image URL`` field click on the ``Browse`` button 
+        2. Beside the ``Image URL`` field click on the ``Browse`` button 
            and select an image in the size you need it. Fill in ``Image 
            Description`` and ``Title`` and click the "Insert"-button.
            
@@ -158,27 +158,25 @@ There are two different ways to use the files:
 
         At the moment there is no template which supports files.
 
-2. Within the text field of the content object
+2. Within the text field of the content object. Just follow these steps:
 
         1. Within the WYSIWYG editor select some text and click on the 
            ``insert/edit link``-button.
-        2. Besided the ``Link URL`` field click on the ``Browse``-button
+        2. Beside the ``Link URL`` field click on the ``Browse``-button
            and select a file you want to link to and optionally add a title.
         3. Click the ``Insert``-button.
 
 Portlets
 ========
 
-Here one can add portlets to a page.
-
-:term:`Portlets` a pieces of content which are displayed in :term:`Slots` left
-and right of your page.
+Here you can add portlets to an content object.
 
 **Blocked parent slots**
 
-By default portlets are inherited from the parent page or the :term:`portal`.
-I you want you can block this portlets per :term:`slot`. For that just select 
-the checkbox beside the slot and click the ``Save Blocked Parent Slots``-button.
+By default portlets are inherited from the parent content object or the 
+:term:`portal`. If you want you can block this portlets per :term:`slot`. 
+For that just select the checkbox beside the slot and click the
+``Save Blocked Parent Slots``-button.
 
 **Slots**
 
@@ -187,7 +185,7 @@ there is a left and a right slot.
 
 **Add a portlet**
 
-To add a portlet, select the kind of portlet and click the ``Add Portlet``-button
+To add a portlet, select the kind of portlet and click the ``Add Portlet``-button.
 Fill in ``position``, ``slot``, ``title`` and the specific portlet data and
 click the ``Save Portlet``-button.
 
@@ -199,7 +197,7 @@ portlet, change the data within the specific portlet form and click the
 
 **Delete a portlet**
 
-Click on the ``Delete``-button of the portlet and answer the question with yes.
+Click on the ``Delete``-button of the portlet and answer the question with *yes*.
 
 Comments
 ========
@@ -208,7 +206,7 @@ Handles the comments of the page.
 
 **Commentable**
 
-Here one can decide whether commments are allowed for this page or not. There
+Here you can decide whether commments are allowed for this page or not. There
 are three choices:
 
 * default
@@ -225,7 +223,7 @@ are three choices:
 
 **Comments**
 
-Displays all comments for this page. Here one can bulk edit (public, etc.) or
+Displays all comments for this page. Here you can bulk edit (public, etc.) or
 delete comments.
 
 SEO
@@ -243,7 +241,7 @@ By default it displays the description of the content object.
 
 **Placeholders**
 
-One can use several placeholders within both fields, which are: 
+You can use several placeholders within both fields, which are: 
 
 - <title>
 

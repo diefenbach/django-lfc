@@ -48,24 +48,25 @@ Select the checkboxes beside the images you want to delete and click the
 
 **Usage of images within content**
 
-One can use this images within every text field which has an WYSIWYG editor,
-e.g. the text portlet or the text field of a page.
+You can use this images within every text field which has an WYSIWYG editor,
+e.g. the text portlet or the text field of a page. To do that just follow these
+steps:
 
     1. Within the WYSIWYG editor click on the image button.
-    2. Besided the ``Image URL`` field click on the ``Browse`` button 
+    2. Beside the ``Image URL`` field click on the ``Browse`` button
        and select an image in the size you need it. Fill in ``Image 
        Description`` and ``Title`` and click the "Insert"-button.
        
 Children
 ========
 
-Displays the direct children of the portal as a list. Here one can bulk edit
+Displays the direct children of the portal as a list. Here you can bulk edit
 (change position, active state, etc.) or delete objects.
 
 Portlets
 ========
 
-Here one can add global portlets of the site.
+Here you can add portlets to the site.
 
 :term:`Portlets` a pieces of content which are displayed in :term:`Slots` left
 and right of your page.
