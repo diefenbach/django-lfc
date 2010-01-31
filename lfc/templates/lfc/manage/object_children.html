@@ -4,10 +4,10 @@
     {% trans 'Children' %}
 </h2>
 
-{% if children %}
-    <form action="{% url lfc_update_children obj.id %}"
-          method="post">
+<form action="{% url lfc_update_children obj.id %}"
+      method="post">
 
+    {% if children %}
         <table class="lfs-manage-table" width="100%">
             <tr>
                 <th class="mini">
@@ -40,7 +40,7 @@
                                style="float:left" />
                     </td>
                     <td>
-                        <input type="text"  
+                        <input type="text"
                                class="position"
                                name="position-{{ child.id }}"
                                value="{{ child.position }}" />
@@ -72,11 +72,22 @@
         </table>
         <div class="manage-form-buttons">
             <input class="ajax-save-button"
-                   type="submit" name="update" value="{% trans 'Update children' %}" />
+                   type="submit" name="update" value="{% trans 'Update' %}" />
             <input class="ajax-save-button"
-                   type="submit" name="delete" value="{% trans 'Delete children' %}" />
+                   type="submit" name="delete" value="{% trans 'Delete' %}" />
+            <input class="ajax-save-button"
+                   type="submit" name="copy" value="{% trans 'Copy' %}" />
+            <input class="ajax-save-button"
+                   type="submit" name="cut" value="{% trans 'Cut' %}" />
+            <input class="ajax-save-button"
+                   type="submit" name="paste" value="{% trans 'Paste' %}" />
         </div>
-    </form>
-{% else %}
-    <span>{% trans 'There are no children' %}</span>
-{% endif %}
+    {% else %}
+        <div>{% trans 'There are no children' %}</div>
+        <div class="manage-form-buttons">
+            <input class="ajax-save-button"
+                   type="submit" name="paste" value="{% trans 'Paste' %}" />
+        </div>
+
+    {% endif %}
+</form>

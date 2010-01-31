@@ -10,7 +10,7 @@ to get a list of all content types one could try to do::
 
     BaseContent.objects.all()
 
-The problem with this is, that Django will deliever instances of BaseContent
+The problem with this is, that Django will deliver instances of BaseContent
 (via a query set) and not, as you might expect, the specific content objects.
 
 Approaches
