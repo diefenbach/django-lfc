@@ -22,20 +22,20 @@ language feature on.
 Create a translation
 ====================
 
-In order to create a translation browse to the object and select the lanuage
-you want from the "Translate to" Menu. 
+In order to create a translation browse to the object and select the language
+you want from the ``Translate to`` menu. 
 
 .. image:: /images/translations_1.*
 
-Fill in the form and click the "Save" button.
+Fill in the form and click the ``Save`` button.
 
 **Now following has taken place:**
 
 * The translation in the selected language has been created, i.e.: the created 
   content object has the language you choosed above.
-* The translation has been assigned to the source object (see the "canonical" 
-  field of the "Metadata" tab), which means that the user is redirected to the
-  connected object in the right language if he changes the language.
+* The translation has been assigned to the source object (see the ``canonical`` 
+  field of the ``Metadata`` tab), which means that the user is redirected to the
+  connected object in the selected language after the changed the language.
   
 Change between translations
 ===========================
@@ -52,7 +52,7 @@ The same is true for the navigation tree.
 .. image:: /images/translations_3.*
 
 
-Site strucutures
+Site structures
 ================
 
 As you have seen the source object and the translations are connected 

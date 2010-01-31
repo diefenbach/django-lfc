@@ -68,7 +68,7 @@ within models.py
     inherit.
 
 11:
-    The new content type. Inherits from BaseContent.
+    The new content type. It Inherits from BaseContent.
 
 14/15:
 

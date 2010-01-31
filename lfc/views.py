@@ -31,7 +31,7 @@ from tagging.models import TaggedItem
 from tagging.utils import get_tag
 
 def portal(request, obj, template_name="lfc/portal.html"):
-    """Displays the default object of the portal.
+    """Displays the the portal.
     """
     return render_to_response(template_name, RequestContext(request, {
         "portal" : lfc.utils.get_portal()
@@ -71,7 +71,7 @@ def base_view(request, language=None, slug=None, obj=None):
     if sub_objects is None:
         # Get sub objects (as LOL if requested)
         if obj_template.children_columns == 0:
-            
+
             sub_objects = obj.children.restricted(request).get_content_objects()
         else:
             sub_objects = lfc.utils.getLOL(obj.children.restricted(request).get_content_objects(), obj_template.children_columns)
@@ -136,7 +136,7 @@ def file(request, language=None, id=None):
     return response
 
 def search_results(request, language, template_name="lfc/search_results.html"):
-    """
+    """Displays the search result for passed language and query.
     """
     query = request.GET.get("q")
     language = translation.get_language()

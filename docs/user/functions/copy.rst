@@ -8,28 +8,27 @@ to use it and how it works.
 Cut and Paste
 =============
 
-To Cut'n Paste an object just browse to it and select "Cut" from the "Actions" 
-menu. The object is now put to the clipboard and ready to paste.
+To cut and paste an object just browse to it and select ``Cut`` from the ``Actions``
+menu. The object is now put to the :term:`clipboard` and ready to paste.
 
 Now browse to the new location to which you want to paste the object and
-select "Paste" from the "Actions" menu
+select ``Paste`` from the ``Actions`` menu
 
-The object is now added to the new and remove from the old location. Moreover 
-it is removed from the clipboad so that you cannot move it to another location 
+The object is now added to the new and removed from the old location. Moreover 
+it is removed from the clipboard so that you cannot move it to another location 
 accidently.
 
 Copy and Paste
 ==============
-To Copy'n Paste an object just browse to it and select "Copy" from the "Actions" 
+To copy and paste an object just browse to it and select ``Copy`` from the ``Actions`` 
 menu. The object is now put to the clipboard and ready to paste.
 
 Now browse to the new location to which you want to paste the object and 
-select "Paste" from the "Actions" menu.
+select ``Paste`` from the ``Actions`` menu.
 
-The object is now added to the new location. Please note that it is not removed
-from the old location (as you expected). It is also not removed from the 
-clipboad so that you can repeately paste the object to the same or different
-locations. 
+The object is now added to the new location. The object is not removed from 
+the old location. It is also not removed from the clipboad so that you 
+can repeatedly paste the object to the same or different locations.
 
 If you copy an object following related objects are also copied:
 
@@ -45,8 +44,8 @@ Miscellaneous
 * Objects can only pasted to objects for which the object is an allowed
   sub type. You will get a proper error message if you try to paste a
   disallowed type.
-* Objects cannot be pasted to it's own descendants. You will get a proper
-  error message if you try it.
+* Objects cannot be cut and pasted to it's own descendants. You will get a 
+  proper error message if you try it.
 * Objects will automatically get a unique slug within the parent object. That 
-  means if an object with the slug "my-object" already exists the object will 
+  means if an object with the slug "my-object" already exists the object will
   get the slug "my-object-1".
