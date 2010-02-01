@@ -86,6 +86,10 @@ $(function() {
                     $(data["html"][html][0]).html(data["html"][html][1]);
                 tinyMCE.execCommand('mceAddControl', true, 'id_text');
                 tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
+                $('ul.sf-menu').superfish({
+                    speed: "fast",
+                    delay: "200"
+                });
                 $.jGrowl(data["message"]);
             }
         })

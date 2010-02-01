@@ -79,15 +79,21 @@
                    type="submit" name="copy" value="{% trans 'Copy' %}" />
             <input class="ajax-save-button"
                    type="submit" name="cut" value="{% trans 'Cut' %}" />
-            <input class="ajax-save-button"
-                   type="submit" name="paste" value="{% trans 'Paste' %}" />
+                   
+            {% if display_paste %}       
+                <input class="ajax-save-button"
+                       type="submit" name="paste" value="{% trans 'Paste' %}" />
+            {% endif %}
         </div>
     {% else %}
         <div>{% trans 'There are no children' %}</div>
-        <div class="manage-form-buttons">
-            <input class="ajax-save-button"
-                   type="submit" name="paste" value="{% trans 'Paste' %}" />
-        </div>
+        
+        {% if display_paste %}
+            <div class="manage-form-buttons">
+                <input class="ajax-save-button"
+                       type="submit" name="paste" value="{% trans 'Paste' %}" />
+            </div>
+        {% endif %}
 
     {% endif %}
 </form>

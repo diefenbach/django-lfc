@@ -54,16 +54,14 @@ from lfc.utils.registration import get_info
 def portal(request, template_name="lfc/manage/portal.html"):
     """Displays the main management screen of the portal with all tabs.
     """
-    content_types = get_allowed_subtypes()
     return render_to_response(template_name, RequestContext(request, {
-        "display_content_menu" : len(get_allowed_subtypes()) > 1,
-        "content_types" : get_allowed_subtypes(),
         "core_data" : portal_core(request),
         "children" : portal_children(request),
         "portlets" : portlets_inline(request, get_portal()),
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
-        "display_paste" : request.session.has_key("clipboard"),
+        "menu" : portal_menu(request),
+        "display_paste" : _display_paste(request)
     }))
 
 @login_required
@@ -110,6 +108,7 @@ def portal_children(request, template_name="lfc/manage/portal_children.html"):
     children = lfc.utils.get_content_objects(parent = None, language__in=("0", language))
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
+        "display_paste" : _display_paste(request),
     }))
 
 @login_required
@@ -132,6 +131,16 @@ def portal_images(request, as_string=False, template_name="lfc/manage/portal_ima
         }, cls = LazyEncoder)
 
         return HttpResponse(result)
+
+def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
+    """Displays the manage menu of the portal.
+    """
+    content_types = get_allowed_subtypes()
+    return render_to_string(template_name, RequestContext(request, {
+        "display_paste" : _display_paste(request),
+        "display_content_menu" : len(get_allowed_subtypes()) > 1,
+        "content_types" : get_allowed_subtypes(),
+    }))
 
 # actions
 def update_portal_children(request):
@@ -194,6 +203,7 @@ def update_portal_children(request):
     html = (
         ("#children", portal_children(request)),
         ("#navigation", navigation(request, None)),
+        ("#menu", portal_menu(request)),
     )
 
     result = simplejson.dumps({
@@ -583,8 +593,24 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
-    objs = lfc.utils.get_content_objects(parent=None)
+    return render_to_response(template_name, RequestContext(request, {
+        "navigation" : navigation(request, obj),
+        "menu" : object_menu(request, obj),
+        "core_data" : core_data(request, id),
+        "meta_data" : meta_data(request, id),
+        "seo_data" : manage_seo(request, id),
+        "images" : images(request, id, as_string=True),
+        "files" : files(request, id),
+        "comments" : comments(request, obj),
+        "portlets" : portlets_inline(request, obj),
+        "children" : children(request, obj),
+        "content_type_name" : get_info(obj).name,
+        "display_paste" : _display_paste(request),
+    }))
 
+def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
+    """Displays the manage menu for the passed object.
+    """
     if obj.is_canonical():
         canonical = obj
     else:
@@ -604,25 +630,15 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         translations = None
 
     content_types = get_allowed_subtypes(obj)
-    return render_to_response(template_name, RequestContext(request, {
+    
+    return render_to_string(template_name, RequestContext(request, {
         "content_types" : content_types,
         "display_content_menu" : len(content_types) > 1,
-        "obj" : obj,
-        "objs" : objs,
         "translations" : translations,
-        "canonical" : canonical,
         "languages" : languages,
-        "navigation" : navigation(request, obj),
-        "core_data" : core_data(request, id),
-        "meta_data" : meta_data(request, id),
-        "seo_data" : manage_seo(request, id),
-        "images" : images(request, id, as_string=True),
-        "files" : files(request, id),
-        "comments" : comments(request, obj),
-        "portlets" : portlets_inline(request, obj),
-        "children" : children(request, obj),
-        "content_type_name" : get_info(obj).name,
-        "display_paste" : request.session.has_key("clipboard"),
+        "canonical" : canonical,
+        "obj" : obj,
+        "display_paste" : _display_paste(request),
     }))
 
 @login_required
@@ -744,6 +760,7 @@ def children(request, obj, template_name="lfc/manage/object_children.html"):
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
         "obj" : obj,
+        "display_paste" : _display_paste(request),
     }))
 
 @login_required
@@ -808,6 +825,7 @@ def update_children(request, id):
     html = (
         ("#navigation", navigation(request, obj.get_content_object())),
         ("#children", children(request, obj)),
+        ("#menu", object_menu(request, obj)),
     )
 
     result = simplejson.dumps({
@@ -1359,7 +1377,11 @@ def _paste(request, id):
 
     error_msg = ""
     for source_id in source_ids:
-        source_obj = lfc.utils.get_content_object(pk=source_id)
+        try:
+            source_obj = lfc.utils.get_content_object(pk=source_id)
+        except BaseContent.DoesNotExist:
+            error_msg = _(u"Some cut/copied objects has been deleted in the meanwhile.")
+            continue
 
         # Copy only allowed sub types to target
         allowed_subtypes = get_allowed_subtypes(target)
@@ -1594,6 +1616,11 @@ def application(request, name, template_name="lfc/manage/application.html"):
     """
     url = reverse("lfc_application", kwargs={ "name" : name })
     return HttpResponseRedirect(url)
+
+def _display_paste(request):
+    """Returns true if the paste button should be displayed.
+    """
+    return request.session.has_key("clipboard")
 
 def _remove_fks(obj):
     """Removes the objects from foreign key fields (in order to not delete

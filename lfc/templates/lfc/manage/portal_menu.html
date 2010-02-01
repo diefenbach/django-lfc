@@ -1,0 +1,28 @@
+{% load i18n %}
+<ul class="sf-menu">
+    <li>
+        {% if display_content_menu %}
+            <a>{% trans "Add" %}</a>
+            <ul>
+            {% for content_type in content_types %}
+                <li>
+                    <a href="{% url lfc_add_top_object %}?type={{content_type.type}}">{% trans content_type.name %}</a>
+               </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            {% for content_type in content_types %}
+                <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
+            {% endfor %}
+        {% endif %}
+    </li>
+    <li>
+        {% if display_paste %}
+            <a href="{% url lfc_paste %}">{% trans 'Paste' %}</a>
+        {% endif %}                
+    </li>
+    </li>            
+    <li>
+        <a href="/">{% trans 'View' %}</a>
+    </li>
+</ul>
