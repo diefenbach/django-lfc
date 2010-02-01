@@ -21,6 +21,13 @@ Code
 Changes
 =======
 
+1.0 alpha 5 (2010-02-01)
+
+* Improved getting of specific content objects
+* Improved tests and documentation
+* Added some caching
+* Added cut/copy'n paste within children tabs
+
 1.0 alpha 4 (2010-01-26)
 ------------------------
 
