@@ -55,13 +55,24 @@ def portal(request, template_name="lfc/manage/portal.html"):
     """Displays the main management screen of the portal with all tabs.
     """
     return render_to_response(template_name, RequestContext(request, {
-        "core_data" : portal_core(request),
+        "object_core_data" : portal_core(request),
         "children" : portal_children(request),
         "portlets" : portlets_inline(request, get_portal()),
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
         "menu" : portal_menu(request),
         "display_paste" : _display_paste(request)
+    }))
+
+@login_required
+def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
+    """Displays the manage menu of the portal.
+    """
+    content_types = get_allowed_subtypes()
+    return render_to_string(template_name, RequestContext(request, {
+        "display_paste" : _display_paste(request),
+        "display_content_menu" : len(get_allowed_subtypes()) > 1,
+        "content_types" : get_allowed_subtypes(),
     }))
 
 @login_required
@@ -131,16 +142,6 @@ def portal_images(request, as_string=False, template_name="lfc/manage/portal_ima
         }, cls = LazyEncoder)
 
         return HttpResponse(result)
-
-def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
-    """Displays the manage menu of the portal.
-    """
-    content_types = get_allowed_subtypes()
-    return render_to_string(template_name, RequestContext(request, {
-        "display_paste" : _display_paste(request),
-        "display_content_menu" : len(get_allowed_subtypes()) > 1,
-        "content_types" : get_allowed_subtypes(),
-    }))
 
 # actions
 def update_portal_children(request):
@@ -229,107 +230,346 @@ def add_portal_images(request):
 
     return HttpResponse(portal_images(request, id, as_string=True))
 
-# Filebrowser ################################################################
+# Objects ####################################################################
 ##############################################################################
 
-def filebrowser(request):
-    """Displays files/images of the current object within the file browser
-    popup of TinyMCE.
+@login_required
+def manage_object(request, id, template_name="lfc/manage/object.html"):
+    """Displays the main management screen with all tabs of the content object
+    with passed id.
     """
-    obj_id = request.GET.get("obj_id")
-
     try:
-        obj = BaseContent.objects.get(pk=obj_id)
-    except (BaseContent.DoesNotExist, ValueError):
-        obj = None
-        language = translation.get_language()
-    else:
-        language = obj.language
+        obj = lfc.utils.get_content_object(pk=id)
+    except BaseContent.DoesNotExist:
+        url = reverse("lfc_manage_portal")
+        return HttpResponseRedirect(url)
 
-    if request.GET.get("type") == "image":
-        portal = get_portal()
-
-        if obj:
-            images = obj.images.all()
-        else:
-            images = []
-        return render_to_response("lfc/manage/filebrowser_images.html",
-            RequestContext(request, {
-            "obj_id" : obj_id,
-            "images" : images,
-            "portal_images" : portal.images.all(),
-        }))
-    else:
-        if obj:
-            files = obj.files.all()
-        else:
-            files = []
-        base_contents = []
-        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", language)):
-            base_contents.append({
-                "title" : base_content.title,
-                "url" : base_content.get_absolute_url(),
-                "children" : _filebrowser_children(request, base_content),
-            })
-
-        return render_to_response("lfc/manage/filebrowser_files.html",
-            RequestContext(request, {
-            "obj_id" : obj_id,
-            "files" : files,
-            "objs" : base_contents,
-        }))
-
-def _filebrowser_children(request, obj):
-    """
-    """
-    objs = []
-    for obj in obj.children.restricted(request):
-        objs.append({
-            "title" : obj.title,
-            "url" : obj.get_absolute_url(),
-            "children" : _filebrowser_children(request, obj),
-        })
-
-    return render_to_string("lfc/manage/filebrowser_files_children.html", RequestContext(request, {
-        "objs" : objs
+    return render_to_response(template_name, RequestContext(request, {
+        "navigation" : navigation(request, obj),
+        "menu" : object_menu(request, obj),
+        "core_data" : object_core_data(request, id),
+        "meta_data" : object_meta_data(request, id),
+        "seo_data" : object_seo_data(request, id),
+        "images" : images(request, id, as_string=True),
+        "files" : files(request, id),
+        "comments" : comments(request, obj),
+        "portlets" : portlets_inline(request, obj),
+        "children" : object_children(request, obj),
+        "content_type_name" : get_info(obj).name,
+        "display_paste" : _display_paste(request),
     }))
 
-def fb_upload_image(request):
-    """Uploads an image within filebrowser.
+@login_required
+def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
+    """Displays the manage menu for the passed object.
     """
-    obj_id = request.POST.get("obj_id")
-    obj = BaseContent.objects.get(pk=obj_id)
+    if obj.is_canonical():
+        canonical = obj
+    else:
+        canonical = obj.canonical
+
+    languages = []
+    for language in settings.LANGUAGES:
+        if language[0] != settings.LANGUAGE_CODE:
+            languages.append({
+                "code" : language[0],
+                "name" : language[1],
+            })
+
+    if canonical:
+        translations = canonical.translations.all()
+    else:
+        translations = None
+
+    content_types = get_allowed_subtypes(obj)
+
+    return render_to_string(template_name, RequestContext(request, {
+        "content_types" : content_types,
+        "display_content_menu" : len(content_types) > 1,
+        "translations" : translations,
+        "languages" : languages,
+        "canonical" : canonical,
+        "obj" : obj,
+        "display_paste" : _display_paste(request),
+    }))
+
+@login_required
+def object_core_data(request, id, template_name="lfc/manage/object_data.html"):
+    """Displays/Updates the core data tab of the content object with passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    obj_ct = ContentType.objects.filter(model=obj.content_type)[0]
+
+    Form = obj.form
 
     if request.method == "POST":
-        for file_content in request.FILES.values():
-            image = Image(content=obj, title=file_content.name)
-            image.image.save(file_content.name, file_content, save=True)
+        form = Form(instance=obj, data=request.POST)
+        if form.is_valid():
+            form.save()
 
-    # Refresh positions
-    for i, image in enumerate(obj.images.all()):
-        image.position = i+1
-        image.save()
+        html =  render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "obj" : obj,
+        }))
 
-    url = "%s?obj_id=%s&amp;type=image" % (reverse("lfc_filebrowser"), obj_id)
-    return HttpResponseRedirect(url)
+        html = (
+            ("#data", html),
+            ("#navigation", navigation(request, obj)),
+        )
 
-def fb_upload_file(request):
-    """Uploads file within filebrowser.
+        result = simplejson.dumps({
+            "html" : html,
+            "message" : _(u"Data has been saved."),
+        }, cls = LazyEncoder)
+        result = HttpResponse(result)
+    else:
+        form = Form(instance=obj)
+
+        result = render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "obj" : obj,
+        }))
+
+    return result
+
+@login_required
+def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
+    """Displays/Updates the meta tab of the content object with passed id.
     """
-    obj_id = request.POST.get("obj_id")
-    obj = BaseContent.objects.get(pk=obj_id)
+    obj = lfc.utils.get_content_object(pk=id)
 
-    for file_content in request.FILES.values():
-        file = File(content=obj, title=file_content.name)
-        file.file.save(file_content.name, file_content, save=True)
+    if request.method == "POST":
 
-    # Refresh positions
-    for i, file in enumerate(obj.files.all()):
-        file.position = i+1
-        file.save()
+        form = MetaDataForm(instance=obj, data=request.POST)
 
-    url = "%s?obj_id=%s" % (reverse("lfc_filebrowser"), obj_id)
-    return HttpResponseRedirect(url)
+        if form.is_valid():
+            form.save()
+            form = MetaDataForm(instance=_update_positions(obj, True))
+
+        html =  render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "obj" : obj,
+        }))
+
+        html = (
+            ("#meta_data", html),
+            ("#navigation", navigation(request, obj)),
+        )
+        result = simplejson.dumps({
+            "html" : html,
+            "message" : _(u"Meta data has been saved."),
+        }, cls = LazyEncoder)
+
+        result = HttpResponse(result)
+
+    else:
+        form = MetaDataForm(instance=obj)
+
+        result = render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "obj" : obj,
+        }))
+
+    return result
+
+@login_required
+def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
+    """Displays/Updates the SEO tab of the content object with passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    if request.method == "POST":
+        form = SEOForm(instance=obj, data=request.POST)
+        if form.is_valid():
+            form.save()
+
+        html =  render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "obj" : obj,
+        }))
+
+        html = (
+            ("#seo", html),
+        )
+        result = simplejson.dumps({
+            "html" : html,
+            "message" : _(u"SEO has been saved."),
+        }, cls = LazyEncoder)
+
+        return HttpResponse(result)
+    else:
+        form = SEOForm(instance=obj)
+        return render_to_string(template_name, RequestContext(request, {
+            "form" : form,
+            "obj" : obj,
+        }))
+
+@login_required
+def object_children(request, obj, template_name="lfc/manage/object_children.html"):
+    """Displays the children of the passed content object.
+    """
+    children = obj.children.all()
+    return render_to_string(template_name, RequestContext(request, {
+        "children" : children,
+        "obj" : obj,
+        "display_paste" : _display_paste(request),
+    }))
+
+# actions
+@login_required
+def add_object(request, language=None, id=None):
+    """Adds a new content object to the object with the passed id. if the passed
+    id is None th content object is added to the portal.
+    """
+    type = request.REQUEST.get("type", "page")
+    ct = ContentType.objects.filter(model=type)[0]
+    mc = ct.model_class()
+    form = mc().form
+
+    try:
+        parent_object = lfc.utils.get_content_object(pk=id)
+    except (BaseContent.DoesNotExist, ValueError):
+        parent_object = None
+
+    if language is None:
+        language = settings.LANGUAGE_CODE
+
+    if request.method == "POST":
+        form = form(data=request.POST, initial={"creator" : request.user})
+        if request.POST.get("save"):
+            if form.is_valid():
+                # figure out language for new object
+                if parent_object:
+                    language = parent_object.language
+                else:
+                    language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
+
+                new_object = form.save()
+                new_object.parent = parent_object
+                new_object.creator = request.user
+                new_object.language = language
+                new_object.position = 1000
+                new_object.save()
+
+                _update_positions(new_object, True)
+                url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
+                msg = _(u"Page has been added.")
+                return MessageHttpResponseRedirect(url, msg)
+
+        else:
+            referer = request.POST.get("referer")
+            return HttpResponseRedirect(referer)
+    else:
+        if parent_object is not None:
+            form = form(initial={"parent" : parent_object.id})
+        else:
+            form = form()
+
+    if parent_object:
+        parent_object = parent_object.get_content_object()
+
+    return render_to_response("lfc/manage/object_add.html", RequestContext(request, {
+        "type" : type,
+        "name" : get_info(type).name,
+        "form" : form,
+        "language" : language,
+        "id" : id,
+        "referer" : request.POST.get("referer", request.META.get("HTTP_REFERER")),
+        "navigation" : navigation(request, parent_object)
+    }))
+
+@login_required
+def delete_object(request, id):
+    """Deletes the content object with passed id.
+    """
+    try:
+        obj = lfc.utils.get_content_object(pk = id)
+    except BaseContent.DoesNotExist:
+        pass
+    else:
+        parent = obj.parent
+        _remove_fks(obj)
+        obj.delete()
+
+    if parent:
+        url = reverse("lfc_manage_object", kwargs={"id": parent.id})
+    else:
+        url = reverse("lfc_manage_portal")
+
+    msg = _(u"Page has been deleted.")
+    return MessageHttpResponseRedirect(url, msg)
+
+@login_required
+def update_object_children(request, id):
+    """Deletes/Updates children for the content object with the passed id.The
+    to updated children ids are passed within the request.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    action = request.POST.get("action")
+    if action == "delete":
+        message = _(u"Objects have been deleted.")
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                try:
+                    id = key.split("-")[1]
+                    child = lfc.utils.get_content_object(pk=id)
+                    _remove_fks(child)
+                    child.delete()
+                except (IndexError, BaseContent.DoesNotExist):
+                    pass
+    elif action == "copy":
+        message = _(u"Objects have been put to the clipboard.")
+        ids = []
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                id = key.split("-")[1]
+                ids.append(id)
+            request.session["clipboard"] = ids
+            request.session["clipboard_action"] = COPY
+    elif action == "cut":
+        message = _(u"Objects have been put to the clipboard.")
+        ids = []
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                id = key.split("-")[1]
+                ids.append(id)
+            request.session["clipboard"] = ids
+            request.session["clipboard_action"] = CUT
+    elif action == "paste":
+        message = _paste(request, id)
+    else:
+        message = _(u"Objects have been updated.")
+        for key in request.POST.keys():
+            if key.startswith("obj_id-"):
+                id = key.split("-")[1]
+                try:
+                    child = BaseContent.objects.get(pk=id)
+                except BaseContent.DoesNotExist:
+                    pass
+                else:
+                    position = request.POST.get("position-%s" % id, "")
+                    if position != "":
+                        try:
+                            child.position = position
+                        except ValueError:
+                            pass
+                    child.active = request.POST.get("is_active-%s" % id, 0)
+                    child.save()
+
+    _update_positions(obj)
+    html = (
+        ("#navigation", navigation(request, obj.get_content_object())),
+        ("#children", object_children(request, obj)),
+        ("#menu", object_menu(request, obj)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
 
 # Portlets ###################################################################
 ##############################################################################
@@ -496,344 +736,106 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
         )
         return HttpResponse(result)
 
-# Objects ####################################################################
+# Navigation tree ############################################################
 ##############################################################################
 
 @login_required
-def add_object(request, language=None, id=None):
-    """Adds a new content object to the object with the passed id. if the passed
-    id is None th content object is added to the portal.
+def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation.html"):
+    """Displays the navigation tree of the management interfaces.
     """
-    type = request.REQUEST.get("type", "page")
-    ct = ContentType.objects.filter(model=type)[0]
-    mc = ct.model_class()
-    form = mc().form
+    nav_tree_lang = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
 
-    try:
-        parent_object = lfc.utils.get_content_object(pk=id)
-    except (BaseContent.DoesNotExist, ValueError):
-        parent_object = None
+    if obj is None:
+        current_objs = []
+        is_portal = True
+    else:
+        current_objs = [obj]
+        current_objs.extend(obj.get_ancestors())
+        is_portal = False
 
-    if language is None:
-        language = settings.LANGUAGE_CODE
+    # Display all objs which are neutral or in default language
+    q = Q(parent = None) & Q(language__in = ("0", nav_tree_lang))
 
-    if request.method == "POST":
-        form = form(data=request.POST, initial={"creator" : request.user})
-        if request.POST.get("save"):
-            if form.is_valid():
-                # figure out language for new object
-                if parent_object:
-                    language = parent_object.language
-                else:
-                    language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
+    temp = BaseContent.objects.filter(q)
 
-                new_object = form.save()
-                new_object.parent = parent_object
-                new_object.creator = request.user
-                new_object.language = language
-                new_object.position = 1000
-                new_object.save()
+    objs = []
+    for obj in temp:
+        obj = obj.get_content_object()
 
-                _update_positions(new_object, True)
-                url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
-                msg = _(u"Page has been added.")
-                return MessageHttpResponseRedirect(url, msg)
-
+        if obj in current_objs:
+            children = _navigation_children(request, current_objs, obj, start_level)
+            is_current = True
         else:
-            referer = request.POST.get("referer")
-            return HttpResponseRedirect(referer)
-    else:
-        if parent_object is not None:
-            form = form(initial={"parent" : parent_object.id})
-        else:
-            form = form()
+            children = ""
+            is_current = False
 
-    if parent_object:
-        parent_object = parent_object.get_content_object()
-
-    return render_to_response("lfc/manage/object_add.html", RequestContext(request, {
-        "type" : type,
-        "name" : get_info(type).name,
-        "form" : form,
-        "language" : language,
-        "id" : id,
-        "referer" : request.POST.get("referer", request.META.get("HTTP_REFERER")),
-        "navigation" : navigation(request, parent_object)
-    }))
-
-@login_required
-def delete_object(request, id):
-    """Deletes the content object with passed id.
-    """
-    try:
-        obj = lfc.utils.get_content_object(pk = id)
-    except BaseContent.DoesNotExist:
-        pass
-    else:
-        parent = obj.parent
-        _remove_fks(obj)
-        obj.delete()
-
-    if parent:
-        url = reverse("lfc_manage_object", kwargs={"id": parent.id})
-    else:
-        url = reverse("lfc_manage_portal")
-
-    msg = _(u"Page has been deleted.")
-    return MessageHttpResponseRedirect(url, msg)
-
-@login_required
-def manage_object(request, id, template_name="lfc/manage/object.html"):
-    """Displays the main management screen with all tabs of the content object
-    with passed id.
-    """
-    try:
-        obj = lfc.utils.get_content_object(pk=id)
-    except BaseContent.DoesNotExist:
-        url = reverse("lfc_manage_portal")
-        return HttpResponseRedirect(url)
-
-    return render_to_response(template_name, RequestContext(request, {
-        "navigation" : navigation(request, obj),
-        "menu" : object_menu(request, obj),
-        "core_data" : core_data(request, id),
-        "meta_data" : meta_data(request, id),
-        "seo_data" : manage_seo(request, id),
-        "images" : images(request, id, as_string=True),
-        "files" : files(request, id),
-        "comments" : comments(request, obj),
-        "portlets" : portlets_inline(request, obj),
-        "children" : children(request, obj),
-        "content_type_name" : get_info(obj).name,
-        "display_paste" : _display_paste(request),
-    }))
-
-def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
-    """Displays the manage menu for the passed object.
-    """
-    if obj.is_canonical():
-        canonical = obj
-    else:
-        canonical = obj.canonical
+        translations = []
+        objs.append({
+            "id" : obj.id,
+            "title" : obj.title,
+            "is_current" : is_current,
+            "children" : children,
+            "level" : 2,
+            "translations" : obj.translations.all(),
+        })
 
     languages = []
     for language in settings.LANGUAGES:
-        if language[0] != settings.LANGUAGE_CODE:
-            languages.append({
-                "code" : language[0],
-                "name" : language[1],
-            })
+        if nav_tree_lang == language[0]:
+            current_language = language[1]
+        languages.append({
+            "code" : language[0],
+            "name" : language[1],
+        })
 
-    if canonical:
-        translations = canonical.translations.all()
-    else:
-        translations = None
-
-    content_types = get_allowed_subtypes(obj)
-    
     return render_to_string(template_name, RequestContext(request, {
-        "content_types" : content_types,
-        "display_content_menu" : len(content_types) > 1,
-        "translations" : translations,
+        "objs" : objs,
+        "show_level" : start_level==2,
+        "level" : 2,
         "languages" : languages,
-        "canonical" : canonical,
-        "obj" : obj,
-        "display_paste" : _display_paste(request),
+        "current_language": current_language,
+        "is_portal" : is_portal,
     }))
 
-@login_required
-def core_data(request, id, template_name="lfc/manage/object_data.html"):
-    """Displays/Updates the core data tab of the content object with passed id.
+def _navigation_children(request, current_objs, obj, start_level, level=3):
+    """Renders the children of the given obj (recursively)
     """
-    obj = lfc.utils.get_content_object(pk=id)
-    obj_ct = ContentType.objects.filter(model=obj.content_type)[0]
+    obj = obj.get_content_object()
+    temp = obj.children.all()
 
-    Form = obj.form
+    objs = []
+    for obj in temp:
+        obj = obj.get_content_object()
+        if obj in current_objs:
+            children = _navigation_children(request, current_objs, obj, start_level, level+1)
+            is_current = True
+        else:
+            children = ""
+            is_current = False
 
-    if request.method == "POST":
-        form = Form(instance=obj, data=request.POST)
-        if form.is_valid():
-            form.save()
+        objs.append({
+            "id" : obj.id,
+            "title" : obj.title,
+            "is_current" : is_current,
+            "children" : children,
+            "level" : level,
+        })
 
-        html =  render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "obj" : obj,
-        }))
-
-        html = (
-            ("#data", html),
-            ("#navigation", navigation(request, obj)),
-        )
-
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : _(u"Data has been saved."),
-        }, cls = LazyEncoder)
-        result = HttpResponse(result)
-    else:
-        form = Form(instance=obj)
-
-        result = render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "obj" : obj,
-        }))
+    result = render_to_string("lfc/manage/navigation_children.html", {
+        "objs" : objs,
+        "show_level" : level >= start_level,
+        "level" : level,
+    })
 
     return result
 
+# actions
 @login_required
-def meta_data(request, id, template_name="lfc/manage/object_meta_data.html"):
-    """Displays/Updates the meta tab of the content object with passed id.
+def set_navigation_tree_language(request, language):
+    """Sets the language for the navigation tree.
     """
-    obj = lfc.utils.get_content_object(pk=id)
-
-    if request.method == "POST":
-
-        form = MetaDataForm(instance=obj, data=request.POST)
-
-        if form.is_valid():
-            form.save()
-            form = MetaDataForm(instance=_update_positions(obj, True))
-
-        html =  render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "obj" : obj,
-        }))
-
-        html = (
-            ("#meta_data", html),
-            ("#navigation", navigation(request, obj)),
-        )
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : _(u"Meta data has been saved."),
-        }, cls = LazyEncoder)
-
-        result = HttpResponse(result)
-
-    else:
-        form = MetaDataForm(instance=obj)
-
-        result = render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "obj" : obj,
-        }))
-
-    return result
-
-@login_required
-def manage_seo(request, id, template_name="lfc/manage/object_seo.html"):
-    """Displays/Updates the SEO tab of the content object with passed id.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-
-    if request.method == "POST":
-        form = SEOForm(instance=obj, data=request.POST)
-        if form.is_valid():
-            form.save()
-
-        html =  render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "obj" : obj,
-        }))
-
-        html = (
-            ("#seo", html),
-        )
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : _(u"SEO has been saved."),
-        }, cls = LazyEncoder)
-
-        return HttpResponse(result)
-    else:
-        form = SEOForm(instance=obj)
-        return render_to_string(template_name, RequestContext(request, {
-            "form" : form,
-            "obj" : obj,
-        }))
-
-@login_required
-def children(request, obj, template_name="lfc/manage/object_children.html"):
-    """Displays the children of the passed content object.
-    """
-    children = obj.children.all()
-    return render_to_string(template_name, RequestContext(request, {
-        "children" : children,
-        "obj" : obj,
-        "display_paste" : _display_paste(request),
-    }))
-
-@login_required
-def update_children(request, id):
-    """Deletes/Updates children for the content object with the passed id.The
-    to updated children ids are passed within the request.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-
-    action = request.POST.get("action")
-    if action == "delete":
-        message = _(u"Objects have been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    id = key.split("-")[1]
-                    child = lfc.utils.get_content_object(pk=id)
-                    _remove_fks(child)
-                    child.delete()
-                except (IndexError, BaseContent.DoesNotExist):
-                    pass
-    elif action == "copy":
-        message = _(u"Objects have been put to the clipboard.")
-        ids = []
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                id = key.split("-")[1]
-                ids.append(id)
-            request.session["clipboard"] = ids
-            request.session["clipboard_action"] = COPY
-    elif action == "cut":
-        message = _(u"Objects have been put to the clipboard.")
-        ids = []
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                id = key.split("-")[1]
-                ids.append(id)
-            request.session["clipboard"] = ids
-            request.session["clipboard_action"] = CUT
-    elif action == "paste":
-        message = _paste(request, id)
-    else:
-        message = _(u"Objects have been updated.")
-        for key in request.POST.keys():
-            if key.startswith("obj_id-"):
-                id = key.split("-")[1]
-                try:
-                    child = BaseContent.objects.get(pk=id)
-                except BaseContent.DoesNotExist:
-                    pass
-                else:
-                    position = request.POST.get("position-%s" % id, "")
-                    if position != "":
-                        try:
-                            child.position = position
-                        except ValueError:
-                            pass
-                    child.active = request.POST.get("is_active-%s" % id, 0)
-                    child.save()
-
-    _update_positions(obj)
-    html = (
-        ("#navigation", navigation(request, obj.get_content_object())),
-        ("#children", children(request, obj)),
-        ("#menu", object_menu(request, obj)),
-    )
-
-    result = simplejson.dumps({
-        "html" : html,
-        "message" : message,
-    }, cls = LazyEncoder)
-
-    return HttpResponse(result)
+    request.session["nav-tree-lang"] = language
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 # Comments ###################################################################
 ##############################################################################
@@ -898,6 +900,7 @@ def update_comments(request, id):
 
 # Files ######################################################################
 ##############################################################################
+
 @login_required
 def files(request, id, template_name="lfc/manage/object_files.html"):
     """Displays the files tab of the object with the passed id.
@@ -1081,108 +1084,111 @@ def update_images(request, id=None):
 
     return HttpResponse(result)
 
-# Navigation tree ############################################################
+# Filebrowser ################################################################
 ##############################################################################
 
-@login_required
-def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation.html"):
-    """Displays the navigation tree of the management interfaces.
+def filebrowser(request):
+    """Displays files/images of the current object within the file browser
+    popup of TinyMCE.
     """
-    nav_tree_lang = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
+    obj_id = request.GET.get("obj_id")
 
-    if obj is None:
-        current_objs = []
-        is_portal = True
+    try:
+        obj = BaseContent.objects.get(pk=obj_id)
+    except (BaseContent.DoesNotExist, ValueError):
+        obj = None
+        language = translation.get_language()
     else:
-        current_objs = [obj]
-        current_objs.extend(obj.get_ancestors())
-        is_portal = False
+        language = obj.language
 
-    # Display all objs which are neutral or in default language
-    q = Q(parent = None) & Q(language__in = ("0", nav_tree_lang))
+    if request.GET.get("type") == "image":
+        portal = get_portal()
 
-    temp = BaseContent.objects.filter(q)
-
-    objs = []
-    for obj in temp:
-        obj = obj.get_content_object()
-
-        if obj in current_objs:
-            children = _navigation_children(request, current_objs, obj, start_level)
-            is_current = True
+        if obj:
+            images = obj.images.all()
         else:
-            children = ""
-            is_current = False
+            images = []
+        return render_to_response("lfc/manage/filebrowser_images.html",
+            RequestContext(request, {
+            "obj_id" : obj_id,
+            "images" : images,
+            "portal_images" : portal.images.all(),
+        }))
+    else:
+        if obj:
+            files = obj.files.all()
+        else:
+            files = []
+        base_contents = []
+        for base_content in BaseContent.objects.filter(parent=None, language__in=("0", language)):
+            base_contents.append({
+                "title" : base_content.title,
+                "url" : base_content.get_absolute_url(),
+                "children" : _filebrowser_children(request, base_content),
+            })
 
-        translations = []
+        return render_to_response("lfc/manage/filebrowser_files.html",
+            RequestContext(request, {
+            "obj_id" : obj_id,
+            "files" : files,
+            "objs" : base_contents,
+        }))
+
+def _filebrowser_children(request, obj):
+    """
+    """
+    objs = []
+    for obj in obj.children.restricted(request):
         objs.append({
-            "id" : obj.id,
             "title" : obj.title,
-            "is_current" : is_current,
-            "children" : children,
-            "level" : 2,
-            "translations" : obj.translations.all(),
+            "url" : obj.get_absolute_url(),
+            "children" : _filebrowser_children(request, obj),
         })
 
-    languages = []
-    for language in settings.LANGUAGES:
-        if nav_tree_lang == language[0]:
-            current_language = language[1]
-        languages.append({
-            "code" : language[0],
-            "name" : language[1],
-        })
-
-    return render_to_string(template_name, RequestContext(request, {
-        "objs" : objs,
-        "show_level" : start_level==2,
-        "level" : 2,
-        "languages" : languages,
-        "current_language": current_language,
-        "is_portal" : is_portal,
+    return render_to_string("lfc/manage/filebrowser_files_children.html", RequestContext(request, {
+        "objs" : objs
     }))
 
-def _navigation_children(request, current_objs, obj, start_level, level=3):
-    """Renders the children of the given obj (recursively)
+def fb_upload_image(request):
+    """Uploads an image within filebrowser.
     """
-    obj = obj.get_content_object()
-    temp = obj.children.all()
+    obj_id = request.POST.get("obj_id")
+    obj = BaseContent.objects.get(pk=obj_id)
 
-    objs = []
-    for obj in temp:
-        obj = obj.get_content_object()
-        if obj in current_objs:
-            children = _navigation_children(request, current_objs, obj, start_level, level+1)
-            is_current = True
-        else:
-            children = ""
-            is_current = False
+    if request.method == "POST":
+        for file_content in request.FILES.values():
+            image = Image(content=obj, title=file_content.name)
+            image.image.save(file_content.name, file_content, save=True)
 
-        objs.append({
-            "id" : obj.id,
-            "title" : obj.title,
-            "is_current" : is_current,
-            "children" : children,
-            "level" : level,
-        })
+    # Refresh positions
+    for i, image in enumerate(obj.images.all()):
+        image.position = i+1
+        image.save()
 
-    result = render_to_string("lfc/manage/navigation_children.html", {
-        "objs" : objs,
-        "show_level" : level >= start_level,
-        "level" : level,
-    })
+    url = "%s?obj_id=%s&amp;type=image" % (reverse("lfc_filebrowser"), obj_id)
+    return HttpResponseRedirect(url)
 
-    return result
-
-# actions
-def set_navigation_tree_language(request, language):
-    """Sets the language for the navigation tree.
+def fb_upload_file(request):
+    """Uploads file within filebrowser.
     """
-    request.session["nav-tree-lang"] = language
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    obj_id = request.POST.get("obj_id")
+    obj = BaseContent.objects.get(pk=obj_id)
+
+    for file_content in request.FILES.values():
+        file = File(content=obj, title=file_content.name)
+        file.file.save(file_content.name, file_content, save=True)
+
+    # Refresh positions
+    for i, file in enumerate(obj.files.all()):
+        file.position = i+1
+        file.save()
+
+    url = "%s?obj_id=%s" % (reverse("lfc_filebrowser"), obj_id)
+    return HttpResponseRedirect(url)
 
 # Translations ###############################################################
 ##############################################################################
+
 @login_required
 def translate_object(request, language, id=None, form_translation=None,
     form_canonical=None, template_name="lfc/manage/object_translate.html"):
@@ -1229,7 +1235,7 @@ def save_translation(request):
 
     if request.POST.get("cancel"):
         url = reverse("lfc_manage_object", kwargs={"id" : canonical_id})
-        _(u"Translation has been canceled.")
+        msg = _(u"Translation has been canceled.")
         return MessageHttpResponseRedirect(url, msg)
 
     canonical = BaseContent.objects.get(pk=canonical_id)
@@ -1303,6 +1309,8 @@ def save_translation(request):
 
 # Template ###################################################################
 ##############################################################################
+
+@login_required
 def set_template(request):
     """Sets the template of the current object
     """
@@ -1318,6 +1326,7 @@ def set_template(request):
 # Cut/Copy and paste #########################################################
 ##############################################################################
 
+@login_required
 def lfc_copy(request, id):
     """Puts the object with passed id into the clipboard.
     """
@@ -1329,6 +1338,7 @@ def lfc_copy(request, id):
 
     return MessageHttpResponseRedirect(url, msg)
 
+@login_required
 def cut(request, id):
     """Puts the object within passed id into the clipboard and marks action
     as cut.
@@ -1341,6 +1351,7 @@ def cut(request, id):
 
     return MessageHttpResponseRedirect(url, msg)
 
+@login_required
 def paste(request, id=None):
     """Paste the object in the clipboard to object with given id.
     """
@@ -1391,11 +1402,12 @@ def _paste(request, id):
             error_msg = _(u"Some objects are not allowed here.")
             continue
 
-        # Don't copy to own descendants
         descendants = source_obj.get_descendants()
-        if target in descendants or target == source_obj:
-            error_msg = _(u"The objects can't be pasted in own descendants.")
-            break
+        if action == CUT:
+            # Don't cut and paste to own descendants
+            if target in descendants or target == source_obj:
+                error_msg = _(u"The objects can't be pasted in own descendants.")
+                break
 
         if action == CUT:
             source_obj.parent_id = id
@@ -1416,8 +1428,11 @@ def _paste(request, id):
             _copy_images(source_obj, target_obj)
             _copy_files(source_obj, target_obj)
             _copy_portlets(source_obj, target_obj)
-            _copy_descendants(source_obj, target_obj)
             _copy_translations(source_obj, target_obj)
+
+            # Prevent recursion
+            if target not in descendants and target != source_obj:
+                _copy_descendants(source_obj, target_obj)
 
     _update_positions(target)
 
@@ -1518,6 +1533,8 @@ def _copy_translations(source_obj, target_obj):
 
 # Content types ##############################################################
 ##############################################################################
+
+@login_required
 def content_types(request):
     """Redirects to the first content type.
     """
@@ -1525,6 +1542,7 @@ def content_types(request):
     url = reverse("lfc_content_type", kwargs={"id" : ctr.id })
     return HttpResponseRedirect(url)
 
+@login_required
 def content_type(request, id, template_name="lfc/manage/content_types.html"):
     """ Displays the main screen of the content type management.
     """
@@ -1545,6 +1563,8 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
 
 # Applications ###############################################################
 ##############################################################################
+
+@login_required
 def applications(request, template_name="lfc/manage/applications.html"):
     """Displays install/uninstall applications view.
     """
@@ -1571,6 +1591,7 @@ def applications(request, template_name="lfc/manage/applications.html"):
         "applications" : applications,
     }))
 
+@login_required
 def install_application(request, name):
     """Installs LFC application with passed name.
     """
@@ -1583,6 +1604,7 @@ def install_application(request, name):
     url = reverse("lfc_applications")
     return HttpResponseRedirect(url)
 
+@login_required
 def reinstall_application(request, name):
     """Reinstalls LFC application with passed name.
     """
@@ -1596,6 +1618,7 @@ def reinstall_application(request, name):
     url = reverse("lfc_applications")
     return HttpResponseRedirect(url)
 
+@login_required
 def uninstall_application(request, name):
     """Uninstalls LFC application with passed name.
     """
@@ -1611,6 +1634,7 @@ def uninstall_application(request, name):
     url = reverse("lfc_applications")
     return HttpResponseRedirect(url)
 
+@login_required
 def application(request, name, template_name="lfc/manage/application.html"):
     """
     """

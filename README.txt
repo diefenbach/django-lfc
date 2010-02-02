@@ -8,6 +8,11 @@ Documentation:
 
 * http://packages.python.org/django-lfc
 
+Demo
+====
+
+* http://demo.django-lfc.com
+
 Group
 =====
 
@@ -22,6 +27,7 @@ Changes
 =======
 
 1.0 alpha 5 (2010-02-01)
+------------------------
 
 * Improved getting of specific content objects
 * Improved tests and documentation

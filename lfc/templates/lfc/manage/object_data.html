@@ -1,5 +1,5 @@
 {% load i18n %}
-<form action="{% url lfc_save_core_data obj.id %}"
+<form action="{% url lfc_save_object_core_data obj.id %}"
       method="POST">
     {% include "lfc/manage/lfc_form.html" %}
     <input class="ajax-save-button"

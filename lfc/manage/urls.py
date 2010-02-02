@@ -26,9 +26,9 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-object/(?P<language>\w+)/(?P<id>\w+)$', "add_object", name="lfc_add_object"),
 
     url(r'^delete-object/(?P<id>\d+)$', "delete_object", name="lfc_delete_object"),
-    url(r'^save-core-data/(?P<id>\d+)$', "core_data", name="lfc_save_core_data"),
-    url(r'^save-meta-data/(?P<id>\d+)$', "meta_data", name="lfc_save_meta_data"),
-    url(r'^save-seo/(?P<id>\d+)$', "manage_seo", name="lfc_save_seo"),
+    url(r'^save-core-data/(?P<id>\d+)$', "object_core_data", name="lfc_save_object_core_data"),
+    url(r'^save-meta-data/(?P<id>\d+)$', "object_meta_data", name="lfc_save_meta_data"),
+    url(r'^save-seo/(?P<id>\d+)$', "object_seo_data", name="lfc_save_seo"),
 
     url(r'^add-images/(?P<id>\d+)$', "add_images", name="lfc_add_images"),
     url(r'^page-images/(?P<id>\d+)$', "images", name="lfc_images"),
@@ -44,7 +44,7 @@ urlpatterns = patterns('lfc.manage.views',
 
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),
 
-    url(r'^update-children/(?P<id>\d+)$', "update_children", name="lfc_update_children"),
+    url(r'^update-children/(?P<id>\d+)$', "update_object_children", name="lfc_update_object_children"),
     url(r'^update-portal-children$', "update_portal_children", name="lfc_update_portal_children"),
 
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
