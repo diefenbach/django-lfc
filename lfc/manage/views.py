@@ -20,6 +20,9 @@ from django.utils import simplejson
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
+# tagging imports
+from tagging.models import Tag
+
 # portlets imports
 from portlets.utils import get_registered_portlets
 from portlets.utils import get_slots
@@ -90,6 +93,7 @@ def add_object(request, language=None, id=None):
                 _update_positions(new_object, True)
                 url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
                 msg = _(u"Page has been added.")
+
                 return MessageHttpResponseRedirect(url, msg)
 
         else:
@@ -125,6 +129,11 @@ def delete_object(request, id):
     else:
         parent = obj.parent
         _remove_fks(obj)
+        # TODO: Delete tags for deleted object
+        Tag.objects.get_for_object(obj).delete()
+        # Deletes files on file system
+        obj.images.all().delete()
+        obj.files.all().delete()
         obj.delete()
 
     if parent:
@@ -267,7 +276,7 @@ def update_portal_children(request):
 def update_portal_images(request):
     """Updates images of the portal.
     """
-    portal = lfc.utils.get_portal()    
+    portal = lfc.utils.get_portal()
     message = _update_images(request, portal)
 
     result = simplejson.dumps({
@@ -276,7 +285,7 @@ def update_portal_images(request):
     }, cls = LazyEncoder)
 
     return HttpResponse(result)
-    
+
 def add_portal_images(request):
     """Adds images to the portal.
     """
@@ -987,10 +996,13 @@ def filebrowser(request):
             "portal_images" : portal.images.all(),
         }))
     else:
+        portal = lfc.utils.get_portal()
         if obj:
-            files = obj.files.all()
+            local_files = obj.files.all()
+            global_files = portal.files.all()
         else:
-            files = []
+            local_files = []
+            global_files = obj.files.all()
         base_contents = []
         for base_content in BaseContent.objects.filter(parent=None, language__in=("0", language)):
             base_contents.append({
@@ -1002,7 +1014,8 @@ def filebrowser(request):
         return render_to_response("lfc/manage/filebrowser_files.html",
             RequestContext(request, {
             "obj_id" : obj_id,
-            "files" : files,
+            "local_files" : local_files,
+            "global_files" : global_files,
             "objs" : base_contents,
         }))
 
@@ -1229,10 +1242,12 @@ def paste(request, id=None):
     """
     if id:
         url = reverse("lfc_manage_object", kwargs = { "id" : id })
+        obj = lfc.utils.get_content_object(pk=id)
     else:
         url = reverse("lfc_manage_portal")
+        obj = None
 
-    msg = _paste(request, id)
+    msg = _paste(request, obj)
     return MessageHttpResponseRedirect(url, msg)
 
 def _paste(request, obj):
@@ -1245,11 +1260,12 @@ def _paste(request, obj):
         msg = _(u"An error has been occured. Please try again.")
         return msg
 
-    # Get the target object
-    if isinstance(obj, Portal):
+    if (obj is None) or isinstance(obj, Portal):
         target = None
+        target_id = None
     else:
         target = obj
+        target_id = obj.id
 
     # Get the source objs
     source_ids = request.session.get("clipboard", [])
@@ -1278,7 +1294,7 @@ def _paste(request, obj):
                 break
 
         if action == CUT:
-            source_obj.parent_id = obj.id
+            source_obj.parent_id = target_id
             source_obj.slug = _generate_slug(source_obj, target)
             source_obj.save()
             _reset_clipboard(request)
@@ -1287,11 +1303,16 @@ def _paste(request, obj):
             target_obj = copy.deepcopy(source_obj)
             target_obj.pk = None
             target_obj.id = None
-            target_obj.parent_id = obj.id
+            target_obj.parent_id = target_id
             target_obj.position = 1000
 
             target_obj.slug = _generate_slug(source_obj, target)
-            target_obj.save()
+
+            # Workaround for django-tagging
+            try:
+                target_obj.save()
+            except IntegrityError:
+                pass
 
             _copy_images(source_obj, target_obj)
             _copy_files(source_obj, target_obj)
@@ -1517,6 +1538,9 @@ def _update_children(request, obj):
                     id = key.split("-")[1]
                     child = lfc.utils.get_content_object(pk=id)
                     _remove_fks(child)
+                    # Deletes files on file system
+                    child.images.all().delete()
+                    child.files.all().delete()
                     child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
