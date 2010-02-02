@@ -16,11 +16,11 @@
     </ul>
 
     {% if obj_id %}
-        <h1 class="middle">{% trans "Existing files" %}</h1>
+        <h1 class="middle">{% trans "Local files" %}</h1>
 
-        {% if files %}
+        {% if local_files %}
             <ul>
-                {% for file in files %}
+                {% for file in local_files %}
                     <li>
                         <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
                             {{ file.title }}"
@@ -30,11 +30,30 @@
             </ul>
         {% else %}
             <p>
-                {% trans "There are no files yet." %}
+                {% trans "There are no local files yet." %}
             </p>
         {% endif %}
 
-        <h1 class="middle">{% trans "Upload files" %}</h1>
+        <h1 class="middle">{% trans "Global files" %}</h1>
+
+        {% if global_files %}
+
+            <ul>
+                {% for file in global_files %}
+                    <li>
+                        <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
+                            {{ file.title }}"
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                {% trans "There are no local files yet." %}
+            </p>
+        {% endif %}
+
+        <h1 class="middle">{% trans "Upload local files" %}</h1>
         <form action="{% url lfc_fb_upload_file %}"
               method="post"
               enctype="multipart/form-data">
