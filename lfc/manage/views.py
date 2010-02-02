@@ -3,6 +3,7 @@ import copy
 
 # django imports
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
@@ -31,6 +32,7 @@ from portlets.models import Slot
 import lfc.utils
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
+from lfc.models import Portal
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import SEOForm
@@ -47,6 +49,92 @@ from lfc.utils import import_module
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
+# Global #####################################################################
+##############################################################################
+
+@login_required
+def add_object(request, language=None, id=None):
+    """Adds a new content object to the object with the passed id. If the
+    passed id is None the content object is added to the portal.
+    """
+    type = request.REQUEST.get("type", "page")
+    ct = ContentType.objects.filter(model=type)[0]
+    mc = ct.model_class()
+    form = mc().form
+
+    try:
+        parent_object = lfc.utils.get_content_object(pk=id)
+    except (BaseContent.DoesNotExist, ValueError):
+        parent_object = None
+
+    if language is None:
+        language = settings.LANGUAGE_CODE
+
+    if request.method == "POST":
+        form = form(data=request.POST, initial={"creator" : request.user})
+        if request.POST.get("save"):
+            if form.is_valid():
+                # figure out language for new object
+                if parent_object:
+                    language = parent_object.language
+                else:
+                    language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
+
+                new_object = form.save()
+                new_object.parent = parent_object
+                new_object.creator = request.user
+                new_object.language = language
+                new_object.position = 1000
+                new_object.save()
+
+                _update_positions(new_object, True)
+                url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
+                msg = _(u"Page has been added.")
+                return MessageHttpResponseRedirect(url, msg)
+
+        else:
+            referer = request.POST.get("referer")
+            return HttpResponseRedirect(referer)
+    else:
+        if parent_object is not None:
+            form = form(initial={"parent" : parent_object.id})
+        else:
+            form = form()
+
+    if parent_object:
+        parent_object = parent_object.get_content_object()
+
+    return render_to_response("lfc/manage/object_add.html", RequestContext(request, {
+        "type" : type,
+        "name" : get_info(type).name,
+        "form" : form,
+        "language" : language,
+        "id" : id,
+        "referer" : request.POST.get("referer", request.META.get("HTTP_REFERER")),
+        "navigation" : navigation(request, parent_object)
+    }))
+
+@login_required
+def delete_object(request, id):
+    """Deletes the content object with passed id.
+    """
+    try:
+        obj = lfc.utils.get_content_object(pk = id)
+    except BaseContent.DoesNotExist:
+        pass
+    else:
+        parent = obj.parent
+        _remove_fks(obj)
+        obj.delete()
+
+    if parent:
+        url = reverse("lfc_manage_object", kwargs={"id": parent.id})
+    else:
+        url = reverse("lfc_manage_portal")
+
+    msg = _(u"Page has been deleted.")
+    return MessageHttpResponseRedirect(url, msg)
+
 # Portal #####################################################################
 ##############################################################################
 
@@ -55,13 +143,14 @@ def portal(request, template_name="lfc/manage/portal.html"):
     """Displays the main management screen of the portal with all tabs.
     """
     return render_to_response(template_name, RequestContext(request, {
-        "object_core_data" : portal_core(request),
+        "menu" : portal_menu(request),
+        "display_paste" : _display_paste(request),
+        "core_data" : portal_core(request),
         "children" : portal_children(request),
         "portlets" : portlets_inline(request, get_portal()),
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
-        "menu" : portal_menu(request),
-        "display_paste" : _display_paste(request)
+        "files" : portal_files(request),
     }))
 
 @login_required
@@ -143,64 +232,25 @@ def portal_images(request, as_string=False, template_name="lfc/manage/portal_ima
 
         return HttpResponse(result)
 
+@login_required
+def portal_files(request, template_name="lfc/manage/portal_files.html"):
+    """Displays the files tab of the portal management screen.
+    """
+    obj = lfc.utils.get_portal()
+    return render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+    }))
+
 # actions
 def update_portal_children(request):
     """Deletes/Updates the children of the portal with passed ids (via
     request body).
     """
-    obj =  get_portal()
-    action = request.POST.get("action")
-    if action == "delete":
-        message = _(u"Objects has been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    id = key.split("-")[1]
-                    child = lfc.utils.get_content_object(pk=id)
-                    _remove_fks(child)
-                    child.delete()
-                except (IndexError, BaseContent.DoesNotExist):
-                    pass
-    elif action == "copy":
-        message = _(u"Objects have been put to the clipboard.")
-        ids = []
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                id = key.split("-")[1]
-                ids.append(id)
-            request.session["clipboard"] = ids
-            request.session["clipboard_action"] = COPY
-    elif action == "cut":
-        message = _(u"Objects have been put to the clipboard.")
-        ids = []
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                id = key.split("-")[1]
-                ids.append(id)
-            request.session["clipboard"] = ids
-            request.session["clipboard_action"] = CUT
-    elif action == "paste":
-        message = _paste(request, None)
-    else:
-        message = _(u"Objects has been updated.")
-        for key in request.POST.keys():
-            if key.startswith("obj_id-"):
-                id = key.split("-")[1]
-                try:
-                    child = BaseContent.objects.get(pk=id)
-                except BaseContent.DoesNotExist:
-                    pass
-                else:
-                    position = request.POST.get("position-%s" % id, "")
-                    if position != "":
-                        try:
-                            child.position = position
-                        except ValueError:
-                            pass
-                    child.active = request.POST.get("is_active-%s" % id, 0)
-                    child.save()
+    portal = lfc.utils.get_portal()
+    message = _update_children(request, portal)
 
     _update_positions(None)
+
     html = (
         ("#children", portal_children(request)),
         ("#navigation", navigation(request, None)),
@@ -214,14 +264,26 @@ def update_portal_children(request):
 
     return HttpResponse(result)
 
+def update_portal_images(request):
+    """Updates images of the portal.
+    """
+    portal = lfc.utils.get_portal()    
+    message = _update_images(request, portal)
+
+    result = simplejson.dumps({
+        "images" : portal_images(request, as_string=True),
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+    
 def add_portal_images(request):
     """Adds images to the portal.
     """
-    obj = get_portal()
-    if request.method == "POST":
-        for file_content in request.FILES.values():
-            image = Image(content=obj, title=file_content.name)
-            image.image.save(file_content.name, file_content, save=True)
+    obj = lfc.utils.get_portal()
+    for file_content in request.FILES.values():
+        image = Image(content=obj, title=file_content.name)
+        image.image.save(file_content.name, file_content, save=True)
 
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
@@ -229,6 +291,36 @@ def add_portal_images(request):
         image.save()
 
     return HttpResponse(portal_images(request, id, as_string=True))
+
+@login_required
+def add_portal_files(request):
+    """Addes files to the portal.
+    """
+    portal = lfc.utils.get_portal()
+    for file_content in request.FILES.values():
+        file = File(content=portal, title=file_content.name)
+        file.file.save(file_content.name, file_content, save=True)
+
+    # Refresh positions
+    for i, file in enumerate(portal.files.all()):
+        file.position = (i + 1) * 10
+        file.save()
+
+    return HttpResponse(portal_files(request))
+
+@login_required
+def update_portal_files(request):
+    """Saves/deletes files for the portal.
+    """
+    portal = lfc.utils.get_portal()
+    message = _update_files(request, portal)
+
+    result = simplejson.dumps({
+        "files" : portal_files(request),
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
 
 # Objects ####################################################################
 ##############################################################################
@@ -250,13 +342,14 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "core_data" : object_core_data(request, id),
         "meta_data" : object_meta_data(request, id),
         "seo_data" : object_seo_data(request, id),
-        "images" : images(request, id, as_string=True),
-        "files" : files(request, id),
+        "images" : object_images(request, id, as_string=True),
+        "files" : object_files(request, id),
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : object_children(request, obj),
         "content_type_name" : get_info(obj).name,
         "display_paste" : _display_paste(request),
+        "lfc_context" : obj,
     }))
 
 @login_required
@@ -373,6 +466,46 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
     return result
 
 @login_required
+def object_children(request, obj, template_name="lfc/manage/object_children.html"):
+    """Displays the children of the passed content object.
+    """
+    children = obj.children.all()
+    return render_to_string(template_name, RequestContext(request, {
+        "children" : children,
+        "obj" : obj,
+        "display_paste" : _display_paste(request),
+    }))
+
+@login_required
+def object_images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
+    """Displays the images tab of a content object or a portal.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    result = render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+    }))
+
+    if as_string:
+        return result
+    else:
+        result = simplejson.dumps({
+            "images" : result,
+            "message" : _(u"Images has been added."),
+        }, cls = LazyEncoder)
+
+        return HttpResponse(result)
+
+@login_required
+def object_files(request, id, template_name="lfc/manage/object_files.html"):
+    """Displays the files tab of the object with the passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    return render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+    }))
+
+@login_required
 def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
     """Displays/Updates the SEO tab of the content object with passed id.
     """
@@ -404,160 +537,17 @@ def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
             "obj" : obj,
         }))
 
-@login_required
-def object_children(request, obj, template_name="lfc/manage/object_children.html"):
-    """Displays the children of the passed content object.
-    """
-    children = obj.children.all()
-    return render_to_string(template_name, RequestContext(request, {
-        "children" : children,
-        "obj" : obj,
-        "display_paste" : _display_paste(request),
-    }))
-
 # actions
-@login_required
-def add_object(request, language=None, id=None):
-    """Adds a new content object to the object with the passed id. if the passed
-    id is None th content object is added to the portal.
-    """
-    type = request.REQUEST.get("type", "page")
-    ct = ContentType.objects.filter(model=type)[0]
-    mc = ct.model_class()
-    form = mc().form
-
-    try:
-        parent_object = lfc.utils.get_content_object(pk=id)
-    except (BaseContent.DoesNotExist, ValueError):
-        parent_object = None
-
-    if language is None:
-        language = settings.LANGUAGE_CODE
-
-    if request.method == "POST":
-        form = form(data=request.POST, initial={"creator" : request.user})
-        if request.POST.get("save"):
-            if form.is_valid():
-                # figure out language for new object
-                if parent_object:
-                    language = parent_object.language
-                else:
-                    language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
-
-                new_object = form.save()
-                new_object.parent = parent_object
-                new_object.creator = request.user
-                new_object.language = language
-                new_object.position = 1000
-                new_object.save()
-
-                _update_positions(new_object, True)
-                url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
-                msg = _(u"Page has been added.")
-                return MessageHttpResponseRedirect(url, msg)
-
-        else:
-            referer = request.POST.get("referer")
-            return HttpResponseRedirect(referer)
-    else:
-        if parent_object is not None:
-            form = form(initial={"parent" : parent_object.id})
-        else:
-            form = form()
-
-    if parent_object:
-        parent_object = parent_object.get_content_object()
-
-    return render_to_response("lfc/manage/object_add.html", RequestContext(request, {
-        "type" : type,
-        "name" : get_info(type).name,
-        "form" : form,
-        "language" : language,
-        "id" : id,
-        "referer" : request.POST.get("referer", request.META.get("HTTP_REFERER")),
-        "navigation" : navigation(request, parent_object)
-    }))
-
-@login_required
-def delete_object(request, id):
-    """Deletes the content object with passed id.
-    """
-    try:
-        obj = lfc.utils.get_content_object(pk = id)
-    except BaseContent.DoesNotExist:
-        pass
-    else:
-        parent = obj.parent
-        _remove_fks(obj)
-        obj.delete()
-
-    if parent:
-        url = reverse("lfc_manage_object", kwargs={"id": parent.id})
-    else:
-        url = reverse("lfc_manage_portal")
-
-    msg = _(u"Page has been deleted.")
-    return MessageHttpResponseRedirect(url, msg)
-
 @login_required
 def update_object_children(request, id):
     """Deletes/Updates children for the content object with the passed id.The
     to updated children ids are passed within the request.
     """
     obj = lfc.utils.get_content_object(pk=id)
-
-    action = request.POST.get("action")
-    if action == "delete":
-        message = _(u"Objects have been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    id = key.split("-")[1]
-                    child = lfc.utils.get_content_object(pk=id)
-                    _remove_fks(child)
-                    child.delete()
-                except (IndexError, BaseContent.DoesNotExist):
-                    pass
-    elif action == "copy":
-        message = _(u"Objects have been put to the clipboard.")
-        ids = []
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                id = key.split("-")[1]
-                ids.append(id)
-            request.session["clipboard"] = ids
-            request.session["clipboard_action"] = COPY
-    elif action == "cut":
-        message = _(u"Objects have been put to the clipboard.")
-        ids = []
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                id = key.split("-")[1]
-                ids.append(id)
-            request.session["clipboard"] = ids
-            request.session["clipboard_action"] = CUT
-    elif action == "paste":
-        message = _paste(request, id)
-    else:
-        message = _(u"Objects have been updated.")
-        for key in request.POST.keys():
-            if key.startswith("obj_id-"):
-                id = key.split("-")[1]
-                try:
-                    child = BaseContent.objects.get(pk=id)
-                except BaseContent.DoesNotExist:
-                    pass
-                else:
-                    position = request.POST.get("position-%s" % id, "")
-                    if position != "":
-                        try:
-                            child.position = position
-                        except ValueError:
-                            pass
-                    child.active = request.POST.get("is_active-%s" % id, 0)
-                    child.save()
+    message = _update_children(request, obj)
 
     _update_positions(obj)
+
     html = (
         ("#navigation", navigation(request, obj.get_content_object())),
         ("#children", object_children(request, obj)),
@@ -566,6 +556,73 @@ def update_object_children(request, id):
 
     result = simplejson.dumps({
         "html" : html,
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+def add_object_images(request, id):
+    """Adds images to the object with the given id.
+
+    The images are passed within the request body (request.FILES).
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    if request.method == "POST":
+        for file_content in request.FILES.values():
+            image = Image(content=obj, title=file_content.name)
+            image.image.save(file_content.name, file_content, save=True)
+
+    # Refresh positions
+    for i, image in enumerate(obj.images.all()):
+        image.position = i+1
+        image.save()
+
+    return HttpResponse(object_images(request, id, as_string=True))
+
+@login_required
+def update_object_images(request, id):
+    """Saves/deletes images for content object with passed id or the portal
+    (if id is None).
+
+    The to deleted images are passed within the request body.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    message = _update_images(request, obj)
+
+    result = simplejson.dumps({
+        "images" : object_images(request, id, as_string=True),
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+@login_required
+def add_object_files(request, id):
+    """Adds files to the content object with the passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    if request.method == "POST":
+        for file_content in request.FILES.values():
+            file = File(content=obj, title=file_content.name)
+            file.file.save(file_content.name, file_content, save=True)
+
+    # Refresh positions
+    for i, file in enumerate(obj.files.all()):
+        file.position = (i + 1) * 10
+        file.save()
+
+    return HttpResponse(object_files(request, id))
+
+@login_required
+def update_object_files(request, id):
+    """Saves/deletes files for the object with the passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    message = _update_files(request, obj)
+
+    result = simplejson.dumps({
+        "files" : object_files(request, id),
         "message" : message,
     }, cls = LazyEncoder)
 
@@ -839,6 +896,7 @@ def set_navigation_tree_language(request, language):
 
 # Comments ###################################################################
 ##############################################################################
+
 @login_required
 def comments(request, obj, template_name="lfc/manage/object_comments.html"):
     """Displays the comments tab of the passed object.
@@ -898,192 +956,6 @@ def update_comments(request, id):
 
     return HttpResponse(result)
 
-# Files ######################################################################
-##############################################################################
-
-@login_required
-def files(request, id, template_name="lfc/manage/object_files.html"):
-    """Displays the files tab of the object with the passed id.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-    return render_to_string(template_name, RequestContext(request, {
-        "obj" : obj,
-    }))
-
-@login_required
-def add_files(request, id):
-    """Adds files to the object with the passed id. The to added files are passed
-    within the request.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-    if request.method == "POST":
-        for file_content in request.FILES.values():
-            file = File(content=obj, title=file_content.name)
-            file.file.save(file_content.name, file_content, save=True)
-
-    # Refresh positions
-    for i, file in enumerate(obj.files.all()):
-        file.position = i+1
-        file.save()
-
-    return HttpResponse(files(request, id))
-
-@login_required
-def update_files(request, id):
-    """Saves/deletes files with for the object with the passed id. The to
-    updated file ids are passed within the request.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-
-    action = request.POST.get("action")
-    if action == "delete":
-        message = _(u"Files has been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    image = File.objects.get(pk=temp_id).delete()
-                except (IndexError, File.DoesNotExist):
-                    pass
-
-    elif action == "update":
-        message = _(u"Files has been updated.")
-        for key, value in request.POST.items():
-            if key.startswith("title-"):
-                temp_id = key.split("-")[1]
-                try:
-                    file = File.objects.get(pk=temp_id)
-                except File.DoesNotExist:
-                    pass
-                else:
-                    file.title = value
-                    file.save()
-
-            elif key.startswith("position-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    file = File.objects.get(pk=temp_id)
-                except (IndexError, File.DoesNotExist):
-                    pass
-                else:
-                    file.position = value
-                    file.save()
-
-    # Refresh positions
-    for i, file in enumerate(obj.files.all()):
-        file.position = i+1
-        file.save()
-
-    result = simplejson.dumps({
-        "files" : files(request, id),
-        "message" : message,
-    }, cls = LazyEncoder)
-
-    return HttpResponse(result)
-
-# Images #####################################################################
-
-@login_required
-def images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
-    """Displays the images tab of a content object.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-
-    result = render_to_string(template_name, RequestContext(request, {
-        "obj" : obj,
-    }))
-
-    if as_string:
-        return result
-    else:
-        result = simplejson.dumps({
-            "images" : result,
-            "message" : _(u"Images has been added."),
-        }, cls = LazyEncoder)
-
-        return HttpResponse(result)
-
-def add_images(request, id):
-    """Adds images to the object with the given id.
-
-    The images are passed within the request body (request.FILES).
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-
-    if request.method == "POST":
-        for file_content in request.FILES.values():
-            image = Image(content=obj, title=file_content.name)
-            image.image.save(file_content.name, file_content, save=True)
-
-    # Refresh positions
-    for i, image in enumerate(obj.images.all()):
-        image.position = i+1
-        image.save()
-
-    return HttpResponse(images(request, id, as_string=True))
-
-@login_required
-def update_images(request, id=None):
-    """Saves/deletes images for content object with passed id or the portal
-    (if id is None).
-
-    The to deleted images are passed within the request body.
-    """
-    if id is None:
-        obj = get_portal()
-    else:
-        obj = lfc.utils.get_content_object(pk=id)
-    action = request.POST.get("action")
-    if action == "delete":
-        message = _(u"Images has been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    image = Image.objects.get(pk=temp_id).delete()
-                except (IndexError, Image.DoesNotExist):
-                    pass
-
-    elif action == "update":
-        message = _(u"Images has been updated.")
-        for key, value in request.POST.items():
-            if key.startswith("title-"):
-                temp_id = key.split("-")[1]
-                try:
-                    image = Image.objects.get(pk=temp_id)
-                except Image.DoesNotExist:
-                    pass
-                else:
-                    image.title = value
-                    image.save()
-
-            elif key.startswith("position-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    image = Image.objects.get(pk=temp_id)
-                except (IndexError, Image.DoesNotExist):
-                    pass
-                else:
-                    image.position = value
-                    image.save()
-
-    # Refresh positions
-    for i, image in enumerate(obj.images.all()):
-        image.position = i+1
-        image.save()
-
-    if id is None:
-        images_inline = portal_images(request, as_string=True)
-    else:
-        images_inline = images(request, id, as_string=True)
-
-    result = simplejson.dumps({
-        "images" : images_inline,
-        "message" : message,
-    }, cls = LazyEncoder)
-
-    return HttpResponse(result)
-
 # Filebrowser ################################################################
 ##############################################################################
 
@@ -1094,7 +966,7 @@ def filebrowser(request):
     obj_id = request.GET.get("obj_id")
 
     try:
-        obj = BaseContent.objects.get(pk=obj_id)
+        obj = lfc.utils.get_content_object(pk=obj_id)
     except (BaseContent.DoesNotExist, ValueError):
         obj = None
         language = translation.get_language()
@@ -1138,7 +1010,7 @@ def _filebrowser_children(request, obj):
     """
     """
     objs = []
-    for obj in obj.children.restricted(request):
+    for obj in obj.get_children():
         objs.append({
             "title" : obj.title,
             "url" : obj.get_absolute_url(),
@@ -1153,7 +1025,7 @@ def fb_upload_image(request):
     """Uploads an image within filebrowser.
     """
     obj_id = request.POST.get("obj_id")
-    obj = BaseContent.objects.get(pk=obj_id)
+    obj = lfc.utils.get_content_object(pk=obj_id)
 
     if request.method == "POST":
         for file_content in request.FILES.values():
@@ -1172,7 +1044,7 @@ def fb_upload_file(request):
     """Uploads file within filebrowser.
     """
     obj_id = request.POST.get("obj_id")
-    obj = BaseContent.objects.get(pk=obj_id)
+    obj = lfc.utils.get_content_object(pk=obj_id)
 
     for file_content in request.FILES.values():
         file = File(content=obj, title=file_content.name)
@@ -1363,7 +1235,7 @@ def paste(request, id=None):
     msg = _paste(request, id)
     return MessageHttpResponseRedirect(url, msg)
 
-def _paste(request, id):
+def _paste(request, obj):
     """
     """
     # Try to get the action
@@ -1374,14 +1246,10 @@ def _paste(request, id):
         return msg
 
     # Get the target object
-    if id:
-        try:
-            target = lfc.utils.get_content_object(pk=id)
-        except BaseContent.DoesNotExist:
-            msg = _(u"The target object has been deleted in the meanwhile.")
-            return msg
-    else:
+    if isinstance(obj, Portal):
         target = None
+    else:
+        target = obj
 
     # Get the source objs
     source_ids = request.session.get("clipboard", [])
@@ -1410,7 +1278,7 @@ def _paste(request, id):
                 break
 
         if action == CUT:
-            source_obj.parent_id = id
+            source_obj.parent_id = obj.id
             source_obj.slug = _generate_slug(source_obj, target)
             source_obj.save()
             _reset_clipboard(request)
@@ -1419,7 +1287,7 @@ def _paste(request, id):
             target_obj = copy.deepcopy(source_obj)
             target_obj.pk = None
             target_obj.id = None
-            target_obj.parent_id = id
+            target_obj.parent_id = obj.id
             target_obj.position = 1000
 
             target_obj.slug = _generate_slug(source_obj, target)
@@ -1586,7 +1454,6 @@ def applications(request, template_name="lfc/manage/applications.html"):
                 "description" : getattr(module, "description", None),
             })
 
-    url = reverse("lfc_applications")
     return render_to_response(template_name, RequestContext(request, {
         "applications" : applications,
     }))
@@ -1634,12 +1501,154 @@ def uninstall_application(request, name):
     url = reverse("lfc_applications")
     return HttpResponseRedirect(url)
 
-@login_required
-def application(request, name, template_name="lfc/manage/application.html"):
+# Privates ###################################################################
+##############################################################################
+
+def _update_children(request, obj):
+    """Updates the children of the passed object. Returns a message which can
+    be displayed to the user.
     """
+    action = request.POST.get("action")
+    if action == "delete":
+        message = _(u"Objects has been deleted.")
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                try:
+                    id = key.split("-")[1]
+                    child = lfc.utils.get_content_object(pk=id)
+                    _remove_fks(child)
+                    child.delete()
+                except (IndexError, BaseContent.DoesNotExist):
+                    pass
+    elif action == "copy":
+        message = _(u"Objects have been put to the clipboard.")
+        ids = []
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                id = key.split("-")[1]
+                ids.append(id)
+            request.session["clipboard"] = ids
+            request.session["clipboard_action"] = COPY
+    elif action == "cut":
+        message = _(u"Objects have been put to the clipboard.")
+        ids = []
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                id = key.split("-")[1]
+                ids.append(id)
+            request.session["clipboard"] = ids
+            request.session["clipboard_action"] = CUT
+    elif action == "paste":
+        message = _paste(request, obj)
+    else:
+        message = _(u"Objects has been updated.")
+        for key in request.POST.keys():
+            if key.startswith("obj_id-"):
+                id = key.split("-")[1]
+                try:
+                    child = BaseContent.objects.get(pk=id)
+                except BaseContent.DoesNotExist:
+                    pass
+                else:
+                    position = request.POST.get("position-%s" % id, "")
+                    if position != "":
+                        try:
+                            child.position = position
+                        except ValueError:
+                            pass
+                    child.active = request.POST.get("is_active-%s" % id, 0)
+                    child.save()
+
+    return message
+
+def _update_images(request, obj):
+    """Updates the images for the passed object.
     """
-    url = reverse("lfc_application", kwargs={ "name" : name })
-    return HttpResponseRedirect(url)
+    action = request.POST.get("action")
+    if action == "delete":
+        message = _(u"Images has been deleted.")
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                try:
+                    temp_id = key.split("-")[1]
+                    image = Image.objects.get(pk=temp_id).delete()
+                except (IndexError, Image.DoesNotExist):
+                    pass
+
+    elif action == "update":
+        message = _(u"Images has been updated.")
+        for key, value in request.POST.items():
+            if key.startswith("title-"):
+                temp_id = key.split("-")[1]
+                try:
+                    image = Image.objects.get(pk=temp_id)
+                except Image.DoesNotExist:
+                    pass
+                else:
+                    image.title = value
+                    image.save()
+
+            elif key.startswith("position-"):
+                try:
+                    temp_id = key.split("-")[1]
+                    image = Image.objects.get(pk=temp_id)
+                except (IndexError, Image.DoesNotExist):
+                    pass
+                else:
+                    image.position = value
+                    image.save()
+
+    # Refresh positions
+    for i, image in enumerate(obj.images.all()):
+        image.position = (i + 1) * 10
+        image.save()
+
+    return message
+
+def _update_files(request, obj):
+    """Saves/Deletes the files for the given object. The object can be a
+    content object or the portal.
+    """
+    action = request.POST.get("action")
+    if action == "delete":
+        message = _(u"Files has been deleted.")
+        for key in request.POST.keys():
+            if key.startswith("delete-"):
+                try:
+                    temp_id = key.split("-")[1]
+                    image = File.objects.get(pk=temp_id).delete()
+                except (IndexError, File.DoesNotExist):
+                    pass
+
+    elif action == "update":
+        message = _(u"Files has been updated.")
+        for key, value in request.POST.items():
+            if key.startswith("title-"):
+                temp_id = key.split("-")[1]
+                try:
+                    file = File.objects.get(pk=temp_id)
+                except File.DoesNotExist:
+                    pass
+                else:
+                    file.title = value
+                    file.save()
+
+            elif key.startswith("position-"):
+                try:
+                    temp_id = key.split("-")[1]
+                    file = File.objects.get(pk=temp_id)
+                except (IndexError, File.DoesNotExist):
+                    pass
+                else:
+                    file.position = value
+                    file.save()
+
+    # Refresh positions
+    for i, file in enumerate(obj.files.all()):
+        file.position = (i + 1) * 10
+        file.save()
+
+    return message
 
 def _display_paste(request):
     """Returns true if the paste button should be displayed.
@@ -1650,7 +1659,10 @@ def _remove_fks(obj):
     """Removes the objects from foreign key fields (in order to not delete
     these related objects)
     """
-    parent = obj.parent
+    try:
+        parent = obj.parent
+    except ObjectDoesNotExist:
+        parent = None
     if parent is None:
         parent = get_portal()
 

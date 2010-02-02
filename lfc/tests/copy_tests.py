@@ -11,17 +11,20 @@ from lfc.models import Portal
 class CopyTestCase(TestCase):
     """
     """
+    fixtures = ["superuser.xml"]
+
     def setUp(self):
         Portal.objects.create(id=1)
         self.p1 = Page.objects.create(id=1, title="Page 1", slug="page-1")
         self.p11 = Page.objects.create(id=11, title="Page 1-1", slug="page-1-1", parent = self.p1)
         self.p2 = Page.objects.create(id=2, title="Page 2", slug="page-2")
-
+        
+        self.client = Client()
+        self.client.login(username="admin", password="admin")
+        
     def test_cut(self):
         """Tests general cut and paste of objects.
         """
-        client = Client()
-
         # P1 has no parent
         p1 = lfc.utils.get_content_object(pk=1)
         self.assertEqual(self.p1.parent, None)
@@ -44,8 +47,6 @@ class CopyTestCase(TestCase):
     def test_copy(self):
         """Tests general copy and paste of objects.
         """
-        client = Client()
-
         p1 = lfc.utils.get_content_object(pk=1)
         self.assertEqual(self.p1.parent, None)
 
@@ -76,8 +77,6 @@ class CopyTestCase(TestCase):
     def test_paste_dissallowed_type(self):
         """Tests to copy and paste an dissallowed content type.
         """
-        client = Client()
-
         ctr = lfc.utils.registration.get_info("page")
         ctr.subtypes = []
         ctr.save()
@@ -103,8 +102,6 @@ class CopyTestCase(TestCase):
     def test_cut_and_paste_to_itself(self):
         """Cut and paste to itself is dissallowed.
         """
-        client = Client()
-
         # Cut
         self.client.get(reverse("lfc_cut", kwargs={"id" : 2}))
 
@@ -117,8 +114,6 @@ class CopyTestCase(TestCase):
     def test_cut_and_paste_to_descendant(self):
         """Cut and paste to descendant is dissallowed.
         """
-        client = Client()
-
         # Cut
         self.client.get(reverse("lfc_cut", kwargs={"id" : 1}))
 
@@ -135,22 +130,18 @@ class CopyTestCase(TestCase):
     def test_copy_and_paste_to_itself(self):
         """Copy and paste to itself is disallowed.
         """
-        client = Client()
-
         # Copy
         self.client.get(reverse("lfc_copy", kwargs={"id" : 2}))
 
-        # Paste to itself
+        # Paste to itself is allowed
         self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
 
         # P2 has children
-        self.assertEqual(len(self.p2.children.all()), 0)
+        self.assertEqual(len(self.p2.children.all()), 1)
 
     def test_copy_and_paste_to_descendant(self):
         """Cut and paste to descendant is dissallowed.
         """
-        client = Client()
-
         # Cut
         self.client.get(reverse("lfc_copy", kwargs={"id" : 1}))
 
@@ -164,3 +155,10 @@ class CopyTestCase(TestCase):
         # P1 has still one children
         self.assertEqual(len(self.p1.get_children()), 1)
 
+    # def test_copy_with_tags(self):
+    #     """
+    #     """
+    #     client = Client()
+    #
+    #     self.p1.tags.add("dog")
+    #

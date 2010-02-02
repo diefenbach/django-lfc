@@ -165,6 +165,15 @@ class Portal(models.Model):
 
     allow_comments
         Turns comments on/off generally.
+        
+    images
+        The images which are associated with the portal. These images are 
+        considered global and can be used within any text editor field.
+
+    files
+        The files which are associated with the portal. These files are 
+        considered global and can be used within any text editor field.
+        
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
     standard = models.ForeignKey("BaseContent", verbose_name = _(u"Page"), blank=True, null=True)
@@ -174,6 +183,9 @@ class Portal(models.Model):
     allow_comments = models.BooleanField(_(u"Allow comments"), default=False)
 
     images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
+        object_id_field="content_id", content_type_field="content_type")
+
+    files = generic.GenericRelation("File", verbose_name=_(u"Files"),
         object_id_field="content_id", content_type_field="content_type")
 
     def __unicode__(self):
