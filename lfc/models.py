@@ -165,15 +165,15 @@ class Portal(models.Model):
 
     allow_comments
         Turns comments on/off generally.
-        
+
     images
-        The images which are associated with the portal. These images are 
+        The images which are associated with the portal. These images are
         considered global and can be used within any text editor field.
 
     files
-        The files which are associated with the portal. These files are 
+        The files which are associated with the portal. These files are
         considered global and can be used within any text editor field.
-        
+
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
     standard = models.ForeignKey("BaseContent", verbose_name = _(u"Page"), blank=True, null=True)
@@ -394,7 +394,7 @@ class BaseContent(AbstractBaseContent):
 
     def __unicode__(self):
         return unicode(self.title)
-    
+
     def save(self, force_insert=False, force_update=False):
         """Djangos default save method. This is overwritten to do some LFC
         related stuff if a content object is saved.
@@ -402,7 +402,8 @@ class BaseContent(AbstractBaseContent):
         self.searchable_text = self.get_searchable_text()
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
-        super(BaseContent, self).save()
+        super(BaseContent, self).save()        
+
         lfc.utils.clear_cache()
 
     def get_absolute_url(self):
@@ -464,11 +465,11 @@ class BaseContent(AbstractBaseContent):
         """Returns all ancestors of a content object.
         """
         ancestors = []
-        page = self
-        while page.parent is not None:
-            temp = page.parent.get_content_object()
+        obj = self
+        while obj and obj.parent is not None:
+            temp = obj.parent.get_content_object()
             ancestors.append(temp)
-            page = page.parent
+            obj = obj.parent
 
         return ancestors
 
