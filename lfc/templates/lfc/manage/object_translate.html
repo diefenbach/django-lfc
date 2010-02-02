@@ -1,6 +1,19 @@
 {% extends "lfc/manage/base.html" %}
 {% load i18n %}
 
+{% block javascript %}
+    {{ form.media }}
+    <script>
+        $(function() {
+            $("#id_translation-title").livequery("keyup", function() {
+                var slug = $("#id_translation-title").val()
+                slug = URLify(slug, 200)
+                $("#id_translation-slug").val(slug);
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block content %}
     <h2>{% trans 'Translate object' %} "{{canonical.title}}"</h2>
 
