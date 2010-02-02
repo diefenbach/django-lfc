@@ -1,7 +1,8 @@
 # lfc imports
-from lfc.models import ContentTypeRegistration
-from lfc.models import Template
 from lfc.models import BaseContent
+from lfc.models import ContentTypeRegistration
+from lfc.models import Portal
+from lfc.models import Template
 
 # django imports
 from django.contrib.contenttypes.models import ContentType
@@ -39,7 +40,7 @@ def get_allowed_subtypes(obj_or_type=None):
         None. If it's None the conten type registrations of all global addable
         content types are returned.
     """
-    if obj_or_type is None:
+    if obj_or_type is None or isinstance(obj_or_type, Portal):
         return ContentTypeRegistration.objects.filter(global_addable=True)
 
     ctr = get_info(obj_or_type)
