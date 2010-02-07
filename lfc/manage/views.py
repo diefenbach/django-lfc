@@ -1619,36 +1619,18 @@ def _update_files(request, obj):
     action = request.POST.get("action")
     if action == "delete":
         message = _(u"Files has been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    image = File.objects.get(pk=temp_id).delete()
-                except (IndexError, File.DoesNotExist):
-                    pass
-
+        for id in request.POST.getlist("delete-files"):
+            try:
+                file = File.objects.get(pk=id).delete()
+            except (IndexError, File.DoesNotExist):
+                pass
     elif action == "update":
         message = _(u"Files has been updated.")
-        for key, value in request.POST.items():
-            if key.startswith("title-"):
-                temp_id = key.split("-")[1]
-                try:
-                    file = File.objects.get(pk=temp_id)
-                except File.DoesNotExist:
-                    pass
-                else:
-                    file.title = value
-                    file.save()
 
-            elif key.startswith("position-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    file = File.objects.get(pk=temp_id)
-                except (IndexError, File.DoesNotExist):
-                    pass
-                else:
-                    file.position = value
-                    file.save()
+        for file in obj.files.all():
+            file.title = request.POST.get("title-%s" % file.id)
+            file.position = request.POST.get("position-%s" % file.id)
+            file.save()
 
     # Refresh positions
     for i, file in enumerate(obj.files.all()):
