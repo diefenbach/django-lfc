@@ -1591,36 +1591,19 @@ def _update_images(request, obj):
     action = request.POST.get("action")
     if action == "delete":
         message = _(u"Images has been deleted.")
-        for key in request.POST.keys():
-            if key.startswith("delete-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    image = Image.objects.get(pk=temp_id).delete()
-                except (IndexError, Image.DoesNotExist):
-                    pass
+        for id in request.POST.getlist("delete-images"):
+            try:
+                image = Image.objects.get(pk=id).delete()
+            except (IndexError, Image.DoesNotExist):
+                pass
 
     elif action == "update":
         message = _(u"Images has been updated.")
-        for key, value in request.POST.items():
-            if key.startswith("title-"):
-                temp_id = key.split("-")[1]
-                try:
-                    image = Image.objects.get(pk=temp_id)
-                except Image.DoesNotExist:
-                    pass
-                else:
-                    image.title = value
-                    image.save()
 
-            elif key.startswith("position-"):
-                try:
-                    temp_id = key.split("-")[1]
-                    image = Image.objects.get(pk=temp_id)
-                except (IndexError, Image.DoesNotExist):
-                    pass
-                else:
-                    image.position = value
-                    image.save()
+        for image in obj.images.all():
+            image.title = request.POST.get("title-%s" % image.id)
+            image.position = request.POST.get("position-%s" % image.id)
+            image.save()
 
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
