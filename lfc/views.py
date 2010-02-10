@@ -135,11 +135,13 @@ def file(request, language=None, id=None):
 
     return response
 
-def search_results(request, language, template_name="lfc/search_results.html"):
+def search_results(request, language=None, template_name="lfc/search_results.html"):
     """Displays the search result for passed language and query.
     """
     query = request.GET.get("q")
-    language = translation.get_language()
+    
+    if language is None:
+        language = settings.LANGUAGE_CODE
 
     f = Q(exclude_from_search=False) & \
         (Q(language = language) | Q(language="0")) & \
