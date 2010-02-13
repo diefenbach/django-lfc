@@ -51,6 +51,10 @@ $(function() {
         $.cookie("message", null, { path: '/' });
     };
 
+    $(window).ajaxSend(function() {
+        $(".ajax-loading").css("display", "inline");
+    })
+
     //  Menu
     $('ul.sf-menu').superfish({
         speed: "fast",
@@ -214,7 +218,7 @@ $(function() {
         })
         return false;
     });
-    
+
     // Delete dialog
     var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, expose: {color: '#eee', loadSpeed:100 } });
     $(".modalInput").livequery("click", function() {
@@ -222,7 +226,7 @@ $(function() {
         delete_dialog.load();
         return false;
     });
-    
+
     var buttons = $("#yesno button").click(function(e) {
         delete_dialog.close();
         var yes = buttons.index(this) === 0;
@@ -230,8 +234,8 @@ $(function() {
         if (yes) {
             window.location.href = url;
         }
-        
-        
+
+
     });
 
 });

@@ -159,7 +159,7 @@ def portal(request, template_name="lfc/manage/portal.html"):
         "portlets" : portlets_inline(request, get_portal()),
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
-        "files" : portal_files(request),
+        "files" : portal_files(request, as_string=True),
     }))
 
 @login_required
@@ -236,19 +236,31 @@ def portal_images(request, as_string=False, template_name="lfc/manage/portal_ima
     else:
         result = simplejson.dumps({
             "images" : result,
-            "message" : _(u"Images has been added."),
+            "message" : _(u"Images have been added."),
         }, cls = LazyEncoder)
 
         return HttpResponse(result)
 
 @login_required
-def portal_files(request, template_name="lfc/manage/portal_files.html"):
+def portal_files(request, as_string=False, template_name="lfc/manage/portal_files.html"):
     """Displays the files tab of the portal management screen.
     """
     obj = lfc.utils.get_portal()
-    return render_to_string(template_name, RequestContext(request, {
+
+    result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
     }))
+    
+    if as_string:
+        return result
+    else:
+        result = simplejson.dumps({
+            "files" : result,
+            "message" : _(u"Files have been added."),
+        }, cls = LazyEncoder)
+
+        return HttpResponse(result)
+    
 
 # actions
 def update_portal_children(request):
@@ -286,6 +298,7 @@ def update_portal_images(request):
 
     return HttpResponse(result)
 
+# @login_required
 def add_portal_images(request):
     """Adds images to the portal.
     """
@@ -301,7 +314,7 @@ def add_portal_images(request):
 
     return HttpResponse(portal_images(request, id, as_string=True))
 
-@login_required
+# @login_required
 def add_portal_files(request):
     """Addes files to the portal.
     """
@@ -325,7 +338,7 @@ def update_portal_files(request):
     message = _update_files(request, portal)
 
     result = simplejson.dumps({
-        "files" : portal_files(request),
+        "files" : portal_files(request, as_string=True),
         "message" : message,
     }, cls = LazyEncoder)
 
@@ -352,7 +365,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "meta_data" : object_meta_data(request, id),
         "seo_data" : object_seo_data(request, id),
         "images" : object_images(request, id, as_string=True),
-        "files" : object_files(request, id),
+        "files" : object_files(request, id, as_string=True),
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : object_children(request, obj),
@@ -500,19 +513,31 @@ def object_images(request, id, as_string=False, template_name="lfc/manage/object
     else:
         result = simplejson.dumps({
             "images" : result,
-            "message" : _(u"Images has been added."),
+            "message" : _(u"Images have been added."),
         }, cls = LazyEncoder)
 
         return HttpResponse(result)
 
 @login_required
-def object_files(request, id, template_name="lfc/manage/object_files.html"):
+def object_files(request, id, as_string=False, template_name="lfc/manage/object_files.html"):
     """Displays the files tab of the object with the passed id.
     """
     obj = lfc.utils.get_content_object(pk=id)
-    return render_to_string(template_name, RequestContext(request, {
+
+    result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
     }))
+    
+    if as_string:
+        return result
+    else:
+        result = simplejson.dumps({
+            "files" : result,
+            "message" : _(u"Files have been added."),
+        }, cls = LazyEncoder)
+
+        return HttpResponse(result)
+    
 
 @login_required
 def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
@@ -606,7 +631,6 @@ def update_object_images(request, id):
 
     return HttpResponse(result)
 
-@login_required
 def add_object_files(request, id):
     """Adds files to the content object with the passed id.
     """
@@ -631,7 +655,7 @@ def update_object_files(request, id):
     message = _update_files(request, obj)
 
     result = simplejson.dumps({
-        "files" : object_files(request, id),
+        "files" : object_files(request, id, as_string=True),
         "message" : message,
     }, cls = LazyEncoder)
 

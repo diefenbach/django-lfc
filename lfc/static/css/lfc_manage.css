@@ -362,3 +362,9 @@ body.filebrowser {
 .filebrowser li {
     list-style: square inside;
 }
+
+.ajax-loading {
+    padding-left: 10px;
+    display: none;
+    color: red;
+}

@@ -1,6 +1,5 @@
 {% extends "lfc/manage/filebrowser_base.html" %}
 {% load i18n %}
-{% load pagination_tags %}
 
 {% block content %}
     <h1>{% trans "Global images" %}</h1>
@@ -42,8 +41,6 @@
             </tr>
         {% endfor %}
     </table>
-    
-    {% autopaginate images %}
 
     <h1 class="middle">{% trans "Local images" %}</h1>
     <table class="lfs-manage-table" width="100%">
@@ -82,7 +79,7 @@
                     {% trans "There are no local images yet" %}
                 </td>
             </tr>
-            
+
         {% endfor %}
     </table>
 
