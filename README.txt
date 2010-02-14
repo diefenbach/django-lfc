@@ -26,6 +26,19 @@ Code
 Changes
 =======
 
+1.0 alpha 6 (2010-02-14)
+------------------------
+
+* Improved manage translations: added automatically slug
+* Improved management filebrowser: show global files
+* Improved management: delete files/images on file system if an object is deleted
+* Improved management: optimized update images
+* Improved management: nicer mass uploads (same as images)
+* Improved search form: take correct slug according to current language for search results
+* Improved HTML: Display page titles within title tag
+* Gallery template: display image titles
+* Update german translations
+
 1.0 alpha 5 (2010-02-01)
 ------------------------
 
