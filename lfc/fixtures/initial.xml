@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+    <object pk="1" model="lfc.portal">
+        <field type="CharField" name="title"></field>
+        <field type="CharField" name="from_email"></field>
+        <field type="TextField" name="notification_emails"></field>
+        <field type="BooleanField" name="allow_comments">0</field>
+    </object>
+
+    <object pk="1" model="portlets.slot">
+        <field type="CharField" name="name">Left</field>
+    </object>
+    <object pk="2" model="portlets.slot">
+        <field type="CharField" name="name">Right</field>
+    </object>
+
+</django-objects>
