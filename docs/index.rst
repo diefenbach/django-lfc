@@ -11,7 +11,7 @@ Introduction
 
 .. toctree::
    :numbered:
-   :maxdepth: 3
+   :maxdepth: 2
 
    introduction/overview.rst
    introduction/concepts.rst
@@ -24,8 +24,9 @@ Users
    :numbered:
    :maxdepth: 2
 
-   user/manage/index.rst
-   user/functions/index.rst
+   user/content/index.rst
+   user/applications/index.rst
+   user/miscellaneous/index.rst
 
 Developers
 ==========

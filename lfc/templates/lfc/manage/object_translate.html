@@ -14,71 +14,75 @@
     </script>
 {% endblock %}
 
+{% block left-slot-wrapper %}{% endblock %}
+
 {% block content %}
-    <h2>{% trans 'Translate object' %} "{{canonical.title}}"</h2>
+    <div style="padding:20px 30px 0 30px">
+        <h2>{% trans 'Translate object' %} "{{canonical.title}}"</h2>
 
-    <form action="{% url lfc_save_translation %}"
-          method="post"
-          enctype="multipart/form-data"
-          class="translate-form">
+        <form action="{% url lfc_save_translation %}"
+              method="post"
+              enctype="multipart/form-data"
+              class="translate-form">
 
-        <table width="100%">
-            <tr>
-                <td width="50%">
-                    <table width="100%">
-                        {% for field in form_canonical %}
-                            <div class="field">
-                                <div class="label">
-                                    {{ field.label_tag }}:
+            <table width="100%">
+                <tr>
+                    <td width="50%">
+                        <table width="100%">
+                            {% for field in form_canonical %}
+                                <div class="field">
+                                    <div class="label">
+                                        {{ field.label_tag }}:
+                                    </div>
+
+                                    {% if field.errors %}
+                                        <div class="error">
+                                            {{ field }}
+                                            {{ field.errors }}
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            {{ field }}
+                                        </div>
+                                    {% endif %}
                                 </div>
+                            {% endfor %}
+                        </table>
+                    </td>
+                    <td width="50%">
 
-                                {% if field.errors %}
-                                    <div class="error">
-                                        {{ field }}
-                                        {{ field.errors }}
+                        <table width="100%">
+                            {% for field in form_translation %}
+                                <div class="field">
+                                    <div class="label">
+                                        {{ field.label_tag }}:
                                     </div>
-                                {% else %}
-                                    <div>
-                                        {{ field }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </table>
-                </td>
-                <td width="50%">
 
-                    <table width="100%">
-                        {% for field in form_translation %}
-                            <div class="field">
-                                <div class="label">
-                                    {{ field.label_tag }}:
+                                    {% if field.errors %}
+                                        <div class="error">
+                                            {{ field }}
+                                            {{ field.errors }}
+                                        </div>
+                                    {% else %}
+                                        <div>
+                                            {{ field }}
+                                        </div>
+                                    {% endif %}
                                 </div>
+                            {% endfor %}
+                        </table>
+                        <input type="hidden" name="translation_language" value="{{ translation_language }}">
+                        <input type="hidden" name="canonical_id" value="{{canonical.id}}" />
+                        <input type="hidden" name="translation_id" value="{{translation_id}}" />
 
-                                {% if field.errors %}
-                                    <div class="error">
-                                        {{ field }}
-                                        {{ field.errors }}
-                                    </div>
-                                {% else %}
-                                    <div>
-                                        {{ field }}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                    </table>
-                    <input type="hidden" name="translation_language" value="{{ translation_language }}">
-                    <input type="hidden" name="canonical_id" value="{{canonical.id}}" />
-                    <input type="hidden" name="translation_id" value="{{translation_id}}" />
+                        <input type="submit" name="save" value="{% trans 'Save' %}" />
+                        <input type="submit" name="cancel" value="{% trans 'Cancel' %}" />
+                    </td>
+                </tr>
+            </table>
 
-                    <input type="submit" name="save" value="{% trans 'Save' %}" />
-                    <input type="submit" name="cancel" value="{% trans 'Cancel' %}" />
-                </td>
-            </tr>
-        </table>
-
-    </form>
+        </form>
+    </div>    
     <script type="text/javascript">
         tinyMCE.execCommand('mceAddControl', true, 'id_canonical-text');
         tinyMCE.execCommand('mceAddControl', true, 'id_translation-text');

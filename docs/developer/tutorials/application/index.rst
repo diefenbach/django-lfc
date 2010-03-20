@@ -141,7 +141,7 @@ Now create another template in the same way and call it "Event 2".
 Portlet
 =======
 
-In order to create a own template you need to create two parts: The python
+In order to create a own portlet you need to create two parts: The python
 part, which contains the portlet class and the template to present the portlet
 as HTML.
 

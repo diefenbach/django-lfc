@@ -25,8 +25,7 @@ Features
   
 **Developers**
 
-* Pluggable
-    * Add own templates
-    * Add own portlets
-    * Add own applications and content types
+* Add own templates
+* Add own portlets
+* Add own applications and content types
         

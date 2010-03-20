@@ -33,7 +33,7 @@ Changes
 * Improved management filebrowser: show global files
 * Improved management: delete files/images on file system if an object is deleted
 * Improved management: optimized update images
-* Improved management: nicer mass uploads (same as images)
+* Improved management: nicer mass uploads for files (same as images)
 * Improved search form: take correct slug according to current language for search results
 * Improved HTML: Display page titles within title tag
 * Gallery template: display image titles
