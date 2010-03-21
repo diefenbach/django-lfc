@@ -1,17 +1,14 @@
 # python imports
-import copy
 import datetime
 import re
 import random
 
 # django imports
-import portlets
 from django import forms
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_syncdb
@@ -22,18 +19,20 @@ from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
 import tagging.utils
-import tagging.models
 from tagging import fields
 from tagging.forms import TagField
 
 # portlets imports
-import portlets
 from portlets.models import Portlet
 from portlets.utils import register_portlet
 
+# workflow imports
+import workflows.utils
+from workflows.models import WorkflowBase
+from workflows.models import Workflow
+
 # lfc imports
 import lfc.utils
-import lfc.settings
 from lfc.fields.thumbs import ImageWithThumbsField
 from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.managers import BaseContentManager
@@ -115,6 +114,10 @@ class ContentTypeRegistration(models.Model):
     default_template
         The default template which is assigned when a instance of the content
         type is created.
+        
+    workflow
+        Stores the workflow of this content type. All instances "inherit" this
+        workflow and will get the initial state of it when created.
     """
     type = models.CharField(_(u"Type"), blank=True, max_length=100, unique=True)
     name = models.CharField(_(u"Name"), blank=True, max_length=100, unique=True)
@@ -125,7 +128,8 @@ class ContentTypeRegistration(models.Model):
 
     subtypes = models.ManyToManyField("self", verbose_name=_(u"Allowed sub types"), symmetrical=False, blank=True, null=True)
     templates = models.ManyToManyField("Template", verbose_name=_(u"Templates"), related_name="content_type_registrations")
-    default_template = models.ForeignKey("Template", verbose_name=_(u"Default template"), blank=True, null=True)
+    default_template = models.ForeignKey("Template", verbose_name=_(u"Default template"), blank=True, null=True)    
+    workflow = models.ForeignKey(Workflow, verbose_name=_(u"Workflow"), blank=True, null=True)
 
     class Meta:
         ordering = ("name", )
@@ -212,6 +216,12 @@ class Portal(models.Model):
         """
         return self.allow_comments
 
+    def get_parent_for_permissions(self):
+        """Fullfills the contract of django-permissions. Returns just None as
+        there is no parent for portlets.
+        """
+        return None
+
     def get_parent_for_portlets(self):
         """Fullfills the contract of django-portlets. Returns just None as
         there is no parent for portlets.
@@ -231,7 +241,7 @@ class Portal(models.Model):
         """
         return lfc.utils.get_content_objects(request, parent=None, **kwargs)
 
-class AbstractBaseContent(models.Model):
+class AbstractBaseContent(models.Model, WorkflowBase):
     """The root of all content types. It provides the inheritable
     BaseContentManager.
 
@@ -299,9 +309,6 @@ class BaseContent(AbstractBaseContent):
         selected out of the children of the object. If there is one, this is
         displayed instead of the object itself.
 
-    active
-        If set to False, the object is only displayed to superusers.
-
     exclude_from_navigation
         If set to True, the object is not displayed within the navigation (top
         tabs and navigation tree).
@@ -319,8 +326,7 @@ class BaseContent(AbstractBaseContent):
         The date the object has been modified at last.
 
     publication_date
-        The date the object has been published (active has been set to True
-        for the first time.) TODO: implement this.
+        The date the object has been published. TODO: implement this.
 
     meta_keywords
         The meta keywords of the object. This is displayed within the meta
@@ -365,7 +371,6 @@ class BaseContent(AbstractBaseContent):
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
     standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
 
-    active = models.BooleanField(_(u"Active"), default=False)
     exclude_from_navigation = models.BooleanField(_(u"Exclude from navigation"), default=False)
     exclude_from_search = models.BooleanField(_(u"Exclude from search results"), default=False)
 
@@ -399,10 +404,14 @@ class BaseContent(AbstractBaseContent):
         """Djangos default save method. This is overwritten to do some LFC
         related stuff if a content object is saved.
         """
+        # Set the initial state if there is none yet
+        if workflows.utils.get_state(self) is None:
+            workflows.utils.set_initial_state(self)
+
         self.searchable_text = self.get_searchable_text()
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
-        super(BaseContent, self).save()        
+        super(BaseContent, self).save()
 
         lfc.utils.clear_cache()
 
@@ -618,6 +627,12 @@ class BaseContent(AbstractBaseContent):
                 return True
             else:
                 return False
+
+    def get_parent_for_permissions(self):
+        """Returns the parent from which permissions are inherited. The
+        implementation of this method is a requirement from django-permissions.
+        """
+        return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
     def get_parent_for_portlets(self):
         """Returns the parent from which portlets should be inherited portlets.

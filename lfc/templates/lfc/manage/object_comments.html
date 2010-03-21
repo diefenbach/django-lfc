@@ -1,23 +1,27 @@
 {% load i18n %}
+{% load lfc_tags %}
 
-<h2>
-    {{ form.allow_comments.label_tag }}
-</h2>
+{% ifhasperm edit %}
+    <h2>
+        {{ form.allow_comments.label_tag }}
+    </h2>
 
-<form action="{% url lfc_update_comments obj.id %}"
-      method="POST">
-    <div class="field">
-        <div>
-            {{ form.allow_comments }}
-            <input class="ajax-save-button"
-                   name="allow_comments"
-                   type="submit"
-                   value="{% trans 'Save' %}" />
+    <form action="{% url lfc_update_comments obj.id %}"
+          method="POST">
+        <div class="field">
+            <div>
+                {{ form.allow_comments }}
+                <input class="ajax-save-button"
+                       name="allow_comments"
+                       type="submit"
+                       value="{% trans 'Save' %}" />
+            </div>
         </div>
-    </div>
-</form>
+    </form>
+{% endifhasperm %}
 
-<h2 class="heading-middle">
+
+<h2 class="middle-heading">
     {% trans 'Comments' %}
 </h2>
 
@@ -77,10 +81,13 @@
             {% endfor %}
         </table>
         <div class="manage-form-buttons">
-            <input class="ajax-save-button"
-                   type="submit" name="update" value="{% trans 'Update comments' %}" />
-            <input class="ajax-save-button"
-                   type="submit" name="delete" value="{% trans 'Delete comments' %}" />
+            {% ifhasperm edit %}
+                <input class="ajax-save-button"
+                       type="submit" name="update" value="{% trans 'Update comments' %}" />
+                <input class="ajax-save-button"
+                       type="submit" name="delete" value="{% trans 'Delete comments' %}" />
+            {% endifhasperm %}
+
         </div>
     </form>
 {% else %}

@@ -1,4 +1,6 @@
 {% load i18n %}
+{% load lfc_tags %}
+
 <ul class="sf-menu">
     <li>
     {% if display_content_menu %}
@@ -30,9 +32,11 @@
                     <a href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
                 </li>                        
             {% endif %}
-            <li>
-                <a class="modalInput" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
-            </li>                    
+            {% ifhasperm delete %}
+                <li>
+                    <a class="modalInput" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                </li>
+            {% endifhasperm %}
         </ul>                        
     </li>
     {% if LFC_MULTILANGUAGE %}
@@ -85,4 +89,16 @@
         <a accesskey="v"
            href="{{ obj.get_absolute_url }}">{% trans 'View' %}</a>
     </li>
+    {% if state %}
+        <li>
+            <a>{{ state }}</a>
+            <ul>
+                {% for transition in transitions %}
+                    <li>
+                        <a href="{% url lfc_do_transition obj.id %}?transition={{ transition.id }}">{{ transition.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    {% endif %}
 </ul>

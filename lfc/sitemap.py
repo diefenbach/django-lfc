@@ -12,7 +12,6 @@ class PageSitemap(Sitemap):
 
     def items(self):
         return Page.objects.filter(
-            active=True,
             exclude_from_navigation=False,
         )
 

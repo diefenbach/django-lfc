@@ -3,16 +3,18 @@ import datetime
 import urllib
 import sys
 
-
 # django settings
+from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.http import Http404
 from django.http import HttpResponseRedirect
-from django.shortcuts import _get_queryset
 from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 from django.utils import translation
+
+# permissions imports
+import permissions.utils
 
 # lfc imports
 import lfc.models
@@ -34,7 +36,7 @@ class MessageHttpResponseRedirect(HttpResponseRedirect):
 
 class LazyEncoder(simplejson.JSONEncoder):
     """JSONEncoder which encodes django's lazy i18n strings.
-    
+
     This is mainly used to return status messages along with content to ajax
     calls.
     """
@@ -198,3 +200,22 @@ def get_related_pages_by_tags(page, num=None):
     cache.set(cache_key, related_pages)
 
     return {"related_pages" : related_pages}
+
+def has_permission(obj, codename, user):
+    """A thin wrapper around permissions' has_permission in order to add LFC
+    specific groups.
+    """
+    # Every user is also anonymous user
+    try:
+        groups = [Group.objects.get(name="Anonymous")]
+    except Group.DoesNotExist:
+        groups = []
+
+    # Check whether the current user is the creator of the current object.
+    try:
+        if user == obj.creator:
+            groups.append(Group.objects.get(name="Owner"))
+    except AttributeError:
+        pass
+
+    return permissions.utils.has_permission(obj, codename, user, groups)

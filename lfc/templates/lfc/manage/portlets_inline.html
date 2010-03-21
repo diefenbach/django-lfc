@@ -1,9 +1,9 @@
 {% load i18n %}
-
+{% load lfc_tags %}
 
 {% if parent_for_portlets %}
     <form class="portlets-form"
-          action="{% url lfc_update_portlets object_type_id, object.id %}"
+          action="{% url lfc_update_portlets object_type_id, obj.id %}"
           method="post">
         <h2>{% trans 'Blocked parent slots' %}</h2>
         {% for slot in slots.items %}
@@ -12,19 +12,22 @@
                        name="block_slot"
                        value="{{ slot.id }}"
                        {% if slot.is_blocked %}checked="checked"{% endif %} />
-                <label class="middle">{{ slot.name }}</label>            
+                <label class="middle">{{ slot.name }}</label>
             </div>
         {% endfor %}
 
         <div class="middle">
-            <input type="submit"
-                   class="ajax-save-button"
-                   value="{% trans 'Save blocked parent slots' %}" />
-        </div>           
-    </form>    
+            {% ifhasperm edit %}
+                    <input type="submit"
+                           class="ajax-save-button"
+                           value="{% trans 'Save blocked parent slots' %}" />
+            {% endifhasperm %}
+        </div>
+
+    </form>
 {% endif %}
-        
-<h2 class="heading-middle">{% trans 'Slots' %}</h2>
+
+<h2 class="middle-heading">{% trans 'Slots' %}</h2>
 
 {% for slot in slots.items %}
     <h3 {% if forloop.first %}class="first-heading"{% endif %}>
@@ -70,22 +73,25 @@
     {% endif %}
 {% endfor %}
 
-<h2 class="heading-middle">
-    {% trans 'Add new portlet' %}
-</h2>
 
-<form class="portlet-add-form"
-      action="{% url lfc_add_portlet object_type_id, object.id %}"
-      method="get">
-    <select name="portlet_type">
-        {% for portlet_type in portlet_types %}
-            <option value="{{ portlet_type.type }}">
-                {{ portlet_type.name }}
-            </option>
-        {% endfor %}
-    </select>
+{% ifhasperm edit %}
+    <h2 class="middle-heading">
+        {% trans 'Add new portlet' %}
+    </h2>
 
-    <input class="portlet-add-button"
-           type="submit"
-           value="{% trans 'Add portlet' %}" />
-</form>
+    <form class="portlet-add-form"
+          action="{% url lfc_add_portlet object_type_id, obj.id %}"
+          method="get">
+        <select name="portlet_type">
+            {% for portlet_type in portlet_types %}
+                <option value="{{ portlet_type.type }}">
+                    {{ portlet_type.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <input class="portlet-add-button"
+               type="submit"
+               value="{% trans 'Add portlet' %}" />
+    </form>
+{% endifhasperm %}

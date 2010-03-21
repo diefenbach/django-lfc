@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 # lfc imports
 import lfc.utils
 from lfc.utils import traverse_object
+from lfc.utils import has_permission
 from lfc.models import File
 from lfc.models import BaseContent
 from lfc.models import Portal
@@ -52,6 +53,9 @@ def base_view(request, language=None, slug=None, obj=None):
 
     if isinstance(obj, Portal):
         return portal(request, obj)
+
+    if not has_permission(obj, "view", request.user):
+        return HttpResponseRedirect(reverse("lfc_login"))
 
     # Redirect to standard object unless superuser is asking
     if obj.standard and request.user.is_superuser == False:
@@ -139,7 +143,7 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
     """Displays the search result for passed language and query.
     """
     query = request.GET.get("q")
-    
+
     if language is None:
         language = settings.LANGUAGE_CODE
 

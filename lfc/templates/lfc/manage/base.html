@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load adminmedia %}
+{% load lfc_tags %}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -72,17 +73,19 @@
                             <li>
                                 <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
-                            <li>
-                                <a>{% trans "Applications" %}</a>
-                                <ul>
-                                    <li>
-                                        <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
-                                    </li>
-                                </ul>
-                            </li>
+                            {% ifportalhasperm manage_portal  %}
+                                <li>
+                                    <a>{% trans "Applications" %}</a>
+                                    <ul>
+                                        <li>
+                                            <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
+                                        </li>
+                                    </ul>
+                                </li>                                
+                            {% endifportalhasperm %}
                         </ul>
                     </td>
                 </tr>

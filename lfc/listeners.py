@@ -6,6 +6,7 @@ from django.core.mail import EmailMessage
 from django.db.models.signals import post_save
 
 # lfc imports
+import lfc.signals
 import lfc.utils
 from lfc.models import BaseContent
 

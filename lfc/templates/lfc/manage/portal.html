@@ -21,6 +21,7 @@
             <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
         </ul>
 
         <div id="data">
@@ -37,6 +38,9 @@
         </div>
         <div id="portlets">
             {{ portlets|safe }}
+        </div>
+        <div id="permissions">
+            {{ permissions|safe }}
         </div>
     </div>
 {% endblock %}

@@ -34,7 +34,6 @@ class PageTestCase(TestCase):
         self.assertEqual(self.p1.parent, None)
         self.assertEqual(self.p1.template, None)
         self.assertEqual(self.p1.standard, None)
-        self.assertEqual(self.p1.active, False)
         self.assertEqual(self.p1.exclude_from_navigation, False)
         self.assertEqual(self.p1.exclude_from_search, False)
         self.assertEqual(self.p1.creator, None)
@@ -216,10 +215,6 @@ class PageTestCase(TestCase):
 
         children = self.p1.get_children()
         self.assertEqual(len(children), 2)
-
-        # Only page 1 is active
-        self.p11.active = True
-        self.p11.save()
 
         children = self.p1.get_children(request)
         self.assertEqual(len(children), 1)

@@ -12,7 +12,6 @@ class ManagerTestCase(TestCase):
     def setUp(self):
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
         self.p2 = Page.objects.create(title="Page 2", slug="page-2")
-        self.p2.active = True
         self.p2.save()
 
     def test_get(self):

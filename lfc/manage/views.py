@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.comments.models import Comment
 from django.db import IntegrityError
@@ -31,7 +32,17 @@ from portlets.models import PortletBlocking
 from portlets.models import PortletRegistration
 from portlets.models import Slot
 
+# permissions imports
+import permissions.utils
+from permissions.models import ObjectPermission
+from permissions.models import Permission
+
+# workflows imports
+import workflows.utils
+from workflows.models import Transition
+
 # lfc imports
+import lfc.signals
 import lfc.utils
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
@@ -89,6 +100,9 @@ def add_object(request, language=None, id=None):
                 new_object.language = language
                 new_object.position = 1000
                 new_object.save()
+
+                # Send signal
+                lfc.signals.post_content_added.send(new_object)
 
                 _update_positions(new_object, True)
                 url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
@@ -160,7 +174,63 @@ def portal(request, template_name="lfc/manage/portal.html"):
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
         "files" : portal_files(request, as_string=True),
+        "permissions" : portal_permissions(request),
     }))
+
+@login_required
+def portal_permissions(request, template_name="lfc/manage/portal_permissions.html"):
+    """Displays the permissions tab of the portal.
+    """
+    portal = get_portal()
+
+    my_permissions = []
+    for permission in Permission.objects.all():
+        groups = []
+        for group in Group.objects.all():
+            groups.append({
+                "id" : group.id,
+                "name" : group.name,
+                "has_permission" : _has_permission(portal, permission.codename, group),
+            })
+
+        my_permissions.append({
+            "name" : permission.name,
+            "codename" : permission.codename,
+            "groups" : groups,
+        })
+
+    return render_to_string(template_name, RequestContext(request, {
+        "groups" : Group.objects.all(),
+        "permissions" : my_permissions,
+    }))
+
+def update_portal_permissions(request):
+    """
+    """
+    obj = get_portal()
+
+    permissions_dict = dict()
+    for permission in request.POST.getlist("permission"):
+        permissions_dict[permission] = 1
+
+    for group in Group.objects.all():
+        for permission in Permission.objects.all():
+            perm_string = "%s|%s" % (group.id, permission.codename)
+            if perm_string in permissions_dict:
+                permissions.utils.grant_permission(obj, permission, group)
+            else:
+                permissions.utils.remove_permission(obj, permission, group)
+
+    html = (
+        ("#permissions", portal_permissions(request)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : _(u"Permissions have been saved."),
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
 
 @login_required
 def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
@@ -250,7 +320,7 @@ def portal_files(request, as_string=False, template_name="lfc/manage/portal_file
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
     }))
-    
+
     if as_string:
         return result
     else:
@@ -260,7 +330,7 @@ def portal_files(request, as_string=False, template_name="lfc/manage/portal_file
         }, cls = LazyEncoder)
 
         return HttpResponse(result)
-    
+
 
 # actions
 def update_portal_children(request):
@@ -358,6 +428,9 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
+    if lfc.utils.has_permission(obj, "view", request.user) == False:
+         return HttpResponseRedirect(reverse("lfc_login"))
+
     return render_to_response(template_name, RequestContext(request, {
         "navigation" : navigation(request, obj),
         "menu" : object_menu(request, obj),
@@ -369,6 +442,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : object_children(request, obj),
+        "permissions" : object_permissions(request, obj),
         "content_type_name" : get_info(obj).name,
         "display_paste" : _display_paste(request),
         "lfc_context" : obj,
@@ -398,6 +472,10 @@ def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
 
     content_types = get_allowed_subtypes(obj)
 
+    # Workflow
+    transitions = workflows.utils.get_allowed_transitions(obj, request.user)
+    state = workflows.utils.get_state(obj)
+
     return render_to_string(template_name, RequestContext(request, {
         "content_types" : content_types,
         "display_content_menu" : len(content_types) > 1,
@@ -406,6 +484,8 @@ def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
         "canonical" : canonical,
         "obj" : obj,
         "display_paste" : _display_paste(request),
+        "transitions" : transitions,
+        "state" : state,
     }))
 
 @login_required
@@ -527,7 +607,7 @@ def object_files(request, id, as_string=False, template_name="lfc/manage/object_
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
     }))
-    
+
     if as_string:
         return result
     else:
@@ -537,7 +617,7 @@ def object_files(request, id, as_string=False, template_name="lfc/manage/object_
         }, cls = LazyEncoder)
 
         return HttpResponse(result)
-    
+
 
 @login_required
 def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
@@ -570,6 +650,38 @@ def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
             "form" : form,
             "obj" : obj,
         }))
+
+@login_required
+def object_permissions(request, obj, template_name="lfc/manage/object_permissions.html"):
+    """Displays/Updates the permissions tab of the content object with passed id.
+    """
+    base_ctype = ContentType.objects.get_for_model(BaseContent)
+    ctype = ContentType.objects.get_for_model(obj)
+
+    q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
+    my_permissions = []
+    for permission in Permission.objects.filter(q):
+        groups = []
+        for group in Group.objects.all():
+            groups.append({
+                "id" : group.id,
+                "name" : group.name,
+                "has_permission" : _has_permission(obj, permission.codename, group),
+            })
+
+        my_permissions.append({
+            "name" : permission.name,
+            "codename" : permission.codename,
+            "groups" : groups,
+            "is_inherited" : permissions.utils.is_inherited(obj, permission.codename),
+        })
+
+    return render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+        "groups" : Group.objects.all(),
+        "permissions" : my_permissions,
+        "workflow" : workflows.utils.get_workflow(obj),
+    }))
 
 # actions
 @login_required
@@ -661,6 +773,44 @@ def update_object_files(request, id):
 
     return HttpResponse(result)
 
+def update_object_permissions(request, id):
+    """Updates the permissions for the object with passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    permissions_dict = dict()
+    for permission in request.POST.getlist("permission"):
+        permissions_dict[permission] = 1
+
+    for group in Group.objects.all():
+        for permission in Permission.objects.all():
+            perm_string = "%s|%s" % (group.id, permission.codename)
+            if perm_string in permissions_dict:
+                permissions.utils.grant_permission(obj, permission, group)
+            else:
+                permissions.utils.remove_permission(obj, permission, group)
+
+    inheritance_dict = dict()
+    for permission in request.POST.getlist("inherit"):
+        inheritance_dict[permission] = 1
+
+    for permission in Permission.objects.all():
+        if permission.codename in inheritance_dict:
+            permissions.utils.remove_inheritance_block(obj, permission)
+        else:
+            permissions.utils.add_inheritance_block(obj, permission)
+
+    html = (
+        ("#permissions", object_permissions(request, obj)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : _(u"Permissions have been saved."),
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
 # Portlets ###################################################################
 ##############################################################################
 
@@ -682,7 +832,7 @@ def portlets_inline(request, obj, template_name="lfc/manage/portlets_inline.html
         "parent_slots" : parent_slots,
         "parent_for_portlets" : parent_for_portlets,
         "portlet_types" : PortletRegistration.objects.all(),
-        "object" : obj,
+        "obj" : obj,
         "object_type_id" : ct.id,
     }))
 
@@ -851,6 +1001,9 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     objs = []
     for obj in temp:
         obj = obj.get_content_object()
+
+        if lfc.utils.has_permission(obj, "view", request.user) == False:
+            continue
 
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level)
@@ -1232,6 +1385,23 @@ def set_template(request):
 
     return HttpResponseRedirect(obj.get_absolute_url())
 
+# Workflow ###################################################################
+##############################################################################
+
+def do_transition(request, id):
+    """Processes transition with passed id.
+    """
+    transition = request.REQUEST.get("transition")
+    try:
+        transition = Transition.objects.get(pk=transition)
+    except Transition.DoesNotExist:
+        pass
+    else:
+        obj = lfc.utils.get_content_object(pk=id)
+        workflows.utils.do_transition(obj, transition, request.user)
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
 # Cut/Copy and paste #########################################################
 ##############################################################################
 
@@ -1460,12 +1630,25 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
     """ Displays the main screen of the content type management.
     """
     ctr = ContentTypeRegistration.objects.get(pk=id)
+    ctype = ContentType.objects.get(name = ctr.type)
+
+    old_workflow = ctr.workflow
 
     if request.method == "POST":
         form = ContentTypeRegistrationForm(data = request.POST, instance=ctr)
         if form.is_valid():
             form.save()
+            # Set workflow state to all instances
+            if ctr.workflow:
+                if ctr.workflow != old_workflow:
+                    workflows.utils.set_workflow_for_model(ctype, ctr.workflow)
+                    for obj in ctr.workflow.get_objects():
+                        obj.set_state(ctr.workflow.initial_state)
+            else:
+                workflows.utils.remove_workflow_from_model(ctype)
     else:
+        ctr.workflow = workflows.utils.get_workflow_for_model(ctype)
+        ctr.save()
         form = ContentTypeRegistrationForm(instance=ctr)
 
     return render_to_response(template_name, RequestContext(request, {
@@ -1602,10 +1785,9 @@ def _update_children(request, obj):
                     if position != "":
                         try:
                             child.position = position
+                            child.save()
                         except ValueError:
                             pass
-                    child.active = request.POST.get("is_active-%s" % id, 0)
-                    child.save()
 
     return message
 
@@ -1711,3 +1893,26 @@ def _update_positions(obj, take_parent=False):
 
     return obj
 
+
+def _has_permission(obj, codename, group):
+    """Checks whether the passed group has passed permission for passed object.
+
+    **Parameters:**
+
+    obj
+        The object for which the permission should be checked.
+
+    codename
+        The permission's codename which should be checked.
+
+    group
+        The group for which the permission should be checked.
+    """
+    ct = ContentType.objects.get_for_model(obj)
+
+    p = ObjectPermission.objects.filter(
+        content_type=ct, content_id=obj.id, group=group, permission__codename = codename)
+
+    if p.count() > 0:
+        return True
+    return False

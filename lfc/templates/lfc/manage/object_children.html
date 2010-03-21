@@ -1,6 +1,7 @@
 {% load i18n %}
+{% load lfc_tags %}
 
-<h2 class="heading-middle">
+<h2 class="middle-heading">
     {% trans 'Children' %}
 </h2>
 
@@ -19,11 +20,6 @@
                 </th>
                 <th>
                     {% trans 'Title' %}
-                </th>
-                <th>
-                    <input type="checkbox"
-                           class="select-all-2" />
-                    {% trans 'Active' %}
                 </th>
                 <th class="right last small">
                     {% trans 'Manage' %}
@@ -48,13 +44,6 @@
                     <td>
                         {{ child.title }}
                     </td>
-                    <td>
-                        <input type="checkbox"
-                               name="is_active-{{ child.id }}"
-                               style="float:left"
-                               class="select-2"
-                               {% if child.active %}checked="checked"{% endif %} />
-                    </td>
                     <td class="right last">
                         <a href="{% url lfc_manage_object child.id %}">
                             <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
@@ -71,20 +60,22 @@
             {% endfor %}
         </table>
         <div class="manage-form-buttons">
-            <input class="ajax-save-button"
-                   type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="ajax-save-button"
-                   type="submit" name="delete" value="{% trans 'Delete' %}" />
-            <input class="ajax-save-button"
-                   type="submit" name="copy" value="{% trans 'Copy' %}" />
-            <input class="ajax-save-button"
-                   type="submit" name="cut" value="{% trans 'Cut' %}" />
-
-            {% if display_paste %}
+            {% ifhasperm edit %}
                 <input class="ajax-save-button"
-                       type="submit" name="paste" value="{% trans 'Paste' %}" />
-            {% endif %}
-            <span class="ajax-loading">{% trans "Processing ..." %}</span>
+                       type="submit" name="update" value="{% trans 'Update' %}" />
+                <input class="ajax-save-button"
+                       type="submit" name="delete" value="{% trans 'Delete' %}" />
+                <input class="ajax-save-button"
+                       type="submit" name="copy" value="{% trans 'Copy' %}" />
+                <input class="ajax-save-button"
+                       type="submit" name="cut" value="{% trans 'Cut' %}" />
+
+                {% if display_paste %}
+                    <input class="ajax-save-button"
+                           type="submit" name="paste" value="{% trans 'Paste' %}" />
+                {% endif %}
+                <span class="ajax-loading">{% trans "Processing ..." %}</span>
+            {% endifhasperm %}
         </div>
     {% else %}
         <div>{% trans 'There are no children' %}</div>

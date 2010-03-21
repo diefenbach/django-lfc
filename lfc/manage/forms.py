@@ -118,7 +118,7 @@ class MetaDataForm(forms.ModelForm):
 
     class Meta:
         model = Page
-        fields = ("template", "standard", "active", "exclude_from_navigation", 
+        fields = ("template", "standard", "exclude_from_navigation", 
             "exclude_from_search", "language", "canonical", "publication_date", )
 
 class PortalCoreForm(forms.ModelForm):

@@ -1,8 +1,13 @@
 {% load i18n %}
+{% load lfc_tags %}
+
 <form action="{% url lfc_save_object_core_data obj.id %}"
       method="POST">
     {% include "lfc/manage/lfc_form.html" %}
-    <input class="ajax-save-button"
-           type="submit"
-           value="{% trans 'Save core data' %}" />
+    
+    {% ifhasperm edit %}
+        <input class="ajax-save-button"
+               type="submit"
+               value="{% trans 'Save core data' %}" />        
+    {% endifhasperm %}
 </form>

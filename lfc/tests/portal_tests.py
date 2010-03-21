@@ -43,10 +43,6 @@ class PortalTestCase(TestCase):
         children = self.p.get_children()
         self.assertEqual(len(children), 2)
 
-        # Only page 1 is active
-        self.p1.active = True
-        self.p1.save()
-
         children = self.p.get_children(request)
         self.assertEqual(len(children), 1)
 

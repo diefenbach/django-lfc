@@ -1,0 +1,41 @@
+{% load i18n %}
+{% load lfc_tags %}
+
+<h2 class="first-heading">
+    {% trans 'Permissions' %}
+</h2>
+
+<form action="{% url lfc_update_object_permissions obj.id %}"
+      method="post">
+
+    <table class="lfs-manage-table" width="80%">
+        <tr>
+            <th>{% trans "Inherit" %}</th>
+            <th>{% trans "Permission" %}</th>
+            {% for group in groups %}
+                <th>{{ group.name }}</th>
+            {% endfor %}
+        </tr>
+        {% for permission in permissions %}
+            <tr>
+                <td><input type="checkbox" name="inherit" value="{{ permission.codename }}" {% if permission.is_inherited %}checked="checked"{% endif %}/></td>
+                <td>{{ permission.name }}</td>
+                {% for group in permission.groups %}
+                    <td><input type="checkbox" name="permission" value="{{ group.id }}|{{ permission.codename }}" {% if group.has_permission %}checked="checked"{% endif %}/></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    {% ifhasperm edit %}
+        <input class="ajax-save-button"
+               type="submit" name="paste" value="{% trans 'Save permissions' %}" />
+    {% endifhasperm %}
+
+</form>
+
+<h2 class="middle-heading">
+    {% trans 'Worflow' %}
+</h2>
+
+<p>The current worflow is: <span style="font-weight:bold">{{ workflow }}</span></p>

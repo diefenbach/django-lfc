@@ -1,0 +1,29 @@
+{% load i18n %}
+
+<h2 class="middle-heading">
+    {% trans 'Permissions' %}
+</h2>
+
+<form action="{% url lfc_update_portal_permissions %}"
+      method="post">
+
+    <table class="lfs-manage-table" width="80%">
+        <tr>
+            <th>{% trans "Permission" %}</th>
+            {% for group in groups %}
+                <th>{{ group.name }}</th>
+            {% endfor %}
+        </tr>
+        {% for permission in permissions %}
+            <tr>
+                <td>{{ permission.name }}</td>
+                {% for group in permission.groups %}
+                    <td><input type="checkbox" name="permission" value="{{ group.id }}|{{ permission.codename }}" {% if group.has_permission %}checked="checked"{% endif %}/></td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <input class="ajax-save-button"
+           type="submit" name="paste" value="{% trans 'Save permissions' %}" />
+</form>

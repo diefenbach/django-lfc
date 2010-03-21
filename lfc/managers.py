@@ -34,4 +34,4 @@ class BaseContentManager(models.Manager):
         if user and user.is_superuser:
             return self.get_query_set()
         else:
-            return self.get_query_set().filter(active=True)
+            return self.get_query_set()
