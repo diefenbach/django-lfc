@@ -1,18 +1,27 @@
 # django imports
 from django.test import TestCase
 
+# permissions imports
+import permissions.utils
+
 # lfc imports
 from lfc.models import BaseContent
 from lfc.models import Page
+from lfc.models import Portal
 from lfc.tests.utils import create_request
 
 class ManagerTestCase(TestCase):
     """
     """
     def setUp(self):
+        Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
         self.p2 = Page.objects.create(title="Page 2", slug="page-2")
-        self.p2.save()
+
+        self.anonymous = permissions.utils.register_group("Anonymous")
+        self.permission = permissions.utils.register_permission("View", "view")
+
+        permissions.utils.grant_permission(self.p2, "view", self.anonymous)
 
     def test_get(self):
         """

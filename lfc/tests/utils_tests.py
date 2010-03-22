@@ -5,12 +5,14 @@ from django.test import TestCase
 import lfc.utils.registration
 from lfc.models import BaseContent
 from lfc.models import Page
+from lfc.models import Portal
 from lfc.tests.utils import create_request
 
 class UtilsTestCase(TestCase):
     """
     """
     def setUp(self):
+        Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
         self.p2 = Page.objects.create(title="Page 2", slug="page-2")
 

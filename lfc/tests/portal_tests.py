@@ -1,6 +1,9 @@
 # django imports
 from django.test import TestCase
 
+# permissions imports
+import permissions.utils
+
 # lfc imports
 from lfc.models import Page
 from lfc.models import Portal
@@ -19,6 +22,9 @@ class PortalTestCase(TestCase):
         self.p111 = Page.objects.create(title="Page 1-1-1", slug="page-1-1-1", parent=self.p11)
         self.p12 = Page.objects.create(title="Page 1-2", slug="page-1-2", parent=self.p1)
         self.p12 = Page.objects.create(title="Page 2", slug="page-2")
+
+        self.anonymous = permissions.utils.register_group("Anonymous")
+        self.permission = permissions.utils.register_permission("View", "view")
 
     def test_get_children(self):
         """
@@ -43,6 +49,7 @@ class PortalTestCase(TestCase):
         children = self.p.get_children()
         self.assertEqual(len(children), 2)
 
+        permissions.utils.grant_permission(self.p1, "view", self.anonymous)
         children = self.p.get_children(request)
         self.assertEqual(len(children), 1)
 

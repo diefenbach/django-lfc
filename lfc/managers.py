@@ -1,7 +1,10 @@
+# django imports
 from django.db import models
-
 from django.db import models
 from django.db.models.query import QuerySet
+
+# permissions imports
+import lfc.utils
 
 class BaseContentQuerySet(QuerySet):
     """Custom QuerySet for BaseContent.
@@ -34,4 +37,10 @@ class BaseContentManager(models.Manager):
         if user and user.is_superuser:
             return self.get_query_set()
         else:
-            return self.get_query_set()
+            # TODO: This is highly inefficient and needs a better implemention
+            ids = []
+            for obj in self.get_query_set():
+                if lfc.utils.has_permission(obj.get_content_object(), "view", request.user):
+                    ids.append(obj.id)
+
+            return self.get_query_set().filter(pk__in=ids)
