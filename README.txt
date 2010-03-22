@@ -26,6 +26,10 @@ Code
 Changes
 =======
 
+1.0 alpha 7 (2010-03-22)
+------------------------
+* Added workflows and permissions
+
 1.0 alpha 6 (2010-02-14)
 ------------------------
 
