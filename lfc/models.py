@@ -114,7 +114,7 @@ class ContentTypeRegistration(models.Model):
     default_template
         The default template which is assigned when a instance of the content
         type is created.
-        
+
     workflow
         Stores the workflow of this content type. All instances "inherit" this
         workflow and will get the initial state of it when created.
@@ -128,7 +128,7 @@ class ContentTypeRegistration(models.Model):
 
     subtypes = models.ManyToManyField("self", verbose_name=_(u"Allowed sub types"), symmetrical=False, blank=True, null=True)
     templates = models.ManyToManyField("Template", verbose_name=_(u"Templates"), related_name="content_type_registrations")
-    default_template = models.ForeignKey("Template", verbose_name=_(u"Default template"), blank=True, null=True)    
+    default_template = models.ForeignKey("Template", verbose_name=_(u"Default template"), blank=True, null=True)
     workflow = models.ForeignKey(Workflow, verbose_name=_(u"Workflow"), blank=True, null=True)
 
     class Meta:
@@ -235,11 +235,19 @@ class Portal(models.Model):
         return Template.objects.get(name="Article")
 
     def get_children(self, request=None, *args, **kwargs):
-        """Returns the children of the portal. If hte request is passed the
+        """Returns the children of the portal. If the request is passed the
         permissions of the current user is taken into account. Additionally
         other valid filters can be passed, e.g. slug = "page-1".
         """
-        return lfc.utils.get_content_objects(request, parent=None, **kwargs)
+        if request is None:
+            return lfc.utils.get_content_objects(request, parent=None, **kwargs)
+
+        objs = []
+        for obj in lfc.utils.get_content_objects(request, parent=None, **kwargs):
+            if lfc.utils.has_permission(obj, "view", request.user):
+                objs.append(obj)
+
+        return objs
 
 class AbstractBaseContent(models.Model, WorkflowBase):
     """The root of all content types. It provides the inheritable
@@ -506,7 +514,14 @@ class BaseContent(AbstractBaseContent):
         passed the permissions of the current user is taken into account.
         Other valid filters can be passed also, e.g. slug = "page-1".
         """
-        return lfc.utils.get_content_objects(request, parent=self, **kwargs)
+        if request is None:
+            return lfc.utils.get_content_objects(request, parent=self, **kwargs)
+
+        objs = []
+        for obj in lfc.utils.get_content_objects(request, parent=self, **kwargs):
+            if lfc.utils.has_permission(obj, "view", request.user):
+                objs.append(obj)
+        return objs
 
     def get_image(self):
         """Returns the first image of a content object. If there is none it
@@ -608,7 +623,12 @@ class BaseContent(AbstractBaseContent):
         if self.is_translation():
             return None
         try:
-            return self.translations.restricted(request).get(language=language).get_content_object()
+            translation = self.translations.get(language=language).get_content_object()
+            if lfc.utils.has_permission(translation, "view", request.user):
+                return translation
+            else:
+                return None
+
         except BaseContent.DoesNotExist:
             return None
 

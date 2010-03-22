@@ -75,10 +75,9 @@ def base_view(request, language=None, slug=None, obj=None):
     if sub_objects is None:
         # Get sub objects (as LOL if requested)
         if obj_template.children_columns == 0:
-
-            sub_objects = obj.children.restricted(request).get_content_objects()
+            sub_objects = obj.get_children()
         else:
-            sub_objects = lfc.utils.getLOL(obj.children.restricted(request).get_content_objects(), obj_template.children_columns)
+            sub_objects = lfc.utils.getLOL(obj.get_children(), obj_template.children_columns)
 
         cache.set(children_cache_key, sub_objects)
 

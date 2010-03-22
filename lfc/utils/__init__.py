@@ -53,11 +53,7 @@ def get_content_object(request=None, *args, **kwargs):
 
     You can consider this as the equivalent to Django's get method.
     """
-    if request:
-        obj = lfc.models.BaseContent.objects.restricted(request).get(*args, **kwargs)
-    else:
-        obj = lfc.models.BaseContent.objects.get(*args, **kwargs)
-
+    obj = lfc.models.BaseContent.objects.get(*args, **kwargs)
     return obj.get_content_object()
 
 def get_content_objects(request=None, *args, **kwargs):
@@ -68,11 +64,7 @@ def get_content_objects(request=None, *args, **kwargs):
 
     You can consider this as the equivalent to Django's filter method.
     """
-
-    if request:
-        objs = lfc.models.BaseContent.objects.restricted(request).filter(*args, **kwargs)
-    else:
-        objs = lfc.models.BaseContent.objects.filter(*args, **kwargs)
+    objs = lfc.models.BaseContent.objects.filter(*args, **kwargs)
 
     result = []
     for obj in objs:

@@ -31,7 +31,8 @@ class UtilsTestCase(TestCase):
         self.assertEqual(ct.title, "Page 1")
 
         # With passed request
-        self.assertRaises(BaseContent.DoesNotExist, lfc.utils.get_content_object, request, slug="page-1")
+        ct = lfc.utils.get_content_object(request, slug="page-1")
+        self.assertEqual(ct.title, "Page 1")
 
     def test_get_content_objects(self):
         """
@@ -49,5 +50,4 @@ class UtilsTestCase(TestCase):
 
         # With passed request
         ct = lfc.utils.get_content_objects(request, slug="page-1")
-        self.assertEqual(ct, [])
-
+        self.assertEqual(ct[0].title, "Page 1")

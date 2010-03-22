@@ -477,9 +477,9 @@ class PortalPermissionComparisonNode(template.Node):
         self.nodelist_true = nodelist_true
         self.nodelist_false = nodelist_false
 
-    def render(self, context):        
+    def render(self, context):
         obj = lfc.utils.get_portal()
-        request = context.get("request")        
+        request = context.get("request")
         if lfc.utils.has_permission(obj, self.permission, request.user):
             return self.nodelist_true.render(context)
         else:

@@ -40,28 +40,3 @@ class ManagerTestCase(TestCase):
         """
         obj = BaseContent.objects.filter(pk=1).get_content_objects()
         self.failUnless(isinstance(obj[0], Page))
-
-    def test_restricted_content_objects(self):
-        """
-        """
-        request = create_request()
-        pages = Page.objects.restricted(request)
-        self.assertEqual(len(pages), 2)
-
-        for page in pages:
-            self.failUnless(isinstance(page, Page))
-
-        request.user.is_superuser = False
-        pages = Page.objects.restricted(request)
-        self.assertEqual(pages[0].title, self.p2.title)
-
-    def test_restricted(self):
-        """
-        """
-        request = create_request()
-        pages = Page.objects.restricted(request)
-        self.assertEqual(len(pages), 2)
-
-        request.user.is_superuser = False
-        pages = Page.objects.restricted(request)
-        self.assertEqual(pages[0].title, self.p2.title)
