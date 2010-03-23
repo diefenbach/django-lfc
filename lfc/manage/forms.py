@@ -1,5 +1,6 @@
 # django imports
 from django import forms
+from django.forms.util import ErrorList
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
@@ -22,10 +23,39 @@ class UserForm(forms.ModelForm):
     """
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
-        
+
         # Remove Anonymous and Owner from group choices
         groups = Group.objects.exclude(name__in=("Anonymous", "Owner"))
         self.fields["groups"].choices = [(g.id, g.name) for g in groups]
+
+    class Meta:
+        model = User
+        exclude = ("user_permissions", "password", "last_login", "date_joined")
+
+class UserAddForm(forms.ModelForm):
+    """
+    """
+    password1 = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
+    password2 = forms.CharField(label=_("Password (again)"), widget=forms.PasswordInput)
+
+    def __init__(self, *args, **kwargs):
+        super(UserAddForm, self).__init__(*args, **kwargs)
+
+        # Remove Anonymous and Owner from group choices
+        groups = Group.objects.exclude(name__in=("Anonymous", "Owner"))
+        self.fields["groups"].choices = [(g.id, g.name) for g in groups]
+
+    def clean(self):
+        """
+        """
+        p1 = self.cleaned_data.get("password1")
+        p2 = self.cleaned_data.get("password2")
+
+        if p1 != p2:
+            self._errors["password1"] = ErrorList(["Passwords must be equal"])
+            self._errors["password2"] = ErrorList(["Passwords  must be equal"])
+            
+        return self.cleaned_data
 
     class Meta:
         model = User

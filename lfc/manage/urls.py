@@ -64,7 +64,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-portal-permissions$', "update_portal_permissions", name="lfc_update_portal_permissions"),
 
     # workflows
-    url(r'^do-transition/(?P<id>\d+)$', "do_transition", name="lfc_do_transition"),
+    url(r'^do-transition/(?P<id>\d+)$', "do_transition", name="lfc_manage_do_transition"),
 
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
 
@@ -88,6 +88,8 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^save-user-data/(?P<id>\d+)', "save_user_data", name="lfc_save_user_data"),
     url(r'^add-user', "add_user", name="lfc_add_user"),
     url(r'^delete-user/(?P<id>\d+)', "delete_user", name="lfc_delete_user"),
+    url(r'^change-users', "change_users", name="lfc_manage_change_users"),
+    url(r'^change-password/(?P<id>\d+)', "change_password", name="lfc_manage_change_password"),
 
     # content
     url(r'^$', "portal", name="lfc_manage_portal"),

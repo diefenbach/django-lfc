@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
@@ -54,6 +55,7 @@ from lfc.manage.forms import PortalCoreForm
 from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import SEOForm
 from lfc.manage.forms import UserForm
+from lfc.manage.forms import UserAddForm
 from lfc.models import Application
 from lfc.models import File
 from lfc.models import Image
@@ -573,9 +575,8 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
 def object_children(request, obj, template_name="lfc/manage/object_children.html"):
     """Displays the children of the passed content object.
     """
-    children = obj.children.all()
     return render_to_string(template_name, RequestContext(request, {
-        "children" : children,
+        "children" : obj.get_children(request),
         "obj" : obj,
         "display_paste" : _display_paste(request),
     }))
@@ -1737,9 +1738,16 @@ def uninstall_application(request, name):
 def manage_users(request, template_name="lfc/manage/users.html"):
     """
     """
-    users = User.objects.all()
-
     return render_to_response(template_name, RequestContext(request, {
+        "users" : users_inline(request),
+    }))
+
+@login_required
+def users_inline(request, template_name="lfc/manage/users_inline.html"):
+    """
+    """
+    users = User.objects.all()
+    return render_to_string(template_name, RequestContext(request, {
         "users" : users,
     }))
 
@@ -1749,6 +1757,7 @@ def manage_user(request, id, as_string=False, template_name="lfc/manage/user.htm
     """
     result = render_to_response(template_name, RequestContext(request, {
         "data" : user_data(request, id),
+        "password" : user_password(request, id),
         "menu" : user_menu(request, id),
         "navigation" : user_navigation(request, id)
     }))
@@ -1765,12 +1774,12 @@ def user_menu(request, id, template_name="lfc/manage/user_menu.html"):
     }))
 
 @login_required
-def user_data(request, id, form=None, template_name="lfc/manage/user_data.html"):
+def user_data(request, id, template_name="lfc/manage/user_data.html"):
     """Displays the user data form of the user with passed id.
     """
     user = User.objects.get(pk=id)
 
-    if request.is_ajax():
+    if request.method == "POST":
         form = UserForm(instance=user, data=request.POST)
     else:
         form = UserForm(instance=user)
@@ -1780,6 +1789,22 @@ def user_data(request, id, form=None, template_name="lfc/manage/user_data.html")
         "form" : form,
     }))
 
+@login_required
+def user_password(request, id, form=None, template_name="lfc/manage/user_password.html"):
+    """Displays the change password form of the user with passed id.
+    """
+    user = User.objects.get(pk=id)
+
+    if request.method == "POST":
+        form = AdminPasswordChangeForm(user, request.POST)
+    else:
+        form = AdminPasswordChangeForm(user)
+
+    return render_to_string(template_name, RequestContext(request, {
+        "form" : form,
+    }))
+
+@login_required
 def user_navigation(request, id, template_name="lfc/manage/user_navigation.html"):
     """Displays the user navigation.
     """
@@ -1787,39 +1812,8 @@ def user_navigation(request, id, template_name="lfc/manage/user_navigation.html"
         "current_user_id" : int(id),
         "users" : User.objects.all(),
     }))
-    
+
 # actions
-def add_user(request, template_name="lfc/manage/user_add.html"):
-    """Displays a add user form.
-    """
-    if request.method == "POST":
-        form = UserForm(data=request.POST)
-        if form.is_valid():
-            user = form.save()
-            return HttpResponseRedirect(reverse("lfc_manage_user", kwargs={"id" : user.id}))
-    else:
-        form = UserForm()
-        return render_to_response(template_name, RequestContext(request, {
-            "form" : form,
-            "navigation" : user_navigation(request, 0),
-        }))
-
-def delete_user(request, id):
-    """
-    """
-    try:
-        user = User.objects.get(pk=id)
-    except User.DoesNotExist:
-        pass
-        message = _(u"User couldn't deleted.")
-    else:
-        user.delete()
-        message = _(u"User has been deleted.")
-
-    user = User.objects.all()[0]
-    url = reverse("lfc_manage_user", kwargs={"id" : user.id })
-    return MessageHttpResponseRedirect(url, message)
-
 @login_required
 def save_user_data(request, id):
     """Saves the user data form of the user with the passed id.
@@ -1840,6 +1834,80 @@ def save_user_data(request, id):
 
     return HttpResponse(result)
 
+def change_password(request, id):
+    """
+    """
+    user = User.objects.get(pk=id)
+    form = AdminPasswordChangeForm(user, request.POST)
+
+    if form.is_valid():
+        form.save()
+        message = _(u"Password has been changed")
+    else:
+        message = _(u"An error occured.")
+
+    html = (("#password", user_password(request, id, form)), )
+
+    result = simplejson.dumps(
+        { "html" : html, "message" : message, }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+@login_required
+def add_user(request, template_name="lfc/manage/user_add.html"):
+    """Displays a add user form.
+    """
+    if request.method == "POST":
+        form = UserAddForm(data=request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(request.POST.get("password1"))
+            user.save()
+            return HttpResponseRedirect(reverse("lfc_manage_user", kwargs={"id" : user.id}))
+        else:
+            return render_to_response(template_name, RequestContext(request, {
+                "form" : form,
+                "navigation" : user_navigation(request, 0),
+            }))
+    else:
+        form = UserAddForm()
+        return render_to_response(template_name, RequestContext(request, {
+            "form" : form,
+            "navigation" : user_navigation(request, 0),
+        }))
+
+@login_required
+def delete_user(request, id):
+    """
+    """
+    try:
+        user = User.objects.get(pk=id)
+    except User.DoesNotExist:
+        pass
+        message = _(u"User couldn't deleted.")
+    else:
+        user.delete()
+        message = _(u"User has been deleted.")
+
+    user = User.objects.all()[0]
+    url = reverse("lfc_manage_user", kwargs={"id" : user.id })
+    return MessageHttpResponseRedirect(url, message)
+
+@login_required
+def change_users(request):
+    """Updates or deletes checked users.
+    """
+    ids = request.POST.getlist("delete_ids")
+    users = User.objects.filter(pk__in=ids)
+    users.delete()
+    message = _(u"Users have been deleted.")
+
+    html = (("#users", users_inline(request)), )
+
+    result = simplejson.dumps(
+        { "html" : html, "message" : message, }, cls = LazyEncoder)
+
+    return HttpResponse(result)
 
 # Privates ###################################################################
 ##############################################################################

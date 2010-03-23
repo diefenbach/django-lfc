@@ -1,0 +1,64 @@
+{% load i18n %}
+<div id="users">
+    <form action="{% url lfc_manage_change_users %}"e
+          method="POST">
+        <table class="lfs-manage-table"
+               style="width:100%">
+            <tr>
+                <th class="small">
+                    <input type="checkbox" />
+                </th>
+                <th width="20%">
+                    {% trans "Fullname" %}
+                </th>
+                <th width="20%">
+                    {% trans "Username" %}
+                </th>
+                <th width="20%">
+                    {% trans "E-Mail" %}
+                </th>
+                <th width="20%">
+                    <input type="checkbox" />
+                    {% trans "Active" %}
+                </th>
+                <th>
+                    {% trans "Edit" %}
+                </th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>
+                        <input type="checkbox" name="delete_ids" value="{{ user.id }}" />
+                    </td>
+                    <td>
+                        <a href="{% url lfc_manage_user user.id %}">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url lfc_manage_user user.id %}">
+                            {{ user.username }}
+                        </a>
+                    </td>
+                    <td>
+                        {% if user.email %}
+                            <a href="mailto:{{ user.email }}">
+                                {{ user.email }}
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <input type="checkbox" name="active" {% if user.is_active %}checked="checked"{% endif %} />
+                    </td>
+                    <td>
+                        <a href="{% url lfc_manage_user user.id %}">
+                            {% trans "Edit" %}
+                        </a>                            
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+        <input type="submit" name="delete" class="ajax-save-button" value="{% trans 'Delete' %}"/>
+        <input type="submit" name="update" class="ajax-save-button" value="{% trans 'Update' %}"/>
+    </form>
+</div>

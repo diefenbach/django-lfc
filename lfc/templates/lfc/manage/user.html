@@ -14,10 +14,16 @@
     <div style="clear:both; padding:20px 20px 0 0" id="manage-tabs">
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#password">{% trans "Change password" %}</a></li>
         </ul>
 
         <div id="data">
             {{ data }}
         </div>
+        
+        <div id="password">
+            {{ password }}
+        </div>
+        
     </div>
 {% endblock %}
