@@ -1,6 +1,8 @@
 # django imports
 from django import forms
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
@@ -15,13 +17,27 @@ from lfc.models import ContentTypeRegistration
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
+class UserForm(forms.ModelForm):
+    """
+    """
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        
+        # Remove Anonymous and Owner from group choices
+        groups = Group.objects.exclude(name__in=("Anonymous", "Owner"))
+        self.fields["groups"].choices = [(g.id, g.name) for g in groups]
+
+    class Meta:
+        model = User
+        exclude = ("user_permissions", "password", "last_login", "date_joined")
+
 class ContentTypeRegistrationForm(forms.ModelForm):
     """
     """
     class Meta:
         model = ContentTypeRegistration
         exclude = ("type", "name")
-        
+
 class CommentsForm(forms.ModelForm):
     """
     """
@@ -77,16 +93,16 @@ class MetaDataForm(forms.ModelForm):
         # Parents - display only objects in the same or neutral language
         # exclude = [p.id for p in instance.children.all()]
         # exclude.append(instance.id)
-        # 
+        #
         # parents = BaseContent.objects.exclude(pk__in=exclude)
         # if not language == "0":
         #     parents = parents.filter(language__in=(language, "0"))
-        # 
+        #
         # parent_choices = []
         # for parent in parents:
         #     if ctr in get_allowed_subtypes(parent.get_content_object()):
         #         parent_choices.append((parent.id, parent.title))
-        # 
+        #
         # if len(parent_choices) < 1:
         #     del self.fields["parent"]
         # else:
@@ -118,7 +134,7 @@ class MetaDataForm(forms.ModelForm):
 
     class Meta:
         model = Page
-        fields = ("template", "standard", "exclude_from_navigation", 
+        fields = ("template", "standard", "exclude_from_navigation",
             "exclude_from_search", "language", "canonical", "publication_date", )
 
 class PortalCoreForm(forms.ModelForm):

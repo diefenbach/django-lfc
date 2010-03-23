@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.comments.models import Comment
@@ -48,10 +49,11 @@ from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import Portal
 from lfc.manage.forms import CommentsForm
+from lfc.manage.forms import ContentTypeRegistrationForm
+from lfc.manage.forms import PortalCoreForm
 from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import SEOForm
-from lfc.manage.forms import PortalCoreForm
-from lfc.manage.forms import ContentTypeRegistrationForm
+from lfc.manage.forms import UserForm
 from lfc.models import Application
 from lfc.models import File
 from lfc.models import Image
@@ -1728,6 +1730,116 @@ def uninstall_application(request, name):
 
     url = reverse("lfc_applications")
     return HttpResponseRedirect(url)
+
+# User #######################################################################
+##############################################################################
+@login_required
+def manage_users(request, template_name="lfc/manage/users.html"):
+    """
+    """
+    users = User.objects.all()
+
+    return render_to_response(template_name, RequestContext(request, {
+        "users" : users,
+    }))
+
+@login_required
+def manage_user(request, id, as_string=False, template_name="lfc/manage/user.html"):
+    """Displays main screen to manage the user with passed id.
+    """
+    result = render_to_response(template_name, RequestContext(request, {
+        "data" : user_data(request, id),
+        "menu" : user_menu(request, id),
+        "navigation" : user_navigation(request, id)
+    }))
+
+    return HttpResponse(result)
+
+@login_required
+def user_menu(request, id, template_name="lfc/manage/user_menu.html"):
+    """Displays the menu within user management.
+    """
+    return render_to_string(template_name, RequestContext(request, {
+        "current_user_id" : id,
+        "display_delete" : id != "1",
+    }))
+
+@login_required
+def user_data(request, id, form=None, template_name="lfc/manage/user_data.html"):
+    """Displays the user data form of the user with passed id.
+    """
+    user = User.objects.get(pk=id)
+
+    if request.is_ajax():
+        form = UserForm(instance=user, data=request.POST)
+    else:
+        form = UserForm(instance=user)
+
+    return render_to_string(template_name, RequestContext(request, {
+        "myuser" : user,
+        "form" : form,
+    }))
+
+def user_navigation(request, id, template_name="lfc/manage/user_navigation.html"):
+    """Displays the user navigation.
+    """
+    return render_to_string(template_name, RequestContext(request, {
+        "current_user_id" : int(id),
+        "users" : User.objects.all(),
+    }))
+    
+# actions
+def add_user(request, template_name="lfc/manage/user_add.html"):
+    """Displays a add user form.
+    """
+    if request.method == "POST":
+        form = UserForm(data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            return HttpResponseRedirect(reverse("lfc_manage_user", kwargs={"id" : user.id}))
+    else:
+        form = UserForm()
+        return render_to_response(template_name, RequestContext(request, {
+            "form" : form,
+            "navigation" : user_navigation(request, 0),
+        }))
+
+def delete_user(request, id):
+    """
+    """
+    try:
+        user = User.objects.get(pk=id)
+    except User.DoesNotExist:
+        pass
+        message = _(u"User couldn't deleted.")
+    else:
+        user.delete()
+        message = _(u"User has been deleted.")
+
+    user = User.objects.all()[0]
+    url = reverse("lfc_manage_user", kwargs={"id" : user.id })
+    return MessageHttpResponseRedirect(url, message)
+
+@login_required
+def save_user_data(request, id):
+    """Saves the user data form of the user with the passed id.
+    """
+    user = User.objects.get(pk=id)
+    form = UserForm(instance=user, data=request.POST)
+
+    if form.is_valid():
+        form.save()
+        message = _(u"User has been saved")
+    else:
+        message = _(u"An error occured.")
+
+    html = (("#data", user_data(request, id)), )
+
+    result = simplejson.dumps(
+        { "html" : html, "message" : message, }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
 
 # Privates ###################################################################
 ##############################################################################

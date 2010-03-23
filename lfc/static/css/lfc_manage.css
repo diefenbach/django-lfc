@@ -143,6 +143,11 @@ table.lfs-manage-table {
 }
 
 /* Navigation */
+.navigation-user {
+    margin-top: 60px;
+    padding-left: 10px;
+}
+
 .navigation-manage {
     padding-top: 10px;
 }

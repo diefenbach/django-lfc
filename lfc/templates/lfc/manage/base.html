@@ -84,7 +84,16 @@
                                             <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
                                         </li>
                                     </ul>
-                                </li>                                
+                                </li>
+                                <li>
+                                    <a>{% trans "User" %}</a>
+                                    <ul>
+                                        <li>
+                                            <a href="{% url lfc_manage_users %}">{% trans 'Users' %}</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                
                             {% endifportalhasperm %}
                         </ul>
                     </td>

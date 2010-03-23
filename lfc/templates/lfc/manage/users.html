@@ -1,0 +1,59 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left-slot-wrapper %}{% endblock %}
+
+{% block content %}
+    <div style="clear:both; padding:20px 20px 0 20px" id="manage-tabs">
+        <ul>
+            <li class="ui-tabs-nav-item"><a href="#users">{% trans "Users" %}</a></li>
+        </ul>
+
+        <div id="users">
+            <table class="lfs-manage-table"
+                   style="width:100%">
+                <tr>
+                    </th>
+                    <th width="20%">
+                        {% trans "Fullname" %}
+                    </th>
+                    <th width="20%">
+                        {% trans "Username" %}
+                    </th>
+                    <th width="20%">
+                        {% trans "E-Mail" %}
+                    </th>
+                    <th>
+                        {% trans "Edit" %}
+                    </th>
+                </tr>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <a href="{% url lfc_manage_user user.id %}">
+                                {{ user.first_name }} {{ user.last_name }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url lfc_manage_user user.id %}">
+                                {{ user.username }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if user.email %}
+                                <a href="mailto:{{ user.email }}">
+                                    {{ user.email }}
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url lfc_manage_user user.id %}">
+                                {% trans "Edit" %}
+                            </a>                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock %}

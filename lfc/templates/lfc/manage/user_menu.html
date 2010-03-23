@@ -1,0 +1,16 @@
+{% load i18n %}
+{% load lfc_tags %}
+
+<ul class="sf-menu">
+    <li>
+        <a href="{% url lfc_add_user %}">{% trans "Add User" %}</a>
+    </li>
+    {% if display_delete %}
+        <li>        
+            <a class="modalInput" href="{% url lfc_delete_user current_user_id %}">{% trans "Delete User" %}</a>
+        </li>        
+    {% endif %}
+    <li>
+        <a href="{% url lfc_manage_users %}">{% trans "Overview" %}</a>
+    </li>
+</ul>

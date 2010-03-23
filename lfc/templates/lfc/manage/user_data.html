@@ -1,0 +1,11 @@
+{% load i18n %}
+
+<form action="{% url lfc_save_user_data myuser.id %}"
+      method="POST">
+
+    {% include "lfc/manage/lfc_form.html" %}
+
+    <input class="ajax-save-button"
+           type="submit"
+           value="{% trans 'Save user' %}" />
+</form>
