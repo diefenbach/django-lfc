@@ -275,7 +275,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     """Renders the children of given object as sub navigation tree.
     """
     obj = obj
-    temp = obj.children.restricted(request).filter(
+    temp = obj.children.filter(
         exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
     ).get_content_objects()
@@ -354,7 +354,7 @@ def objects_by_slug(context, slug):
     except Http404:
         return { "objs" : [] }
 
-    objs = obj.children.restricted(request)
+    objs = obj.children.all()
 
     return { "objs" : objs }
 
@@ -382,7 +382,7 @@ def previous_next_by_position(context, obj):
     """Displays previous/links by position for the given object.
     """
     request = context.get("request")
-    siblings = [o.get_content_object() for o in obj.parent.children.restricted(request)]
+    siblings = [o.get_content_object() for o in obj.parent.children.all()]
     current_position = siblings.index(obj)
     next_position = current_position + 1
     previous_position = current_position - 1
@@ -493,4 +493,3 @@ def ifportalhasperm(parser, token):
     """This function provides functionality for the 'ifportalhasperm' template tag.
     """
     return PortalPermissionComparisonNode.handle_token(parser, token)
-

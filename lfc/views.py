@@ -154,11 +154,11 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
         (Q(searchable_text__icontains=query))
 
     try:
-        obj = BaseContent.objects.restricted(request).get(slug="search-results")
+        obj = BaseContent.objects.get(slug="search-results")
     except BaseContent.DoesNotExist:
         obj = None
 
-    results = BaseContent.objects.restricted(request).filter(f)
+    results = BaseContent.objects.filter(f)
     return render_to_response(template_name, RequestContext(request, {
         "lfc_context" : obj,
         "query" : query,
@@ -180,7 +180,7 @@ def set_language(request, language, id=None):
 
     url = None
     if id:
-        obj = BaseContent.objects.restricted(request).get(pk=id)
+        obj = BaseContent.objects.get(pk=id)
 
         # If the language of the current object same as the requested language we
         # just stay on the object.
@@ -256,7 +256,7 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
         raise Http404(_('No Tag found matching "%s".') % tag)
 
     obj = request.META.get("lfc_context")
-    queryset = BaseContent.objects.restricted(request).filter(parent=obj)
+    queryset = BaseContent.objects.filter(parent=obj)
     objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
 
     return render_to_response(template_name, RequestContext(request, {

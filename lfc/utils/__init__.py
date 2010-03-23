@@ -108,7 +108,7 @@ def traverse_object(request, path):
 
     for path in paths[1:]:
         try:
-            obj = obj.children.restricted(request).get(slug=path, language__in = ("0", obj.language)).get_content_object()
+            obj = obj.children.get(slug=path, language__in = ("0", obj.language)).get_content_object()
         except lfc.models.BaseContent.DoesNotExist:
             raise Http404
 
