@@ -52,7 +52,9 @@ urlpatterns += patterns('lfc.views',
 
     url(r'^set-language/(?P<language>[-\w]{2})/$', 'set_language', name="lfc_set_language"),
     url(r'^set-language/(?P<language>[-\w]{2})/(?P<id>\d+)/$', 'set_language', name="lfc_set_language"),
-    
+
+    url(r'^do-transition/(?P<id>\d+)/$', 'do_transition', name="lfc_do_transition"),
+
     url(r'^file/(?P<id>[-\w]*)', "file", name="lfc_file"),
 
     url(r'^(?P<language>[-\w]{2})$', "base_view", name="lfc_base_view"),

@@ -21,11 +21,14 @@ from django.utils.translation import ugettext_lazy as _
 
 # lfc imports
 import lfc.utils
-from lfc.utils import traverse_object
 from lfc.utils import has_permission
+from lfc.utils import MessageHttpResponseRedirect
 from lfc.models import File
 from lfc.models import BaseContent
 from lfc.models import Portal
+
+# workflows imports
+from workflows.models import Transition
 
 # tagging imports
 from tagging.models import TaggedItem
@@ -227,6 +230,20 @@ def set_language(request, language, id=None):
             response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
 
     return response
+
+def do_transition(request, id):
+    """
+    """
+    transition = request.POST.get("transition")
+    try:
+        transition = Transition.objects.get(pk=transition)
+    except Transition.DoesNotExist:
+        pass
+    else:
+        obj = lfc.utils.get_content_object(pk=id)
+        obj.do_transition(transition, request.user)
+
+    return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"Hurz"))
 
 def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):
     """
