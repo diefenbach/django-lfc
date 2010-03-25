@@ -19,6 +19,13 @@ input[type='text'] {
     width: 200px;
 }
 
+.user-filter {
+    padding:5px 0 10px 0;
+}
+input.user-name-filter {
+    width: 175px;
+}
+
 input.position {
     width: 50px;
     size: 5;
@@ -30,6 +37,11 @@ img {
 
 a  {
     text-decoration: none;
+}
+
+.discreet {
+    color: #999;
+    font-size: 90%;
 }
 
 .selected {
@@ -143,8 +155,38 @@ table.lfs-manage-table {
 }
 
 /* Navigation */
+.page-navigation {
+    background: #ddd;
+    border: 1px solid #aaa;
+    padding: 2px 0 6px 0;
+    text-align: center;
+    color: #555;
+}
+
+.icon,
+.page-navigation img {
+    position: relative;
+    top: 4px;
+}
+
+table.users,
+table.users tr.header {
+    border: 1px solid #ccc;
+}
+
+table.users-navigation th,
+table.users-navigation td {
+    padding: 4px;
+    vertical-align: center;
+}
+
+table.users-navigation img {
+    position: relative;
+    top: 2px;
+}
+
 .navigation-user {
-    margin-top: 60px;
+    margin-top: 20px;
     padding-left: 10px;
 }
 

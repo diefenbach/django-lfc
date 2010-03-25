@@ -4,6 +4,8 @@ import copy
 # django imports
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import EmptyPage
+from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AdminPasswordChangeForm
@@ -1732,7 +1734,7 @@ def uninstall_application(request, name):
     url = reverse("lfc_applications")
     return HttpResponseRedirect(url)
 
-# User #######################################################################
+# Users ######################################################################
 ##############################################################################
 @login_required
 def manage_users(request, template_name="lfc/manage/users.html"):
@@ -1746,10 +1748,104 @@ def manage_users(request, template_name="lfc/manage/users.html"):
 def users_inline(request, template_name="lfc/manage/users_inline.html"):
     """
     """
-    users = User.objects.all()
+    users = _get_filtered_users(request, "users")
+    paginator = Paginator(users, 20)
+    p = request.session.get("page", request.REQUEST.get("page", 1))
+
+    try:
+        page = paginator.page(p)
+    except EmptyPage:
+        page = 0
+
     return render_to_string(template_name, RequestContext(request, {
         "users" : users,
+        "paginator" : paginator,
+        "page" : page,
+        "name_filter" : request.session.get("users_name_filter", ""),
+        "active_filter" : request.session.get("users_active_filter", "")
     }))
+
+@login_required
+def change_users(request):
+    """Updates or deletes checked users.
+    """
+    if request.POST.get("action") == "delete":
+        ids = request.POST.getlist("delete_ids")
+        users = User.objects.filter(pk__in=ids)
+        users.delete()
+        message = _(u"Users have been deleted.")
+    else:
+        message = _(u"Users have been updated.")
+        active_ids = request.POST.getlist("active_ids")
+        for id in request.POST.getlist("user_ids"):
+            user = User.objects.get(pk=id)
+            if id in active_ids:
+                user.is_active = True
+            else:
+                user.is_active = False
+            user.save()
+
+    html = (("#users", users_inline(request)), )
+
+    result = simplejson.dumps(
+        { "html" : html, "message" : message, }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+@login_required
+def set_users_page(request):
+    """Sets the current user page.
+    """
+    request.session["users_page"] = request.GET.get("page", 1)
+
+    user = request.GET.get("user")
+    if user:
+        html = (("#navigation", user_navigation(request, user)), )
+    else:
+        html = (("#users", users_inline(request)), )
+
+    result = simplejson.dumps({ "html" : html }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+@login_required
+def set_users_filter(request):
+    """Filter users
+    """
+    _update_filter(request, "users_active_filter")
+    _update_filter(request, "users_name_filter")
+    request.session["users_page"] = 1
+
+    message = _(u"Filter has been set.")
+    html = (("#users", users_inline(request)), )
+
+    result = simplejson.dumps(
+        { "html" : html, "message" : message, }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+def reset_users_filter(request):
+    """
+    """
+    _delete_filter(request, "users_name_filter")
+    _delete_filter(request, "users_active_filter")
+    _delete_filter(request, "users_page")
+
+    message = _(u"Filter has been reset.")
+
+    user = request.GET.get("user")
+    if user:
+        html = (("#navigation", user_navigation(request, user)), )
+    else:
+        html = (("#users", users_inline(request)), )
+
+    result = simplejson.dumps(
+        { "html" : html, "message" : message, }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+# User #######################################################################
+##############################################################################
 
 @login_required
 def manage_user(request, id, as_string=False, template_name="lfc/manage/user.html"):
@@ -1759,7 +1855,9 @@ def manage_user(request, id, as_string=False, template_name="lfc/manage/user.htm
         "data" : user_data(request, id),
         "password" : user_password(request, id),
         "menu" : user_menu(request, id),
-        "navigation" : user_navigation(request, id)
+        "navigation" : user_navigation(request, id),
+        "current_user_id" : id,
+        "user_name_filter" : request.session.get("user_name_filter", "")
     }))
 
     return HttpResponse(result)
@@ -1808,9 +1906,19 @@ def user_password(request, id, form=None, template_name="lfc/manage/user_passwor
 def user_navigation(request, id, template_name="lfc/manage/user_navigation.html"):
     """Displays the user navigation.
     """
+    users = _get_filtered_users(request, "user")
+    paginator = Paginator(users, 20)
+    page = request.session.get("user_page", request.REQUEST.get("page", 1))
+
+    try:
+        page = paginator.page(page)
+    except EmptyPage:
+        page = 0
+
     return render_to_string(template_name, RequestContext(request, {
         "current_user_id" : int(id),
-        "users" : User.objects.all(),
+        "paginator" : paginator,
+        "page" : page,
     }))
 
 # actions
@@ -1894,15 +2002,43 @@ def delete_user(request, id):
     return MessageHttpResponseRedirect(url, message)
 
 @login_required
-def change_users(request):
-    """Updates or deletes checked users.
+def set_user_page(request):
+    """Sets the current user page.
     """
-    ids = request.POST.getlist("delete_ids")
-    users = User.objects.filter(pk__in=ids)
-    users.delete()
-    message = _(u"Users have been deleted.")
+    request.session["user_page"] = request.GET.get("page", 1)
+    user = request.GET.get("user")
 
-    html = (("#users", users_inline(request)), )
+    html = (("#navigation", user_navigation(request, user)), )
+    result = simplejson.dumps({ "html" : html }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+@login_required
+def set_user_filter(request):
+    """Filter users
+    """
+    user = request.GET.get("user")
+
+    _update_filter(request, "user_name_filter")
+    request.session["user_page"] = 1
+
+    html = (("#navigation", user_navigation(request, user)), )
+
+    result = simplejson.dumps(
+        { "html" : html }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+def reset_user_filter(request):
+    """
+    """
+    _delete_filter(request, "user_name_filter")
+    _delete_filter(request, "user_page")
+
+    message = _(u"Filter has been reset.")
+
+    user = request.GET.get("user")
+    html = (("#navigation", user_navigation(request, user)), )
 
     result = simplejson.dumps(
         { "html" : html, "message" : message, }, cls = LazyEncoder)
@@ -1911,6 +2047,41 @@ def change_users(request):
 
 # Privates ###################################################################
 ##############################################################################
+
+def _get_filtered_users(request, prefix):
+    q = None
+    name_filter = request.session.get("%s_name_filter" % prefix)
+    if name_filter:
+        q = Q(first_name__icontains=name_filter) | \
+            Q(last_name__icontains=name_filter) | \
+            Q(email__icontains=name_filter) | \
+            Q(username__icontains=name_filter)
+
+    active_filter = request.session.get("%s_active_filter" % prefix)
+    if active_filter:
+        if q:
+            q &= Q(is_active=active_filter)
+        else:
+            q = Q(is_active=active_filter)
+
+    if q:
+        users = User.objects.filter(q)
+    else:
+        users = User.objects.all()
+
+    return users
+
+def _delete_filter(request, name):
+    if request.session.has_key(name):
+        del request.session[name]
+
+def _update_filter(request, name):
+    filter = request.GET.get(name, "")
+    if filter != "":
+        request.session[name] = filter
+    else:
+        if request.session.has_key(name):
+            del request.session[name]
 
 def _update_children(request, obj):
     """Updates the children of the passed object. Returns a message which can

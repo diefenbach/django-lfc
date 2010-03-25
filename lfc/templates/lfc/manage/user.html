@@ -2,11 +2,22 @@
 {% load i18n %}
 
 {% block left_slot %}
-    {{ navigation }}
+    <div class="user-filter">
+        <input class="user-name-filter" name="user_name_filter" data="{% url lfc_manage_set_user_filter %}?user={{ current_user_id }}" type="text" value="{{ user_name_filter }}"/>
+        <a class="ajax-link reset-link"
+           href="{% url lfc_manage_reset_user_filter %}?user={{ current_user_id }}">
+           <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" title="{% trans 'Last' %}"/>
+        </a>
+    </div>
+
+    <div id="navigation">
+        {{ navigation }}
+    </div>
+
 {% endblock %}
 
 {% block content %}
-    <div id="menu" 
+    <div id="menu"
          class="site-actions">
          {{ menu|safe }}
     </div>
@@ -20,10 +31,10 @@
         <div id="data">
             {{ data }}
         </div>
-        
+
         <div id="password">
             {{ password }}
         </div>
-        
+
     </div>
 {% endblock %}

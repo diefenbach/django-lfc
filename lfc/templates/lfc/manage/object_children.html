@@ -11,15 +11,18 @@
     {% if children %}
         <table class="lfs-manage-table" width="100%">
             <tr>
-                <th class="mini">
+                <th width="1%">
                     <input type="checkbox"
                            class="select-all-1" />
                 </th>
-                <th class="mini">
+                <th width="10%">
                     {% trans 'Position' %}
                 </th>
-                <th>
+                <th width="20%">
                     {% trans 'Title' %}
+                </th>
+                <th width="20%">
+                    {% trans 'State' %}
                 </th>
                 <th class="right last small">
                     {% trans 'Manage' %}
@@ -42,7 +45,12 @@
                                value="{{ child.position }}" />
                     </td>
                     <td>
-                        {{ child.title }}
+                        <a href="{% url lfc_manage_object child.id %}">
+                            {{ child.title }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ child.get_state.name }}
                     </td>
                     <td class="right last">
                         <a href="{% url lfc_manage_object child.id %}">

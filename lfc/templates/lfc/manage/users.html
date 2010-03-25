@@ -4,10 +4,7 @@
 {% block left-slot-wrapper %}{% endblock %}
 
 {% block content %}
-    <div style="clear:both; padding:20px 20px 0 20px" id="manage-tabs">
-        <ul>
-            <li class="ui-tabs-nav-item"><a href="#users">{% trans "Users" %}</a></li>
-        </ul>
+    <div id="users">
         {{ users|safe }}
     </div>
 {% endblock %}

@@ -100,6 +100,39 @@ $(function() {
         return false;
     });
 
+    // Generic ajax link
+    $(".ajax-link").livequery("click", function() {
+        var url = $(this).attr("href");
+
+        $.get(url, function(data) {
+            data = JSON.parse(data);
+            for (var html in data["html"])
+                $(data["html"][html][0]).html(data["html"][html][1]);
+
+            if (data["message"]) {
+                $.jGrowl(data["message"]);
+            }
+        });
+
+        return false;
+    });
+
+    $(".reset-link").livequery("click", function() {
+        $("input[name=name_filter]").val("");
+        $("select[name=active_filter]").val("");
+        return false;
+    });
+
+    $(".user-name-filter").livequery("keyup", function() {
+        var url = $(this).attr("data");
+        var value = $(this).attr("value");
+        $.get(url, { "user_name_filter" : value }, function(data) {
+            data = JSON.parse(data);
+            for (var html in data["html"])
+                $(data["html"][html][0]).html(data["html"][html][1]);
+        });
+    });
+
     // Confirmation link
     var confirmation;
     $(".confirmation-link-no").livequery("click", function() {
@@ -168,6 +201,14 @@ $(function() {
     });
 
     // Select all
+    $(".select-all").livequery("click", function() {
+        var checked = this.checked;
+        var selector = ".select-" + $(this).attr("value")
+        $(selector).each(function() {
+            this.checked = checked;
+        });
+    });
+
     $(".select-all-1").livequery("click", function() {
         var checked = this.checked;
         $(".select-1").each(function() {

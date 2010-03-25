@@ -90,6 +90,13 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^delete-user/(?P<id>\d+)', "delete_user", name="lfc_delete_user"),
     url(r'^change-users', "change_users", name="lfc_manage_change_users"),
     url(r'^change-password/(?P<id>\d+)', "change_password", name="lfc_manage_change_password"),
+    url(r'^set-users-filter', "set_users_filter", name="lfc_manage_set_users_filter"),
+    url(r'^reset-users-filter', "reset_users_filter", name="lfc_manage_reset_users_filter"),
+    url(r'^set-users-page', "set_users_page", name="lfc_manage_set_users_page"),
+
+    url(r'^set-user-filter', "set_user_filter", name="lfc_manage_set_user_filter"),
+    url(r'^reset-user-filter', "reset_user_filter", name="lfc_manage_reset_user_filter"),
+    url(r'^set-user-page', "set_user_page", name="lfc_manage_set_user_page"),
 
     # content
     url(r'^$', "portal", name="lfc_manage_portal"),
