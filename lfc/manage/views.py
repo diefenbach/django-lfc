@@ -708,7 +708,7 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
             continue
         temp.append(user.id)
 
-        local_roles = permissions.utils.get_local_roles(user, obj)
+        local_roles = permissions.utils.get_local_roles(obj, user)
 
         roles = []
         for role in Role.objects.all():
@@ -739,7 +739,7 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
             continue
         temp.append(group.id)
 
-        local_roles = permissions.utils.get_local_roles(group, obj)
+        local_roles = permissions.utils.get_local_roles(obj, group)
 
         roles = []
         for role in Role.objects.all():
@@ -842,7 +842,7 @@ def save_local_roles(request, id):
             except User.DoesNotExist:
                 continue
             else:
-                permissions.utils.remove_roles(obj, user)
+                permissions.utils.remove_local_roles(obj, user)
 
         # Remove local roles for checked groups
         for group_id in request.POST.getlist("to_delete_group"):
@@ -851,7 +851,7 @@ def save_local_roles(request, id):
             except Group.DoesNotExist:
                 continue
             else:
-                permissions.utils.remove_roles(obj, group)
+                permissions.utils.remove_local_roles(obj, group)
     else:
         message = _(u"Local roles has been saved")
         users_roles = request.POST.getlist("user_role")
@@ -867,9 +867,9 @@ def save_local_roles(request, id):
 
             for role in Role.objects.all():
                 if "%s|%s" % (user.id, role.id) in users_roles:
-                    permissions.utils.add_role(user, role, obj)
+                    permissions.utils.add_local_role(obj, user, role)
                 else:
-                    permissions.utils.remove_role(user, role, obj)
+                    permissions.utils.remove_local_role(obj, user, role)
 
         temp = []
         for group in [prr.group for prr in PrincipalRoleRelation.objects.exclude(group=None).filter(content_id=obj.id, content_type=ctype)]:
@@ -881,9 +881,9 @@ def save_local_roles(request, id):
 
             for role in Role.objects.all():
                 if "%s|%s" % (group.id, role.id) in groups_roles:
-                    permissions.utils.add_role(group, role, obj)
+                    permissions.utils.add_local_role(obj, group, role)
                 else:
-                    permissions.utils.remove_role(group, role, obj)
+                    permissions.utils.remove_local_role(obj, group, role)
 
     html = (
         ("#local-roles", local_roles(request, obj)),
@@ -2311,7 +2311,7 @@ def delete_group(request, id, template_name="lfc/manage/group_add.html"):
 @login_required
 def save_group(request, id, template_name="lfc/manage/group_add.html"):
     """Saves group with passed id.
-    """    
+    """
     group = Group.objects.get(pk=id)
     form = GroupForm(instance=group, data=request.POST)
     if form.is_valid():

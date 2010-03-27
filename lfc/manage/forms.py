@@ -30,7 +30,7 @@ class RoleForm(forms.ModelForm):
 
 class GroupForm(forms.ModelForm):
     """
-    """
+    """    
     class Meta:
         model = Group
         exclude = ("permissions", )
