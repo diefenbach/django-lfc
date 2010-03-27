@@ -1,0 +1,43 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left_slot %}
+    <div class="navigation-group">
+        {% for role in roles %}
+            <div>
+                <a {% ifequal role.id current_role_id %}class="selected"{% endifequal %}
+                   href="{% url lfc_manage_role role.id %}">
+                    {{ role.name }}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div id="menu"
+         class="site-actions">
+
+        <ul class="sf-menu">
+            <li>
+                <a>{% trans "Add Role" %}</a>
+            </li>
+        </ul>
+    </div>
+
+    <div style="clear:both; padding:10px 20px 0 0" id="manage-tabs">
+        <ul>
+            <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
+        </ul>
+
+        <div id="data">
+            <form action="{% url lfc_manage_add_role %}"
+                  method="POST">
+                {% include "lfc/manage/lfc_form.html" %}
+                <input type="submit" value='{% trans "Add role" %}' />
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

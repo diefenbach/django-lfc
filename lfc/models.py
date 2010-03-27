@@ -26,10 +26,13 @@ from tagging.forms import TagField
 from portlets.models import Portlet
 from portlets.utils import register_portlet
 
-# workflow imports
+# workflows imports
 import workflows.utils
 from workflows.models import WorkflowBase
 from workflows.models import Workflow
+
+# permissions imports
+import permissions.utils
 
 # lfc imports
 import lfc.utils
@@ -582,8 +585,12 @@ class BaseContent(AbstractBaseContent):
         if self.is_canonical():
             return self
         else:
-            # Send it through the restricted manager
-            return self.canonical and BaseContent.objects.restricted(request).get(pk=self.canonical.id)
+            if self.canonical:
+                obj = BaseContent.objects.get(pk=self.canonical.id)
+                if lfc.utils.has_permission(obj, "view", request.user):
+                    return obj
+                else:
+                    return None
 
     def is_translation(self):
         """Returns true if the instance is a translation of another instance.

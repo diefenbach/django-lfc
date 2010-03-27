@@ -1,0 +1,82 @@
+{% load i18n %}
+
+<h2 class="middle-heading">
+    {% trans 'Local roles' %}     
+    <a class="overlay-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
+        <img style="position:relative; top:2px" src="{{ MEDIA_URL }}lfc/icons/add.png" />
+    </a>
+</h2>
+
+{% if users or groups %}
+    <form action="{% url lfc_manage_save_local_roles obj.id %}"
+          method="POST">
+        <table class="lfs-manage-table" width="80%">
+            <tr>
+                <th width="200px"><input type="checkbox" class="select-all" value="1" /></th>
+                <th width="300px">
+                    {% trans "User" %} / {% trans "Group" %}
+                </th>                
+                {% for role in roles %}
+                    <th>
+                        {{ role.name }}
+                    </th>
+                {% endfor %}
+            </tr>
+            {% if users %}
+                <tr>
+                    <td></td>
+                    <td>
+                        <h3 class="discreet">{% trans "Users" %}</h3>
+                    </td>
+                </tr>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="to_delete_user" value="{{ user.id }}" class="select-1" />
+                        </td>
+                        <td>
+                            <a href="{% url lfc_manage_user user.id %}">
+                                {{ user.name }}
+                            </a>
+                        </td>
+                        {% for role in user.roles %}
+                            <td>
+                                <input type="checkbox" {% if role.has_local_role %}checked="checked"{% endif %} name="user_role" value="{{ user.id }}|{{ role.id }}" />
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            {% if groups %}
+                <tr>
+                    <td></td>
+                    <td>
+                        <h3 style="padding-top:20px" class="discreet">{% trans "Groups" %}</h3>
+                    </td>
+                </tr>
+                {% for group in groups %}
+                    <tr>
+                        <td>
+                            <input type="checkbox" name="to_delete_group" value="{{ group.id }}" class="select-1" />
+                        </td>
+                        <td>
+                            <a href="{% url lfc_manage_user group.id %}">
+                                {{ group.name }}
+                            </a>
+                        </td>
+                        {% for role in group.roles %}
+                            <td>
+                                <input type="checkbox" {% if role.has_local_role %}checked="checked"{% endif %} name="group_role" value="{{ group.id }}|{{ role.id }}" />
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+        <input id="hurz" class="ajax-save-button" type="submit" name="delete" value='{% trans "Delete local roles" %}' />
+        <input class="ajax-save-button" type="submit" name="save"   value='{% trans "Save local roles" %}' />
+    </form>
+{% else %}
+    <p style="padding-top:10px">{% trans "This object has no local roles." %}</p>
+{% endif %}
+

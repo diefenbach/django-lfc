@@ -18,7 +18,7 @@ class ManagerTestCase(TestCase):
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
         self.p2 = Page.objects.create(title="Page 2", slug="page-2")
 
-        self.anonymous = permissions.utils.register_group("Anonymous")
+        self.anonymous = permissions.utils.register_role("Anonymous")
         self.permission = permissions.utils.register_permission("View", "view")
 
         permissions.utils.grant_permission(self.p2, "view", self.anonymous)

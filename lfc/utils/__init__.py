@@ -15,6 +15,7 @@ from django.utils import translation
 
 # permissions imports
 import permissions.utils
+from permissions.models import Role
 
 # lfc imports
 import lfc.models
@@ -199,15 +200,15 @@ def has_permission(obj, codename, user):
     """
     # Every user is also anonymous user
     try:
-        groups = [Group.objects.get(name="Anonymous")]
-    except Group.DoesNotExist:
-        groups = []
+        roles = [Role.objects.get(name="Anonymous")]
+    except Role.DoesNotExist:
+        roles = []
 
     # Check whether the current user is the creator of the current object.
     try:
         if user == obj.creator:
-            groups.append(Group.objects.get(name="Owner"))
+            roles.append(Role.objects.get(name="Owner"))
     except AttributeError:
         pass
 
-    return permissions.utils.has_permission(obj, codename, user, groups)
+    return permissions.utils.has_permission(obj, codename, user, roles)

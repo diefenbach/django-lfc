@@ -10,15 +10,15 @@
     <table class="lfs-manage-table" width="80%">
         <tr>
             <th>{% trans "Permission" %}</th>
-            {% for group in groups %}
-                <th>{{ group.name }}</th>
+            {% for role in roles %}
+                <th>{{ role.name }}</th>
             {% endfor %}
         </tr>
         {% for permission in permissions %}
             <tr>
                 <td>{{ permission.name }}</td>
-                {% for group in permission.groups %}
-                    <td><input type="checkbox" name="permission" value="{{ group.id }}|{{ permission.codename }}" {% if group.has_permission %}checked="checked"{% endif %}/></td>
+                {% for role in permission.roles %}
+                    <td><input type="checkbox" name="permission" value="{{ role.id }}|{{ permission.codename }}" {% if role.has_permission %}checked="checked"{% endif %}/></td>
                 {% endfor %}
             </tr>
         {% endfor %}

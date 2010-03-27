@@ -40,6 +40,8 @@ from portlets.models import Slot
 import permissions.utils
 from permissions.models import ObjectPermission
 from permissions.models import Permission
+from permissions.models import PrincipalRoleRelation
+from permissions.models import Role
 
 # workflows imports
 import workflows.utils
@@ -53,8 +55,10 @@ from lfc.models import ContentTypeRegistration
 from lfc.models import Portal
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import ContentTypeRegistrationForm
+from lfc.manage.forms import GroupForm
 from lfc.manage.forms import PortalCoreForm
 from lfc.manage.forms import MetaDataForm
+from lfc.manage.forms import RoleForm
 from lfc.manage.forms import SEOForm
 from lfc.manage.forms import UserForm
 from lfc.manage.forms import UserAddForm
@@ -191,22 +195,22 @@ def portal_permissions(request, template_name="lfc/manage/portal_permissions.htm
 
     my_permissions = []
     for permission in Permission.objects.all():
-        groups = []
-        for group in Group.objects.all():
-            groups.append({
-                "id" : group.id,
-                "name" : group.name,
-                "has_permission" : _has_permission(portal, permission.codename, group),
+        roles = []
+        for role in Role.objects.all():
+            roles.append({
+                "id" : role.id,
+                "name" : role.name,
+                "has_permission" : _has_permission(portal, permission.codename, role),
             })
 
         my_permissions.append({
             "name" : permission.name,
             "codename" : permission.codename,
-            "groups" : groups,
+            "roles" : roles,
         })
 
     return render_to_string(template_name, RequestContext(request, {
-        "groups" : Group.objects.all(),
+        "roles" : Role.objects.all(),
         "permissions" : my_permissions,
     }))
 
@@ -219,13 +223,13 @@ def update_portal_permissions(request):
     for permission in request.POST.getlist("permission"):
         permissions_dict[permission] = 1
 
-    for group in Group.objects.all():
+    for role in Role.objects.all():
         for permission in Permission.objects.all():
-            perm_string = "%s|%s" % (group.id, permission.codename)
+            perm_string = "%s|%s" % (role.id, permission.codename)
             if perm_string in permissions_dict:
-                permissions.utils.grant_permission(obj, permission, group)
+                permissions.utils.grant_permission(obj, permission, role)
             else:
-                permissions.utils.remove_permission(obj, permission, group)
+                permissions.utils.remove_permission(obj, permission, role)
 
     html = (
         ("#permissions", portal_permissions(request)),
@@ -666,29 +670,232 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
     my_permissions = []
     for permission in Permission.objects.filter(q):
-        groups = []
-        for group in Group.objects.all():
-            groups.append({
-                "id" : group.id,
-                "name" : group.name,
-                "has_permission" : _has_permission(obj, permission.codename, group),
+        roles = []
+        for role in Role.objects.all():
+            roles.append({
+                "id" : role.id,
+                "name" : role.name,
+                "has_permission" : _has_permission(obj, permission.codename, role),
             })
 
         my_permissions.append({
             "name" : permission.name,
             "codename" : permission.codename,
-            "groups" : groups,
+            "roles" : roles,
             "is_inherited" : permissions.utils.is_inherited(obj, permission.codename),
         })
 
     return render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
-        "groups" : Group.objects.all(),
+        "roles" : Role.objects.all(),
         "permissions" : my_permissions,
         "workflow" : workflows.utils.get_workflow(obj),
+        "local_roles" : local_roles(request, obj),
     }))
 
+@login_required
+def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
+    """
+    """
+    ctype = ContentType.objects.get_for_model(obj)
+
+    temp = []
+    users = []
+    for user in [prr.user for prr in PrincipalRoleRelation.objects.exclude(user=None).filter(content_id=obj.id, content_type=ctype)]:
+
+        # Every user just one time
+        if user.id in temp:
+            continue
+        temp.append(user.id)
+
+        local_roles = permissions.utils.get_local_roles(user, obj)
+
+        roles = []
+        for role in Role.objects.all():
+
+            roles.append({
+                "id" : role.id,
+                "name" : role.name,
+                "has_local_role" : role in local_roles,
+            })
+
+        if user.first_name and user.last_name:
+            name = "%s %s" % (user.first_name, user.last_name)
+        else:
+            name = user.username
+
+        users.append({
+            "id" : user.id,
+            "name" : name,
+            "roles" : roles,
+        })
+
+    temp = []
+    groups = []
+    for group in [prr.group for prr in PrincipalRoleRelation.objects.exclude(group=None).filter(content_id=obj.id, content_type=ctype)]:
+
+        # Every group just one time
+        if group.id in temp:
+            continue
+        temp.append(group.id)
+
+        local_roles = permissions.utils.get_local_roles(group, obj)
+
+        roles = []
+        for role in Role.objects.all():
+
+            roles.append({
+                "id" : role.id,
+                "name" : role.name,
+                "has_local_role" : role in local_roles,
+            })
+
+        groups.append({
+            "id" : group.id,
+            "name" : group.name,
+            "roles" : roles,
+        })
+
+    return render_to_string(template_name, RequestContext(request, {
+        "users" : users,
+        "groups" : groups,
+        "roles" : Role.objects.all(),
+        "obj" : obj,
+    }))
+
+def local_roles_add_form(request, id, template_name="lfc/manage/local_roles_add.html"):
+    """Displays a form to add local roles to object with passed id.
+    """
+    return render_to_response(template_name, RequestContext(request, {
+        "obj_id" : id,
+    }))
+
+def local_roles_search(request, id, template_name="lfc/manage/local_roles_search_result.html"):
+    """
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    ctype = ContentType.objects.get_for_model(obj)
+
+    user_ids = [prr.user.id for prr in PrincipalRoleRelation.objects.exclude(user=None).filter(content_id=obj.id, content_type=ctype)]
+    group_ids = [prr.group.id for prr in PrincipalRoleRelation.objects.exclude(group=None).filter(content_id=obj.id, content_type=ctype)]
+
+    html = render_to_string(template_name, RequestContext(request, {
+        "users" : User.objects.exclude(pk__in=user_ids),
+        "groups" : Group.objects.exclude(pk__in=group_ids),
+        "obj_id" : id,
+        "roles" : Role.objects.all(),
+    }))
+
+    html = (
+        ("#local-roles-search-result", html),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
 # actions
+@login_required
+def add_local_roles(request, id):
+    """
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    ctype = ContentType.objects.get_for_model(obj)
+
+    for user_role in request.POST.getlist("user_role"):
+        user_id, role_id = user_role.split("|")
+        PrincipalRoleRelation.objects.create(user_id=user_id, content_id = id, content_type=ctype, role_id = role_id)
+
+    for group_role in request.POST.getlist("group_role"):
+        group_id, role_id = group_role.split("|")
+        PrincipalRoleRelation.objects.create(group_id=group_id, content_id = id, content_type=ctype, role_id = role_id)
+
+    message = _(u"Local roles has been added")
+
+    html = (
+        ("#local-roles", local_roles(request, obj)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+def save_local_roles(request, id):
+    """
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    ctype = ContentType.objects.get_for_model(obj)
+
+    if request.POST.get("action") == "delete":
+
+        message = _(u"Local roles has been deleted")
+
+        # Remove local roles for checked users
+        for user_id in request.POST.getlist("to_delete_user"):
+            try:
+                user = User.objects.get(pk=user_id)
+            except User.DoesNotExist:
+                continue
+            else:
+                permissions.utils.remove_roles(obj, user)
+
+        # Remove local roles for checked groups
+        for group_id in request.POST.getlist("to_delete_group"):
+            try:
+                group = Group.objects.get(pk=group_id)
+            except Group.DoesNotExist:
+                continue
+            else:
+                permissions.utils.remove_roles(obj, group)
+    else:
+        message = _(u"Local roles has been saved")
+        users_roles = request.POST.getlist("user_role")
+        groups_roles = request.POST.getlist("group_role")
+
+        temp = []
+        for user in [prr.user for prr in PrincipalRoleRelation.objects.exclude(user=None).filter(content_id=obj.id, content_type=ctype)]:
+
+            # Every user just one time
+            if user.id in temp:
+                continue
+            temp.append(user.id)
+
+            for role in Role.objects.all():
+                if "%s|%s" % (user.id, role.id) in users_roles:
+                    permissions.utils.add_role(user, role, obj)
+                else:
+                    permissions.utils.remove_role(user, role, obj)
+
+        temp = []
+        for group in [prr.group for prr in PrincipalRoleRelation.objects.exclude(group=None).filter(content_id=obj.id, content_type=ctype)]:
+
+            # Every user just one time
+            if group.id in temp:
+                continue
+            temp.append(group.id)
+
+            for role in Role.objects.all():
+                if "%s|%s" % (group.id, role.id) in groups_roles:
+                    permissions.utils.add_role(group, role, obj)
+                else:
+                    permissions.utils.remove_role(group, role, obj)
+
+    html = (
+        ("#local-roles", local_roles(request, obj)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
 @login_required
 def update_object_children(request, id):
     """Deletes/Updates children for the content object with the passed id.The
@@ -787,13 +994,13 @@ def update_object_permissions(request, id):
     for permission in request.POST.getlist("permission"):
         permissions_dict[permission] = 1
 
-    for group in Group.objects.all():
+    for role in Role.objects.all():
         for permission in Permission.objects.all():
-            perm_string = "%s|%s" % (group.id, permission.codename)
+            perm_string = "%s|%s" % (role.id, permission.codename)
             if perm_string in permissions_dict:
-                permissions.utils.grant_permission(obj, permission, group)
+                permissions.utils.grant_permission(obj, permission, role)
             else:
-                permissions.utils.remove_permission(obj, permission, group)
+                permissions.utils.remove_permission(obj, permission, role)
 
     inheritance_dict = dict()
     for permission in request.POST.getlist("inherit"):
@@ -1848,9 +2055,13 @@ def reset_users_filter(request):
 ##############################################################################
 
 @login_required
-def manage_user(request, id, as_string=False, template_name="lfc/manage/user.html"):
+def manage_user(request, id=None, template_name="lfc/manage/user.html"):
     """Displays main screen to manage the user with passed id.
     """
+    if id is None:
+        user = User.objects.all()[0]
+        return HttpResponseRedirect(reverse("lfc_manage_user", kwargs={ "id" : user.id }))
+
     result = render_to_response(template_name, RequestContext(request, {
         "data" : user_data(request, id),
         "password" : user_password(request, id),
@@ -1907,7 +2118,7 @@ def user_navigation(request, id, template_name="lfc/manage/user_navigation.html"
     """Displays the user navigation.
     """
     users = _get_filtered_users(request, "user")
-    paginator = Paginator(users, 20)
+    paginator = Paginator(users, 30)
     page = request.session.get("user_page", request.REQUEST.get("page", 1))
 
     try:
@@ -2044,6 +2255,143 @@ def reset_user_filter(request):
         { "html" : html, "message" : message, }, cls = LazyEncoder)
 
     return HttpResponse(result)
+
+# Group ######################################################################
+# ############################################################################
+
+def manage_group(request, id=None, template_name="lfc/manage/group.html"):
+    """
+    """
+    if id is None:
+        id = Group.objects.all()[0].id
+        return HttpResponseRedirect(reverse("lfc_manage_group", kwargs={"id" : id}))
+
+    group = Group.objects.get(pk=id)
+
+    form = GroupForm(instance=group)
+    return render_to_response(template_name, RequestContext(request, {
+        "form" : form,
+        "group" : group,
+        "groups" : Group.objects.all(),
+        "current_group_id" : group.id,
+    }))
+
+@login_required
+def add_group(request, template_name="lfc/manage/group_add.html"):
+    """Displays a add group form.
+    """
+    if request.method == "POST":
+        form = GroupForm(data=request.POST)
+        if form.is_valid():
+            group = form.save()
+            return HttpResponseRedirect(reverse("lfc_manage_group", kwargs={"id" : group.id}))
+        else:
+            return render_to_response(template_name, RequestContext(request, {
+                "form" : form,
+                "groups" : Group.objects.all(),
+            }))
+    else:
+        form = GroupForm()
+        return render_to_response(template_name, RequestContext(request, {
+            "form" : form,
+            "groups" : Group.objects.all(),
+        }))
+
+@login_required
+def delete_group(request, id, template_name="lfc/manage/group_add.html"):
+    """Deletes a group.
+    """
+    try:
+        Group.objects.get(pk=id).delete()
+    except Group.DoesNotExist:
+        pass
+
+    return HttpResponseRedirect(reverse("lfc_manage_group"))
+
+@login_required
+def save_group(request, id, template_name="lfc/manage/group_add.html"):
+    """Saves group with passed id.
+    """    
+    group = Group.objects.get(pk=id)
+    form = GroupForm(instance=group, data=request.POST)
+    if form.is_valid():
+        group = form.save()
+        return HttpResponseRedirect(reverse("lfc_manage_group", kwargs={"id" : group.id}))
+    else:
+        return render_to_response(template_name, RequestContext(request, {
+            "form" : form,
+            "group" : group,
+            "groups" : Group.objects.all(),
+            "current_group_id" : int(id),
+        }))
+
+# Role #######################################################################
+# ############################################################################
+
+def manage_role(request, id=None, template_name="lfc/manage/role.html"):
+    """
+    """
+    if id is None or id in ("1", "2"):
+        id = Role.objects.exclude(name__in = ("Anonymous", "Owner"))[0].id
+        return HttpResponseRedirect(reverse("lfc_manage_role", kwargs={"id" : id}))
+
+    role = Role.objects.get(pk=id)
+    form = RoleForm(instance=role)
+
+    return render_to_response(template_name, RequestContext(request, {
+        "form" : form,
+        "role" : role,
+        "roles" : Role.objects.exclude(name__in = ("Anonymous", "Owner")),
+        "current_role_id" : int(id),
+    }))
+
+@login_required
+def add_role(request, template_name="lfc/manage/role_add.html"):
+    """Displays a add role form.
+    """
+    if request.method == "POST":
+        form = RoleForm(data=request.POST)
+        if form.is_valid():
+            role = form.save()
+            return HttpResponseRedirect(reverse("lfc_manage_role", kwargs={"id" : role.id}))
+        else:
+            return render_to_response(template_name, RequestContext(request, {
+                "form" : form,
+            }))
+    else:
+        form = RoleForm()
+        return render_to_response(template_name, RequestContext(request, {
+            "form" : form,
+            "roles" : Role.objects.exclude(name__in = ("Anonymous", "Owner")),
+        }))
+
+@login_required
+def delete_role(request, id, template_name="lfc/manage/role_add.html"):
+    """Deletes a role.
+    """
+    try:
+        Role.objects.get(pk=id).delete()
+    except Role.DoesNotExist:
+        pass
+
+    return HttpResponseRedirect(reverse("lfc_manage_role"))
+
+@login_required
+def save_role(request, id, template_name="lfc/manage/role_add.html"):
+    """Saves role with passed id.
+    """
+    role = Role.objects.get(pk=id)
+    form = RoleForm(instance=role, data=request.POST)
+    if form.is_valid():
+        role = form.save()
+        return HttpResponseRedirect(reverse("lfc_manage_role", kwargs={"id" : role.id}))
+    else:
+        return render_to_response(template_name, RequestContext(request, {
+            "form" : form,
+            "role" : role,
+            "roles" : Role.objects.exclude(name__in = ("Anonymous", "Owner")),
+            "current_role_id" : int(id),
+        }))
 
 # Privates ###################################################################
 ##############################################################################
@@ -2245,7 +2593,7 @@ def _update_positions(obj, take_parent=False):
     return obj
 
 
-def _has_permission(obj, codename, group):
+def _has_permission(obj, codename, role):
     """Checks whether the passed group has passed permission for passed object.
 
     **Parameters:**
@@ -2256,13 +2604,13 @@ def _has_permission(obj, codename, group):
     codename
         The permission's codename which should be checked.
 
-    group
-        The group for which the permission should be checked.
+    role
+        The role for which the permission should be checked.
     """
     ct = ContentType.objects.get_for_model(obj)
 
     p = ObjectPermission.objects.filter(
-        content_type=ct, content_id=obj.id, group=group, permission__codename = codename)
+        content_type=ct, content_id=obj.id, role=role, permission__codename = codename)
 
     if p.count() > 0:
         return True

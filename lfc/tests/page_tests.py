@@ -25,7 +25,7 @@ class PageTestCase(TestCase):
         self.p111 = Page.objects.create(title="Page 1-1-1", slug="page-1-1-1", parent=self.p11)
         self.p12 = Page.objects.create(title="Page 1-2", slug="page-1-2", parent=self.p1)
 
-        self.anonymous = permissions.utils.register_group("Anonymous")
+        self.anonymous = permissions.utils.register_role("Anonymous")
         self.permission = permissions.utils.register_permission("View", "view")
 
     def test_page_defaults(self):

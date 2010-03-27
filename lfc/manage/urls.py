@@ -74,6 +74,12 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
 
+    # local roles
+    url(r'^save-local-roles/(?P<id>\d+)', "save_local_roles", name="lfc_manage_save_local_roles"),
+    url(r'^local-roles-add-form/(?P<id>\d+)', "local_roles_add_form", name="lfc_manage_local_roles_add_form"),
+    url(r'^local-roles-search/(?P<id>\d+)', "local_roles_search", name="lfc_manage_local_roles_search"),
+    url(r'^add-local-roles/(?P<id>\d+)', "add_local_roles", name="lfc_manage_add_local_roles"),
+
     # translation
     url(r'^save-translation', "save_translation", name="lfc_save_translation"),
     url(r'^(?P<id>\d+)/translate/(?P<language>\w{2})', "translate_object", name="lfc_translate_object"),
@@ -85,6 +91,7 @@ urlpatterns = patterns('lfc.manage.views',
     # users
     url(r'^users', "manage_users", name="lfc_manage_users"),
     url(r'^user/(?P<id>\d+)', "manage_user", name="lfc_manage_user"),
+    url(r'^user$', "manage_user", name="lfc_manage_user"),
     url(r'^save-user-data/(?P<id>\d+)', "save_user_data", name="lfc_save_user_data"),
     url(r'^add-user', "add_user", name="lfc_add_user"),
     url(r'^delete-user/(?P<id>\d+)', "delete_user", name="lfc_delete_user"),
@@ -93,10 +100,23 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^set-users-filter', "set_users_filter", name="lfc_manage_set_users_filter"),
     url(r'^reset-users-filter', "reset_users_filter", name="lfc_manage_reset_users_filter"),
     url(r'^set-users-page', "set_users_page", name="lfc_manage_set_users_page"),
-
     url(r'^set-user-filter', "set_user_filter", name="lfc_manage_set_user_filter"),
     url(r'^reset-user-filter', "reset_user_filter", name="lfc_manage_reset_user_filter"),
     url(r'^set-user-page', "set_user_page", name="lfc_manage_set_user_page"),
+
+    # groups
+    url(r'^group$', "manage_group", name="lfc_manage_group"),
+    url(r'^group/(?P<id>\d+)$', "manage_group", name="lfc_manage_group"),
+    url(r'^add-group$', "add_group", name="lfc_manage_add_group"),
+    url(r'^save-group/(?P<id>\d+)$', "save_group", name="lfc_manage_save_group"),
+    url(r'^delete-group/(?P<id>\d+)$', "delete_group", name="lfc_manage_delete_group"),
+
+    # roles
+    url(r'^role$', "manage_role", name="lfc_manage_role"),
+    url(r'^role/(?P<id>\d+)$', "manage_role", name="lfc_manage_role"),
+    url(r'^add-role$', "add_role", name="lfc_manage_add_role"),
+    url(r'^save-role/(?P<id>\d+)$', "save_role", name="lfc_manage_save_role"),
+    url(r'^delete-role/(?P<id>\d+)$', "delete_role", name="lfc_manage_delete_role"),
 
     # content
     url(r'^$', "portal", name="lfc_manage_portal"),

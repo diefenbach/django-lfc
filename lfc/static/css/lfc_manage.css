@@ -15,6 +15,10 @@ select {
     width: 200px;
 }
 
+select.users-active-filter {
+    width: 100px;
+}
+
 input[type='text'] {
     width: 200px;
 }
@@ -156,8 +160,8 @@ table.lfs-manage-table {
 
 /* Navigation */
 .page-navigation {
-    background: #ddd;
-    border: 1px solid #aaa;
+    background: #eee;
+    border: 1px solid #ccc;
     padding: 2px 0 6px 0;
     text-align: center;
     color: #555;
@@ -169,6 +173,14 @@ table.lfs-manage-table {
     top: 4px;
 }
 
+table.groups {
+    width: 95%;
+    border: 1px solid #eee;
+    margin-left: 30px;
+}
+
+table.groups, 
+table.groups tr.header,  
 table.users,
 table.users tr.header {
     border: 1px solid #ccc;
@@ -185,6 +197,7 @@ table.users-navigation img {
     top: 2px;
 }
 
+.navigation-group,
 .navigation-user {
     margin-top: 20px;
     padding-left: 10px;

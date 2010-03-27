@@ -89,7 +89,13 @@
                                     <a>{% trans "User" %}</a>
                                     <ul>
                                         <li>
-                                            <a href="{% url lfc_manage_users %}">{% trans 'Users' %}</a>
+                                            <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
+                                        </li>                                        
+                                        <li>
+                                            <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url lfc_manage_group %}">{% trans 'Groups' %}</a>
                                         </li>
                                     </ul>
                                 </li>

@@ -94,7 +94,8 @@ $(function() {
                     speed: "fast",
                     delay: "200"
                 });
-                $.jGrowl(data["message"]);
+                if (data["message"])
+                    $.jGrowl(data["message"]);
             }
         })
         return false;
@@ -257,6 +258,15 @@ $(function() {
                 $.jGrowl(data["message"]);
             }
         })
+        return false;
+    });
+
+    $(".overlay-link").livequery("click", function() {
+        var url = $(this).attr("href");
+        $.get(url, function(data) {
+            $("#overlay .content").html(data);
+            overlay.load();
+        });
         return false;
     });
 

@@ -69,7 +69,7 @@
                     <input style="padding-top:2px" name="users_name_filter" type="text" value="{{ name_filter }}" />
                 </td>
                 <td>
-                    <select name="users_active_filter">
+                    <select class="users-active-filter" name="users_active_filter">
                         <option value="">---</option>
                         <option value="1" {% ifequal active_filter "1" %}selected="selected"{% endifequal %}>{% trans "Yes" %}</option>
                         <option value="0" {% ifequal active_filter "0" %}selected="selected"{% endifequal %}>{% trans "No" %}</option>

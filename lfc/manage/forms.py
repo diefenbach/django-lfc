@@ -9,6 +9,10 @@ from django.utils.translation import ugettext_lazy as _
 # tagging imports
 from tagging.forms import TagField
 
+# permissions imports
+from permissions.models import Role
+from permissions.models import PrincipalRoleRelation
+
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.models import Page
@@ -18,15 +22,56 @@ from lfc.models import ContentTypeRegistration
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
+class RoleForm(forms.ModelForm):
+    """
+    """
+    class Meta:
+        model = Role
+
+class GroupForm(forms.ModelForm):
+    """
+    """
+    class Meta:
+        model = Group
+        exclude = ("permissions", )
+
 class UserForm(forms.ModelForm):
     """
     """
+    roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
+
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
 
         # Remove Anonymous and Owner from group choices
-        groups = Group.objects.exclude(name__in=("Anonymous", "Owner"))
-        self.fields["groups"].choices = [(g.id, g.name) for g in groups]
+        roles = Role.objects.exclude(name__in=("Anonymous", "Owner"))
+        self.fields["roles"].choices = [(r.id, r.name) for r in roles]
+
+        self.initial.update({
+            "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(user=self.instance)]})
+
+    def save(self, commit=True):
+        """
+        """
+        role_ids = self.data.get("roles", [])
+
+        for role in Role.objects.all():
+
+            if str(role.id) in role_ids:
+                try:
+                    prr = PrincipalRoleRelation.objects.get(user=self.instance, role=role)
+                except PrincipalRoleRelation.DoesNotExist:
+                    PrincipalRoleRelation.objects.create(user=self.instance, role=role)
+            else:
+                try:
+                    prr = PrincipalRoleRelation.objects.get(user=self.instance, role=role)
+                except PrincipalRoleRelation.DoesNotExist:
+                    pass
+                else:
+                    prr.delete()
+
+        del self.fields["roles"]
+        super(UserForm, self).save(commit)
 
     class Meta:
         model = User
@@ -54,7 +99,7 @@ class UserAddForm(forms.ModelForm):
         if p1 != p2:
             self._errors["password1"] = ErrorList(["Passwords must be equal"])
             self._errors["password2"] = ErrorList(["Passwords  must be equal"])
-            
+
         return self.cleaned_data
 
     class Meta:
