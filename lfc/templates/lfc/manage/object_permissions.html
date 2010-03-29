@@ -14,10 +14,10 @@
 <form action="{% url lfc_update_object_permissions obj.id %}"
       method="post">
 
-    <table class="lfs-manage-table" width="80%">
+    <table class="lfs-manage-table" width="99%">
         <tr>
-            <th width="200px">{% trans "Inherit" %}</th>
-            <th width="300px">{% trans "Permission" %}</th>
+            <th width="100px">{% trans "Inherit" %}</th>
+            <th width="200px">{% trans "Permission" %}</th>
             {% for role in roles %}
                 <th>{{ role.name }}</th>
             {% endfor %}

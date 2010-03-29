@@ -200,7 +200,7 @@ def portal_permissions(request, template_name="lfc/manage/portal_permissions.htm
             roles.append({
                 "id" : role.id,
                 "name" : role.name,
-                "has_permission" : _has_permission(portal, permission.codename, role),
+                "has_permission" : _has_permission(portal, role, permission.codename),
             })
 
         my_permissions.append({
@@ -227,9 +227,9 @@ def update_portal_permissions(request):
         for permission in Permission.objects.all():
             perm_string = "%s|%s" % (role.id, permission.codename)
             if perm_string in permissions_dict:
-                permissions.utils.grant_permission(obj, permission, role)
+                permissions.utils.grant_permission(obj, role, permission)
             else:
-                permissions.utils.remove_permission(obj, permission, role)
+                permissions.utils.remove_permission(obj, role, permission)
 
     html = (
         ("#permissions", portal_permissions(request)),
@@ -438,7 +438,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
-    if lfc.utils.has_permission(obj, "view", request.user) == False:
+    if lfc.utils.has_permission(obj, request.user, "view") == False:
          return HttpResponseRedirect(reverse("lfc_login"))
 
     return render_to_response(template_name, RequestContext(request, {
@@ -675,7 +675,7 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
             roles.append({
                 "id" : role.id,
                 "name" : role.name,
-                "has_permission" : _has_permission(obj, permission.codename, role),
+                "has_permission" : _has_permission(obj, role, permission.codename),
             })
 
         my_permissions.append({
@@ -776,12 +776,15 @@ def local_roles_search(request, id, template_name="lfc/manage/local_roles_search
     obj = lfc.utils.get_content_object(pk=id)
     ctype = ContentType.objects.get_for_model(obj)
 
+    name = request.GET.get("name", "")
+    q_users = Q(username__icontains=name) | Q(first_name__icontains=name) | Q(last_name__icontains=name)
+
     user_ids = [prr.user.id for prr in PrincipalRoleRelation.objects.exclude(user=None).filter(content_id=obj.id, content_type=ctype)]
     group_ids = [prr.group.id for prr in PrincipalRoleRelation.objects.exclude(group=None).filter(content_id=obj.id, content_type=ctype)]
 
     html = render_to_string(template_name, RequestContext(request, {
-        "users" : User.objects.exclude(pk__in=user_ids),
-        "groups" : Group.objects.exclude(pk__in=group_ids),
+        "users" : User.objects.exclude(pk__in=user_ids).filter(q_users),
+        "groups" : Group.objects.exclude(pk__in=group_ids).filter(name__icontains=name),
         "obj_id" : id,
         "roles" : Role.objects.all(),
     }))
@@ -806,11 +809,19 @@ def add_local_roles(request, id):
 
     for user_role in request.POST.getlist("user_role"):
         user_id, role_id = user_role.split("|")
-        PrincipalRoleRelation.objects.create(user_id=user_id, content_id = id, content_type=ctype, role_id = role_id)
+        user = permissions.utils.get_user(user_id)
+        role = permissions.utils.get_role(role_id)
+
+        if user and role:
+            permissions.utils.add_local_role(obj, user, role)
 
     for group_role in request.POST.getlist("group_role"):
         group_id, role_id = group_role.split("|")
-        PrincipalRoleRelation.objects.create(group_id=group_id, content_id = id, content_type=ctype, role_id = role_id)
+        group = permissions.utils.get_group(group_id)
+        role = permissions.utils.get_role(role_id)
+
+        if group and role:
+            permissions.utils.add_local_role(obj, group, role)
 
     message = _(u"Local roles has been added")
 
@@ -994,19 +1005,21 @@ def update_object_permissions(request, id):
     for permission in request.POST.getlist("permission"):
         permissions_dict[permission] = 1
 
+    q = Q(content_types=obj) | Q(content_types = None)
+
     for role in Role.objects.all():
-        for permission in Permission.objects.all():
+        for permission in Permission.objects.filter(q):
             perm_string = "%s|%s" % (role.id, permission.codename)
             if perm_string in permissions_dict:
-                permissions.utils.grant_permission(obj, permission, role)
+                permissions.utils.grant_permission(obj, role, permission)
             else:
-                permissions.utils.remove_permission(obj, permission, role)
+                permissions.utils.remove_permission(obj, role, permission)
 
     inheritance_dict = dict()
     for permission in request.POST.getlist("inherit"):
         inheritance_dict[permission] = 1
 
-    for permission in Permission.objects.all():
+    for permission in Permission.objects.filter(q):
         if permission.codename in inheritance_dict:
             permissions.utils.remove_inheritance_block(obj, permission)
         else:
@@ -1214,7 +1227,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     for obj in temp:
         obj = obj.get_content_object()
 
-        if lfc.utils.has_permission(obj, "view", request.user) == False:
+        if lfc.utils.has_permission(obj, request.user, "view") == False:
             continue
 
         if obj in current_objs:
@@ -2263,8 +2276,11 @@ def manage_group(request, id=None, template_name="lfc/manage/group.html"):
     """
     """
     if id is None:
-        id = Group.objects.all()[0].id
-        return HttpResponseRedirect(reverse("lfc_manage_group", kwargs={"id" : id}))
+        try:
+            id = Group.objects.all()[0].id
+            return HttpResponseRedirect(reverse("lfc_manage_group", kwargs={"id" : id}))
+        except IndexError:
+            return HttpResponseRedirect(reverse("lfc_manage_add_group"))
 
     group = Group.objects.get(pk=id)
 
@@ -2592,8 +2608,7 @@ def _update_positions(obj, take_parent=False):
 
     return obj
 
-
-def _has_permission(obj, codename, role):
+def _has_permission(obj, role, codename):
     """Checks whether the passed group has passed permission for passed object.
 
     **Parameters:**

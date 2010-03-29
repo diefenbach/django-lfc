@@ -49,7 +49,7 @@ class PortalTestCase(TestCase):
         children = self.p.get_children()
         self.assertEqual(len(children), 2)
 
-        permissions.utils.grant_permission(self.p1, "view", self.anonymous)
+        permissions.utils.grant_permission(self.p1, self.anonymous, "view")
         children = self.p.get_children(request)
         self.assertEqual(len(children), 1)
 

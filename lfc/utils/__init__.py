@@ -194,7 +194,7 @@ def get_related_pages_by_tags(page, num=None):
 
     return {"related_pages" : related_pages}
 
-def has_permission(obj, codename, user):
+def has_permission(obj, user, codename):
     """A thin wrapper around permissions' has_permission in order to add LFC
     specific groups.
     """
@@ -211,4 +211,4 @@ def has_permission(obj, codename, user):
     except AttributeError:
         pass
 
-    return permissions.utils.has_permission(obj, codename, user, roles)
+    return permissions.utils.has_permission(obj, user, codename, roles)

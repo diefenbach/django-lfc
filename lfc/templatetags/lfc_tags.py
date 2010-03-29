@@ -158,7 +158,7 @@ def tabs(context):
 
         tabs = []
         for obj in tl_objs:
-            if lfc.utils.has_permission(obj, "view", request.user):
+            if lfc.utils.has_permission(obj, request.user, "view"):
                 obj.current = obj in current_pages
                 tabs.append(obj)
 
@@ -437,7 +437,7 @@ class PermissionComparisonNode(template.Node):
     def render(self, context):
         obj = context.get("obj")
         request = context.get("request")
-        if lfc.utils.has_permission(obj, self.permission, request.user):
+        if lfc.utils.has_permission(obj, request.user, self.permission):
             return self.nodelist_true.render(context)
         else:
             return self.nodelist_false
@@ -480,7 +480,7 @@ class PortalPermissionComparisonNode(template.Node):
     def render(self, context):
         obj = lfc.utils.get_portal()
         request = context.get("request")
-        if lfc.utils.has_permission(obj, self.permission, request.user):
+        if lfc.utils.has_permission(obj, request.user, self.permission):
             return self.nodelist_true.render(context)
         else:
             try:

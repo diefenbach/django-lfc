@@ -57,7 +57,7 @@ def base_view(request, language=None, slug=None, obj=None):
     if isinstance(obj, Portal):
         return portal(request, obj)
 
-    if not has_permission(obj, "view", request.user):
+    if not has_permission(obj, request.user, "view"):
         return HttpResponseRedirect(reverse("lfc_login"))
 
     # Redirect to standard object unless superuser is asking

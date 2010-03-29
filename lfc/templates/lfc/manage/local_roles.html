@@ -10,10 +10,10 @@
 {% if users or groups %}
     <form action="{% url lfc_manage_save_local_roles obj.id %}"
           method="POST">
-        <table class="lfs-manage-table" width="80%">
+        <table class="lfs-manage-table" width="99%">
             <tr>
-                <th width="200px"><input type="checkbox" class="select-all" value="1" /></th>
-                <th width="300px">
+                <th width="100px"><input type="checkbox" class="select-all" value="1" /></th>
+                <th width="200px">
                     {% trans "User" %} / {% trans "Group" %}
                 </th>                
                 {% for role in roles %}

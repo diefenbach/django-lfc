@@ -21,7 +21,7 @@ class ManagerTestCase(TestCase):
         self.anonymous = permissions.utils.register_role("Anonymous")
         self.permission = permissions.utils.register_permission("View", "view")
 
-        permissions.utils.grant_permission(self.p2, "view", self.anonymous)
+        permissions.utils.grant_permission(self.p2, self.anonymous, "view")
 
     def test_get(self):
         """

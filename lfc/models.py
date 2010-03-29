@@ -247,7 +247,7 @@ class Portal(models.Model):
 
         objs = []
         for obj in lfc.utils.get_content_objects(request, parent=None, **kwargs):
-            if lfc.utils.has_permission(obj, "view", request.user):
+            if lfc.utils.has_permission(obj, request.user, "view"):
                 objs.append(obj)
 
         return objs
@@ -523,7 +523,7 @@ class BaseContent(AbstractBaseContent):
 
         objs = []
         for obj in lfc.utils.get_content_objects(request, parent=self, **kwargs):
-            if lfc.utils.has_permission(obj, "view", request.user):
+            if lfc.utils.has_permission(obj, request.user, "view"):
                 objs.append(obj)
         return objs
 
@@ -587,7 +587,7 @@ class BaseContent(AbstractBaseContent):
         else:
             if self.canonical:
                 obj = BaseContent.objects.get(pk=self.canonical.id)
-                if lfc.utils.has_permission(obj, "view", request.user):
+                if lfc.utils.has_permission(obj, request.user, "view"):
                     return obj
                 else:
                     return None
@@ -632,7 +632,7 @@ class BaseContent(AbstractBaseContent):
             return None
         try:
             translation = self.translations.get(language=language).get_content_object()
-            if lfc.utils.has_permission(translation, "view", request.user):
+            if lfc.utils.has_permission(translation, request.user, "view"):
                 return translation
             else:
                 return None

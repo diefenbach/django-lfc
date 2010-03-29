@@ -206,11 +206,11 @@ class PageTestCase(TestCase):
         request = create_request()
         # children = self.p1.get_children(request)
         # self.assertEqual(len(children), 2)
-        # 
+        #
         # # The cildren have to be specific objects
         # for child in children:
         #     self.failUnless(isinstance(child, Page))
-        # 
+        #
         # children = self.p1.get_children(request, slug="page-1-1")
         # self.assertEqual(len(children), 1)
 
@@ -222,13 +222,13 @@ class PageTestCase(TestCase):
 
         children = self.p1.get_children()
         self.assertEqual(len(children), 2)
-        
-        # Grant view permission to self.p11
-        permissions.utils.grant_permission(self.p11, "view", self.anonymous)
 
-        result = lfc.utils.has_permission(self.p11, "view", request.user)
+        # Grant view permission to self.p11
+        permissions.utils.grant_permission(self.p11, self.anonymous, "view")
+
+        result = lfc.utils.has_permission(self.p11, request.user, "view")
         self.assertEqual(result, True)
-        
+
         children = self.p1.get_children(request)
         self.assertEqual(len(children), 1)
 
