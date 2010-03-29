@@ -248,7 +248,7 @@ class Portal(models.Model, PermissionBase):
 
         objs = []
         for obj in lfc.utils.get_content_objects(request, parent=None, **kwargs):
-            if self.has_permission(request.user, "view"):
+            if obj.has_permission(request.user, "view"):
                 objs.append(obj)
 
         return objs
@@ -543,7 +543,7 @@ class BaseContent(AbstractBaseContent):
 
         objs = []
         for obj in lfc.utils.get_content_objects(request, parent=self, **kwargs):
-            if self.has_permission(request.user, "view"):
+            if obj.has_permission(request.user, "view"):
                 objs.append(obj)
         return objs
 

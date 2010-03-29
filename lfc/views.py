@@ -21,7 +21,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # lfc imports
 import lfc.utils
-from lfc.utils import has_permission
 from lfc.utils import MessageHttpResponseRedirect
 from lfc.models import File
 from lfc.models import BaseContent
