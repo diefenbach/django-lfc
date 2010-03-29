@@ -32,7 +32,8 @@ from workflows.models import WorkflowBase
 from workflows.models import Workflow
 
 # permissions imports
-import permissions.utils
+from permissions.models import PermissionBase
+from permissions.models import Role
 
 # lfc imports
 import lfc.utils
@@ -150,7 +151,7 @@ class ContentTypeRegistration(models.Model):
         """
         return self.templates.all()
 
-class Portal(models.Model):
+class Portal(models.Model, PermissionBase):
     """A portal is the root of all content objects. Stores global images and
     some general data about the site.
 
@@ -247,12 +248,31 @@ class Portal(models.Model):
 
         objs = []
         for obj in lfc.utils.get_content_objects(request, parent=None, **kwargs):
-            if lfc.utils.has_permission(obj, request.user, "view"):
+            if self.has_permission(request.user, "view"):
                 objs.append(obj)
 
         return objs
+    
+    def has_permission(self, user, codename):
+        """Overwrites django-permissions' has_permission in order to add LFC 
+        specific groups.
+        """
+        # Every user is also anonymous user
+        try:
+            roles = [Role.objects.get(name="Anonymous")]
+        except Role.DoesNotExist:
+            roles = []
 
-class AbstractBaseContent(models.Model, WorkflowBase):
+        # Check whether the current user is the creator of the current object.
+        try:
+            if user == self.creator:
+                roles.append(Role.objects.get(name="Owner"))
+        except AttributeError:
+            pass
+
+        return super(Portal, self).has_permission(user, codename, roles)
+        
+class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
     """The root of all content types. It provides the inheritable
     BaseContentManager.
 
@@ -523,7 +543,7 @@ class BaseContent(AbstractBaseContent):
 
         objs = []
         for obj in lfc.utils.get_content_objects(request, parent=self, **kwargs):
-            if lfc.utils.has_permission(obj, request.user, "view"):
+            if self.has_permission(request.user, "view"):
                 objs.append(obj)
         return objs
 
@@ -587,7 +607,7 @@ class BaseContent(AbstractBaseContent):
         else:
             if self.canonical:
                 obj = BaseContent.objects.get(pk=self.canonical.id)
-                if lfc.utils.has_permission(obj, request.user, "view"):
+                if self.has_permission(request.user, "view"):
                     return obj
                 else:
                     return None
@@ -632,7 +652,7 @@ class BaseContent(AbstractBaseContent):
             return None
         try:
             translation = self.translations.get(language=language).get_content_object()
-            if lfc.utils.has_permission(translation, request.user, "view"):
+            if translation.has_permission(request.user, "view"):
                 return translation
             else:
                 return None
@@ -655,18 +675,39 @@ class BaseContent(AbstractBaseContent):
                 return True
             else:
                 return False
-
+                
+    def get_parent_for_portlets(self):
+        """Returns the parent from which portlets should be inherited portlets.
+        The implementation of this method is a requirement from django-portlets.
+        """
+        return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
+    
+    # django-permissions
     def get_parent_for_permissions(self):
         """Returns the parent from which permissions are inherited. The
         implementation of this method is a requirement from django-permissions.
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
-    def get_parent_for_portlets(self):
-        """Returns the parent from which portlets should be inherited portlets.
-        The implementation of this method is a requirement from django-portlets.
+    def has_permission(self, user, codename):
+        """Overwrites django-permissions' has_permission in order to add LFC 
+        specific groups.
         """
-        return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
+        # Every user is also anonymous user
+        try:
+            roles = [Role.objects.get(name="Anonymous")]
+        except Role.DoesNotExist:
+            roles = []
+
+        # Check whether the current user is the creator of the current object.
+        try:
+            if user == self.creator:
+                roles.append(Role.objects.get(name="Owner"))
+        except AttributeError:
+            pass
+
+        return super(BaseContent, self).has_permission(user, codename, roles)
+
 
 class Page(BaseContent):
     """A page is the foremost object within lfc which shows information to the

@@ -226,7 +226,7 @@ class PageTestCase(TestCase):
         # Grant view permission to self.p11
         permissions.utils.grant_permission(self.p11, self.anonymous, "view")
 
-        result = lfc.utils.has_permission(self.p11, request.user, "view")
+        result = self.p11.has_permission(request.user, "view")
         self.assertEqual(result, True)
 
         children = self.p1.get_children(request)

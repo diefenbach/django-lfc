@@ -193,22 +193,3 @@ def get_related_pages_by_tags(page, num=None):
     cache.set(cache_key, related_pages)
 
     return {"related_pages" : related_pages}
-
-def has_permission(obj, user, codename):
-    """A thin wrapper around permissions' has_permission in order to add LFC
-    specific groups.
-    """
-    # Every user is also anonymous user
-    try:
-        roles = [Role.objects.get(name="Anonymous")]
-    except Role.DoesNotExist:
-        roles = []
-
-    # Check whether the current user is the creator of the current object.
-    try:
-        if user == obj.creator:
-            roles.append(Role.objects.get(name="Owner"))
-    except AttributeError:
-        pass
-
-    return permissions.utils.has_permission(obj, user, codename, roles)

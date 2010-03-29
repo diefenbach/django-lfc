@@ -227,9 +227,9 @@ def update_portal_permissions(request):
         for permission in Permission.objects.all():
             perm_string = "%s|%s" % (role.id, permission.codename)
             if perm_string in permissions_dict:
-                permissions.utils.grant_permission(obj, role, permission)
+                obj.grant_permission(role, permission)
             else:
-                permissions.utils.remove_permission(obj, role, permission)
+                obj.remove_permission(role, permission)
 
     html = (
         ("#permissions", portal_permissions(request)),
@@ -438,7 +438,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
-    if lfc.utils.has_permission(obj, request.user, "view") == False:
+    if obj.has_permission(request.user, "view") == False:
          return HttpResponseRedirect(reverse("lfc_login"))
 
     return render_to_response(template_name, RequestContext(request, {
@@ -682,7 +682,7 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
             "name" : permission.name,
             "codename" : permission.codename,
             "roles" : roles,
-            "is_inherited" : permissions.utils.is_inherited(obj, permission.codename),
+            "is_inherited" : obj.is_inherited(permission.codename),
         })
 
     return render_to_string(template_name, RequestContext(request, {
@@ -708,7 +708,7 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
             continue
         temp.append(user.id)
 
-        local_roles = permissions.utils.get_local_roles(obj, user)
+        local_roles = obj.get_roles(user)
 
         roles = []
         for role in Role.objects.all():
@@ -739,7 +739,7 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
             continue
         temp.append(group.id)
 
-        local_roles = permissions.utils.get_local_roles(obj, group)
+        local_roles = obj.get_roles(group)
 
         roles = []
         for role in Role.objects.all():
@@ -813,7 +813,7 @@ def add_local_roles(request, id):
         role = permissions.utils.get_role(role_id)
 
         if user and role:
-            permissions.utils.add_local_role(obj, user, role)
+            obj.add_role(user, role)
 
     for group_role in request.POST.getlist("group_role"):
         group_id, role_id = group_role.split("|")
@@ -821,7 +821,7 @@ def add_local_roles(request, id):
         role = permissions.utils.get_role(role_id)
 
         if group and role:
-            permissions.utils.add_local_role(obj, group, role)
+            obj.add_role(group, role)
 
     message = _(u"Local roles has been added")
 
@@ -853,7 +853,7 @@ def save_local_roles(request, id):
             except User.DoesNotExist:
                 continue
             else:
-                permissions.utils.remove_local_roles(obj, user)
+                obj.remove_roles(user)
 
         # Remove local roles for checked groups
         for group_id in request.POST.getlist("to_delete_group"):
@@ -862,7 +862,7 @@ def save_local_roles(request, id):
             except Group.DoesNotExist:
                 continue
             else:
-                permissions.utils.remove_local_roles(obj, group)
+                obj.remove_roles(group)
     else:
         message = _(u"Local roles has been saved")
         users_roles = request.POST.getlist("user_role")
@@ -878,9 +878,9 @@ def save_local_roles(request, id):
 
             for role in Role.objects.all():
                 if "%s|%s" % (user.id, role.id) in users_roles:
-                    permissions.utils.add_local_role(obj, user, role)
+                    obj.add_role(user, role)
                 else:
-                    permissions.utils.remove_local_role(obj, user, role)
+                    obj.remove_role(user, role)
 
         temp = []
         for group in [prr.group for prr in PrincipalRoleRelation.objects.exclude(group=None).filter(content_id=obj.id, content_type=ctype)]:
@@ -892,9 +892,9 @@ def save_local_roles(request, id):
 
             for role in Role.objects.all():
                 if "%s|%s" % (group.id, role.id) in groups_roles:
-                    permissions.utils.add_local_role(obj, group, role)
+                    obj.add_role(group, role)
                 else:
-                    permissions.utils.remove_local_role(obj, group, role)
+                    obj.remove_role(group, role)
 
     html = (
         ("#local-roles", local_roles(request, obj)),
@@ -1011,9 +1011,9 @@ def update_object_permissions(request, id):
         for permission in Permission.objects.filter(q):
             perm_string = "%s|%s" % (role.id, permission.codename)
             if perm_string in permissions_dict:
-                permissions.utils.grant_permission(obj, role, permission)
+                obj.grant_permission(role, permission)
             else:
-                permissions.utils.remove_permission(obj, role, permission)
+                obj.remove_permission(role, permission)
 
     inheritance_dict = dict()
     for permission in request.POST.getlist("inherit"):
@@ -1021,9 +1021,9 @@ def update_object_permissions(request, id):
 
     for permission in Permission.objects.filter(q):
         if permission.codename in inheritance_dict:
-            permissions.utils.remove_inheritance_block(obj, permission)
+            obj.remove_inheritance_block(permission)
         else:
-            permissions.utils.add_inheritance_block(obj, permission)
+            obj.add_inheritance_block(permission)
 
     html = (
         ("#permissions", object_permissions(request, obj)),
@@ -1227,7 +1227,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     for obj in temp:
         obj = obj.get_content_object()
 
-        if lfc.utils.has_permission(obj, request.user, "view") == False:
+        if obj.has_permission(request.user, "view") == False:
             continue
 
         if obj in current_objs:
