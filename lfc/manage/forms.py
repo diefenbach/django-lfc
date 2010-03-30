@@ -31,9 +31,43 @@ class RoleForm(forms.ModelForm):
 class GroupForm(forms.ModelForm):
     """
     """
+    roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
+
     class Meta:
         model = Group
         exclude = ("permissions", )
+
+    def __init__(self, *args, **kwargs):
+        super(GroupForm, self).__init__(*args, **kwargs)
+
+        roles = Role.objects.exclude(name__in=("Anonymous", "Owner"))
+        self.fields["roles"].choices = [(r.id, r.name) for r in roles]
+
+        self.initial.update({
+            "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance)]})
+
+    def save(self, commit=True):
+        """
+        """
+        role_ids = self.data.getlist("roles")
+
+        for role in Role.objects.all():
+
+            if str(role.id) in role_ids:
+                try:
+                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role)
+                except PrincipalRoleRelation.DoesNotExist:
+                    PrincipalRoleRelation.objects.create(group=self.instance, role=role)
+            else:
+                try:
+                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role)
+                except PrincipalRoleRelation.DoesNotExist:
+                    pass
+                else:
+                    prr.delete()
+
+        del self.fields["roles"]
+        return super(GroupForm, self).save(commit)
 
 class UserForm(forms.ModelForm):
     """
