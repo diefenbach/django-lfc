@@ -2192,10 +2192,31 @@ def add_user(request, template_name="lfc/manage/user_add.html"):
     if request.method == "POST":
         form = UserAddForm(data=request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
+            user = form.save()
             user.set_password(request.POST.get("password1"))
+
+            role_ids = request.POST.getlist("roles")
+            for role in Role.objects.all():
+
+                if str(role.id) in role_ids:
+                    try:
+                        prr = PrincipalRoleRelation.objects.get(user=user, role=role)
+                    except PrincipalRoleRelation.DoesNotExist:
+                        PrincipalRoleRelation.objects.create(user=user, role=role)
+                else:
+                    try:
+                        prr = PrincipalRoleRelation.objects.get(user=user, role=role)
+                    except PrincipalRoleRelation.DoesNotExist:
+                        pass
+                    else:
+                        prr.delete()
+
             user.save()
-            return HttpResponseRedirect(reverse("lfc_manage_user", kwargs={"id" : user.id}))
+
+            url = reverse("lfc_manage_user", kwargs={"id" : user.id})
+            message = _(u"User has been added")
+            return MessageHttpResponseRedirect(url, message)
+
         else:
             return render_to_response(template_name, RequestContext(request, {
                 "form" : form,
@@ -2429,9 +2450,9 @@ def _get_filtered_users(request, prefix):
             q = Q(is_active=active_filter)
 
     if q:
-        users = User.objects.filter(q)
+        users = User.objects.filter(q).order_by("username", )
     else:
-        users = User.objects.all()
+        users = User.objects.all().order_by("username", )
 
     return users
 

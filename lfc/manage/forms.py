@@ -30,7 +30,7 @@ class RoleForm(forms.ModelForm):
 
 class GroupForm(forms.ModelForm):
     """
-    """    
+    """
     class Meta:
         model = Group
         exclude = ("permissions", )
@@ -43,7 +43,6 @@ class UserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserForm, self).__init__(*args, **kwargs)
 
-        # Remove Anonymous and Owner from group choices
         roles = Role.objects.exclude(name__in=("Anonymous", "Owner"))
         self.fields["roles"].choices = [(r.id, r.name) for r in roles]
 
@@ -80,15 +79,21 @@ class UserForm(forms.ModelForm):
 class UserAddForm(forms.ModelForm):
     """
     """
+    roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
     password1 = forms.CharField(label=_("Password"), widget=forms.PasswordInput)
     password2 = forms.CharField(label=_("Password (again)"), widget=forms.PasswordInput)
 
     def __init__(self, *args, **kwargs):
         super(UserAddForm, self).__init__(*args, **kwargs)
 
-        # Remove Anonymous and Owner from group choices
-        groups = Group.objects.exclude(name__in=("Anonymous", "Owner"))
-        self.fields["groups"].choices = [(g.id, g.name) for g in groups]
+        roles = Role.objects.exclude(name__in=("Anonymous", "Owner"))
+        self.fields["roles"].choices = [(r.id, r.name) for r in roles]
+
+    def save(self, commit=True):
+        """
+        """        
+        del self.fields["roles"]
+        return super(UserAddForm, self).save(commit)
 
     def clean(self):
         """
