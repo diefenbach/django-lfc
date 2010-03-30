@@ -242,7 +242,7 @@ def do_transition(request, id):
         obj = lfc.utils.get_content_object(pk=id)
         obj.do_transition(transition, request.user)
 
-    return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"Hurz"))
+    return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"State has been changed."))
 
 def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):
     """
