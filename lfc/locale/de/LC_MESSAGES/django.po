@@ -229,7 +229,7 @@ msgstr ""
 #: manage/forms.py:34 manage/forms.py:75 manage/forms.py:116
 #: templates/lfc/manage/base.html:95
 msgid "Roles"
-msgstr "Roolen"
+msgstr "Rollen"
 
 #: manage/forms.py:117
 msgid "Password"
@@ -567,7 +567,7 @@ msgstr "Lokale Bilder hochladen"
 
 #: templates/lfc/manage/group.html:24 templates/lfc/manage/group_add.html:24
 msgid "Add Group"
-msgstr "Group hinzugefügen"
+msgstr "Gruppe hinzufügen"
 
 #: templates/lfc/manage/group.html:27
 msgid "Delete group"
