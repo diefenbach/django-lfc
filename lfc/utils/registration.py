@@ -71,7 +71,7 @@ def register_sub_type(klass, name):
     if sub_ctr:
         base_ctr.subtypes.add(sub_ctr)
 
-def register_content_type(klass, name, sub_types=[], templates=[], default_template=None):
+def register_content_type(klass, name, sub_types=[], templates=[], default_template=None, global_addable=True):
     """Registers a content type.
 
     **Parameters:**
@@ -94,6 +94,10 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
 
     default_template
         Default template of the registered object.
+        
+    global_addable
+        Decides whether the content type is global addable or just within 
+        specific content types.
     """
     type = klass.__name__.lower()
     try:
@@ -104,6 +108,10 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
     else:
         # Don't update a content type for now
         if created:
+            # Set attributes
+            ctr.global_addable = global_addable
+            ctr.save()
+
             # Add subtypes
             for sub_type in sub_types:
                 try:
