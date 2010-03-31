@@ -1855,7 +1855,7 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
     """ Displays the main screen of the content type management.
     """
     ctr = ContentTypeRegistration.objects.get(pk=id)
-    ctype = ContentType.objects.get(name = ctr.type)
+    ctype = ContentType.objects.get(model = ctr.type)
 
     old_workflow = ctr.workflow
 
