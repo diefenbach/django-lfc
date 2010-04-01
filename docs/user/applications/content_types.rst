@@ -9,7 +9,7 @@ Available options
 -----------------
 
 Display select standard
-    If checked, the user can select a standard object from the children of the 
+    If checked, the user can select a standard object from the children of the
     object. See :ref:`Standard <page-standard-label>`.
 
 Display position
@@ -21,6 +21,15 @@ Global addable
 
 Default template
     The default template of the selected content object.
+
+Workflow
+    The workflow for the content type. All instances of this content type have
+    this workflow.
+
+    .. warning::
+
+        If you change the workflow all instances of this content type
+        will get the initial state of the new assigned workflow.
 
 Allowed sub types
     Content types which can be added to the content type.

@@ -17,3 +17,5 @@ Here you will find the official public API of LFC.
    template.rst
    managers.rst
    utils.rst
+   permissions.rst
+   workflows.rst

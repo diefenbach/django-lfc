@@ -2,14 +2,14 @@
 Page
 ====
 
-This section describes the several data tabs and fields of the page content 
+This section describes the several data tabs and fields of the page content
 object.
 
 Data
 =====
 
 Title
-    The title of the page. The title is displayed on top of the page and as 
+    The title of the page. The title is displayed on top of the page and as
     within the title tab of the page.
 
 Display Title
@@ -35,14 +35,14 @@ Metadata
 .. _template-label:
 
 Template
-    The template which is used to display the object's content. Please note: 
-    If this field is not displayed just the default template has been 
+    The template which is used to display the object's content. Please note:
+    If this field is not displayed just the default template has been
     registered.
 
 .. _page-standard-label:
 
 Standard
-    The sub page which should be displayed instead of the page itself. Please 
+    The sub page which should be displayed instead of the page itself. Please
     note: If this field is not displayed the page has no sub pages.
 
 Active
@@ -60,7 +60,7 @@ Language
     The language of the object.
 
     .. note::
-        
+
         If this field is not displayed your site has multi languages deactivated.
 
 Publication date
@@ -94,7 +94,7 @@ There are two different ways to use the images:
 
 1. Within the selected :ref:`template <template-label>`
 2. Within the :term:`WYSIWYG` field of a content object
- 
+
 Files
 =====
 
@@ -145,7 +145,7 @@ Edit a portlet
     ``Save Portlet``-button.
 
 Delete a portlet
-    Click on the ``Delete``-button of the portlet and answer the question with 
+    Click on the ``Delete``-button of the portlet and answer the question with
     ``yes``.
 
 Comments
@@ -191,3 +191,64 @@ You can use several placeholders within both fields, which are:
 
 <description>
     This includes the description of the content object.
+
+Permissions
+===========
+
+Workflow
+--------
+
+The current workflow of the page. If the page has a workflow this and the
+current state are responsible of the granted permissions.
+
+Permissions
+-----------
+
+The current permissions which are granted for every role for this page.
+
+.. note::
+
+    If the page has an workflow the permissions which are managed by the
+    workflow shouldn't be changed manually.
+
+Local roles
+-----------
+
+Displays the current local roles of the page for users and groups.
+
+**Add local roles:**
+
+To add new local roles proceed as following:
+
+1. Click on the *Add*-button.
+
+Within the opened dialog:
+
+2. Search for users and groups
+3. Select roles for displayed users and groups
+4. Click the *Add*-button.
+5. Close the dialog
+
+You will now see the selected roles for users and groups within the "Local
+roles"-section
+
+**Change local roles:**
+
+To change local roles proceed as following:
+
+1. Deselect the checkboxes for the roles you want to remove from users and 
+   groups.
+2. Click the *Save local roles*-button
+
+.. note::
+
+    If an user or group doesn't have a role anymore it is removed completely
+    from the local roles section.
+
+**Remove local roles:**
+
+To remove users or groups from the "Local roles"-section proceed as following:
+
+1. Select the checkbox on the left side of the users or groups you want to 
+   remove.
+2. Click the *Delete local roles*-button.

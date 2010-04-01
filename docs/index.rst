@@ -25,6 +25,7 @@ Users
    :maxdepth: 2
 
    user/content/index.rst
+   user/users/index.rst
    user/applications/index.rst
    user/miscellaneous/index.rst
 

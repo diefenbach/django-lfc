@@ -82,3 +82,8 @@ completely independent page structures in different languages.
 
 Additionally it is possible to create language neutral objects which are
 displayed independent on the current selected language.
+
+Permissions
+-----------
+
+To be written.
