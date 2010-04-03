@@ -63,6 +63,11 @@ a  {
     padding-top: 30px;
 }
 
+.right-padding {
+    text-align: right;
+    padding-right: 10px;
+}
+
 .right {
     text-align: right;
 }

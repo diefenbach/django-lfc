@@ -1,0 +1,36 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left_slot %}
+    <div id="navigation">
+        {{ navigation }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div id="menu"
+         class="site-actions">
+        {{ menu|safe}}
+    </div>
+
+    <div style="clear:both" id="manage-tabs">
+
+        <ul>
+            <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#states">{% trans 'States' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="#transitions">{% trans 'Transitions' %}</a></li>
+        </ul>
+
+        <div id="data">
+            {{ data|safe }}
+        </div>
+        <div id="states">
+            {{ states|safe }}
+        </div>
+        <div id="transitions">
+            {{ transitions|safe }}
+        </div>
+    </div>
+
+{% endblock %}

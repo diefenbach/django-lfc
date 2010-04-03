@@ -1,0 +1,66 @@
+{% load i18n %}
+
+<h2 class="first-heading">{% trans "Transitions" %}</h2>
+
+{% for transition in workflow.transitions.all %}
+    <h3>
+        <a class="modalInput" href="{% url lfc_manage_delete_workflow_transition transition.id %}">
+            <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
+        </a>
+        
+        <a class="overlay-link" href="{% url lfc_manage_transition transition.id %}">
+            {{ transition.name }}
+        </a>
+    </h3>
+    <div style="padding: 0 0 10px 20px">
+        <table>
+            <tr>
+                <td style="padding-right:20px">
+                    {% trans "Destination state" %}:
+                </td>
+                <td>
+                    {% if transition.destination %}
+                        <a class="overlay-link" href="{% url lfc_manage_state transition.destination.id %}">
+                            {{ transition.destination.name }}
+                        </a>
+                    {% else %}
+                        {% trans "None" %}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% trans "Permission" %}:
+                </td>
+                <td>
+                    {% if transition.permission %}
+                        {{ transition.permission.name }}
+                    {% else %}
+                        {% trans "None" %}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    {% trans "Condition" %}:
+                </td>
+                <td>
+                    {% if transition.condition %}
+                        {{ transition.condition }}
+                    {% else %}
+                        {% trans "None" %}
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+{% endfor %}
+
+<h2 class="middle-heading">{% trans "Add transition" %}</h2>
+
+<form action="{% url lfc_manage_add_workflow_transition workflow.id %}"
+      method="POST">
+    <input name="name" type="text" />
+    <input class="ajax-save-button"
+           type="submit" value='{% trans "Add state" %}'/>
+</form>

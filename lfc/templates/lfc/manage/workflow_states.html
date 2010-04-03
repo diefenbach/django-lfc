@@ -1,0 +1,30 @@
+{% load i18n %}
+
+<h2 class="first-heading">{% trans "States" %}</h2>
+
+{% for state in workflow.states.all %}
+    <h3>
+        <a class="modalInput" href="{% url lfc_manage_delete_workflow_state state.id %}">
+            <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
+        </a>
+        <a class="overlay-link" href="{% url lfc_manage_state state.id %}">
+            {{ state.name }}
+        </a>
+    </h3>
+    {% for transition in state.transitions.all %}
+        <div style="padding: 0 0 10px 20px">
+            <a class="overlay-link" href="{% url lfc_manage_transition transition.id %}">
+                {{ transition.name }}
+            </a>
+        </div>
+    {% endfor %}
+{% endfor %}
+
+<h2 class="middle-heading">{% trans "Add state" %}</h2>
+
+<form action="{% url lfc_manage_add_workflow_state workflow.id %}"
+      method="POST">
+    <input name="name" type="text" />
+    <input class="ajax-save-button"
+           type="submit" value='{% trans "Add state" %}'/>
+</form>

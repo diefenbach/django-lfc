@@ -3,14 +3,31 @@
 
 <form action="{% url lfc_save_meta_data obj.id %}"
       method="POST">
-    <table>
+
         {% include "lfc/manage/lfc_form.html" %}
-    </table>
-    
+
+        <div class="field">
+            <div class="label">
+                <label>{% trans "Creation date" %}:</label>
+            </div>
+            <div>
+                {{ obj.creation_date }}
+            </div>
+        </div>
+
+        <div class="field">
+            <div class="label">
+                <label>{% trans "Modification date" %}:</label>
+            </div>
+            <div>
+                {{ obj.modification_date }}
+            </div>
+        </div>
+
     {% ifhasperm edit %}
         <input class="ajax-save-button"
                type="submit"
                value="{% trans 'Save metadata' %}" />
     {% endifhasperm %}
-    
+
 </form>

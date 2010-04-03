@@ -85,13 +85,9 @@
         {% endif %}
     </li>
     {% endif %}
-    <li>
-        <a accesskey="v"
-           href="{{ obj.get_absolute_url }}">{% trans 'View' %}</a>
-    </li>
     {% if state %}
         <li>
-            <a>{{ state }}</a>
+            <a>{{ state.name }}</a>
             <ul>
                 {% for transition in transitions %}
                     <li>
@@ -101,4 +97,8 @@
             </ul>
         </li>
     {% endif %}
+    <li>
+        <a accesskey="v"
+           href="{{ obj.get_absolute_url }}">{% trans 'View' %}</a>
+    </li>
 </ul>

@@ -1,0 +1,17 @@
+{% load i18n %}
+
+<h2 class="first-heading">{% trans "Permissions" %}</h2>
+
+<form action="{% url lfc_manage_save_workflow_permissions workflow.id %}"
+      method="POST">
+    {% for permission in permissions %}
+        <div>
+            <input type="checkbox" name="permission" value="{{ permission.id }}" {% if permission.checked %}checked="checked"{% endif %} />
+            {{ permission.name }}
+        </div>
+    {% endfor %}
+    <div class="manage-form-buttons">
+        <input class="ajax-save-button"
+               type="submit" value='{% trans "Save permissions" %}' />
+    </div>
+</form>

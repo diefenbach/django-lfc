@@ -1,0 +1,63 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left-slot-wrapper %}{% endblock %}
+{% block content %}
+    <div style="margin-top:20px; margin-left: 20px">
+        {% if objs %}
+            <table class="lfs-manage-table" style="width:99%;">
+                <tr>
+                    <th>
+                        {% trans "Title" %}
+                    </th>
+                    <th>
+                        {% trans "Content type" %}
+                    </th>
+                    <th>
+                        {% trans "Creation Date" %}
+                    </th>
+                    <th>
+                        {% trans "Creator" %}
+                    </th>
+                    <th class="right-padding">
+                        {% trans "Manage" %}
+                    </th>
+                </tr>
+                {% for obj in objs %}
+                    <tr>
+                        <td>
+                            <a href="{% url lfc_manage_object obj.id %}">
+                                {{ obj.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ obj.get_content_type }}
+                        </td>
+                        <td>
+                            {{ obj.creation_date|date:"d.m.Y - H:i" }}
+                        </td>
+                        <td>
+                            {% if obj.creator.first_name and obj.creator.last_name %}
+                                {{ obj.creator.first_name }} {{ obj.creator.last_name }}
+                            {% else %}
+                                {{ obj.creator.username }}                                
+                            {% endif %}                            
+                        </td>
+                        <td class="right-padding">
+                            <a href="{% url lfc_manage_object obj.id %}">
+                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png" alt='{% trans "Edit" %}' />
+                            </a>                            
+                            <a href="{{ obj.get_absolute_url }}">
+                                <img src="{{ MEDIA_URL }}lfc/icons/zoom.png" alt='{% trans "Edit" %}' />
+                            </a>                            
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>
+                {% trans "There are no objects to review" %}
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

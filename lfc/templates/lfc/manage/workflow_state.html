@@ -1,0 +1,77 @@
+{% load i18n %}
+
+<div style="width:600px; height:500px">
+    <h1 class="first-heading">
+        {% trans "Edit state:" %} "{{ state.name }}"
+    </h1>
+    <form action="{% url lfc_manage_save_workflow_state state.id %}"
+          method="POST">
+            {% include "lfc/manage/lfc_form.html" %}
+        
+        <div class="field">
+            <div class="label">
+                <label>{% trans "Type" %}:</label>
+            </div>
+            <div>
+                <input type="checkbox" name="public" {% if public %}checked="checked"{% endif %} />
+                <label>{% trans "Public" %}</label>
+            </div>
+            <div>
+                <input type="checkbox" name="review" {% if review %}checked="checked"{% endif %} />
+                <label> {% trans "Review" %}</label>
+            </div>
+            
+        </div>    
+        
+        <div class="field">
+            <div class="label">
+                <label>{% trans "Permissions" %}:</label>
+            </div>
+            <div style="max-height:200px; width:600px; overflow:auto">
+
+                <table class="lfs-manage-table" width="100%">
+                    <tr>
+                        <th>{% trans "Inherit" %}</th>
+                        <th>{% trans "Permission" %}</th>
+                        {% for role in roles %}
+                            <th>
+                                {{ role.name }}
+                            </th>
+                        {% endfor %}
+                    </tr>
+                    {% for permission in permissions %}
+                        <tr>
+                            <td>
+                                <input type="checkbox"
+                                       name="inherited_id"
+                                       value="{{ permission.id }}"
+                                       {% if permission.inherited %}checked="checked"{% endif %} />
+                            </td>
+                            <td>
+                                {{ permission.name }}
+                            </td>
+                            {% for role in permission.roles %}
+                                <td>
+                                    <input name="role_permission_id"
+                                           value="{{ role.id }}|{{ permission.id }}"
+                                           type="checkbox"
+                                           {% if role.checked %}checked="checked"{% endif %} />
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+        
+
+        <div class="manage-form-buttons">
+            <input class="ajax-save-button"
+                   type="submit" value='{% trans "Save" %}' />
+
+            <input class="ajax-save-button overlay-close"
+                   type="submit" value='{% trans "Save &amp; close" %}' />
+
+        </div>
+    </form>
+</div>
