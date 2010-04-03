@@ -65,20 +65,6 @@ urlpatterns = patterns('lfc.manage.views',
 
     # workflows
     url(r'^do-transition/(?P<id>\d+)$', "do_transition", name="lfc_manage_do_transition"),
-    url(r'^workflow/(?P<id>\d+)$', "manage_workflow", name="lfc_manage_workflow"),
-    url(r'^workflow$', "manage_workflow", name="lfc_manage_workflow"),
-    url(r'^add-workflow$', "add_workflow", name="lfc_manage_add_workflow"),
-    url(r'^delete-workflow/(?P<id>\d+)$', "delete_workflow", name="lfc_manage_delete_workflow"),
-    url(r'^state/(?P<id>\d+)$', "manage_state", name="lfc_manage_state"),
-    url(r'^transition/(?P<id>\d+)$', "manage_transition", name="lfc_manage_transition"),
-    url(r'^save-workflow-data/(?P<id>\d+)$', "save_workflow_data", name="lfc_manage_save_workflow_data"),
-    url(r'^save-state/(?P<id>\d+)$', "save_workflow_state", name="lfc_manage_save_workflow_state"),
-    url(r'^delete-state/(?P<id>\d+)$', "delete_workflow_state", name="lfc_manage_delete_workflow_state"),
-    url(r'^add-state/(?P<id>\d+)$', "add_workflow_state", name="lfc_manage_add_workflow_state"),
-    url(r'^add-transition/(?P<id>\d+)$', "add_workflow_transition", name="lfc_manage_add_workflow_transition"),
-    url(r'^delete-transition/(?P<id>\d+)$', "delete_workflow_transition", name="lfc_manage_delete_workflow_transition"),
-    
-    url(r'^save-transition/(?P<id>\d+)$', "save_workflow_transition", name="lfc_manage_save_workflow_transition"),
 
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
 
@@ -87,8 +73,6 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-portlets/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets", name="lfc_update_portlets"),
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
-
-    url(r'^review$', "review_objects", name="lfc_manage_review"),
 
     # local roles
     url(r'^save-local-roles/(?P<id>\d+)', "save_local_roles", name="lfc_manage_save_local_roles"),

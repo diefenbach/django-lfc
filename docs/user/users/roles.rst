@@ -2,15 +2,14 @@
 Roles
 =====
 
-This section describes the several data tabs and fields of the roles management
-interface.
+Overview
+--------
+
+Roles are used to grant permissions to users. Typical roles are *Reader*,
+*Manager* or *Editor*.
 
 Data
 ----
 
 Name
     The unique name of the role.
-
-.. seealso::
-
-   * :ref:`Roles concepts <concepts-roles-label>`

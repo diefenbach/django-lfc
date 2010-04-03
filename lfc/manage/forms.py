@@ -13,69 +13,14 @@ from tagging.forms import TagField
 from permissions.models import Role
 from permissions.models import PrincipalRoleRelation
 
-# workflows imports
-from workflows.models import Workflow
-from workflows.models import State
-from workflows.models import Transition
-
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.models import Page
 from lfc.models import BaseContent
 from lfc.models import Portal
 from lfc.models import ContentTypeRegistration
+from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
-
-class WorkflowAddForm(forms.ModelForm):
-    """Form to add a workflow.
-    """
-    class Meta:
-        model = Workflow
-        exclude = ("permissions", "initial_state")
-
-class WorkflowForm(forms.ModelForm):
-    """Form to manage a workflow.
-    """
-    def __init__(self, *args, **kwargs):
-        super(WorkflowForm, self).__init__(*args, **kwargs)
-
-        instance = kwargs.get("instance")
-        if instance:
-            self.fields["initial_state"].choices = [(s.id, s.name) for s in instance.states.all()]
-
-    class Meta:
-        model = Workflow
-        exclude = ("permissions", )
-
-class StateForm(forms.ModelForm):
-    """Form to manage a workflow state.
-    """
-    def __init__(self, *args, **kwargs):
-        super(StateForm, self).__init__(*args, **kwargs)
-
-        instance = kwargs.get("instance")
-        if instance:
-            self.fields["transitions"].choices = [(t.id, t.name) for t in Transition.objects.filter(workflow=instance.workflow)]
-
-    class Meta:
-        model = State
-        exclude = ["workflow"]
-
-class TransitionForm(forms.ModelForm):
-    """Form to manage a workflow transition.
-    """
-    def __init__(self, *args, **kwargs):
-        super(TransitionForm, self).__init__(*args, **kwargs)
-
-        instance = kwargs.get("instance")
-        if instance:
-            choices = [("", "---------")]
-            choices.extend([(s.id, s.name) for s in State.objects.filter(workflow=instance.workflow)])
-            self.fields["destination"].choices = choices
-
-    class Meta:
-        model = Transition
-        exclude = ["workflow"]
 
 class RoleForm(forms.ModelForm):
     """
@@ -180,7 +125,7 @@ class UserAddForm(forms.ModelForm):
 
     def save(self, commit=True):
         """
-        """
+        """        
         del self.fields["roles"]
         return super(UserAddForm, self).save(commit)
 
@@ -259,6 +204,26 @@ class MetaDataForm(forms.ModelForm):
                 canonicals.insert(0, ("", "----------"))
                 self.fields["canonical"].choices = canonicals
 
+        # Parents - display only objects in the same or neutral language
+        # exclude = [p.id for p in instance.children.all()]
+        # exclude.append(instance.id)
+        #
+        # parents = BaseContent.objects.exclude(pk__in=exclude)
+        # if not language == "0":
+        #     parents = parents.filter(language__in=(language, "0"))
+        #
+        # parent_choices = []
+        # for parent in parents:
+        #     if ctr in get_allowed_subtypes(parent.get_content_object()):
+        #         parent_choices.append((parent.id, parent.title))
+        #
+        # if len(parent_choices) < 1:
+        #     del self.fields["parent"]
+        # else:
+        #     parent_choices = sorted(parent_choices, lambda a, b: cmp(a[1], b[1]))
+        #     parent_choices.insert(0, ("", "----------"))
+        #     self.fields["parent"].choices = parent_choices
+
         # Standard - display only children of the current instance
         if not ctr.display_select_standard:
             del self.fields["standard"]
@@ -283,8 +248,8 @@ class MetaDataForm(forms.ModelForm):
 
     class Meta:
         model = Page
-        fields = ("template", "standard", "language", "canonical",
-            "exclude_from_navigation", "exclude_from_search", "publication_date", )
+        fields = ("template", "standard", "exclude_from_navigation",
+            "exclude_from_search", "language", "canonical", "publication_date", )
 
 class PortalCoreForm(forms.ModelForm):
     """Form for portal core data.

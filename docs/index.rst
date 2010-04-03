@@ -26,7 +26,6 @@ Users
 
    user/content/index.rst
    user/users/index.rst
-   user/workflows/index.rst
    user/applications/index.rst
    user/miscellaneous/index.rst
 

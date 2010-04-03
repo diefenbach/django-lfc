@@ -30,7 +30,6 @@ from portlets.utils import register_portlet
 import workflows.utils
 from workflows.models import WorkflowBase
 from workflows.models import Workflow
-from workflows.models import State
 
 # permissions imports
 from permissions.models import PermissionBase
@@ -50,34 +49,6 @@ class Application(models.Model):
     """
     """
     name = models.CharField(max_length=100, unique=True)
-
-class WorkflowStatesInformation(models.Model):
-    """Stores some information about workflows
-
-    **Attributes:**
-
-    state
-        The state for which information are stored.
-
-    public
-        True if the state is considered as public.
-
-    review
-        True if the state is considered as to be reviewed.
-    """
-    state = models.ForeignKey(State)
-    public = models.BooleanField(default=False)
-    review = models.BooleanField(default=False)
-
-    def __unicode__(self):
-        result = self.state.name        
-        if self.public:
-            result += u" " + u"Public"
-
-        if self.review:
-            result += u" " + "Review"
-
-        return result
 
 class Template(models.Model):
     """A template displays the content of an object.
@@ -281,9 +252,9 @@ class Portal(models.Model, PermissionBase):
                 objs.append(obj)
 
         return objs
-
+    
     def has_permission(self, user, codename):
-        """Overwrites django-permissions' has_permission in order to add LFC
+        """Overwrites django-permissions' has_permission in order to add LFC 
         specific groups.
         """
         # Every user is also anonymous user
@@ -300,7 +271,7 @@ class Portal(models.Model, PermissionBase):
             pass
 
         return super(Portal, self).has_permission(user, codename, roles)
-
+        
 class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
     """The root of all content types. It provides the inheritable
     BaseContentManager.
@@ -437,7 +408,7 @@ class BaseContent(AbstractBaseContent):
     creator = models.ForeignKey(User, verbose_name=_(u"Creator"), null=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     modification_date = models.DateTimeField(_(u"Modification date"), auto_now=True, auto_now_add=True)
-    publication_date = models.DateTimeField(_(u"Publication date"), null=True, blank=True)
+    publication_date = models.DateTimeField(_(u"Publication date"), default=datetime.datetime.now())
 
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
@@ -466,7 +437,7 @@ class BaseContent(AbstractBaseContent):
         """
         # Set the initial state if there is none yet
         co = self.get_content_object()
-        if co.id and workflows.utils.get_state(co) is None:
+        if workflows.utils.get_state(co) is None:
             workflows.utils.set_initial_state(co)
 
         self.searchable_text = self.get_searchable_text()
@@ -549,11 +520,6 @@ class BaseContent(AbstractBaseContent):
         ancestors = self.get_ancestors()
         ancestors.reverse()
         return ancestors
-
-    def get_content_type(self):
-        """
-        """
-        return self.get_content_object().__class__.__name__
 
     def get_descendants(self, request=None, result=None):
         """Returns all descendants of the content object. If the request is
@@ -709,13 +675,13 @@ class BaseContent(AbstractBaseContent):
                 return True
             else:
                 return False
-
+                
     def get_parent_for_portlets(self):
         """Returns the parent from which portlets should be inherited portlets.
         The implementation of this method is a requirement from django-portlets.
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
-
+    
     # django-permissions
     def get_parent_for_permissions(self):
         """Returns the parent from which permissions are inherited. The
@@ -724,7 +690,7 @@ class BaseContent(AbstractBaseContent):
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
     def has_permission(self, user, codename):
-        """Overwrites django-permissions' has_permission in order to add LFC
+        """Overwrites django-permissions' has_permission in order to add LFC 
         specific groups.
         """
         # Every user is also anonymous user

@@ -46,7 +46,7 @@ $(function() {
     // Message
     var message = $.cookie("message");
 
-    if (message) {
+    if (message != null) {
         $.jGrowl(message);
         $.cookie("message", null, { path: '/' });
     };
@@ -100,7 +100,7 @@ $(function() {
         })
         return false;
     });
-    
+
     // Generic ajax link
     $(".ajax-link").livequery("click", function() {
         var url = $(this).attr("href");
@@ -268,10 +268,6 @@ $(function() {
             overlay.load();
         });
         return false;
-    });
-
-    $(".overlay-close").livequery("click", function() {
-        overlay.close()
     });
 
     // Delete dialog

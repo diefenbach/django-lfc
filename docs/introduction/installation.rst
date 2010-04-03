@@ -15,7 +15,7 @@ The easiest way at the moment is to use the provided buildout:
 2. Execute the buildout::
 
     $ cd lfc-buildout-development
-    $ python bootstrap
+    $ python boostrap
     $ bin/buildout -v
 
 3. Start the server::
