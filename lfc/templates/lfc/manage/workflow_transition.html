@@ -1,0 +1,21 @@
+{% load i18n %}
+
+<div style="width:400px; height:400px">
+    <h1 class="first-heading">
+        {% trans "Edit transition:" %} "{{ transition.name }}"
+    </h1>
+    <form action="{% url lfc_manage_save_workflow_transition transition.id %}"
+          method="POST">
+
+        {% include "lfc/manage/lfc_form.html" %}
+
+        <div class="manage-form-buttons">
+            <input class="ajax-save-button"
+                   type="submit" value='{% trans "Save" %}' />
+
+            <input class="ajax-save-button overlay-close"
+                   type="submit" value='{% trans "Save &amp; close" %}' />
+
+        </div>
+    </form>
+</div>

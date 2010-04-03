@@ -9,6 +9,7 @@ from lfc.models import File
 from lfc.models import NavigationPortlet
 from lfc.models import PagesPortlet
 from lfc.models import Template
+from lfc.models import WorkflowStatesInformation
 
 admin.site.register(ContentTypeRegistration)
 admin.site.register(File)
@@ -19,3 +20,4 @@ admin.site.register(Portal)
 admin.site.register(NavigationPortlet)
 admin.site.register(PagesPortlet)
 admin.site.register(Template)
+admin.site.register(WorkflowStatesInformation)

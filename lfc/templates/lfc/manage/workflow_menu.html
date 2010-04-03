@@ -1,0 +1,13 @@
+{% load i18n %}
+{% load lfc_tags %}
+
+<ul class="sf-menu">
+    <li>
+        <a href="{% url lfc_manage_add_workflow %}">{% trans "Add workflow" %}</a>
+    </li>
+    {% if workflow %}
+        <li>
+            <a class="modalInput" href="{% url lfc_manage_delete_workflow workflow.id %}">{% trans "Delete workflow" %}</a>
+        </li>
+    {% endif %}
+</ul>

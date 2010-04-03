@@ -7,6 +7,7 @@ import sys
 from django.contrib.auth.models import Group
 from django.core.cache import cache
 from django.http import Http404
+from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.utils import simplejson
 from django.utils.functional import Promise
@@ -35,6 +36,28 @@ class MessageHttpResponseRedirect(HttpResponseRedirect):
 
         self.set_cookie("message", lfc_quote(message), max_age=max_age, expires=expires)
 
+def set_message_to_reponse(response, msg):
+    """Sets message cookie with passed message to passed response.
+    """
+    # We just keep the message two seconds.
+    max_age = 2
+    expires = datetime.datetime.strftime(
+        datetime.datetime.utcnow() +
+        datetime.timedelta(seconds=max_age), "%a, %d-%b-%Y %H:%M:%S GMT")
+
+    response.set_cookie("message", lfc_quote(msg), max_age=max_age, expires=expires)
+    return response
+
+def return_as_json(html, message):
+    """
+    """
+    return HttpResponse(get_json(html, message))
+    
+def get_json(html, message):
+    """Returns html and message json encoded.
+    """
+    return simplejson.dumps({ "html" : html, "message" : message, }, cls = LazyEncoder)
+    
 class LazyEncoder(simplejson.JSONEncoder):
     """JSONEncoder which encodes django's lazy i18n strings.
 

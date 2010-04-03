@@ -1,5 +1,6 @@
 # python imports
 import copy
+import datetime
 
 # django imports
 from django.conf import settings
@@ -45,7 +46,12 @@ from permissions.models import Role
 
 # workflows imports
 import workflows.utils
+from workflows.models import State
+from workflows.models import StateInheritanceBlock
+from workflows.models import StatePermissionRelation
 from workflows.models import Transition
+from workflows.models import Workflow
+from workflows.models import WorkflowPermissionRelation
 
 # lfc imports
 import lfc.signals
@@ -53,6 +59,7 @@ import lfc.utils
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import Portal
+from lfc.models import WorkflowStatesInformation
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import ContentTypeRegistrationForm
 from lfc.manage.forms import GroupForm
@@ -62,16 +69,389 @@ from lfc.manage.forms import RoleForm
 from lfc.manage.forms import SEOForm
 from lfc.manage.forms import UserForm
 from lfc.manage.forms import UserAddForm
+from lfc.manage.forms import StateForm
+from lfc.manage.forms import TransitionForm
+from lfc.manage.forms import WorkflowForm
+from lfc.manage.forms import WorkflowAddForm
 from lfc.models import Application
 from lfc.models import File
 from lfc.models import Image
 from lfc.settings import COPY, CUT
 from lfc.utils import LazyEncoder
 from lfc.utils import MessageHttpResponseRedirect
+from lfc.utils import return_as_json
 from lfc.utils import get_portal
 from lfc.utils import import_module
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
+
+
+# Workflows ##################################################################
+##############################################################################
+@login_required
+def manage_workflow(request, id=None, template_name="lfc/manage/workflow.html"):
+    """
+    """
+    workflows = Workflow.objects.all()
+
+    if id:
+        workflow = Workflow.objects.get(pk=id)
+    else:
+        try:
+            workflow = workflows[0]
+        except IndexError:
+            return HttpResponseRedirect(reverse("lfc_manage_add_workflow"))
+        else:
+            return HttpResponseRedirect(
+                reverse("lfc_manage_workflow", kwargs={"id" : workflow.id }))
+
+    return render_to_response(template_name, RequestContext(request, {
+        "data" : workflow_data(request, workflow),
+        "states" : workflow_states(request, workflow),
+        "transitions" : workflow_transitions(request, workflow),
+        "menu" : workflow_menu(request, workflow),
+        "navigation" : workflow_navigation(request, workflow),
+        "workflow" : workflow,
+    }))
+
+def add_workflow(request, template_name="lfc/manage/workflow_add.html"):
+    """Displays an add form and adds a workflow.
+    """
+    if request.method == "POST":
+        form = WorkflowAddForm(data = request.POST)
+        if form.is_valid():
+            workflow = form.save()
+            return MessageHttpResponseRedirect(
+                reverse("lfc_manage_workflow", kwargs = {"id" : workflow.id }),
+                _(u"Workflow has been added."))
+    else:
+        form = WorkflowAddForm()
+
+    return render_to_response(template_name, RequestContext(request, {
+        "form" : form,
+        "menu" : workflow_menu(request),
+        "navigation" : workflow_navigation(request),
+    }))
+
+def delete_workflow(request, id):
+    """
+    """
+    try:
+        workflow = Workflow.objects.get(pk=id)
+    except Workflow.DoesNotExist:
+        pass
+    else:
+        for ctr in ContentTypeRegistration.objects.filter(workflow=workflow):
+            ctr.workflow = None
+            ctr.save()
+        workflow.delete()
+
+    return MessageHttpResponseRedirect(
+        reverse("lfc_manage_workflow"), _(u"Workflow has been deleted."))
+
+def workflow_data(request, workflow, template_name="lfc/manage/workflow_data.html"):
+    """Displays the data form of the workflow with passed workflow.
+    """
+    form = WorkflowForm(instance=workflow)
+
+    selected = [w.permission for w in WorkflowPermissionRelation.objects.filter(workflow=workflow)]
+
+    permissions = []
+    for permission in Permission.objects.all():
+        permissions.append({
+            "id" : permission.id,
+            "name" : permission.name,
+            "checked" : permission in selected,
+        })
+
+    return render_to_string(template_name, RequestContext(request, {
+        "workflow" : workflow,
+        "form" : form,
+        "permissions" : permissions,
+    }))
+
+def workflow_states(request, workflow, template_name="lfc/manage/workflow_states.html"):
+    """Displays the states of the passed workflow.
+    """
+    return render_to_string(template_name, RequestContext(request, {
+        "workflow" : workflow,
+    }))
+
+def workflow_transitions(request, workflow, template_name="lfc/manage/workflow_transitions.html"):
+    """Displays the states of the passed workflow.
+    """
+    return render_to_string(template_name, RequestContext(request, {
+        "workflow" : workflow,
+    }))
+
+def workflow_menu(request, workflow=None, template_name="lfc/manage/workflow_menu.html"):
+    """
+    """
+    return render_to_string(template_name, RequestContext(request, {
+        "workflow" : workflow,
+    }))
+
+def workflow_navigation(request, workflow=None, template_name="lfc/manage/workflow_navigation.html"):
+    """Displays the left side navigation of a workflow
+    """
+    return render_to_string(template_name, RequestContext(request, {
+        "current_workflow" : workflow,
+        "workflows" : Workflow.objects.all()
+    }))
+
+def save_workflow_data(request, id):
+    """Saves the workflow data.
+    """
+    workflow = Workflow.objects.get(pk=id)
+
+    form = WorkflowForm(instance=workflow, data=request.POST)
+    if form.is_valid:
+        form.save()
+
+    selected = request.POST.getlist("permission")
+
+    for permission in Permission.objects.all():
+        if str(permission.id) in selected:
+            try:
+                WorkflowPermissionRelation.objects.create(workflow=workflow, permission=permission)
+            except IntegrityError:
+                pass
+        else:
+            try:
+                wpr = WorkflowPermissionRelation.objects.get(workflow=workflow, permission=permission)
+            except WorkflowPermissionRelation.DoesNotExist:
+                pass
+            else:
+                wpr.delete()
+
+    html = (
+        ("#data", workflow_data(request, workflow)),
+        ("#navigation", workflow_navigation(request, workflow)),
+    )
+
+    return return_as_json(html, _(u"Workflow data has been saved."))
+
+def manage_state(request, id, template_name="lfc/manage/workflow_state.html"):
+    """
+    """
+    state = State.objects.get(pk=id)
+    workflow = state.workflow
+
+    form = StateForm(instance=state)
+
+    roles = Role.objects.all()
+
+    permissions = []
+    for permission in workflow.permissions.all():
+        roles_temp = []
+        for role in roles:
+            try:
+                StatePermissionRelation.objects.get(state=state, permission=permission, role=role)
+            except StatePermissionRelation.DoesNotExist:
+                checked = False
+            else:
+                checked = True
+
+            roles_temp.append({
+                "id" : role.id,
+                "name" : role.name,
+                "checked" : checked,
+            })
+
+        try:
+            StateInheritanceBlock.objects.get(state=state, permission=permission)
+        except StateInheritanceBlock.DoesNotExist:
+            inherited = True
+        else:
+            inherited = False
+
+        permissions.append({
+            "id" : permission.id,
+            "name" : permission.name,
+            "roles" : roles_temp,
+            "inherited" : inherited,
+        })
+
+    try:
+        wsi = WorkflowStatesInformation.objects.get(state=state)
+    except WorkflowStatesInformation.DoesNotExist:
+        public = False
+        review = False
+    else:
+        public = wsi.public
+        review = wsi.review
+
+    return render_to_response(template_name, RequestContext(request, {
+        "state" : state,
+        "form" : form,
+        "permissions" : permissions,
+        "roles" : roles,
+        "public" : public,
+        "review" : review,
+    }))
+
+def save_workflow_state(request, id):
+    """Saves the workflow state with passed id.
+    """
+    state = State.objects.get(pk=id)
+
+    form = StateForm(instance=state, data=request.POST)
+    if form.is_valid:
+        form.save()
+
+    # Workflow information
+    wsi, created = WorkflowStatesInformation.objects.get_or_create(state=state)
+    if request.POST.get("public"):
+        wsi.public = True
+    else:
+        wsi.public = False
+
+    if request.POST.get("review"):
+        wsi.review = True
+    else:
+        wsi.review = False
+
+    wsi.save()
+
+    role_permssion_ids = request.POST.getlist("role_permission_id")
+    inherited_ids = request.POST.getlist("inherited_id")
+
+    for role in Role.objects.all():
+        for permission in Permission.objects.all():
+
+            # Inheritance
+            if str(permission.id) in inherited_ids:
+                try:
+                    sib = StateInheritanceBlock.objects.get(state=state, permission=permission)
+                except StateInheritanceBlock.DoesNotExist:
+                    pass
+                else:
+                    sib.delete()
+            else:
+                StateInheritanceBlock.objects.get_or_create(state=state, permission=permission)
+
+            # Roles
+            role_permission_id  = "%s|%s" % (role.id, permission.id)
+            if role_permission_id in role_permssion_ids:
+                StatePermissionRelation.objects.get_or_create(state=state, role=role, permission=permission)
+            else:
+                try:
+                    spr = StatePermissionRelation.objects.get(state=state, role=role, permission=permission)
+                except StatePermissionRelation.DoesNotExist:
+                    pass
+                else:
+                    spr.delete()
+
+    html = (
+        ("#data", workflow_data(request, state.workflow)),
+        ("#states", workflow_states(request, state.workflow)),
+    )
+
+    return return_as_json(html, _(u"State has been saved."))
+
+def add_workflow_state(request, id):
+    """
+    """
+    name = request.POST.get("name")
+    if name != "":
+        state = State.objects.create(workflow_id = id, name=name)
+
+    html = (
+        ("#data", workflow_data(request, state.workflow)),
+        ("#states", workflow_states(request, state.workflow)),
+    )
+
+    return return_as_json(html, _(u"State has been added."))
+
+def delete_workflow_state(request, id):
+    """Deletes the transition with passed id.
+    """
+    try:
+        state = State.objects.get(pk=id)
+    except State.DoesNotExist:
+        pass
+    else:
+        if state.workflow.get_initial_state() == state:
+            state.workflow.initial_state = None
+            state.workflow.save()
+        state.delete()
+
+    return MessageHttpResponseRedirect(
+        request.META.get("HTTP_REFERER"), _(u"State has been deleted.")
+    )
+
+def manage_transition(request, id, template_name="lfc/manage/workflow_transition.html"):
+    """Manages transition with passed id.
+    """
+    transition = Transition.objects.get(pk=id)
+    form = TransitionForm(instance=transition)
+
+    return render_to_response(template_name, RequestContext(request, {
+        "transition" : transition,
+        "form" : form,
+    }))
+
+def save_workflow_transition(request, id):
+    """Saves the workflow state with passed id.
+    """
+    transition = Transition.objects.get(pk=id)
+
+    form = TransitionForm(instance=transition, data=request.POST)
+    if form.is_valid:
+        form.save()
+
+    html = (
+        ("#transitions", workflow_transitions(request, transition.workflow)),
+        ("#states", workflow_states(request, transition.workflow)),
+    )
+
+    return return_as_json(html, _(u"Transition has been saved."))
+
+def add_workflow_transition(request, id):
+    """Adds a transition to workflow with passed id.
+    """
+    workflow = Workflow.objects.get(pk=id)
+
+    name = request.POST.get("name")
+    if name != "":
+        state = Transition.objects.create(workflow = workflow, name=name)
+
+    html = (
+        ("#transitions", workflow_transitions(request, workflow)),
+    )
+
+    return return_as_json(html, _(u"Transition has been added."))
+
+def delete_workflow_transition(request, id):
+    """Deletes the transition with passed id.
+    """
+    try:
+        transition = Transition.objects.get(pk=id)
+    except Transition.DoesNotExist:
+        pass
+    else:
+        transition.delete()
+
+    return MessageHttpResponseRedirect(
+        request.META.get("HTTP_REFERER"), _(u"Transition has been deleted.")
+    )
+
+@login_required
+def review_objects(request, template_name="lfc/manage/review_objects.html"):
+    """Displays a list of submitted objects.
+    """
+    portal = get_portal()
+
+    review_states = [wst.state for wst in WorkflowStatesInformation.objects.filter(review=True)]
+
+    objs = []
+    for obj in lfc.utils.get_content_objects():
+        if obj.get_state() in review_states:
+            objs.append(obj)
+
+    return render_to_response(template_name, RequestContext(request, {
+        "objs" : objs,
+    }))
 
 # Global #####################################################################
 ##############################################################################
@@ -1625,6 +2005,13 @@ def do_transition(request, id):
         obj = lfc.utils.get_content_object(pk=id)
         workflows.utils.do_transition(obj, transition, request.user)
 
+        # Set publication date
+        if obj.publication_date is None:
+            public_states = [wst.state for wst in WorkflowStatesInformation.objects.filter(public=True)]
+            if obj.get_state() in public_states:
+                obj.publication_date = datetime.datetime.now()
+                obj.save()
+
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 # Cut/Copy and paste #########################################################
@@ -1859,16 +2246,24 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
 
     old_workflow = ctr.workflow
 
+    if old_workflow:
+        old_objects = old_workflow.get_objects()
+    else:
+        old_objects = []
+
+    message = ""
     if request.method == "POST":
         form = ContentTypeRegistrationForm(data = request.POST, instance=ctr)
         if form.is_valid():
+            message = _(u"Content type has been saved.")
             form.save()
-            # Set workflow state to all instances
+            # Set workflow state to all instances which had the old workflow
             if ctr.workflow:
                 if ctr.workflow != old_workflow:
                     workflows.utils.set_workflow_for_model(ctype, ctr.workflow)
-                    for obj in ctr.workflow.get_objects():
-                        obj.set_state(ctr.workflow.initial_state)
+                    for obj in old_objects:
+                        if obj.content_type == ctr.type:
+                            obj.set_state(ctr.workflow.get_initial_state())
             else:
                 workflows.utils.remove_workflow_from_model(ctype)
     else:
@@ -1876,11 +2271,13 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
         ctr.save()
         form = ContentTypeRegistrationForm(instance=ctr)
 
-    return render_to_response(template_name, RequestContext(request, {
+    response = render_to_response(template_name, RequestContext(request, {
         "types" : ContentTypeRegistration.objects.all(),
         "ctr" : ctr,
         "form" : form,
     }))
+
+    return lfc.utils.set_message_to_reponse(response, message)
 
 # Applications ###############################################################
 ##############################################################################

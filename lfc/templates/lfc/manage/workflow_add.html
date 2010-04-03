@@ -1,0 +1,32 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left_slot %}
+    <div id="navigation">
+        {{ navigation }}
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <div id="menu"
+         class="site-actions">
+        {{ menu|safe}}
+    </div>
+
+    <div id="manage-tabs">
+
+        <ul>
+            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Data' %}</a></li>
+        </ul>
+
+        <div id="data">
+            <form action="{% url lfc_manage_add_workflow %}"
+                  method="POST">
+
+                {% include "lfc/manage/lfc_form.html" %}
+                <input type="submit" value='{% trans "Add" %}' />
+
+            </form>
+        </div>
+{% endblock %}
