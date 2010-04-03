@@ -1,0 +1,12 @@
+{% load i18n %}
+
+<div class="navigation-user">
+    {% for workflow in workflows %}
+        <div>
+            <a {% ifequal current_workflow.id workflow.id %}class="selected"{% endifequal %}
+               href="{% url lfc_manage_workflow workflow.id %}">
+               {{ workflow.name }}
+            </a>
+        </div>
+    {% endfor %}
+</div>

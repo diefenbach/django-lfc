@@ -73,18 +73,6 @@
                             <li>
                                 <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
-                            {% ifportalhasperm manage_portal  %}
-                                <li>
-                                    <a>{% trans "Applications" %}</a>
-                                    <ul>
-                                        <li>
-                                            <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
-                                        </li>
-                                        <li>
-                                            <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
-                                        </li>
-                                    </ul>
-                                </li>
                                 <li>
                                     <a>{% trans "User" %}</a>
                                     <ul>
@@ -99,8 +87,25 @@
                                         </li>
                                     </ul>
                                 </li>
-                                
-                            {% endifportalhasperm %}
+                                <li>
+                                    <a href="{% url lfc_manage_review %}">{% trans 'Review' %}</a>
+                                </li>
+                                <li>
+                                    <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
+                                </li>
+                                {% ifportalhasperm manage_portal  %}
+                                    <li>
+                                        <a>{% trans "Applications" %}</a>
+                                        <ul>
+                                            <li>
+                                                <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
+                                            </li>
+                                            <li>
+                                                <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
+                                            </li>
+                                        </ul>
+                                    </li>                            
+                                {% endifportalhasperm %}
                         </ul>
                     </td>
                 </tr>

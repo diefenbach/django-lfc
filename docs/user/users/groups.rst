@@ -2,14 +2,8 @@
 Groups
 ======
 
-Overview
---------
-
-* Groups combines users together.
-* Groups can have roles (these are considered as global).
-* Groups can have local roles, that is roles for a specific object.
-* Groups has all permissions of their roles - global and local ones.
-* Users of a Group have the group’s roles and permissions.
+This section describes the several data tabs and fields of the groups
+management interface.
 
 Data
 ----
@@ -19,3 +13,7 @@ Name
     
 Roles
     The global roles of the group.
+    
+.. seealso::
+
+   * :ref:`Groups concepts <concepts-groups-label>`

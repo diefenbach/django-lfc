@@ -3,26 +3,26 @@ Concepts
 ========
 
 Content types
--------------
+=============
 
 Within the core of LFC there is only one :term:`content type`: :term:`Page`
 (more can be added by developers).
 
 Sub objects
------------
+===========
 
 Every instance of an content object can have arbitrary sub objects which will
 build the content structure. Every content type can restrict the type of
 allowed sub types.
 
 Images and Files
-----------------
+================
 
 Every object can have an arbitrary amount of images and files. How they are
 displayed is up to the selected template.
 
 Templates
----------
+=========
 
 The content of an object is displayed by :term:`templates`. By default there 
 are  just a small bunch of templates (more can be added by developers):
@@ -44,11 +44,11 @@ are  just a small bunch of templates (more can be added by developers):
 * Overview
 
   All sub pages are displayed as a list. The first image of the sub pages 
-  (if there is one) is displayed as thumbnail top left, the text flows aroung
+  (if there is one) is displayed as thumbnail top left, the text flows around
   the image.
 
 Portlets
---------
+========
 
 Every object can have so-called :term:`portlets`, which are displayed in a 
 :term:`slots`. By default there is a left and a right slot and  just a few 
@@ -70,7 +70,7 @@ Portlets are inherited from parent pages but it is also possible to block
 parent portlets per :term:`slot`.
 
 Translations
-------------
+============
 
 Every page can have multiple translations.
 
@@ -84,6 +84,64 @@ Additionally it is possible to create language neutral objects which are
 displayed independent on the current selected language.
 
 Permissions
------------
+===========
 
-To be written.
+* Permissions are granted to roles (and only to roles) in order to allow 
+  something to users or groups which have these roles.
+
+.. _concepts-roles-label:
+
+Roles
+=====
+
+* Roles are used to grant permissions. Typical roles are *Reader*, *Manager*  
+  or *Editor*.
+
+Local Roles
+===========
+
+* Local roles are roles which are assigned to users and groups for a specific 
+  content objects.
+
+.. _concepts-users-label:
+
+Users
+=====
+
+* Users are actors which may need a permission to do something within LFC.
+* Users can be member of several groups.
+* User can have several roles, directly or via a membership to a group
+  (these are considered as global).
+* User can have local roles, directly or via a membership to a group. That is
+  roles for a specific object.
+* Users have all roles of their groups - global and local ones.
+* Users have all permissions of their roles - global and local ones.
+
+.. _concepts-groups-label:
+
+Groups
+======
+
+* Groups combines users together.
+* Groups can have roles (these are considered as global).
+* Groups can have local roles, that is roles for a specific object.
+* Groups has all permissions of their roles - global and local ones.
+* Users of a Group have the group's roles and permissions.
+
+.. _concepts-workflow-label:
+
+Workflows
+=========
+
+A workflow consists of a sequence of connected (through transitions) states. 
+The transitions can be restricted by permissions.
+
+A workflow can be assigned to models and model instances. All instances will
+"inherit" the workflow of its model. If an instance has an own workflow this 
+will have precedence. In this way all instances of a content type have the 
+same workflow unless a specific instance of that content type have an other 
+workflow assigned.
+
+Every workflow manages a set of permissions. Every workflow state can grant
+or remove this permissions from the instance for several groups. In this way
+objects have different permissions per workflow state.

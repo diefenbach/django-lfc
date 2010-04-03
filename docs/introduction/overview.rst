@@ -16,16 +16,20 @@ Features
 * Cut/Copy'n Paste
 * Easy upload of images and files
 * Multilingual content and GUI
+* Role based permissions
 * RSS Feeds
 * Search
 * Tagging
+* Users, Groups and Roles
 * Variable Templates
 * Variable Portlets
+* Workflows
 * WYSIWYG-Editor
   
 **Developers**
 
 * Add own templates
 * Add own portlets
+* Add own workflows
 * Add own applications and content types
         
