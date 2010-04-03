@@ -2,7 +2,8 @@
 Users
 =====
 
-This section describes the several data tabs and fields of the user management.
+This section describes the several data tabs and fields of the user management
+interface.
 
 Data
 ----
@@ -41,3 +42,7 @@ Change password
 Password / Password (again)
     Both fields must be filled in with the same password to set a new password
     for the user.
+
+.. seealso::
+
+   * :ref:`Users concepts <concepts-users-label>`
