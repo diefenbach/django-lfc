@@ -2257,13 +2257,22 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
         if form.is_valid():
             message = _(u"Content type has been saved.")
             form.save()
-            # Set workflow state to all instances which had the old workflow
             if ctr.workflow:
-                if ctr.workflow != old_workflow:
+                # if there is an old worfklow set workflow state to all 
+                # content type instances which had the old workflow
+                if old_workflow and ctr.workflow != old_workflow:
                     workflows.utils.set_workflow_for_model(ctype, ctr.workflow)
                     for obj in old_objects:
                         if obj.content_type == ctr.type:
                             obj.set_state(ctr.workflow.get_initial_state())
+                # If there is no old workflow set the initial workflow state 
+                # to all content type instances which get the new workflow
+                elif old_workflow is None:
+                    workflows.utils.set_workflow_for_model(ctype, ctr.workflow)
+                    for obj in ctr.workflow.get_objects():
+                        if obj.content_type == ctr.type:
+                            obj.set_state(ctr.workflow.get_initial_state())
+
             else:
                 workflows.utils.remove_workflow_from_model(ctype)
     else:
