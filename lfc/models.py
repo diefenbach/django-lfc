@@ -28,12 +28,12 @@ from portlets.utils import register_portlet
 
 # workflows imports
 import workflows.utils
-from workflows.models import WorkflowBase
+from workflows import WorkflowBase
 from workflows.models import Workflow
 from workflows.models import State
 
 # permissions imports
-from permissions.models import PermissionBase
+from permissions import PermissionBase
 from permissions.models import Role
 
 # lfc imports
