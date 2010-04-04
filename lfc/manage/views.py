@@ -863,8 +863,8 @@ def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
     content_types = get_allowed_subtypes(obj)
 
     # Workflow
-    transitions = workflows.utils.get_allowed_transitions(obj, request.user)
-    state = workflows.utils.get_state(obj)
+    transitions = obj.get_allowed_transitions(request.user)
+    state = obj.get_state()
 
     return render_to_string(template_name, RequestContext(request, {
         "content_types" : content_types,

@@ -70,7 +70,7 @@ class WorkflowStatesInformation(models.Model):
     review = models.BooleanField(default=False)
 
     def __unicode__(self):
-        result = self.state.name        
+        result = self.state.name
         if self.public:
             result += u" " + u"Public"
 
@@ -742,6 +742,21 @@ class BaseContent(AbstractBaseContent):
 
         return super(BaseContent, self).has_permission(user, codename, roles)
 
+    # django-workflows
+    def get_allowed_transitions(self, user):
+        """Returns all allowed permissions for the passed user.
+        """
+        state = self.get_state()
+        if state is None:
+            return []
+
+        transitions = []
+        for transition in state.transitions.all():
+            permission = transition.permission
+            if permission is None or self.has_permission(user, permission.codename):
+               transitions.append(transition)
+
+        return transitions
 
 class Page(BaseContent):
     """A page is the foremost object within lfc which shows information to the
