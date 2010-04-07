@@ -29,6 +29,7 @@ Users
    user/workflows/index.rst
    user/applications/index.rst
    user/miscellaneous/index.rst
+   user/tutorials/index.rst
 
 Developers
 ==========

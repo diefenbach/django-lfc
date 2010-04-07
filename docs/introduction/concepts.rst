@@ -100,7 +100,7 @@ Roles
 Local Roles
 ===========
 
-* Local roles are roles which are assigned to users and groups for a specific 
+* Local roles are roles which are assigned to users and groups for specific 
   content objects.
 
 .. _concepts-users-label:
@@ -109,10 +109,10 @@ Users
 =====
 
 * Users are actors which may need a permission to do something within LFC.
-* Users can be member of several groups.
-* User can have several roles, directly or via a membership to a group
+* Users can be members of several groups.
+* Users can have several roles, directly or via a membership to a group
   (these are considered as global).
-* User can have local roles, directly or via a membership to a group. That is
+* Users can have *local roles*, directly or via a membership to a group. That is
   roles for a specific object.
 * Users have all roles of their groups - global and local ones.
 * Users have all permissions of their roles - global and local ones.
@@ -143,5 +143,5 @@ same workflow unless a specific instance of that content type have an other
 workflow assigned.
 
 Every workflow manages a set of permissions. Every workflow state can grant
-or remove this permissions from the instance for several groups. In this way
+or remove this permissions from the instance for several roles. In this way
 objects have different permissions per workflow state.
