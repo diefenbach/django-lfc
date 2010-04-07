@@ -24,6 +24,9 @@
                 <th width="20%">
                     {% trans 'State' %}
                 </th>
+                <th width="20%">
+                    {% trans 'Type' %}
+                </th>
                 <th class="right last small">
                     {% trans 'Manage' %}
                 </th>
@@ -46,11 +49,16 @@
                     </td>
                     <td>
                         <a href="{% url lfc_manage_object child.id %}">
-                            {{ child.title }}
+                            <a href="{% url lfc_manage_object child.id %}">
+                                {{ child.title }}
+                            </a>
                         </a>
                     </td>
                     <td>
                         {{ child.get_state.name }}
+                    </td>
+                    <td>
+                        {{ child.get_content_type }}
                     </td>
                     <td class="right last">
                         <a href="{% url lfc_manage_object child.id %}">

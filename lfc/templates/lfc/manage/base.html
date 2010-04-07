@@ -55,9 +55,9 @@
             <div class="username">
                 {% if user.is_authenticated %}
                     {% if user.last_name %}
-                        <span>{{user.first_name}} {{user.last_name}}</span>
+                        <span id="user_fullname">{{user.first_name}} {{user.last_name}}</span>
                     {% else %}
-                        <span>{{ user.username }}</span>
+                        <span id="username">{{ user.username }}</span>
                     {% endif %}
                     | <a class="logout"
                          href="{% url lfc_logout %}">{% trans 'Logout' %}</a>

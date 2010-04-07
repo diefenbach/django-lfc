@@ -23,6 +23,9 @@
                 <th width="20%">
                     {% trans 'State' %}
                 </th>
+                <th width="20%">
+                    {% trans 'Type' %}
+                </th>
                 <th class="right last small">
                     {% trans 'Manage' %}
                 </th>
@@ -44,10 +47,15 @@
                                value="{{ child.position }}" />
                     </td>
                     <td>
-                        {{ child.title }}
+                        <a href="{% url lfc_manage_object child.id %}">
+                            {{ child.title }}
+                        </a>
                     </td>
                     <td>
                         {{ child.get_state.name }}
+                    </td>
+                    <td>
+                        {{ child.get_content_type }}
                     </td>
                     <td class="right last">
                         <a href="{% url lfc_manage_object child.id %}">
@@ -64,7 +72,7 @@
                 </tr>
             {% endfor %}
         </table>
-        <div class="manage-form-buttons">            
+        <div class="manage-form-buttons">
             <input class="ajax-save-button"
                    type="submit" name="update" value="{% trans 'Update' %}" />
             <input class="ajax-save-button"
@@ -73,10 +81,10 @@
                    type="submit" name="copy" value="{% trans 'Copy' %}" />
             <input class="ajax-save-button"
                    type="submit" name="cut" value="{% trans 'Cut' %}" />
-                   
+
             {% if display_paste %}
                 <input class="ajax-save-button"
-                       type="submit" name="paste" value="{% trans 'Paste' %}" />                
+                       type="submit" name="paste" value="{% trans 'Paste' %}" />
             {% endif %}
             <span class="ajax-loading">{% trans "Processing ..." %}</span>
         </div>
