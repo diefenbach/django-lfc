@@ -517,6 +517,11 @@ class BaseContent(AbstractBaseContent):
         else:
             return self
 
+    def get_content_type(self):
+        """Returns the content type as string.
+        """
+        return self.__class__.__name__
+
     def get_searchable_text(self):
         """Returns the searchable text of this content type. By default it
         takes the title the description of the instance into account. Sub
@@ -553,7 +558,10 @@ class BaseContent(AbstractBaseContent):
     def get_content_type(self):
         """
         """
-        return self.get_content_object().__class__.__name__
+        try:
+            return ContentTypeRegistration.objects.get(type=self.content_type).name
+        except ContentTypeRegistration.DoesNotExist:
+            return _(u"n/a")
 
     def get_descendants(self, request=None, result=None):
         """Returns all descendants of the content object. If the request is
