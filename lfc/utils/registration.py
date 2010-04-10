@@ -8,6 +8,10 @@ from lfc.models import Template
 from django.contrib.contenttypes.models import ContentType
 from django.db import IntegrityError
 
+# workflow imports
+from workflows.models import Workflow
+from workflows.models import WorkflowModelRelation
+
 def get_info(obj_or_type):
     """Returns the ContentTypeRegistration for the passed object or type.
     Returns None if the content type registry is not found.
@@ -71,7 +75,7 @@ def register_sub_type(klass, name):
     if sub_ctr:
         base_ctr.subtypes.add(sub_ctr)
 
-def register_content_type(klass, name, sub_types=[], templates=[], default_template=None, global_addable=True):
+def register_content_type(klass, name, sub_types=[], templates=[], default_template=None, global_addable=True, workflow=None):
     """Registers a content type.
 
     **Parameters:**
@@ -94,10 +98,14 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
 
     default_template
         Default template of the registered object.
-        
+
     global_addable
-        Decides whether the content type is global addable or just within 
+        Decides whether the content type is global addable or just within
         specific content types.
+
+    Workflow
+        The workflow of the content type. Needs to be a string with the
+        unique workflow name.
     """
     type = klass.__name__.lower()
     try:
@@ -132,6 +140,25 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
                     if template_name == default_template:
                         ctr.default_template = template
                         ctr.save()
+
+            # Add workflow
+            if workflow:
+                try:
+                    wf = Workflow.objects.get(name=workflow)
+                except Workflow.DoesNotExist:
+                    pass
+                else:
+                    ctr.workflow = wf
+                    ctr.save()
+                    
+                    ctype = ContentType.objects.get_for_model(klass)
+                    try:
+                        wmr = WorkflowModelRelation.objects.get(content_type=ctype)
+                    except WorkflowModelRelation.DoesNotExist:
+                        WorkflowModelRelation.objects.create(workflow=wf, content_type=ctype)
+                    else:
+                        wmr.content_type = ctype
+                        wmr.save()
 
 def unregister_content_type(name):
     """Unregisteres content type with passed name.
