@@ -7,7 +7,7 @@
     </li>
     {% if workflow %}
         <li>
-            <a class="modalInput" href="{% url lfc_manage_delete_workflow workflow.id %}">{% trans "Delete workflow" %}</a>
+            <a class="delete-link" href="{% url lfc_manage_delete_workflow workflow.id %}">{% trans "Delete workflow" %}</a>
         </li>
     {% endif %}
 </ul>

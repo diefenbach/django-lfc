@@ -25,7 +25,7 @@
             </li>
             {% if display_delete %}
                 <li>
-                    <a class="modalInput" href="{% url lfc_delete_user current_user_id %}">{% trans "Delete User" %}</a>
+                    <a class="delete-link" href="{% url lfc_delete_user current_user_id %}">{% trans "Delete User" %}</a>
                 </li>
             {% endif %}
         </ul>

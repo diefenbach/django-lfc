@@ -4,7 +4,7 @@
 
 {% for state in workflow.states.all %}
     <h3>
-        <a class="modalInput" href="{% url lfc_manage_delete_workflow_state state.id %}">
+        <a class="delete-link" href="{% url lfc_manage_delete_workflow_state state.id %}">
             <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
         </a>
         <a class="overlay-link" href="{% url lfc_manage_state state.id %}">

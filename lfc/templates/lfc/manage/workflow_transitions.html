@@ -4,7 +4,7 @@
 
 {% for transition in workflow.transitions.all %}
     <h3>
-        <a class="modalInput" href="{% url lfc_manage_delete_workflow_transition transition.id %}">
+        <a class="delete-link" href="{% url lfc_manage_delete_workflow_transition transition.id %}">
             <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
         </a>
         
