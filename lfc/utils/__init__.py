@@ -4,8 +4,8 @@ import urllib
 import sys
 
 # django settings
-from django.contrib.auth.models import Group
 from django.core.cache import cache
+from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
@@ -13,10 +13,6 @@ from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 from django.utils import translation
-
-# permissions imports
-import permissions.utils
-from permissions.models import Role
 
 # lfc imports
 import lfc.models
@@ -113,6 +109,11 @@ def get_portal(pk=1):
     cache.set(cache_key, portal)
     return portal
 
+def login_form():
+    """Returns the lfc login form.
+    """
+    return HttpResponseRedirect(reverse("lfc_login"))
+    
 def traverse_object(request, path):
     """Returns the the object with the given path.
     """
