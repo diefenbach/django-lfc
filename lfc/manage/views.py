@@ -187,6 +187,10 @@ def delete_object(request, id):
 def portal(request, template_name="lfc/manage/portal.html"):
     """Displays the main management screen of the portal with all tabs.
     """
+    portal = get_portal()
+    if not portal.has_permission(request.user, "manage_portal"):
+        return lfc.utils.login_form()
+
     return render_to_response(template_name, RequestContext(request, {
         "menu" : portal_menu(request),
         "display_paste" : _display_paste(request),
