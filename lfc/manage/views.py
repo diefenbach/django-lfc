@@ -471,7 +471,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "permissions" : object_permissions(request, obj),
         "content_type_name" : get_info(obj).name,
         "display_paste" : _display_paste(request),
-        "lfc_context" : obj,
+        "obj" : obj,
     }))
 
 @login_required

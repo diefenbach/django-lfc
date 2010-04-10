@@ -17,10 +17,10 @@
 
         <table class="lfs-manage-table full">
             <tr>
-                <th class="tiny padr">{% trans "Inherit" %}</th>
-                <th class="large">{% trans "Permission" %}</th>
+                <th width="60px">{% trans "Inherit" %}</th>
+                <th class="middle">{% trans "Permission" %}</th>
                 {% for role in roles %}
-                    <th class="large">{{ role.name }}</th>
+                    <th class="middle">{{ role.name }}</th>
                 {% endfor %}
             </tr>
             {% for permission in permissions %}
@@ -38,9 +38,6 @@
                type="submit" name="paste" value="{% trans 'Save permissions' %}" />
     </form>
 
-    <div id="local-roles">
-        {{ local_roles|safe }}
-    </div>
 {% else %}
     <h2 class="first-heading">
         {% trans 'Worflow' %}
@@ -52,10 +49,10 @@
         {% trans 'Permissions' %}
     </h2>
 
-    <table class="lfs-manage-table" width="99%">
+    <table class="lfs-manage-table full">
         <tr>
             <th class="tiny padr">{% trans "Inherited" %}</th>
-            <th class="large">{% trans "Permission" %}</th>
+            <th class="middle">{% trans "Permission" %}</th>
             {% for role in roles %}
                 <th class="large">{{ role.name }}</th>
             {% endfor %}
@@ -82,6 +79,8 @@
             </tr>
         {% endfor %}
     </table>
-
 {% endifhasperm %}
+<div id="local-roles">
+    {{ local_roles|safe }}
+</div>
 

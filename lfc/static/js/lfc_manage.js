@@ -225,7 +225,7 @@ $(function() {
     });
 
     // Portlets
-    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100, expose: {color: '#eee', loadSpeed:100 } });
+    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100, expose: {color: '#222', loadSpeed:100 } });
     $(".portlet-edit-button").livequery("click", function() {
         tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
         var url = $(this).attr("href");
@@ -275,8 +275,8 @@ $(function() {
     });
 
     // Delete dialog
-    var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, expose: {color: '#eee', loadSpeed:100 } });
-    $(".modalInput").livequery("click", function() {
+    var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, top: '25%', expose: {color: '#222', loadSpeed:100 } });
+    $(".delete-link").livequery("click", function() {
         $("#delete-url").html($(this).attr("href"));
         delete_dialog.load();
         return false;

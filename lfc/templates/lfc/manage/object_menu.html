@@ -36,7 +36,7 @@
             {% endif %}
             {% ifhasperm delete %}
                 <li>
-                    <a class="modalInput" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                    <a class="delete-link" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
                 </li>
             {% endifhasperm %}
         </ul>                        
