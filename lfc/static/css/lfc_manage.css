@@ -484,3 +484,7 @@ body.filebrowser {
     height: 400px;
     overflow: auto;
 }
+
+.wf_permission .permission {
+    color: red;
+}

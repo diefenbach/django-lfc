@@ -1107,3 +1107,39 @@ msgstr "Übergang hinzufügen"
 #, python-format
 msgid "%s tag needs no argument"
 msgstr ""
+
+msgid "Submit"
+msgstr "Einreichen"
+
+msgid "Anonymous"
+msgstr "Anonymer"
+
+msgid "Editor"
+msgstr "Bearbeiter"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "Owner"
+msgstr "Eigentümer"
+
+msgid "Reader"
+msgstr "Leser"
+
+msgid "Reviewer"
+msgstr "Redakteur"
+
+msgid "Private"
+msgstr "Privat"
+
+msgid "Submitted"
+msgstr "Eingereicht"
+
+msgid "Make private"
+msgstr "Privat schalten"
+
+msgid "Make public"
+msgstr "Öffentlich schalten"
+
+msgid "Reject"
+msgstr "Ablehnen"

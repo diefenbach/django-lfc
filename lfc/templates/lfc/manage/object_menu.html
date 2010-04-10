@@ -92,12 +92,14 @@
     {% endif %}
     {% if state %}
         <li>
-            <a>{{ state.name }}</a>
+            <a>{% trans state.name %}</a>
             {% if transitions %}
                 <ul>
                     {% for transition in transitions %}
                         <li>
-                            <a href="{% url lfc_manage_do_transition obj.id %}?transition={{ transition.id }}">{{ transition.name }}</a>
+                            <a href="{% url lfc_manage_do_transition obj.id %}?transition={{ transition.id }}">
+                                {% trans transition.name %}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>

@@ -24,7 +24,7 @@
                         </th>                
                         {% for role in roles %}
                             <th class="middle">
-                                {{ role.name }}
+                                {% trans role.name %}
                             </th>
                         {% endfor %}
                     </tr>
@@ -59,7 +59,7 @@
                             </th>                
                             {% for role in roles %}
                                 <th class="middle">
-                                    {{ role.name }}
+                                    {% trans role.name %}
                                 </th>
                             {% endfor %}
                         </tr>

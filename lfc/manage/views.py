@@ -682,7 +682,10 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
     """
     base_ctype = ContentType.objects.get_for_model(BaseContent)
     ctype = ContentType.objects.get_for_model(obj)
-
+        
+    workflow = obj.get_workflow()
+    wf_permissions = workflow.permissions.all()
+    
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
     my_permissions = []
     for permission in Permission.objects.filter(q):
@@ -699,13 +702,14 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
             "codename" : permission.codename,
             "roles" : roles,
             "is_inherited" : obj.is_inherited(permission.codename),
+            "is_wf_permission" : permission in wf_permissions,
         })
 
     return render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
         "roles" : Role.objects.all(),
         "permissions" : my_permissions,
-        "workflow" : workflows.utils.get_workflow(obj),
+        "workflow" : workflow,
         "local_roles" : local_roles(request, obj),
     }))
 
