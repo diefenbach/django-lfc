@@ -18,78 +18,116 @@
             </div>
         </div>
     </form>
-{% endifhasperm %}
 
 
-<h2 class="middle-heading">
-    {% trans 'Comments' %}
-</h2>
+    <h2 class="middle-heading">
+        {% trans 'Comments' %}
+    </h2>
 
-{% if comments %}
-    <form action="{% url lfc_update_comments obj.id %}"
-          method="post">
+    {% if comments %}
+        <form action="{% url lfc_update_comments obj.id %}"
+              method="post">
 
-        <table class="lfs-manage-table">
+            <table class="lfs-manage-table half">
+                <tr>
+                    <th class="tiny">
+                        <input type="checkbox"
+                               class="select-all-1" />
+                    </th>
+                    <th class="tiny right-padding">
+                        {% trans 'SNR' %}
+                    </th>
+                    <th class="middle">
+                        {% trans 'Name' %}
+                    </th>
+                    <th class="tiny right-padding">
+                        {% trans 'Public' %}
+                    </th>
+                    <th class="right-padding">
+                        {% trans 'Edit' %}
+                    </th>
+                </tr>
+                {% for comment in comments %}
+                    <tr>
+                        <td>
+                            <input type="hidden"
+                                   name="comment_id-{{ comment.id }}" />
+                            <input type="checkbox"
+                                   class="select-1"
+                                   name="delete-{{comment.id}}"
+                                   style="float:left" />
+                        </td>
+                        <td>
+                            {{ forloop.counter }}.
+                        </td>
+                        <td>
+                            {{comment.name}}
+                        </td>
+                        <td>
+                            <input type="checkbox"
+                                   name="is_public-{{comment.id}}"
+                                   style="float:left"
+                                   {% if comment.is_public %}checked="checked"{% endif %} />
+                        </td>
+                        <td class="right-padding">
+                            <a href="/admin/comments/comment/{{comment.id}}">
+                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                     alt="{% trans 'Edit' %}"
+                                     title="{% trans 'Edit object' %}" />
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="manage-form-buttons">
+                <input class="ajax-save-button"
+                       type="submit" name="update" value="{% trans 'Update comments' %}" />
+                <input class="ajax-save-button"
+                       type="submit" name="delete" value="{% trans 'Delete comments' %}" />
+            </div>
+        </form>
+    {% else %}
+        <span>{% trans 'There are no comments' %}</span>
+    {% endif %}
+{% else %}
+    <h2 class="first-heading">
+        {% trans 'Allow comments' %}
+    </h2>
+    <div class="padding-b">
+        {{ obj.get_allow_comments_display }}
+    </div>
+
+    <h2 class="first-heading">
+        {% trans 'Comments' %}
+    </h2>
+    
+    {% if comments %}
+        <table class="lfs-manage-table half">
             <tr>
-                <th>
-                    <input type="checkbox"
-                           class="select-all-1" />
-                </th>
-                <th>
-                    {% trans 'SNR' %}
-                </th>
-                <th>
+                <th class="middle">
                     {% trans 'Name' %}
                 </th>
                 <th>
                     {% trans 'Public' %}
                 </th>
-                <th>
-                    {% trans 'Edit' %}
-                </th>
             </tr>
             {% for comment in comments %}
                 <tr>
                     <td>
-                        <input type="hidden"
-                               name="comment_id-{{ comment.id }}" />
-                        <input type="checkbox"
-                               class="select-1"
-                               name="delete-{{comment.id}}"
-                               style="float:left" />
+                        {{ comment.name }}
                     </td>
                     <td>
-                        {{ forloop.counter }}.
-                    </td>
-                    <td>
-                        {{comment.name}}
-                    </td>
-                    <td>
-                        <input type="checkbox"
-                               name="is_public-{{comment.id}}"
-                               style="float:left"
-                               {% if comment.is_public %}checked="checked"{% endif %} />
-                    </td>
-                    <td>
-                        <a href="/admin/comments/comment/{{comment.id}}">
-                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
-                                 alt="{% trans 'Edit' %}"
-                                 title="{% trans 'Edit object' %}" />
-                        </a>
+                        {% if comment.is_public %}
+                            {% trans "Yes" %}
+                        {% else %}
+                            {% trans "No" %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
         </table>
-        <div class="manage-form-buttons">
-            {% ifhasperm edit %}
-                <input class="ajax-save-button"
-                       type="submit" name="update" value="{% trans 'Update comments' %}" />
-                <input class="ajax-save-button"
-                       type="submit" name="delete" value="{% trans 'Delete comments' %}" />
-            {% endifhasperm %}
+    {% else %}
+        <span>{% trans 'There are no comments' %}</span>
+    {% endif %}    
+{% endifhasperm %}
 
-        </div>
-    </form>
-{% else %}
-    <span>{% trans 'There are no comments' %}</span>
-{% endif %}

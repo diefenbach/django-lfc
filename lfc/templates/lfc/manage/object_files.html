@@ -1,54 +1,54 @@
 {% load i18n %}
 {% load lfc_tags %}
 
-{% if obj.files.all %}
-    <form id="object-files-update-form"
-          action="{% url lfc_update_files obj.id %}"
-          method="post">
-
-        <table class="lfs-manage-table">
-            <tr>
-                <th>
-                    <input type="checkbox"
-                           class="select-all-2" />
-                </th>
-                <th>
-                    {% trans 'Title' %}
-                </th>
-                <th class="number">
-                    {% trans 'Position' %}
-                </th>
-            </tr>
-            {% for file in obj.files.all %}
-                <tr>
-                    <td>
-                        <input type="checkbox"
-                               class="select-2"
-                               name="delete-files"
-                               value="{{ file.id }}"
-                               style="float:left" />
-                    </td>
-                    <td>
-                        <input type="text" name="title-{{file.id}}" value="{{file.title}}" />
-                    </td>
-                    <td class="number">
-                        <input type="text" name="position-{{file.id}}" value="{{file.position}}" size="3" />
-                    </td>
-                </tr>
-            {% endfor %}
-        </table>
-
-        <input class="object-files-update-button"
-               type="submit" name="update" value="{% trans 'Update' %}" />
-        <input class="object-files-update-button"
-               type="submit" name="delete" value="{% trans 'Delete' %}" />
-
-    </form>
-{% else %}
-    <span>{% trans 'There are no files' %}</span>
-{% endif %}
-
 {% ifhasperm edit %}
+    {% if obj.files.all %}
+        <form id="object-files-update-form"
+              action="{% url lfc_update_files obj.id %}"
+              method="post">
+
+            <table class="lfs-manage-table half">
+                <tr>
+                    <th>
+                        <input type="checkbox"
+                               class="select-all-2" />
+                    </th>
+                    <th>
+                        {% trans 'Title' %}
+                    </th>
+                    <th class="number">
+                        {% trans 'Position' %}
+                    </th>
+                </tr>
+                {% for file in obj.files.all %}
+                    <tr>
+                        <td>
+                            <input type="checkbox"
+                                   class="select-2"
+                                   name="delete-files"
+                                   value="{{ file.id }}"
+                                   style="float:left" />
+                        </td>
+                        <td>
+                            <input type="text" name="title-{{file.id}}" value="{{file.title}}" />
+                        </td>
+                        <td class="number">
+                            <input type="text" name="position-{{file.id}}" value="{{file.position}}" size="3" />
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <input class="object-files-update-button"
+                   type="submit" name="update" value="{% trans 'Update' %}" />
+            <input class="object-files-update-button"
+                   type="submit" name="delete" value="{% trans 'Delete' %}" />
+
+        </form>
+    {% else %}
+        <span>{% trans 'There are no files' %}</span>
+    {% endif %}
+
     <h2 class="middle-heading">{% trans 'Add files' %}</h2>
 
     <form id="files-form"
@@ -114,6 +114,24 @@
 
         swfu = new SWFUpload(settings);
     </script>
+{% else %}
+    {% if obj.files.all %}
+        <table class="lfs-manage-table half">
+            <tr>
+                <th>
+                    {% trans 'Title' %}
+                </th>
+            </tr>
+            {% for file in obj.files.all %}
+                <tr>
+                    <td>
+                        {{ file.title }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <span>{% trans 'There are no files' %}</span>
+    {% endif %}    
 {% endifhasperm %}
-
 

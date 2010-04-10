@@ -63,25 +63,6 @@ a  {
     padding-top: 30px;
 }
 
-.right-padding {
-    text-align: right;
-    padding-right: 10px;
-}
-
-.right {
-    text-align: right;
-}
-
-.mini {
-    width: 1px;
-    padding: 0 5px;
-}
-
-.small {
-    width: 50px;
-}
-
-
 h1 {
     font-size: 131%;
     font-weight: bold;
@@ -157,10 +138,52 @@ table.lfs-manage-table {
     height: 30px;
     background-color: #ede9e8;
     padding-left: 10px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    color: #555;
 }
 
 .lfs-manage-table td {
-    padding: 4px 10px
+    padding: 4px 10px;
+    border: 1px solid #ddd;
+}
+
+.lfs-manage-table.full {
+    width: 100%;
+}
+
+.lfs-manage-table.half {
+    width: 50%;
+}
+
+.lfs-manage-table .large {
+    width: 300px;
+}
+
+.lfs-manage-table .middle {
+    width: 200px;
+}
+
+.lfs-manage-table .small {
+    width: 100px;
+}
+
+.lfs-manage-table .tiny {
+    width: 1px;
+}
+
+.lfs-manage-table .right-padding {
+    text-align: right;
+    padding-right: 10px;
+}
+
+.lfs-manage-table .right {
+    text-align: right;
+}
+
+.lfs-manage-table .emphasized {
+    font-weight: bold;
+    color: #555;
 }
 
 /* Navigation */
@@ -184,8 +207,8 @@ table.groups {
     margin-left: 30px;
 }
 
-table.groups, 
-table.groups tr.header,  
+table.groups,
+table.groups tr.header,
 table.users,
 table.users tr.header {
     border: 1px solid #ccc;
@@ -277,15 +300,13 @@ a:hover {
 }
 
 .delete {
-    margin: 0 10px;
-    padding-left: 20px;
+    padding-left: 16px;
     background: url(/media/lfc/icons/delete.png) no-repeat;
     text-decoration: none;
 }
 
 .edit {
-    margin: 0 10px;
-    padding-left: 20px;
+    padding-left: 16px;
     background: url(/media/lfc/icons/edit.png) no-repeat;
     text-decoration: none;
 }
@@ -358,6 +379,18 @@ label {
     font-weight: bold;
 }
 
+.padding {
+    padding: 10px 0;
+}
+
+.padr {
+    padding-right: 10px;
+}
+
+.padding-b {
+    padding-bottom: 15px;
+}
+
 .portlet-form td.label {
     padding-right: 40px;
 }
@@ -371,10 +404,6 @@ label {
 }
 
 .no-portlets {
-    padding: 10px 0;
-}
-
-.middle {
     padding: 10px 0;
 }
 
@@ -432,4 +461,20 @@ body.filebrowser {
     padding-left: 10px;
     display: none;
     color: red;
+}
+
+.field-wrapper {
+    border: 1px solid #aaa;
+    padding: 10px 5px;
+    width: 600px;
+    margin-bottom: 10px;
+}
+
+.description.field-wrapper {
+    height: 100px;
+}
+
+.text.field-wrapper {
+    height: 400px;
+    overflow: auto;
 }

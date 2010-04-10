@@ -884,11 +884,11 @@ msgstr "Arbeitsablauf"
 
 #: templates/lfc/manage/object_permissions.html:8
 msgid "The current workflow is"
-msgstr "Der aktuell Arbeitsablauf ist"
+msgstr "Der aktuelle Arbeitsablauf ist"
 
 #: templates/lfc/manage/object_permissions.html:19
-msgid "Inherit"
-msgstr "Erben"
+msgid "Inherited"
+msgstr "Geerbt"
 
 #: templates/lfc/manage/object_permissions.html:20
 #: templates/lfc/manage/portal_permissions.html:12

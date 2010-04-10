@@ -405,6 +405,40 @@ def previous_next_by_position(context, obj):
         "next" : next,
     }
 
+from django.forms import ChoiceField, FileField, CharField, Textarea
+
+@register.filter(name='field_value')
+def field_value(field):
+    """ Returns the value for this BoundField, as rendered in widgets. 
+    """ 
+    if field.form.is_bound: 
+        if isinstance(field.field, FileField) and field.data is None: 
+            val = field.form.initial.get(field.name, field.field.initial) 
+        else: 
+            val = field.data 
+    else:
+        val = field.form.initial.get(field.name, field.field.initial)
+        if callable(val):
+            val = val()
+    if val is None:
+        val = ''
+    return val
+
+@register.filter(name='display_value')
+def display_value(field): 
+    """ 
+    Returns the displayed value for this BoundField, as rendered in widgets. 
+    """ 
+    value = field_value(field)
+    if isinstance(field.field, CharField) and isinstance(field.field.widget, Textarea): 
+        value = """<div class="%s field-wrapper">%s</div>""" % (field.name, value)
+
+    if isinstance(field.field, ChoiceField): 
+        for (val, desc) in field.field.choices: 
+            if val == value: 
+                return desc 
+    return value
+
 class PermissionComparisonNode(template.Node):
     """Implements a node to provide an if current user has passed permission
     for current object tag.
@@ -440,7 +474,10 @@ class PermissionComparisonNode(template.Node):
         if obj.has_permission(request.user, self.permission):
             return self.nodelist_true.render(context)
         else:
-            return self.nodelist_false
+            try:
+                return self.nodelist_false.render(context)
+            except AttributeError:
+                return ""
 
 @register.tag
 def ifhasperm(parser, token):

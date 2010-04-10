@@ -18,9 +18,11 @@
 
 <div class="navigation-manage" style="clear:both">
     <ul class="level-1">
-        <li {% if is_portal %}class="current"{% endif %}>
-            <a href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
-        </li>
+        {% ifportalhasperm manage_portal %}
+            <li {% if is_portal %}class="current"{% endif %}>
+                <a href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
+            </li>
+        {% endifportalhasperm %}
         <li>
             <ul class="level-{{ level }}">
                 {% for obj in objs %}

@@ -1,53 +1,53 @@
 {% load i18n %}
 {% load lfc_tags %}
 
-{% if obj.images.all %}
-    <form id="object-images-update-form"
-          action="{% url lfc_update_images obj.id %}"
-          method="post">
+{% ifhasperm edit %}
+    {% if obj.images.all %}
+        <form id="object-images-update-form"
+              action="{% url lfc_update_images obj.id %}"
+              method="post">
 
-        <table class="lfs-manage-table">
-            <tr>
-                <th>
-                    <input type="checkbox"
-                           class="select-all-1" />
-                </th>
-                <th>
-                    {% trans 'File' %}
-                </th>
-                <th>
-                    {% trans 'Title' %}
-                </th>
-                <th class="number">
-                    {% trans 'Position' %}
-                </th>
-            </tr>
-            {% for image in obj.images.all %}
+            <table class="lfs-manage-table half">
                 <tr>
-                    <td>
+                    <th class="tiny">
                         <input type="checkbox"
-                               class="select-1"
-                               name="delete-images"
-                               value="{{ image.id }}"
-                               style="float:left" />
-                    </td>
-                    <td>
-                        <img src="{{ image.image.url_60x60 }}"
-                             alt="{{ image.title }}"
-                             title="{{ image_title }}"
-                             style="float:left"/>
-
-                    </td>
-                    <td>
-                        <input type="text" name="title-{{ image.id }}" value="{{ image.title }}" />
-                    </td>
-                    <td class="number last">
-                        <input type="text" name="position-{{ image.id }}" value="{{ image.position }}" size="3" />
-                    </td>
+                               class="select-all-1" />
+                    </th>
+                    <th>
+                        {% trans 'Image' %}
+                    </th>
+                    <th>
+                        {% trans 'Title' %}
+                    </th>
+                    <th>
+                        {% trans 'Position' %}
+                    </th>
                 </tr>
-            {% endfor %}
-        </table>
-        {% ifhasperm edit %}
+                {% for image in obj.images.all %}
+                    <tr>
+                        <td>
+                            <input type="checkbox"
+                                   class="select-1"
+                                   name="delete-images"
+                                   value="{{ image.id }}"
+                                   style="float:left" />
+                        </td>
+                        <td>
+                            <img src="{{ image.image.url_60x60 }}"
+                                 alt="{{ image.title }}"
+                                 title="{{ image_title }}"
+                                 style="float:left"/>
+
+                        </td>
+                        <td>
+                            <input type="text" name="title-{{ image.id }}" value="{{ image.title }}" />
+                        </td>
+                        <td>
+                            <input type="text" name="position-{{ image.id }}" value="{{ image.position }}" size="3" />
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
             <div class="manage-form-buttons">
                 <input class="object-images-update-button"
                        type="submit" name="update" value="{% trans 'Update' %}" />
@@ -55,13 +55,11 @@
                        type="submit" name="delete" value="{% trans 'Delete' %}" />
                 <span class="ajax-loading">{% trans "Processing ..." %}</span>
             </div>
-        {% endifhasperm %}
-    </form>
-{% else %}
-    <span>{% trans 'There are no images' %}</span>
-{% endif %}
+        </form>
+    {% else %}
+        <span>{% trans 'There are no images' %}</span>
+    {% endif %}
 
-{% ifhasperm edit %}
     <h2 class="middle-heading">{% trans 'Add images' %}</h2>
 
     <div id="content">
@@ -130,5 +128,33 @@
 
         swfu = new SWFUpload(settings);
     </script>
-{% endifhasperm %}
+{% else %}
+    {% if obj.images.all %}
+        <table class="lfs-manage-table half">
+            <tr>
+                <th class="tiny">
+                    {% trans 'Image' %}
+                </th>
+                <th>
+                    {% trans 'Title' %}
+                </th>
+            </tr>
+            {% for image in obj.images.all %}
+                <tr>
+                    <td>
+                        <img src="{{ image.image.url_60x60 }}"
+                             alt="{{ image.title }}"
+                             title="{{ image_title }}"
+                             style="float:left"/>
 
+                    </td>
+                    <td>
+                        {{ image.title }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <span>{% trans 'There are no images' %}</span>
+    {% endif %}    
+{% endifhasperm %}
