@@ -87,10 +87,12 @@ Checks whether the current user has passed permission::
 Models
 ======
 
-.. automodule:: permissions.models
+.. automodule:: permissions
 
   .. autoclass:: PermissionBase
      :members:
+
+.. automodule:: permissions.models
 
   .. autoclass:: Permission
      :members:

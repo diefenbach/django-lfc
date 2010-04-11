@@ -6,9 +6,10 @@ General
 =======
 
 * LFC comes with several permissions out of the box.
-* Permissions are needed by an user to do specific actions on a content
-  object.
-* The only way to grant permissions to an user is via :doc:`roles <roles>`.
+* Permissions are needed by users to do specific actions on content objects.
+* The only way to grant permissions to users is via :doc:`roles <roles>`.
+* Permissions per role may vary dependent on the workflow and current workflow
+  state of a content object.
 
 Permissions
 ===========
@@ -36,3 +37,5 @@ View
 .. seealso::
 
    * :doc:`roles`
+   * :doc:`workflows`
+   
