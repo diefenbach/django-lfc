@@ -10,3 +10,4 @@ In this section we describe miscellaneous features of LFC.
    copy.rst
    translations.rst
    permissions.rst
+   roles.rst
