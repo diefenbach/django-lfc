@@ -53,6 +53,9 @@ def base_view(request, language=None, slug=None, obj=None):
     if obj is None:
         raise Http404()
 
+    if lfc.utils.registration.get_info(obj) is None:
+        raise Http404()
+
     if isinstance(obj, Portal):
         return portal(request, obj)
 

@@ -48,12 +48,12 @@ def return_as_json(html, message):
     """
     """
     return HttpResponse(get_json(html, message))
-    
+
 def get_json(html, message):
     """Returns html and message json encoded.
     """
     return simplejson.dumps({ "html" : html, "message" : message, }, cls = LazyEncoder)
-    
+
 class LazyEncoder(simplejson.JSONEncoder):
     """JSONEncoder which encodes django's lazy i18n strings.
 
@@ -88,7 +88,9 @@ def get_content_objects(request=None, *args, **kwargs):
 
     result = []
     for obj in objs:
-        result.append(obj.get_content_object())
+        obj = obj.get_content_object()
+        if lfc.utils.registration.get_info(obj):
+            result.append(obj)
 
     return result
 
@@ -113,7 +115,7 @@ def login_form():
     """Returns the lfc login form.
     """
     return HttpResponseRedirect(reverse("lfc_login"))
-    
+
 def traverse_object(request, path):
     """Returns the the object with the given path.
     """

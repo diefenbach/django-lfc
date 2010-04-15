@@ -16,6 +16,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.comments.models import Comment
 from django.db import IntegrityError
 from django.db.models import Q
+from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -454,6 +455,9 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
+    if not lfc.utils.registration.get_info(obj):
+        raise Http404()
+
     if obj.has_permission(request.user, "view") == False:
          return HttpResponseRedirect(reverse("lfc_login"))
 
@@ -682,10 +686,10 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
     """
     base_ctype = ContentType.objects.get_for_model(BaseContent)
     ctype = ContentType.objects.get_for_model(obj)
-        
+
     workflow = obj.get_workflow()
     wf_permissions = workflow.permissions.all()
-    
+
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
     my_permissions = []
     for permission in Permission.objects.filter(q):
@@ -1241,7 +1245,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     # Display all objs which are neutral or in default language
     q = Q(parent = None) & Q(language__in = ("0", nav_tree_lang))
 
-    temp = BaseContent.objects.filter(q)
+    temp = lfc.utils.get_content_objects(request, q)
 
     objs = []
     for obj in temp:
@@ -1294,6 +1298,10 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
     objs = []
     for obj in temp:
         obj = obj.get_content_object()
+
+        if not lfc.utils.registration.get_info(obj):
+            continue
+
         if obj in current_objs:
             children = _navigation_children(request, current_objs, obj, start_level, level+1)
             is_current = True
@@ -2288,14 +2296,14 @@ def content_type(request, id, template_name="lfc/manage/content_types.html"):
             message = _(u"Content type has been saved.")
             form.save()
             if ctr.workflow:
-                # if there is an old worfklow set workflow state to all 
+                # if there is an old worfklow set workflow state to all
                 # content type instances which had the old workflow
                 if old_workflow and ctr.workflow != old_workflow:
                     workflows.utils.set_workflow_for_model(ctype, ctr.workflow)
                     for obj in old_objects:
                         if obj.content_type == ctr.type:
                             obj.set_state(ctr.workflow.get_initial_state())
-                # If there is no old workflow set the initial workflow state 
+                # If there is no old workflow set the initial workflow state
                 # to all content type instances which get the new workflow
                 elif old_workflow is None:
                     workflows.utils.set_workflow_for_model(ctype, ctr.workflow)
@@ -2597,7 +2605,7 @@ def save_user_data(request, id):
         message = _(u"An error occured.")
 
     html = (
-        ("#data", user_data(request, id)), 
+        ("#data", user_data(request, id)),
         ("#navigation", user_navigation(request, id)),
         ("#user_fullname", "%s %s" % (user.first_name, user.last_name)),
         ("#username", user.username),
