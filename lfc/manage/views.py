@@ -1111,11 +1111,13 @@ def update_portlets(request, object_type_id, object_id):
             except PortletBlocking.DoesNotExist:
                 pass
 
-        html = portlets_inline(request, obj)
+    html = (
+        ("#portlets", portlets_inline(request, obj)),
+    )
 
     result = simplejson.dumps({
         "html" : html,
-        "message" : _(u"Portlet has been updated.")},
+        "message" : _(u"Portlets have been updated.")},
         cls = LazyEncoder
     )
     return HttpResponse(result)
