@@ -1,6 +1,5 @@
 {% load i18n %}
 
-
 <div id="menu"
      class="site-actions" style="padding-left:20px">
     <ul class="sf-menu">
@@ -9,7 +8,6 @@
         </li>
     </ul>
 </div>
-
 
 <div style="padding-left:30px">
     <form action="{% url lfc_manage_set_users_filter %}"
@@ -92,26 +90,25 @@
 <div id="data" style="margin-top: 10px; margin-left: 30px; ">
     <form action="{% url lfc_manage_change_users %}"e
           method="POST">
-        <table class="users lfs-manage-table"
-               style="width:95%">
+        <table class="users lfs-manage-table full">
             <tr class="header">
-                <th class="small">
+                <th class="tiny padr">
                     <input class="select-all" value="1" type="checkbox" />
                 </th>
-                <th width="20%">
+                <th>
                     {% trans "Fullname" %}
                 </th>
-                <th width="20%">
+                <th class="large">
                     {% trans "Username" %}
                 </th>
-                <th width="20%">
+                <th class="large">
                     {% trans "E-Mail" %}
                 </th>
-                <th width="20%">
+                <th class="small">
                     <input class="select-all" value="2" type="checkbox" />
                     {% trans "Active" %}
                 </th>
-                <th>
+                <th class="small">
                     {% trans "Edit" %}
                 </th>
             </tr>
@@ -143,7 +140,9 @@
                     </td>
                     <td>
                         <a href="{% url lfc_manage_user user.id %}">
-                            {% trans "Edit" %}
+                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png" 
+                                 title="{% trans "Edit" %}" 
+                                 alt="{% trans "Edit" %}" />
                         </a>
                     </td>
                 </tr>
