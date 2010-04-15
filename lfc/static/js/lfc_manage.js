@@ -50,11 +50,7 @@ $(function() {
         $.jGrowl(message);
         $.cookie("message", null, { path: '/' });
     };
-
-    $(window).ajaxSend(function() {
-        $(".ajax-loading").css("display", "inline");
-    })
-
+    
     //  Menu
     $('ul.sf-menu').superfish({
         speed: "fast",
@@ -79,6 +75,7 @@ $(function() {
 
     // Generic ajax save button
     $(".ajax-save-button").livequery("click", function() {
+        $(".ajax-loading").show()
         var action = $(this).attr("name")
         tinyMCE.execCommand('mceRemoveControl', false, 'id_text');
         tinyMCE.execCommand('mceRemoveControl', false, 'id_short_text');
@@ -96,6 +93,7 @@ $(function() {
                 });
                 if (data["message"])
                     $.jGrowl(data["message"]);
+                $(".ajax-loading").hide();
             }
         })
         return false;

@@ -466,7 +466,7 @@ body.filebrowser {
 .ajax-loading {
     padding-left: 10px;
     display: none;
-    color: red;
+    color: #555;
 }
 
 .field-wrapper {
