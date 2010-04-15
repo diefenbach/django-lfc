@@ -2,7 +2,8 @@
 Users
 =====
 
-This section describes the users, groups and roles of LFC.
+This section describes the management interface of LFC's users, groups and 
+roles.
 
 .. toctree::
    :maxdepth: 1

@@ -5,7 +5,7 @@ Overview
 Goal
 ====
 
-LFC aims to be easy and fast for both: users and developers.
+LFC aims to be easy and fast for all: users, developers and designers.
 
 Features
 =========

@@ -2,6 +2,9 @@
 Concepts
 ========
 
+This section describes shortly the concepts of LFC. You will find more 
+detailed information later in this documentation.
+
 Content types
 =============
 
@@ -27,21 +30,21 @@ Templates
 The content of an object is displayed by :term:`templates`. By default there 
 are  just a small bunch of templates (more can be added by developers):
 
-* Plain
+Plain
 
-  Only the text is displayed: The user can add images by the WYSIWYG
+  Only the text is displayed: The user can add images with the :term:`WYSIWYG`
   Editor
 
-* Article
+Article
 
   The first assigned image is displayed top left, the text flows around
   the image.
 
-* Gallery
+Gallery
 
   All assigned images are display as a 3x3 grid.
 
-* Overview
+Overview
 
   All sub pages are displayed as a list. The first image of the sub pages 
   (if there is one) is displayed as thumbnail top left, the text flows around
@@ -54,15 +57,15 @@ Every object can have so-called :term:`portlets`, which are displayed in a
 :term:`slots`. By default there is a left and a right slot and  just a few 
 portlets (more slots and portlets can be added by developers):
 
-* Text portlet
+Text portlet
 
   A portlet to display HTML structured text
 
-* Navigation portlet
+Navigation portlet
 
   A portlet to display the content structure as navigation tree
 
-* Pages
+Pages
 
   A portlet to display selected (by tags) pages
 
@@ -86,22 +89,29 @@ displayed independent on the current selected language.
 Permissions
 ===========
 
-* Permissions are granted to roles (and only to roles) in order to allow 
-  something to users or groups which have these roles.
+Permissions are granted to roles (and only to roles) in order to allow 
+specific actions (e.g. add content) for users or groups.
 
 .. _concepts-roles-label:
 
 Roles
 =====
 
-* Roles are used to grant permissions. Typical roles are *Reader*, *Manager*  
-  or *Editor*.
+Roles are used to grant permissions. LFC comes with a several *Roles* by 
+default (more can be added by users):
+
+* Anonymous
+* Editor
+* Manager
+* Owner
+* Reader
+* Reviewer
 
 Local Roles
 ===========
 
-* Local roles are roles which are assigned to users and groups for specific 
-  content objects.
+Local roles are roles which are assigned to users and groups for specific
+content objects.
 
 .. _concepts-users-label:
 
@@ -136,12 +146,16 @@ Workflows
 A workflow consists of a sequence of connected (through transitions) states. 
 The transitions can be restricted by permissions.
 
-A workflow can be assigned to models and model instances. All instances will
-"inherit" the workflow of its model. If an instance has an own workflow this 
-will have precedence. In this way all instances of a content type have the 
-same workflow unless a specific instance of that content type have an other 
-workflow assigned.
+By default LFC comes with two workflows (more can be added by users and
+developers):
 
-Every workflow manages a set of permissions. Every workflow state can grant
-or remove this permissions from the instance for several roles. In this way
-objects have different permissions per workflow state.
+Simple Workflow
+
+    A simple workflow for smaller sites where only one or a few authors add 
+    content objects.
+
+Portal Workflow
+
+    A workflow for larger sites where content is provided by several authors.
+    Every content object must be submitted for review before it can be 
+    published.
