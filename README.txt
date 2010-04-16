@@ -26,6 +26,17 @@ Code
 Changes
 =======
 
+1.0 alpha 8 (2010-04-16)
+------------------------
+
+* Added: Roles
+* Added: global_addable to "register_content_type" function
+* Improved management: added user management forms
+* Improved management: added workflow management forms
+* Improved management: take care of permissions
+* Improved management: cleaned up permissions forms
+* Bugfix: Display only objects with registered content type
+
 1.0 alpha 7 (2010-03-22)
 ------------------------
 * Added workflows and permissions
