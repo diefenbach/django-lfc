@@ -28,7 +28,7 @@
                         </td>
                     </tr>
                 {% endfor %}
-            </table>    
+            </table>
             <div class="padding-b">
                 <input type="submit"
                        class="ajax-save-button"
@@ -56,7 +56,7 @@
                         {% trans 'Title' %}
                     </th>
                     <th class="tiny right-padding">
-                        {% trans 'Delete' %}
+                        {% trans 'Manage' %}
                     </th>
                 </tr>
                 {% for portlet in slot.portlets %}
@@ -74,6 +74,10 @@
                             </a>
                         </td>
                         <td class="right">
+                            <a class="edit portlet-edit-button"
+                               title='{% trans "Edit" %}'
+                               href="{% url lfc_edit_portlet portlet.pa_id %}"></a>
+
                             <a class="delete delete-link"
                                title='{% trans "Delete" %}'
                                href="{% url lfc_delete_portlet portlet.pa_id %}"></a>
