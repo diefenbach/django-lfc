@@ -21,7 +21,7 @@ sys.path.append(os.path.abspath("../../../lfc_project"))
 sys.path.append(os.path.abspath("../../../parts/lfc"))
 sys.path.append(os.path.abspath("../../../parts/django"))
 sys.path.append(os.path.abspath("../../../parts/tagging"))
-sys.path.append(os.path.abspath("../../../eggs/django_portlets-0.3.2-py2.6.egg"))
+sys.path.append(os.path.abspath("../../../parts/portlets"))
 sys.path.append(os.path.abspath("../../../parts/permissions"))
 sys.path.append(os.path.abspath("../../../parts/workflows"))
 
