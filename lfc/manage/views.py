@@ -367,8 +367,6 @@ def update_portal_children(request):
     portal = lfc.utils.get_portal()
     message = _update_children(request, portal)
 
-    _update_positions(None)
-
     html = (
         ("#children", portal_children(request)),
         ("#navigation", navigation(request, None)),
@@ -2145,12 +2143,14 @@ def _paste(request, obj):
             source_obj.save()
             _reset_clipboard(request)
         else:
-            # Here we go ...
+            # Paste
             target_obj = copy.deepcopy(source_obj)
             target_obj.pk = None
             target_obj.id = None
             target_obj.parent_id = target_id
-            target_obj.position = 1000
+
+            amount = BaseContent.objects.filter(parent=target_id, language__in=("0", source_obj.language)).count()
+            target_obj.position = (amount + 1) * 10
 
             target_obj.slug = _generate_slug(source_obj, target)
 
@@ -2168,8 +2168,6 @@ def _paste(request, obj):
             # Prevent recursion
             if target not in descendants and target != source_obj:
                 _copy_descendants(source_obj, target_obj)
-
-    _update_positions(target)
 
     if error_msg:
         msg = error_msg
@@ -2254,11 +2252,15 @@ def _copy_translations(source_obj, target_obj):
     """Copies all translations from source_obj to target_obj.
     """
     for translation in source_obj.translations.all().get_content_objects():
+
         new_translation = copy.deepcopy(translation)
         new_translation.pk = None
         new_translation.id = None
         new_translation.slug = _generate_slug(translation, translation.parent)
         new_translation.canonical = target_obj
+
+        amount = BaseContent.objects.filter(parent=translation.parent, language__in=(translation.language,0)).count()
+        new_translation.position = (amount + 1) * 10
         new_translation.save()
 
         _copy_images(translation, new_translation)
@@ -2943,6 +2945,12 @@ def _update_children(request, obj):
                     child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
+
+        if isinstance(obj, Portal):
+            _update_positions(None)
+        else:
+            _update_positions(obj)
+
     elif action == "copy":
         message = _(u"Objects have been put to the clipboard.")
         ids = []
@@ -2980,6 +2988,11 @@ def _update_children(request, obj):
                             child.save()
                         except ValueError:
                             pass
+
+        if isinstance(obj, Portal):
+            _update_positions(None)
+        else:
+            _update_positions(obj)
 
     return message
 
@@ -3078,7 +3091,7 @@ def _update_positions(obj, take_parent=False):
             objs = BaseContent.objects.filter(parent=parent, language = language[0])
 
         for i, p in enumerate(objs):
-            p.position = (i+1)*10
+            p.position = (i + 1) * 10
             p.save()
             if obj and obj.id == p.id:
                 obj = p

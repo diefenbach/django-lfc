@@ -464,15 +464,16 @@ class BaseContent(AbstractBaseContent):
         """Djangos default save method. This is overwritten to do some LFC
         related stuff if a content object is saved.
         """
-        # Set the initial state if there is none yet
-        co = self.get_content_object()
-        if co.id and workflows.utils.get_state(co) is None:
-            workflows.utils.set_initial_state(co)
-
         self.searchable_text = self.get_searchable_text()
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
+
         super(BaseContent, self).save()
+
+        # Set the initial state if there is none yet
+        co = self.get_content_object()
+        if workflows.utils.get_state(co) is None:
+            workflows.utils.set_initial_state(co)
 
         lfc.utils.clear_cache()
 
