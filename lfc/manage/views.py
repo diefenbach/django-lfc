@@ -121,13 +121,15 @@ def add_object(request, language=None, id=None):
                 new_object.parent = parent_object
                 new_object.creator = request.user
                 new_object.language = language
-                new_object.position = 1000
+
+                amount = BaseContent.objects.filter(parent=parent_object, language__in=("0", language)).count()
+                new_object.position = amount * 10
                 new_object.save()
 
                 # Send signal
                 lfc.signals.post_content_added.send(new_object)
 
-                _update_positions(new_object, True)
+                # _update_positions(new_object, True)
                 url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
                 msg = _(u"Page has been added.")
 
@@ -686,7 +688,10 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
     ctype = ContentType.objects.get_for_model(obj)
 
     workflow = obj.get_workflow()
-    wf_permissions = workflow.permissions.all()
+    if workflow:
+        wf_permissions = workflow.permissions.all()
+    else:
+        wf_permissions = []
 
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
     my_permissions = []
@@ -2133,13 +2138,19 @@ def _paste(request, obj):
         descendants = source_obj.get_descendants()
         if action == CUT:
             # Don't cut and paste to own descendants
-            if target in descendants or target == source_obj:
+            if target in descendants or target == source_obj or target == source_obj.parent:
                 error_msg = _(u"The objects can't be pasted in own descendants.")
                 break
 
-        if action == CUT:
             source_obj.parent_id = target_id
             source_obj.slug = _generate_slug(source_obj, target)
+
+            if source_obj.language == "0":
+                amount = BaseContent.objects.filter(parent=target_id, language__in=("0", translation.get_language())).count()
+            else:
+                amount = BaseContent.objects.filter(parent=target_id, language__in=("0", source_obj.language)).count()
+                
+            source_obj.position = (amount + 1) * 10
             source_obj.save()
             _reset_clipboard(request)
         else:
@@ -2259,7 +2270,7 @@ def _copy_translations(source_obj, target_obj):
         new_translation.slug = _generate_slug(translation, translation.parent)
         new_translation.canonical = target_obj
 
-        amount = BaseContent.objects.filter(parent=translation.parent, language__in=(translation.language,0)).count()
+        amount = BaseContent.objects.filter(parent=translation.parent, language__in=("0", translation.language)).count()
         new_translation.position = (amount + 1) * 10
         new_translation.save()
 
