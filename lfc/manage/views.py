@@ -41,6 +41,7 @@ from portlets.models import Slot
 # permissions imports
 import permissions.utils
 from permissions.models import ObjectPermission
+from permissions.models import ObjectPermissionInheritanceBlock
 from permissions.models import Permission
 from permissions.models import PrincipalRoleRelation
 from permissions.models import Role
@@ -49,6 +50,7 @@ from permissions.models import Role
 import workflows.utils
 from workflows.models import State
 from workflows.models import StateInheritanceBlock
+from workflows.models import StateObjectRelation
 from workflows.models import StatePermissionRelation
 from workflows.models import Transition
 from workflows.models import Workflow
@@ -166,13 +168,24 @@ def delete_object(request, id):
     except BaseContent.DoesNotExist:
         pass
     else:
+        ctype = ContentType.objects.get_for_model(obj)
         parent = obj.parent
         _remove_fks(obj)
+
         # TODO: Delete tags for deleted object
         Tag.objects.get_for_object(obj).delete()
+
         # Deletes files on file system
         obj.images.all().delete()
         obj.files.all().delete()
+
+        # Delete workflows stuff
+        StateObjectRelation.objects.filter(content_id=obj.id, content_type=ctype).delete()
+
+        # Delete permissions stuff
+        ObjectPermission.objects.filter(content_id=obj.id, content_type=ctype).delete()
+        ObjectPermissionInheritanceBlock.objects.filter(content_id=obj.id, content_type=ctype).delete()
+
         obj.delete()
 
     if parent:
@@ -2149,7 +2162,7 @@ def _paste(request, obj):
                 amount = BaseContent.objects.filter(parent=target_id, language__in=("0", translation.get_language())).count()
             else:
                 amount = BaseContent.objects.filter(parent=target_id, language__in=("0", source_obj.language)).count()
-                
+
             source_obj.position = (amount + 1) * 10
             source_obj.save()
             _reset_clipboard(request)
@@ -2949,10 +2962,23 @@ def _update_children(request, obj):
                 try:
                     id = key.split("-")[1]
                     child = lfc.utils.get_content_object(pk=id)
+                    ctype = ContentType.objects.get_for_model(child)
                     _remove_fks(child)
+
                     # Deletes files on file system
                     child.images.all().delete()
                     child.files.all().delete()
+
+                    # Delete workflows stuff
+                    StateObjectRelation.objects.filter(
+                        content_id=child.id, content_type=ctype).delete()
+
+                    # Delete permissions stuff
+                    ObjectPermission.objects.filter(
+                        content_id=child.id, content_type=ctype).delete()
+                    ObjectPermissionInheritanceBlock.objects.filter(
+                        content_id=child.id, content_type=ctype).delete()
+
                     child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
