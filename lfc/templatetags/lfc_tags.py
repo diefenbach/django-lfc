@@ -275,8 +275,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     """Renders the children of given object as sub navigation tree.
     """
     obj = obj
-    temp = obj.get_children(
-        exclude_from_navigation = False,
+    temp = obj.get_children(request, exclude_from_navigation = False,
         language__in = (translation.get_language(), "0"),
     )
 
