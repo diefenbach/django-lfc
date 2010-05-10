@@ -294,8 +294,11 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
     if request.method == "POST":
         form = PortalCoreForm(instance=portal, data=request.POST)
         if form.is_valid():
+            message = _(u"Portal data has been saved.")
             form.save()
-
+        else:
+            message = _(u"An error has been occured.")
+                
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "portal" : portal,
@@ -307,7 +310,7 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
 
         result = simplejson.dumps({
             "html" : html,
-            "message" : _(u"Portal data has been saved.")},
+            "message" : message},
             cls = LazyEncoder
         )
         result = HttpResponse(result)

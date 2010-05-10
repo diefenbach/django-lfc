@@ -442,6 +442,10 @@ div.delete-dialog {
     -moz-box-shadow: 10px 10px 5px #222;
 }
 
+.errorlist {
+    color: red;
+}
+
 .translate-form .errorlist,
 .translate-form .errorlist li {
     display: inline;
