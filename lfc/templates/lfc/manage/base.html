@@ -6,13 +6,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title>{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/yui/reset-min.css" />
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/lightbox/css/jquery.lightbox-0.5.css" />
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/jquery/jquery-ui-themeroller/jquery-ui-themeroller.css" />
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/jquery/jquery.jgrowl.css" />
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/jquery/superfish/superfish.css" />
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/jquery/autocomplete/jquery.autocomplete.css" />
-        <link rel="stylesheet" type="text/css" href="{{MEDIA_URL}}lfc/css/lfc_manage.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/yui/reset-min.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/lightbox/css/jquery.lightbox-0.5.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/jquery-ui-themeroller/jquery-ui-themeroller.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/jquery.jgrowl.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/superfish/superfish.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/autocomplete/jquery.autocomplete.css" />
+        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/css/lfc_manage.css" />
 
         {# <script type="text/javascript" src="/admin/jsi18n/"></script> #}
         {# <script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script> #}
@@ -20,18 +20,18 @@
         {# <script type="text/javascript" src="{% admin_media_prefix %}js/admin/DateTimeShortcuts.js"></script>         #}
         <script type="text/javascript" src="{% admin_media_prefix %}js/urlify.js"></script>
 
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.tools.min.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.livequery.pack.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.form.pack.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.jgrowl_minimized.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery.cookie.pack.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/superfish/superfish.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/jquery-ui-personalized-1.5.3.packed.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/js/json2.js"></script>
-        <script type="text/javascript" src="{{MEDIA_URL}}lfc/js/lfc_manage.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.tools.min.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.livequery.pack.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.form.pack.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.jgrowl_minimized.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.cookie.pack.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/superfish/superfish.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery-ui-personalized-1.5.3.packed.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/json2.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/lfc_manage.js"></script>
 
         <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.queue.js"></script>
@@ -73,12 +73,13 @@
                             <li>
                                 <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
+                            {% if LFC_MANAGE_USERS %}
                                 <li>
                                     <a>{% trans "User" %}</a>
                                     <ul>
                                         <li>
                                             <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
-                                        </li>                                        
+                                        </li>
                                         <li>
                                             <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
                                         </li>
@@ -87,12 +88,16 @@
                                         </li>
                                     </ul>
                                 </li>
+                            {% endif %}
+                            {% if LFC_MANAGE_WORKFLOWS %}
                                 <li>
                                     <a href="{% url lfc_manage_review %}">{% trans 'Review' %}</a>
                                 </li>
                                 <li>
                                     <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
                                 </li>
+                            {% endif %}
+                            {% if LFC_MANAGE_APPLICATIONS %}
                                 {% ifportalhasperm manage_portal  %}
                                     <li>
                                         <a>{% trans "Applications" %}</a>
@@ -104,8 +109,9 @@
                                                 <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
                                             </li>
                                         </ul>
-                                    </li>                            
+                                    </li>
                                 {% endifportalhasperm %}
+                            {% endif %}
                         </ul>
                     </td>
                 </tr>
@@ -141,16 +147,16 @@
             <div class="content"></div>
         </div>
 
-        <div class="delete-dialog" id="yesno"> 
-            <p> 
+        <div class="delete-dialog" id="yesno">
+            <p>
                 {% trans "Do you really want to delete this object?" %}
-            </p> 
+            </p>
 
-            <button> Yes </button> 
-            <button> No </button> 
-            
+            <button> Yes </button>
+            <button> No </button>
+
             <div style="display:none" id="delete-url">url</div>
-        </div> 
+        </div>
 
         <span id="obj-id"
               data="{{ obj.id }}" />

@@ -21,7 +21,10 @@
             <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
-            <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
+            {% if LFC_MANAGE_PERMISSIONS %}
+                <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
+            {% endif %}
+
         </ul>
 
         <div id="data">
@@ -39,8 +42,10 @@
         <div id="portlets">
             {{ portlets|safe }}
         </div>
-        <div id="permissions">
-            {{ permissions|safe }}
-        </div>
+        {% if LFC_MANAGE_PERMISSIONS %}
+            <div id="permissions">
+                {{ permissions|safe }}
+            </div>
+        {% endif %}
     </div>
 {% endblock %}

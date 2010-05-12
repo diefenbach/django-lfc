@@ -296,7 +296,7 @@ class Portal(models.Model, PermissionBase):
         try:
             if user == self.creator:
                 roles.append(Role.objects.get(name="Owner"))
-        except AttributeError:
+        except (AttributeError, Role.DoesNotExist):
             pass
 
         return super(Portal, self).has_permission(user, codename, roles)
@@ -746,7 +746,7 @@ class BaseContent(AbstractBaseContent):
         try:
             if user == self.creator:
                 roles.append(Role.objects.get(name="Owner"))
-        except AttributeError:
+        except (AttributeError, Role.DoesNotExist):
             pass
 
         return super(BaseContent, self).has_permission(user, codename, roles)

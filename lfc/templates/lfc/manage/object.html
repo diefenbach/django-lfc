@@ -27,7 +27,9 @@
                 <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
                 <li class="ui-tabs-nav-item"><a href="#comments">{% trans 'Comments' %}</a></li>
                 <li class="ui-tabs-nav-item"><a href="#seo_data">{% trans 'SEO' %}</a></li>
-                <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
+                {% if LFC_MANAGE_PERMISSIONS %}
+                    <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
+                {% endif %}
             </ul>
 
             <div id="core_data">
@@ -54,9 +56,11 @@
             <div id="comments">
                 {{ comments }}
             </div>
-            <div id="permissions">
-                {{ permissions }}
-            </div>
+            {% if LFC_MANAGE_PERMISSIONS %}
+                <div id="permissions">
+                    {{ permissions }}
+                </div>
+            {% endif %}
             <script type="text/javascript">
                 tinyMCE.execCommand('mceAddControl', true, 'id_text');
                 tinyMCE.execCommand('mceAddControl', true, 'id_short_text');

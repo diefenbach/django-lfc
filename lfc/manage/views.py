@@ -207,6 +207,11 @@ def portal(request, template_name="lfc/manage/portal.html"):
     if not portal.has_permission(request.user, "manage_portal"):
         return lfc.utils.login_form()
 
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = portal_permissions(request)
+    else:
+        permissions = ""
+
     return render_to_response(template_name, RequestContext(request, {
         "menu" : portal_menu(request),
         "display_paste" : _display_paste(request),
@@ -216,7 +221,7 @@ def portal(request, template_name="lfc/manage/portal.html"):
         "navigation" : navigation(request, None),
         "images" : portal_images(request, as_string=True),
         "files" : portal_files(request, as_string=True),
-        "permissions" : portal_permissions(request),
+        "permissions" : permissions,
     }))
 
 @login_required
@@ -298,7 +303,7 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
             form.save()
         else:
             message = _(u"An error has been occured.")
-                
+
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "portal" : portal,
@@ -477,6 +482,11 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     if obj.has_permission(request.user, "view") == False:
          return HttpResponseRedirect(reverse("lfc_login"))
 
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = object_permissions(request, obj)
+    else:
+        permissions = ""
+
     return render_to_response(template_name, RequestContext(request, {
         "navigation" : navigation(request, obj),
         "menu" : object_menu(request, obj),
@@ -488,7 +498,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : object_children(request, obj),
-        "permissions" : object_permissions(request, obj),
+        "permissions" : permissions,
         "content_type_name" : get_info(obj).name,
         "display_paste" : _display_paste(request),
         "obj" : obj,

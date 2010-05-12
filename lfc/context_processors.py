@@ -17,9 +17,13 @@ def main(request):
     
     return {
         "PORTAL" : lfc.utils.get_portal(),
-        "LFC_MULTILANGUAGE"   : settings.LFC_MULTILANGUAGE,
-        "DEFAULT_LANGUAGE"    : default_language,
-        "CURRENT_LANGUAGE"    : current_language,
+        "LFC_MULTILANGUAGE" : settings.LFC_MULTILANGUAGE,
+        "LFC_MANAGE_WORKFLOWS" : settings.LFC_MANAGE_WORKFLOWS,
+        "LFC_MANAGE_APPLICATIONS" : settings.LFC_MANAGE_APPLICATIONS,
+        "LFC_MANAGE_USERS" : settings.LFC_MANAGE_USERS,
+        "LFC_MANAGE_PERMISSIONS" : settings.LFC_MANAGE_PERMISSIONS,
+        "DEFAULT_LANGUAGE" : default_language,
+        "CURRENT_LANGUAGE" : current_language,
         "IS_DEFAULT_LANGUAGE" : is_default_language,
-        "LINK_LANGUAGE"       : link_language, 
+        "LINK_LANGUAGE" : link_language, 
     }
