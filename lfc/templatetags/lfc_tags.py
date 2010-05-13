@@ -158,7 +158,7 @@ def tabs(context):
 
         tabs = []
         for obj in tl_objs:
-            if obj.has_permission(request.user, "view"):
+            if obj.has_permission(request.user, "view") and obj.is_active(request.user):
                 obj.current = obj in current_pages
                 tabs.append(obj)
 

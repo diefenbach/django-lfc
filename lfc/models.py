@@ -388,6 +388,13 @@ class BaseContent(AbstractBaseContent):
     publication_date
         The date the object has been published. TODO: implement this.
 
+    start_date
+        if given the object is only public when the start date is reached.
+
+    end_date
+        if given the object is only public when the end date is not reached
+        yet.
+
     meta_keywords
         The meta keywords of the object. This is displayed within the meta
         keywords tag of the rendered HTML.
@@ -438,6 +445,8 @@ class BaseContent(AbstractBaseContent):
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     modification_date = models.DateTimeField(_(u"Modification date"), auto_now=True, auto_now_add=True)
     publication_date = models.DateTimeField(_(u"Publication date"), null=True, blank=True)
+    start_date = models.DateTimeField(_(u"Start date"), null=True, blank=True)
+    end_date = models.DateTimeField(_(u"End date"), null=True, blank=True)
 
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
@@ -750,6 +759,26 @@ class BaseContent(AbstractBaseContent):
             pass
 
         return super(BaseContent, self).has_permission(user, codename, roles)
+
+    def is_active(self, user):
+        """Returns True if now is between start and end date of the object.
+        """
+        if user.is_superuser:
+            return True
+
+        if self.start_date or self.end_date:
+            started = True
+            ended = False
+
+            now = datetime.datetime.now()
+            if self.start_date and self.start_date > now:
+                started = False
+            if self.end_date and now >= self.end_date:
+                ended = True
+
+            return started and not ended
+        else:
+            return True
 
     # django-workflows
     def get_allowed_transitions(self, user):

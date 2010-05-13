@@ -59,6 +59,9 @@ def base_view(request, language=None, slug=None, obj=None):
     if lfc.utils.registration.get_info(obj) is None:
         raise Http404()
 
+    if not obj.is_active(request.user):
+        raise Http404()
+
     if not obj.has_permission(request.user, "view"):
         return HttpResponseRedirect(reverse("lfc_login"))
 

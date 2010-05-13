@@ -284,7 +284,8 @@ class MetaDataForm(forms.ModelForm):
     class Meta:
         model = Page
         fields = ("template", "standard", "language", "canonical",
-            "exclude_from_navigation", "exclude_from_search", "publication_date", )
+            "exclude_from_navigation", "exclude_from_search", "publication_date", 
+            "start_date", "end_date")
 
 class PortalCoreForm(forms.ModelForm):
     """Form for portal core data.
