@@ -83,9 +83,9 @@ def base_view(request, language=None, slug=None, obj=None):
     if sub_objects is None:
         # Get sub objects (as LOL if requested)
         if obj_template.children_columns == 0:
-            sub_objects = obj.get_children()
+            sub_objects = obj.get_children(request)
         else:
-            sub_objects = lfc.utils.getLOL(obj.get_children(), obj_template.children_columns)
+            sub_objects = lfc.utils.getLOL(obj.get_children(request), obj_template.children_columns)
 
         cache.set(children_cache_key, sub_objects)
 
@@ -163,7 +163,8 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
     except BaseContent.DoesNotExist:
         obj = None
 
-    results = BaseContent.objects.filter(f)
+    results = lfc.utils.get_content_objects(request, f)
+
     return render_to_response(template_name, RequestContext(request, {
         "lfc_context" : obj,
         "query" : query,

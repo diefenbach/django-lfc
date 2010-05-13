@@ -144,7 +144,8 @@ def tabs(context):
     pages = cache.get(cache_key)
 
     if pages is None:
-        tl_objs = lfc.utils.get_content_objects(request,
+        tl_objs = lfc.utils.get_content_objects(
+            request,
             language__in=(language, "0"),
             parent = None,
             exclude_from_navigation=False,
@@ -158,9 +159,8 @@ def tabs(context):
 
         tabs = []
         for obj in tl_objs:
-            if obj.has_permission(request.user, "view") and obj.is_active(request.user):
-                obj.current = obj in current_pages
-                tabs.append(obj)
+            obj.current = obj in current_pages
+            tabs.append(obj)
 
         cache.set(cache_key, pages)
 

@@ -50,4 +50,4 @@ class UtilsTestCase(TestCase):
 
         # With passed request
         ct = lfc.utils.get_content_objects(request, slug="page-1")
-        self.assertEqual(ct[0].title, "Page 1")
+        self.assertEqual(len(ct), 0)

@@ -1499,7 +1499,7 @@ def _filebrowser_children(request, obj):
     """
     """
     objs = []
-    for obj in obj.get_children():
+    for obj in obj.get_children(request):
         objs.append({
             "title" : obj.title,
             "url" : obj.get_absolute_url(),

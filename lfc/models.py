@@ -272,15 +272,7 @@ class Portal(models.Model, PermissionBase):
         permissions of the current user is taken into account. Additionally
         other valid filters can be passed, e.g. slug = "page-1".
         """
-        if request is None:
-            return lfc.utils.get_content_objects(request, parent=None, **kwargs)
-
-        objs = []
-        for obj in lfc.utils.get_content_objects(request, parent=None, **kwargs):
-            if obj.has_permission(request.user, "view"):
-                objs.append(obj)
-
-        return objs
+        return lfc.utils.get_content_objects(request, parent=None, **kwargs)
 
     def has_permission(self, user, codename):
         """Overwrites django-permissions' has_permission in order to add LFC
@@ -590,14 +582,7 @@ class BaseContent(AbstractBaseContent):
         passed the permissions of the current user is taken into account.
         Other valid filters can be passed also, e.g. slug = "page-1".
         """
-        if request is None:
-            return lfc.utils.get_content_objects(request, parent=self, **kwargs)
-
-        objs = []
-        for obj in lfc.utils.get_content_objects(request, parent=self, **kwargs):
-            if obj.has_permission(request.user, "view"):
-                objs.append(obj)
-        return objs
+        return lfc.utils.get_content_objects(request, parent=self, **kwargs)
 
     def get_image(self):
         """Returns the first image of a content object. If there is none it

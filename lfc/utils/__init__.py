@@ -79,18 +79,31 @@ def get_content_object(request=None, *args, **kwargs):
 def get_content_objects(request=None, *args, **kwargs):
     """Returns specific content objects based on passed parameters.
 
-    This method should be used if one wants the specific content objects
-    instead of the BaseContent objects.
+    This method should be used if one wants the specific content object
+    instead of the BaseContent object.
+
+    Takes permissions of the current and start_date and end_date of object
+    into account.
 
     You can consider this as the equivalent to Django's filter method.
     """
     objs = lfc.models.BaseContent.objects.filter(*args, **kwargs)
 
     result = []
-    for obj in objs:
-        obj = obj.get_content_object()
-        if lfc.utils.registration.get_info(obj):
-            result.append(obj)
+
+    if request is None or request.user.is_superuser:
+        for obj in objs:
+            obj = obj.get_content_object()
+            if lfc.utils.registration.get_info(obj):
+                result.append(obj)
+    else:
+        for obj in objs:
+            obj = obj.get_content_object()
+            if lfc.utils.registration.get_info(obj) and \
+                obj.has_permission(request.user, "view") and \
+                obj.is_active(request.user):
+                obj = obj.get_content_object()
+                result.append(obj)
 
     return result
 
