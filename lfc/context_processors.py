@@ -22,6 +22,7 @@ def main(request):
         "LFC_MANAGE_APPLICATIONS" : settings.LFC_MANAGE_APPLICATIONS,
         "LFC_MANAGE_USERS" : settings.LFC_MANAGE_USERS,
         "LFC_MANAGE_PERMISSIONS" : settings.LFC_MANAGE_PERMISSIONS,
+        "LANGUAGES_DICT" : settings.LANGUAGES_DICT,
         "DEFAULT_LANGUAGE" : default_language,
         "CURRENT_LANGUAGE" : current_language,
         "IS_DEFAULT_LANGUAGE" : is_default_language,

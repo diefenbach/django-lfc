@@ -1364,6 +1364,21 @@ def set_navigation_tree_language(request, language):
     request.session["nav-tree-lang"] = language
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
+def set_language(request, language):
+    """Sets the language of the portal.
+    """
+    translation.activate(language)
+
+    response = HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    if translation.check_for_language(language):
+        if hasattr(request, 'session'):
+            request.session['django_language'] = language
+        else:
+            response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
+
+    return response
+
 # Comments ###################################################################
 ##############################################################################
 

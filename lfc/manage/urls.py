@@ -102,6 +102,7 @@ urlpatterns = patterns('lfc.manage.views',
 
     # navigation
     url(r'^set-navigation-tree-language/(?P<language>\w{2})', "set_navigation_tree_language", name="lfc_set_navigation_tree_language"),
+    url(r'^set-language/(?P<language>\w{2})', "set_language", name="lfc_manage_set_language"),
     url(r'^set-template$', "set_template", name="lfc_set_template"),
 
     # users
