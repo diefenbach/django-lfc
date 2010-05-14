@@ -5,17 +5,23 @@
           action="{% url lfc_update_portal_files %}"
           method="post">
 
-        <table class="lfs-manage-table">
+        <table class="lfs-manage-table full">
             <tr>
-                <th>
+                <th class="tiny">
                     <input type="checkbox"
                            class="select-all-2" />
                 </th>
                 <th>
                     {% trans 'Title' %}
                 </th>
-                <th class="number">
+                <th class="small right-padding">
                     {% trans 'Position' %}
+                </th>
+                <th class="middle right-padding">
+                    {% trans 'Creation date' %}
+                </th>
+                <th class="small right-padding">
+                    {% trans 'Download' %}
                 </th>
             </tr>
             {% for file in obj.files.all %}
@@ -28,10 +34,20 @@
                                style="float:left" />
                     </td>
                     <td>
-                        <input type="text" name="title-{{file.id}}" value="{{file.title}}" />
+                        <input type="text" name="title-{{ file.id }}" value="{{ file.title }}" />
                     </td>
-                    <td class="number">
-                        <input type="text" name="position-{{file.id}}" value="{{file.position}}" size="3" />
+                    <td class="right">
+                        <input class="position" type="text" name="position-{{ file.id }}" value="{{ file.position }}" />
+                    </td>
+                    <td class="right">
+                        {{ file.creation_date|date:"Y-m-d H:i:s" }}
+                    </td>
+                    <td class="right last">
+                        <a href="{{ file.get_absolute_url }}">
+                            <image src="{{ MEDIA_URL }}lfc/icons/disk.png" 
+                                   alt='{% trans "Download" %}' 
+                                   title='{% trans "Download" %}' />
+                        </a>
                     </td>
                 </tr>
             {% endfor %}

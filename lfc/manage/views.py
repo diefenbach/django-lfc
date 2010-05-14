@@ -427,7 +427,7 @@ def add_portal_images(request):
 
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
-        image.position = i+1
+        image.position = (i+1) * 10
         image.save()
 
     return HttpResponse(portal_images(request, id, as_string=True))
@@ -997,7 +997,7 @@ def add_object_images(request, id):
 
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
-        image.position = i+1
+        image.position = (i+1) * 10
         image.save()
 
     return HttpResponse(object_images(request, id, as_string=True))
@@ -1523,7 +1523,7 @@ def fb_upload_image(request):
 
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
-        image.position = i+1
+        image.position = (i+1) * 10
         image.save()
 
     url = "%s?obj_id=%s&amp;type=image" % (reverse("lfc_filebrowser"), obj_id)
@@ -1541,7 +1541,7 @@ def fb_upload_file(request):
 
     # Refresh positions
     for i, file in enumerate(obj.files.all()):
-        file.position = i+1
+        file.position = (i+1) * 10
         file.save()
 
     url = "%s?obj_id=%s" % (reverse("lfc_filebrowser"), obj_id)

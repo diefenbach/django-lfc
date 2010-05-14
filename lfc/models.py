@@ -846,9 +846,10 @@ class Image(models.Model):
     caption = models.CharField(blank=True, max_length=100)
     short_description = models.TextField(blank=True)
     description = models.TextField(blank=True)
+    creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     image = ImageWithThumbsField(_(u"Image"), upload_to="uploads",
         sizes=((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800)))
-
+        
     class Meta:
         ordering = ("position", )
 
@@ -893,6 +894,7 @@ class File(models.Model):
 
     position = models.SmallIntegerField(default=999)
     description = models.CharField(blank=True, max_length=100)
+    creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     file = models.FileField(upload_to="files")
 
     class Meta:

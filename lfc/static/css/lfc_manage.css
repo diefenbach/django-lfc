@@ -23,6 +23,10 @@ input[type='text'] {
     width: 200px;
 }
 
+input.position {
+    width: 30px !important;
+}
+
 .user-filter {
     padding:5px 0 10px 0;
 }
