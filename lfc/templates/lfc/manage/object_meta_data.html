@@ -12,7 +12,7 @@
                     <label>{% trans "Creation date" %}:</label>
                 </div>
                 <div>
-                    {{ obj.creation_date }}
+                    {{ obj.creation_date|date:"Y-m-d H:i:s" }}
                 </div>
             </div>
 
@@ -21,7 +21,7 @@
                     <label>{% trans "Modification date" %}:</label>
                 </div>
                 <div>
-                    {{ obj.modification_date }}
+                    {{ obj.modification_date|date:"Y-m-d H:i:s" }}
                 </div>
             </div>
 

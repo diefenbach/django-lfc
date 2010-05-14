@@ -1,9 +1,9 @@
 # django imports
 from django import forms
-from django.forms.util import ErrorList
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
