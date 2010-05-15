@@ -10,7 +10,7 @@ from lfc.models import PagesPortlet
 from lfc.models import RandomPortlet
 from lfc.models import TextPortlet
 
-def register():
+def initialize():
     """Registers default portlets, templates and content types.
     """
     # Portlets
