@@ -1387,7 +1387,7 @@ def comments(request, obj, template_name="lfc/manage/object_comments.html"):
     """Displays the comments tab of the passed object.
     """
     form = CommentsForm(instance=obj)
-    comments = Comment.objects.filter(object_pk = obj.id)
+    comments = Comment.objects.filter(object_pk = str(obj.id))
 
     return render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
