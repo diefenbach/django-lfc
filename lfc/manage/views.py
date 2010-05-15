@@ -1726,7 +1726,7 @@ def do_transition(request, id):
             if obj.get_state() in public_states:
                 obj.publication_date = datetime.datetime.now()
                 obj.save()
-    
+
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 @login_required
@@ -2878,11 +2878,18 @@ def save_group(request, id, template_name="lfc/manage/group_add.html"):
 def manage_role(request, id=None, template_name="lfc/manage/role.html"):
     """Displays manage interface for role with passed id.
     """
-    if id is None or id in ("1", "2"):
-        id = Role.objects.exclude(name__in = ("Anonymous", "Owner"))[0].id
-        return HttpResponseRedirect(reverse("lfc_manage_role", kwargs={"id" : id}))
+    if id is None:
+        try:
+            role = Role.objects.exclude(name__in=("Anonymous", "Owner"))[0]
+        except IndexError:
+            return HttpResponseRedirect(reverse("lfc_manage_add_role"))
+        else:
+            return HttpResponseRedirect(reverse("lfc_manage_role", kwargs={"id" : role.id}))
 
     role = Role.objects.get(pk=id)
+    if role.name in ["Anonymous", "Owner"]:
+        raise Http404
+
     form = RoleForm(instance=role)
 
     return render_to_response(template_name, RequestContext(request, {
