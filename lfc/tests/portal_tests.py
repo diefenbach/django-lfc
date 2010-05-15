@@ -15,6 +15,9 @@ class PortalTestCase(TestCase):
     def setUp(self):
         """
         """
+        from lfc.utils.init import register
+        register()
+
         self.p = Portal.objects.create()
         self.p.notification_emails = "john@doe.com, jane@doe.com"
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")

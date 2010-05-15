@@ -12,6 +12,11 @@ class UtilsTestCase(TestCase):
     """
     """
     def setUp(self):
+        """
+        """
+        from lfc.utils.init import register
+        register()
+        
         Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
         self.p2 = Page.objects.create(title="Page 2", slug="page-2")

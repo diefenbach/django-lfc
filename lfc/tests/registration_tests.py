@@ -14,6 +14,12 @@ from lfc.models import ContentTypeRegistration
 class RegistrationTestCase(TestCase):
     """Tests for registration related stuff.
     """
+    def setUp(self):
+        """
+        """
+        from lfc.utils.init import register
+        register()
+
     def test_default_portlets(self):
         """Portlets which have to be registered at least.
         """

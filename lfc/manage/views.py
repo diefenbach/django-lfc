@@ -2212,10 +2212,10 @@ def _paste(request, obj):
             except IntegrityError:
                 pass
 
-            _copy_images(source_obj, target_obj)
-            _copy_files(source_obj, target_obj)
-            _copy_portlets(source_obj, target_obj)
-            _copy_translations(source_obj, target_obj)
+            # _copy_images(source_obj, target_obj)
+            # _copy_files(source_obj, target_obj)
+            # _copy_portlets(source_obj, target_obj)
+            # _copy_translations(source_obj, target_obj)
 
             # Prevent recursion
             if target not in descendants and target != source_obj:

@@ -14,6 +14,9 @@ class CopyTestCase(TestCase):
     fixtures = ["superuser.xml"]
 
     def setUp(self):
+        from lfc.utils.init import register
+        register()
+
         Portal.objects.create(id=1)
         self.p1 = Page.objects.create(id=1, title="Page 1", slug="page-1")
         self.p11 = Page.objects.create(id=11, title="Page 1-1", slug="page-1-1", parent = self.p1)
