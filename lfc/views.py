@@ -238,17 +238,12 @@ def set_language(request, language, id=None):
     return response
 
 def do_transition(request, id):
+    """Processes passed transition for object with passed id.
     """
-    """
-    transition = request.POST.get("transition")
-    try:
-        transition = Transition.objects.get(pk=transition)
-    except Transition.DoesNotExist:
-        pass
-    else:
-        obj = lfc.utils.get_content_object(pk=id)
-        obj.do_transition(transition, request.user)
+    from lfc.manage.views import do_transition
+    do_transition(request, id)
 
+    obj = BaseContent.objects.get(pk=id)
     return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"State has been changed."))
 
 def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):

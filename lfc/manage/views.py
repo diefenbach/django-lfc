@@ -1709,7 +1709,7 @@ def review_objects(request, template_name="lfc/manage/review_objects.html"):
 
 @login_required
 def do_transition(request, id):
-    """Processes transition with passed id.
+    """Processes passed transition for object with passed id.
     """
     transition = request.REQUEST.get("transition")
     try:
@@ -1726,7 +1726,7 @@ def do_transition(request, id):
             if obj.get_state() in public_states:
                 obj.publication_date = datetime.datetime.now()
                 obj.save()
-
+    
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 @login_required
