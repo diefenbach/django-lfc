@@ -7,11 +7,11 @@
 <form action="{% url lfc_update_portal_permissions %}"
       method="post">
 
-    <table class="lfs-manage-table" width="80%">
+    <table class="lfs-manage-table full">
         <tr>
-            <th>{% trans "Permission" %}</th>
+            <th class="middle">{% trans "Permission" %}</th>
             {% for role in roles %}
-                <th>{{ role.name }}</th>
+                <th class="middle">{{ role.name }}</th>
             {% endfor %}
         </tr>
         {% for permission in permissions %}
