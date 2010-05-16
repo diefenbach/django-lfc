@@ -1,12 +1,13 @@
+# django imports
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import IntegrityError
+
 # lfc imports
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import Portal
 from lfc.models import Template
-
-# django imports
-from django.contrib.contenttypes.models import ContentType
-from django.db import IntegrityError
 
 # workflow imports
 from workflows.models import Workflow
@@ -163,12 +164,12 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
 def unregister_content_type(name):
     """Unregisteres content type with passed name.
     """
-    ctype = ContentType.objects.get(name=name.lower())
 
     # Remove Workflow Model Relation
     try:
+        ctype = ContentType.objects.get(name=name.lower())
         wmr = WorkflowModelRelation.objects.get(content_type=ctype)
-    except WorkflowModelRelation.DoesNotExist:
+    except ObjectDoesNotExist:
         pass
     else:
         wmr.delete()
