@@ -133,7 +133,7 @@ def add_object(request, language=None, id=None):
                 new_object.language = language
 
                 amount = BaseContent.objects.filter(parent=parent_object, language__in=("0", language)).count()
-                new_object.position = amount * 10
+                new_object.position = (amount+1) * 10
 
                 new_object.save()
 
