@@ -150,7 +150,7 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
                 else:
                     ctr.workflow = wf
                     ctr.save()
-                    
+
                     ctype = ContentType.objects.get_for_model(klass)
                     try:
                         wmr = WorkflowModelRelation.objects.get(content_type=ctype)
@@ -163,6 +163,17 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
 def unregister_content_type(name):
     """Unregisteres content type with passed name.
     """
+    ctype = ContentType.objects.get(name=name.lower())
+
+    # Remove Workflow Model Relation
+    try:
+        wmr = WorkflowModelRelation.objects.get(content_type=ctype)
+    except WorkflowModelRelation.DoesNotExist:
+        pass
+    else:
+        wmr.delete()
+
+    # Remove ContentType
     try:
         ctr = ContentTypeRegistration.objects.get(name=name)
     except ContentTypeRegistration.DoesNotExist:
