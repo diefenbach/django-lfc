@@ -119,13 +119,22 @@ def add_object(request, language=None, id=None):
                 else:
                     language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
 
-                new_object = form.save()
+                new_object = form.save(commit=False)
+
+                # Find unique slug
+                i = 1
+                slug = new_object.slug
+                while BaseContent.objects.filter(slug=new_object.slug, parent=parent_object, language=language).count() > 0:
+                    new_object.slug = slug + "-%s" % i
+                    i += 1
+
                 new_object.parent = parent_object
                 new_object.creator = request.user
                 new_object.language = language
 
                 amount = BaseContent.objects.filter(parent=parent_object, language__in=("0", language)).count()
                 new_object.position = amount * 10
+
                 new_object.save()
 
                 # Send signal
@@ -554,9 +563,18 @@ def object_core_data(request, id, template_name="lfc/manage/object_data.html"):
     Form = obj.form
 
     if request.method == "POST":
+        message = _("An error has been occured")
+
         form = Form(instance=obj, data=request.POST)
         if form.is_valid():
-            form.save()
+            # Unfortunately this is not checked via the form is_valid method.
+            try:
+                BaseContent.objects.exclude(pk=id).get(slug=form.data.get("slug"), parent=obj.parent, language=obj.language)
+            except BaseContent.DoesNotExist:
+                form.save()
+                message = _(u"Data has been saved.")
+            else:
+                form.errors["slug"] = _("An object with this slug already exists.")
 
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -564,15 +582,17 @@ def object_core_data(request, id, template_name="lfc/manage/object_data.html"):
         }))
 
         html = (
-            ("#data", html),
+            ("#core_data", html),
             ("#navigation", navigation(request, obj)),
         )
 
         result = simplejson.dumps({
             "html" : html,
-            "message" : _(u"Data has been saved."),
+            "message" : message,
         }, cls = LazyEncoder)
+
         result = HttpResponse(result)
+
     else:
         form = Form(instance=obj)
 

@@ -6,7 +6,11 @@
 
         {% if field.errors %}
             <div class="error">
-                {{ field.errors }}
+                <ul class="errorlist">
+                   <li>
+                        {{ field.errors }}
+                   </li> 
+                </ul>
                 {{ field }}
             </div>
         {% else %}
