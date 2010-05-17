@@ -344,7 +344,7 @@ def page(context, slug, part):
     return { "page" : page, "part": part }
 
 @register.inclusion_tag('lfc/tags/objects.html', takes_context=True)
-def objects_by_slug(context, slug):
+def objects_by_slug(context, slug, limit=5, title=True, text=False):
     """Display all sub objects of the object with given slug
     """
     request = context.get("request")
@@ -353,9 +353,17 @@ def objects_by_slug(context, slug):
     except Http404:
         return { "objs" : [] }
 
-    objs = obj.children.all()
+    objs = obj.children.all().order_by("-publication_date")[:limit]
+    
+    result = []
+    for obj in objs:
+        result.append(obj.get_content_object())
 
-    return { "objs" : objs }
+    return { 
+        "objs" : result,
+        "title" : title,
+        "text" : text,
+    }
 
 @register.inclusion_tag('lfc/tags/previous_next.html')
 def previous_next_by_date(obj):
