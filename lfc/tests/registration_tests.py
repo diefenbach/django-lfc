@@ -17,8 +17,8 @@ class RegistrationTestCase(TestCase):
     def setUp(self):
         """
         """
-        from lfc.utils.init import register
-        register()
+        from lfc.utils.initialize import initialize
+        initialize()
 
     def test_default_portlets(self):
         """Portlets which have to be registered at least.

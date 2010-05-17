@@ -19,8 +19,8 @@ class PageTestCase(TestCase):
     def setUp(self):
         """
         """
-        from lfc.utils.init import register
-        register()
+        from lfc.utils.initialize import initialize
+        initialize()
 
         self.p = Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
