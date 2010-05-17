@@ -9,11 +9,11 @@ The easiest way is to use the provided installer:
 
 1. Download the installer
 
-   http://pypi.python.org/packages/source/d/django-lfc/django-lfc-installer-1.0a8.tar.gz
+   http://pypi.python.org/packages/source/d/django-lfc/django-lfc-installer-1.0b1.tar.gz
 
 2. Unpack the tarball::
 
-    $ tar xzf django-lfc-installer-1.0a8.tar.gz
+    $ tar xzf django-lfc-installer-1.0b1.tar.gz
 
 3. Execute the buildout::
 
