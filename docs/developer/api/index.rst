@@ -2,11 +2,6 @@
 API
 ===
 
-.. warning::
-
-    LFC is in alpha state. Please consider the API as supposed to be changed 
-    until it reaches beta state.
-
 Here you will find the official public API of LFC.
 
 .. toctree::
