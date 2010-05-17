@@ -276,7 +276,7 @@ like following:
     from lfc_events.models import EventsPortlet
 
     def install():
-        register_template(name = "Event 1", file_name="lfc_events/event_1.html")
+        register_template(name = "Event 1", path="lfc_events/event_1.html")
 
         register_content_type(obj = Event, name = "Event",
             templates=["Event 1"], default_template="Event 1")
