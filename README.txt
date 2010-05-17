@@ -26,6 +26,27 @@ Code
 Changes
 =======
 
+1.0 beta 1 (2010-05-17)
+-----------------------
+
+* Improvement: speeded up copy'n paste
+* Added: date dependent publishing
+* Added: image browser; Added link to original image
+* Added: management; added optional simplification by settings
+* Added: management; added menu to change general language
+* Added: creation date to Image and File
+* Bugfix: view portal without standard page
+* Bugfix: calculation of children positions
+* Bugfix: deleting related workflows and permissions information when deleting content objects
+* Bugfix: display only published objects within navigation portlet
+* Bugfix: set publication date when change workflow state within preview
+* Bugfix: remove WorkflowModelRelation if an application is uninstalled
+* Bugfix: management portal; display correct message if an error occured. Issue #8
+* Bugfix: management; allow only unique slugs
+* Bugfix: postgreSQL: get comments of an object
+* Bugfix: postgreSQL; factored out initial registering to scripts. issue #1
+* Bugfix: filebrowser; display local images
+
 1.0 alpha 8 (2010-04-16)
 ------------------------
 
