@@ -72,20 +72,32 @@ class LanguagesNode(Node):
         lfc_context = context.get("lfc_context")
         request = context.get("request")
 
-        languages = []
-        for language in settings.LANGUAGES:
-            if lfc_context is None:
-                is_available = True
-            elif lfc_context.has_language(request, language[0]):
-                is_available = True
-            else:
-                is_available = False
+        # Get cache
+        if lfc_context:
+            cache_key = "languages-%s" % lfc_context.id
+        else:
+            cache_key = "languages-none"
 
-            languages.append({
-                "code" : language[0],
-                "name" : language[1],
-                "is_available" : is_available,
-            })
+        languages = cache.get(cache_key)
+
+        if languages is None:
+            languages = []
+            for language in settings.LANGUAGES:
+                if lfc_context is None:
+                    is_available = True
+                elif lfc_context.has_language(request, language[0]):
+                    is_available = True
+                else:
+                    is_available = False
+
+                languages.append({
+                    "code" : language[0],
+                    "name" : language[1],
+                    "is_available" : is_available,
+                })
+
+        # Set cache
+        cache.set(cache_key, languages)
 
         context["lfc_languages"] = languages
         return ''
@@ -141,9 +153,9 @@ def tabs(context):
     else:
         cache_key = "tabs-portal"
 
-    pages = cache.get(cache_key)
+    tabs = cache.get(cache_key)
 
-    if pages is None:
+    if tabs is None:
         tl_objs = lfc.utils.get_content_objects(
             request,
             language__in=(language, "0"),
@@ -162,7 +174,7 @@ def tabs(context):
             obj.current = obj in current_pages
             tabs.append(obj)
 
-        cache.set(cache_key, pages)
+        cache.set(cache_key, tabs)
 
     return {
         "language" : language,
@@ -354,12 +366,12 @@ def objects_by_slug(context, slug, limit=5, title=True, text=False):
         return { "objs" : [] }
 
     objs = obj.children.all().order_by("-publication_date")[:limit]
-    
+
     result = []
     for obj in objs:
         result.append(obj.get_content_object())
 
-    return { 
+    return {
         "objs" : result,
         "title" : title,
         "text" : text,
@@ -416,13 +428,13 @@ from django.forms import ChoiceField, FileField, CharField, Textarea
 
 @register.filter(name='field_value')
 def field_value(field):
-    """ Returns the value for this BoundField, as rendered in widgets. 
-    """ 
-    if field.form.is_bound: 
-        if isinstance(field.field, FileField) and field.data is None: 
-            val = field.form.initial.get(field.name, field.field.initial) 
-        else: 
-            val = field.data 
+    """ Returns the value for this BoundField, as rendered in widgets.
+    """
+    if field.form.is_bound:
+        if isinstance(field.field, FileField) and field.data is None:
+            val = field.form.initial.get(field.name, field.field.initial)
+        else:
+            val = field.data
     else:
         val = field.form.initial.get(field.name, field.field.initial)
         if callable(val):
@@ -432,18 +444,18 @@ def field_value(field):
     return val
 
 @register.filter(name='display_value')
-def display_value(field): 
-    """ 
-    Returns the displayed value for this BoundField, as rendered in widgets. 
-    """ 
+def display_value(field):
+    """
+    Returns the displayed value for this BoundField, as rendered in widgets.
+    """
     value = field_value(field)
-    if isinstance(field.field, CharField) and isinstance(field.field.widget, Textarea): 
+    if isinstance(field.field, CharField) and isinstance(field.field.widget, Textarea):
         value = """<div class="%s field-wrapper">%s</div>""" % (field.name, value)
 
-    if isinstance(field.field, ChoiceField): 
-        for (val, desc) in field.field.choices: 
-            if val == value: 
-                return desc 
+    if isinstance(field.field, ChoiceField):
+        for (val, desc) in field.field.choices:
+            if val == value:
+                return desc
     return value
 
 class PermissionComparisonNode(template.Node):

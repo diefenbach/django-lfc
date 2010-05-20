@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_syncdb
@@ -730,6 +731,12 @@ class BaseContent(AbstractBaseContent):
         """Overwrites django-permissions' has_permission in order to add LFC
         specific groups.
         """
+        # Get cache
+        cache_key = "object-%s-%s-%s" % (self.id, user.id, codename)
+        result = cache.get(cache_key)
+        if result:
+            return result
+
         # Every user is also anonymous user
         try:
             roles = [Role.objects.get(name="Anonymous")]
@@ -743,7 +750,11 @@ class BaseContent(AbstractBaseContent):
         except (AttributeError, Role.DoesNotExist):
             pass
 
-        return super(BaseContent, self).has_permission(user, codename, roles)
+        result = super(BaseContent, self).has_permission(user, codename, roles)
+
+        # set cache
+        cache.set(cache_key, result)
+        return result
 
     def is_active(self, user):
         """Returns True if now is between start and end date of the object.
@@ -776,7 +787,7 @@ class BaseContent(AbstractBaseContent):
         transitions = []
         for transition in state.transitions.all():
             permission = transition.permission
-            if permission is None or self.has_permission(user, permission.codename):
+            if permission is None or self.has_permission(obj, user, permission.codename):
                transitions.append(transition)
 
         return transitions
@@ -849,7 +860,7 @@ class Image(models.Model):
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     image = ImageWithThumbsField(_(u"Image"), upload_to="uploads",
         sizes=((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800)))
-        
+
     class Meta:
         ordering = ("position", )
 

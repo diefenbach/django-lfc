@@ -1,4 +1,5 @@
 # django imports
+from django.core.cache import cache
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
@@ -29,10 +30,21 @@ def get_info(obj_or_type):
     else:
         type = obj_or_type
 
+    # Get cache
+    cache_key = "info-%s" % type
+    result = cache.get(cache_key)
+    if result:
+        return result
+
     try:
-        return ContentTypeRegistration.objects.get(type = type)
+        result = ContentTypeRegistration.objects.get(type = type)
     except ContentTypeRegistration.DoesNotExist:
-        return None
+        result = None
+
+    # Set cache
+    cache.set(cache_key, result)
+
+    return result
 
 def get_allowed_subtypes(obj_or_type=None):
     """Returns all allowed sub types for given object or type. Returns a list
