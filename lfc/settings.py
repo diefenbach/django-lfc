@@ -13,5 +13,14 @@ ALLOW_COMMENTS_CHOICES = (
 LANGUAGE_CHOICES = [("0", _(u"Neutral"),)]
 LANGUAGE_CHOICES.extend(settings.LANGUAGES)
 
+LANGUAGES_DICT = []
+for language in settings.LANGUAGES:
+    LANGUAGES_DICT.append({
+        "code" : language[0],
+        "name" : language[1],
+    })
+
+LFC_LANGUAGE_IDS = [l[0] for l in settings.LANGUAGES]
+
 COPY = 1
 CUT = 2

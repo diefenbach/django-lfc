@@ -8,15 +8,13 @@ from cStringIO import StringIO
 from django.conf import settings
 from django.http import Http404
 from django.http import HttpResponseServerError
-from django.shortcuts import get_object_or_404
 from django.utils import translation
 
 # lfc imports
+from lfc.settings import LFC_LANGUAGE_IDS
 from lfc.utils import traverse_object
 from lfc.utils import get_portal
 from lfc.utils import get_content_object
-
-from lfc.models import BaseContent
 
 class ProfileMiddleware(object):
     """
@@ -88,7 +86,7 @@ class LFCMiddleware:
         if language:
             # if settings.LFC_MULTILANGUAGE == False:
             #     raise Http404
-            if language not in settings.LFC_LANGUAGE_IDS:
+            if language not in LFC_LANGUAGE_IDS:
                 raise Http404
 
             translation.activate(language)
