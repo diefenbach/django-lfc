@@ -40,6 +40,7 @@ Developers
 
    developer/tutorials/index.rst
    developer/api/index.rst
+   developer/settings.rst
 
 Indices and tables
 ==================
