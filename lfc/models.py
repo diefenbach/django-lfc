@@ -731,7 +731,7 @@ class BaseContent(AbstractBaseContent):
         """Overwrites django-permissions' has_permission in order to add LFC
         specific groups.
         """
-        # Get cache
+        # CACHE
         cache_key = "object-%s-%s-%s" % (self.id, user.id, codename)
         result = cache.get(cache_key)
         if result:

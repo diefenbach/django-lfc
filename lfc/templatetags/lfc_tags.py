@@ -72,11 +72,11 @@ class LanguagesNode(Node):
         lfc_context = context.get("lfc_context")
         request = context.get("request")
 
-        # Get cache
+        # CACHE
         if lfc_context:
-            cache_key = "languages-%s" % lfc_context.id
+            cache_key = "languages-%s-%s" % (lfc_context.id, request.user.id)
         else:
-            cache_key = "languages-none"
+            cache_key = "languages-none-%s" % request.user.id
 
         languages = cache.get(cache_key)
 
@@ -147,9 +147,10 @@ def tabs(context):
     language = context.get("LANGUAGE_CODE")
 
     lfc_context = context.get("lfc_context")
-
+    
+    # CACHE
     if lfc_context:
-        cache_key = "tabs-%s-%s" % (lfc_context.content_type, lfc_context.id)
+        cache_key = "tabs-%s-%s-%s" % (lfc_context.content_type, lfc_context.id, request.user.id)
     else:
         cache_key = "tabs-portal"
 

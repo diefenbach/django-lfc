@@ -71,6 +71,7 @@ def base_view(request, language=None, slug=None, obj=None):
         return HttpResponseRedirect(url)
 
     # Template
+    # CACHE 
     template_cache_key = "template-%s-%s" % (obj.content_type, obj.id)
     obj_template = cache.get(template_cache_key)
     if obj_template is None:
@@ -78,7 +79,8 @@ def base_view(request, language=None, slug=None, obj=None):
         cache.set(template_cache_key, obj_template)
 
     # Children
-    children_cache_key = "children-%s-%s" % (obj.content_type, obj.id)
+    # CACHE
+    children_cache_key = "children-%s-%s-%s" % (obj.content_type, obj.id, request.user.id)
     sub_objects = cache.get(children_cache_key)
     if sub_objects is None:
         # Get sub objects (as LOL if requested)
@@ -90,6 +92,7 @@ def base_view(request, language=None, slug=None, obj=None):
         cache.set(children_cache_key, sub_objects)
 
     # Images
+    # CACHE
     images_cache_key = "images-%s-%s" % (obj.content_type, obj.id)
     cached_images = cache.get(images_cache_key)
     if cached_images:

@@ -30,7 +30,7 @@ def get_info(obj_or_type):
     else:
         type = obj_or_type
 
-    # Get cache
+    # CACHE
     cache_key = "info-%s" % type
     result = cache.get(cache_key)
     if result:

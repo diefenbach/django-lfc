@@ -110,12 +110,13 @@ def get_content_objects(request=None, *args, **kwargs):
 def get_portal(pk=1):
     """Returns the default portal.
     """
-    # At the moment the default portal should always exist.
+    # CACHE
     cache_key = "portal-%s" % pk
     portal = cache.get(cache_key)
     if portal:
         return portal
 
+    # At the moment the default portal should always exist.
     try:
         portal = lfc.models.Portal.objects.get(pk=pk)
     except lfc.models.Portal.DoesNotExist:
@@ -132,7 +133,8 @@ def login_form():
 def traverse_object(request, path):
     """Returns the the object with the given path.
     """
-    cache_key = "traverse-obj-%s" % path
+    # CACHE
+    cache_key = "traverse-obj-%s-%s" % (path, request.user.id)
     obj = cache.get(cache_key)
     if obj:
         return obj
@@ -219,7 +221,7 @@ def get_related_pages_by_tags(page, num=None):
 
     See there for more.
     """
-    # Try to get it out of cache
+    # CACHE
     cache_key = "related-page-by-tags-%s" % page.id
     related_pages = cache.get(cache_key)
     if related_pages is not None:
