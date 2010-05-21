@@ -26,6 +26,13 @@ Code
 Changes
 =======
 
+1.0 beta 2 (2010-05-21)
+-----------------------
+
+* Improved caching
+* Added License
+* Moved LANGUAGES_DICT and LFC_LANGUAGE_IDS from django settings to lfc settings
+
 1.0 beta 1 (2010-05-17)
 -----------------------
 
