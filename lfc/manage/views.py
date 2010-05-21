@@ -1214,6 +1214,8 @@ def add_portlet(request, object_type_id, object_id, template_name="lfc/manage/po
                 cls = LazyEncoder
             )
 
+            lfc.utils.clear_cache()
+
             return HttpResponse(result)
 
         except ContentType.DoesNotExist:
@@ -1229,6 +1231,7 @@ def delete_portlet(request, portletassignment_id):
         pass
     else:
         pa.delete()
+        lfc.utils.clear_cache()
         url = request.META.get("HTTP_REFERER")
         msg = _(u"Portlet has been deleted.")
         return MessageHttpResponseRedirect(url, msg)
@@ -1266,6 +1269,7 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
         pa.slot_id = request.POST.get("slot")
         pa.position = request.POST.get("position")
         pa.save()
+        lfc.utils.clear_cache()
 
         html = portlets_inline(request, pa.content)
 
