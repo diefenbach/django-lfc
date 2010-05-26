@@ -133,8 +133,10 @@ def login_form():
 def traverse_object(request, path):
     """Returns the the object with the given path.
     """
+    language = translation.get_language()
+    
     # CACHE
-    cache_key = "traverse-obj-%s-%s" % (path, request.user.id)
+    cache_key = "traverse-obj-%s-%s-%s" % (path, request.user.id, language)
     obj = cache.get(cache_key)
     if obj:
         return obj

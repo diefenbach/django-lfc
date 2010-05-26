@@ -150,9 +150,9 @@ def tabs(context):
     
     # CACHE
     if lfc_context:
-        cache_key = "tabs-%s-%s-%s" % (lfc_context.content_type, lfc_context.id, request.user.id)
+        cache_key = "tabs-%s-%s-%s-%s" % (lfc_context.content_type, lfc_context.id, request.user.id, language)
     else:
-        cache_key = "tabs-portal"
+        cache_key = "tabs-portal-%s" % language
 
     tabs = cache.get(cache_key)
 
