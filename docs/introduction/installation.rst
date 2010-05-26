@@ -21,15 +21,19 @@ The easiest way is to use the provided installer:
     $ python bootstrap
     $ bin/buildout -v
 
-4. Start the server::
+4. Run the tests::
+
+    $ bin/django test lfc
+
+5. Start the server::
 
     $ bin/django runserver
 
-5. Login::
+6. Login::
 
     http://localhost:8000/login/ (admin/admin)
 
-6. Go to the management interface::
+7. Go to the management interface::
 
     http://localhost:8000/manage/
 
@@ -52,15 +56,19 @@ This will checkout the latest versions within trunk.
     $ python bootstrap
     $ bin/buildout -v
 
-4. Start the server::
+4. Run the tests::
+
+    $ bin/django test lfc
+
+5. Start the server::
 
     $ bin/django runserver
 
-5. Login::
+6. Login::
 
     http://localhost:8000/login/ (admin/admin)
 
-6. Go to the management interface::
+7. Go to the management interface::
 
     http://localhost:8000/manage/
 
@@ -79,15 +87,15 @@ do some further steps.
 3. Initialize the database
 
  You can choose from two different setups:
-     
+
  simple
      Creates default portlets, templates, content types and a simple
      workflow for a simple site::
- 
+
       $ bin/django runscript lfc_initialize_simple
- 
- portal     
-     Creates default portlets, templates, content types, roles and 
+
+ portal
+     Creates default portlets, templates, content types, roles and
      permissions and workflows for a larger portal::
- 
+
       $ bin/django runscript lfc_initialize_portal
