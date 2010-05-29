@@ -50,7 +50,7 @@ urlpatterns += patterns('lfc.views',
     url(r'^(?P<language>[-\w]{2})/search-results', "search_results", name="lfc_search"),
     url(r'^search-results', "search_results", name="lfc_search"),
 
-    url(r'^(?P<language>[-\w]{2})/live-search-results', "search_results", name="lfc_live_search"),
+    url(r'^(?P<language>[-\w]{2})/live-search-results', "live_search_results", name="lfc_live_search"),
     url(r'^live-search-results', "live_search_results", name="lfc_live_search"),
 
     url(r'^set-language/(?P<language>[-\w]{2})/$', 'set_language', name="lfc_set_language"),
