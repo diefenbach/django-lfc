@@ -50,7 +50,7 @@ $(function() {
         $.jGrowl(message);
         $.cookie("message", null, { path: '/' });
     };
-    
+
     //  Menu
     $('ul.sf-menu').superfish({
         speed: "fast",
@@ -98,7 +98,7 @@ $(function() {
         })
         return false;
     });
-    
+
     // Generic ajax link
     $(".ajax-link").livequery("click", function() {
         var url = $(this).attr("href");
@@ -251,8 +251,13 @@ $(function() {
         $(this).parents("form:first").ajaxSubmit({
             success : function(data) {
                 data = JSON.parse(data);
-                overlay.close();
-                $("#portlets").html(data["html"])
+                if (data["success"]) {
+                    overlay.close();
+                    $("#portlets").html(data["html"])
+                }
+                else {
+                    $("#overlay .content").html(data["html"]);
+                }
                 $.jGrowl(data["message"]);
             }
         })

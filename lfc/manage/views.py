@@ -1201,20 +1201,37 @@ def add_portlet(request, object_type_id, object_id, template_name="lfc/manage/po
             ct = ContentType.objects.filter(model=portlet_type.lower())[0]
             mc = ct.model_class()
             form = mc().form(prefix="portlet", data=request.POST)
-            portlet = form.save()
 
-            slot_id = request.POST.get("slot")
-            position = request.POST.get("position")
-            PortletAssignment.objects.create(
-                slot_id=slot_id, content=obj, portlet=portlet, position=position)
+            if form.is_valid():
+                portlet = form.save()
 
-            result = simplejson.dumps({
-                "html" : portlets_inline(request, obj),
-                "message" : _(u"Portlet has been added.")},
-                cls = LazyEncoder
-            )
+                slot_id = request.POST.get("slot")
+                position = request.POST.get("position")
+                PortletAssignment.objects.create(
+                    slot_id=slot_id, content=obj, portlet=portlet, position=position)
 
-            lfc.utils.clear_cache()
+                result = simplejson.dumps({
+                    "html" : portlets_inline(request, obj),
+                    "message" : _(u"Portlet has been added."),
+                    "success" : True,
+                }, cls = LazyEncoder)
+
+                lfc.utils.clear_cache()
+            else:
+                html = render_to_string(template_name, RequestContext(request, {
+                    "form" : form,
+                    "object_id" : object_id,
+                    "object_type_id" : object_ct.id,
+                    "portlet_type" : portlet_type,
+                    "slots" : Slot.objects.all(),
+                }))
+
+                result = simplejson.dumps({
+                    "html" : html,
+                    "message" : _(u"An error has been occured."),
+                    "success" : False },
+                    cls = LazyEncoder
+                )
 
             return HttpResponse(result)
 
@@ -1245,14 +1262,15 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
     except PortletAssignment.DoesNotExist:
         return ""
 
+    slots = []
+    for slot in Slot.objects.all():
+        slots.append({
+            "id" : slot.id,
+            "name" : slot.name,
+            "selected" : slot.id == pa.slot.id,
+        })
+
     if request.method == "GET":
-        slots = []
-        for slot in Slot.objects.all():
-            slots.append({
-                "id" : slot.id,
-                "name" : slot.name,
-                "selected" : slot.id == pa.slot.id,
-            })
 
         form = pa.portlet.form(prefix="portlet")
         return render_to_response(template_name, RequestContext(request, {
@@ -1263,21 +1281,40 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
         }))
     else:
         form = pa.portlet.form(prefix="portlet", data=request.POST)
-        portlet = form.save()
 
-        # Save the rest
-        pa.slot_id = request.POST.get("slot")
-        pa.position = request.POST.get("position")
-        pa.save()
-        lfc.utils.clear_cache()
+        if form.is_valid():
+            portlet = form.save()
 
-        html = portlets_inline(request, pa.content)
+            # Save the rest
+            pa.slot_id = request.POST.get("slot")
+            pa.position = request.POST.get("position")
+            pa.save()
+            lfc.utils.clear_cache()
 
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : _(u"Portlet has been saved.")},
-            cls = LazyEncoder
-        )
+            html = portlets_inline(request, pa.content)
+
+            result = simplejson.dumps({
+                "html" : html,
+                "message" : _(u"Portlet has been saved."),
+                "success" : True },
+                cls = LazyEncoder
+            )
+        else:
+
+            html = render_to_string(template_name, RequestContext(request, {
+                "form" : form,
+                "portletassigment_id" : pa.id,
+                "slots" : slots,
+                "position" : pa.position,
+            }))
+
+            result = simplejson.dumps({
+                "html" : html,
+                "message" : _(u"An error has been occured."),
+                "success" : False },
+                cls = LazyEncoder
+            )
+
         return HttpResponse(result)
 
 # Navigation tree ############################################################
