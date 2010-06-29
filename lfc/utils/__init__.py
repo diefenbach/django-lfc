@@ -4,6 +4,7 @@ import urllib
 import sys
 
 # django settings
+from django.conf import settings
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import Http404
@@ -111,7 +112,7 @@ def get_portal(pk=1):
     """Returns the default portal.
     """
     # CACHE
-    cache_key = "portal-%s" % pk
+    cache_key = "%s-portal-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, pk)
     portal = cache.get(cache_key)
     if portal:
         return portal
@@ -136,7 +137,8 @@ def traverse_object(request, path):
     language = translation.get_language()
     
     # CACHE
-    cache_key = "traverse-obj-%s-%s-%s" % (path, request.user.id, language)
+    cache_key = "%s-traverse-obj-%s-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                              path, request.user.id, language)
     obj = cache.get(cache_key)
     if obj:
         return obj
@@ -224,7 +226,8 @@ def get_related_pages_by_tags(page, num=None):
     See there for more.
     """
     # CACHE
-    cache_key = "related-page-by-tags-%s" % page.id
+    cache_key = "%s-related-page-by-tags-%s" % \
+                                 (settings.CACHE_MIDDLEWARE_KEY_PREFIX, page.id)
     related_pages = cache.get(cache_key)
     if related_pages is not None:
         return {"related_pages" : related_pages}

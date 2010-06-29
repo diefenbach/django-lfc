@@ -1,5 +1,6 @@
 # django imports
 from django.core.cache import cache
+from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
@@ -31,7 +32,7 @@ def get_info(obj_or_type):
         type = obj_or_type
 
     # CACHE
-    cache_key = "info-%s" % type
+    cache_key = "%s-info-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, type)
     result = cache.get(cache_key)
     if result:
         return result

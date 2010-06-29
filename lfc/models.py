@@ -732,7 +732,8 @@ class BaseContent(AbstractBaseContent):
         specific groups.
         """
         # CACHE
-        cache_key = "object-%s-%s-%s" % (self.id, user.id, codename)
+        cache_key = "%s-object-%s-%s-%s" % \
+              (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.id, user.id, codename)
         result = cache.get(cache_key)
         if result:
             return result

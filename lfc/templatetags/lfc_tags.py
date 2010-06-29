@@ -74,9 +74,13 @@ class LanguagesNode(Node):
 
         # CACHE
         if lfc_context:
-            cache_key = "languages-%s-%s" % (lfc_context.id, request.user.id)
+            cache_key = "%s-languages-%s-%s" % \
+                                          (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                           lfc_context.id, request.user.id)
         else:
-            cache_key = "languages-none-%s" % request.user.id
+            cache_key = "%s-languages-none-%s" % \
+                                          (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                           request.user.id)
 
         languages = cache.get(cache_key)
 
@@ -150,9 +154,13 @@ def tabs(context):
     
     # CACHE
     if lfc_context:
-        cache_key = "tabs-%s-%s-%s-%s" % (lfc_context.content_type, lfc_context.id, request.user.id, language)
+        cache_key = "%s-tabs-%s-%s-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                             lfc_context.content_type,
+                                             lfc_context.id, request.user.id,
+                                             language)
     else:
-        cache_key = "tabs-portal-%s" % language
+        cache_key = "%s-tabs-portal-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                           language)
 
     tabs = cache.get(cache_key)
 

@@ -72,7 +72,8 @@ def base_view(request, language=None, slug=None, obj=None):
 
     # Template
     # CACHE 
-    template_cache_key = "template-%s-%s" % (obj.content_type, obj.id)
+    template_cache_key = "%s-template-%s-%s" % \
+                (settings.CACHE_MIDDLEWARE_KEY_PREFIX, obj.content_type, obj.id)
     obj_template = cache.get(template_cache_key)
     if obj_template is None:
         obj_template = obj.get_template()
@@ -80,7 +81,10 @@ def base_view(request, language=None, slug=None, obj=None):
 
     # Children
     # CACHE
-    children_cache_key = "children-%s-%s-%s" % (obj.content_type, obj.id, request.user.id)
+    children_cache_key = "%s-children-%s-%s-%s" % \
+                                          (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                           obj.content_type, obj.id,
+                                           request.user.id)
     sub_objects = cache.get(children_cache_key)
     if sub_objects is None:
         # Get sub objects (as LOL if requested)
@@ -93,7 +97,9 @@ def base_view(request, language=None, slug=None, obj=None):
 
     # Images
     # CACHE
-    images_cache_key = "images-%s-%s" % (obj.content_type, obj.id)
+    images_cache_key = "%s-images-%s-%s" % \
+                                          (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                           obj.content_type, obj.id)
     cached_images = cache.get(images_cache_key)
     if cached_images:
         image     = cached_images["image"]
