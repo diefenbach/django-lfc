@@ -90,6 +90,9 @@
     </table>
 
     <h1 class="middle">{% trans "Upload local images" %}</h1>
+    {% if not obj_id %}
+        {% trans "You have to save content object before you can upload images for it." %}
+    {% else %}
     <form action="{% url lfc_fb_upload_image %}"
           method="post"
           enctype="multipart/form-data">
@@ -97,4 +100,5 @@
         <input type="file" name="image" />
         <input type="submit" />
     </form>
+    {% endif %}
 {% endblock %}
