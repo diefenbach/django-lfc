@@ -31,7 +31,7 @@ class AutoCompleteTagInput(forms.TextInput):
                 scroll: true,
                 scrollHeight: 300,
                 matchContains: true,
-                autoFill: true,
+                autoFill: true
             });
             </script>''' % (name, tag_list))
             

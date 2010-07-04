@@ -38,7 +38,7 @@ tinyMCE.init({
     theme_advanced_toolbar_location : "top",
     theme_advanced_toolbar_align : "left",
     content_css : "/media/tiny.css",
-    file_browser_callback: "CustomFileBrowser",
+    file_browser_callback: "CustomFileBrowser"
 })
 
 $(function() {
