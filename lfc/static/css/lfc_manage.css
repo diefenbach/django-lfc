@@ -496,3 +496,7 @@ body.filebrowser {
 .wf_permission .permission {
     color: red;
 }
+
+#divStatus {
+    display: none;
+}
