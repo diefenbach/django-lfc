@@ -7,6 +7,7 @@ from django.views.generic.simple import direct_to_template
 from tagging.views import tagged_object_list
 
 # lfc imports
+from lfc.forms import ContactForm
 from lfc.feeds import PageTagFeed
 from lfc.models import Page
 from lfc.sitemap import PageSitemap
@@ -31,8 +32,15 @@ urlpatterns += patterns('django.contrib.auth.views',
 feeds = {
     "rss" : PageTagFeed,
 }
+
 urlpatterns += patterns('',
     url(r'(?P<url>rss.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name="feed"),
+)
+
+# Contact form
+urlpatterns += patterns('contact_form.views',
+    url(r'^contact$', "contact_form", { "form_class" : ContactForm }, name='contact_form'),
+    url(r'^sent$', direct_to_template, { 'template': 'contact_form/contact_form_sent.html' }, name='contact_form_sent'),
 )
 
 # Sitemaps
