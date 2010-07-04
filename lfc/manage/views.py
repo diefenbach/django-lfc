@@ -563,7 +563,7 @@ def object_core_data(request, id, template_name="lfc/manage/object_data.html"):
     Form = obj.form
 
     if request.method == "POST":
-        message = _("An error has been occured")
+        message = _("An error has been occured.")
 
         form = Form(instance=obj, data=request.POST)
         if form.is_valid():
@@ -2742,7 +2742,7 @@ def change_password(request, id):
 
     if form.is_valid():
         form.save()
-        message = _(u"Password has been changed")
+        message = _(u"Password has been changed.")
     else:
         message = _(u"An error occured.")
 
@@ -2782,7 +2782,7 @@ def add_user(request, template_name="lfc/manage/user_add.html"):
             user.save()
 
             url = reverse("lfc_manage_user", kwargs={"id" : user.id})
-            message = _(u"User has been added")
+            message = _(u"User has been added.")
             return MessageHttpResponseRedirect(url, message)
 
         else:
