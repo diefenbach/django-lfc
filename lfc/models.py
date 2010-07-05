@@ -788,7 +788,7 @@ class BaseContent(AbstractBaseContent):
         transitions = []
         for transition in state.transitions.all():
             permission = transition.permission
-            if permission is None or self.has_permission(obj, user, permission.codename):
+            if permission is None or self.has_permission(user, permission.codename):
                transitions.append(transition)
 
         return transitions
