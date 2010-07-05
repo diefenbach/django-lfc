@@ -115,7 +115,6 @@ class Command(BaseCommand):
         StateInheritanceBlock.objects.create(state=private, permission=delete_perm)
         StateInheritanceBlock.objects.create(state=private, permission=edit_perm)
         StateInheritanceBlock.objects.create(state=private, permission=view_perm)
-        StateInheritanceBlock.objects.create(state=private, permission=view_perm)
 
         # Public
         StateInheritanceBlock.objects.create(state=public, permission=add_perm)
