@@ -2,23 +2,23 @@
 from django.core.management.base import BaseCommand
 
 WELCOME_DESCRIPTION = """
-<p>LFS is an online shop based on <a href="http://www.python.org/" target="_blank">Python</a>,
+<p>LFC is a CMS based on <a href="http://www.python.org/" target="_blank">Python</a>,
 <a href="http://www.djangoproject.com/" target="_blank">Django</a> and
 <a href="http://jquery.com/" target="_blank">jQuery</a>.</p>
 
 <h1>Login</h1>
-<p>Go to the <a href="/manage">management interface</a> to start to add content.</p>
+<p>Go to the <a href="/manage/">management interface</a> to start to add content.</p>
 
 <h1>Information &amp; Help</h1>
 <p>You can find more information and help on following places:</p>
 <ul>
-<li><a href="http://www.getlfs.com" target="_blank">Official page</a></li>
-<li><a href="http://packages.python.org/django-lfs/index.html" target="_blank">Documentation on PyPI</a></li>
-<li><a href="http://pypi.python.org/pypi/django-lfs" target="_blank">Releases on PyPI</a></li>
-<li><a href="http://bitbucket.org/diefenbach/django-lfs" target="_blank">Source code on bitbucket.org</a></li>
-<li><a href="http://groups.google.com/group/django-lfs" target="_blank">Google Group</a></li>
-<li><a href="http://twitter.com/lfsproject" target="_blank">lfsproject on Twitter</a></li>
-<li><a href="irc://irc.freenode.net/django-lfs" target="_blank">IRC</a></li>
+<li><a href="http://www.lfcproject.com" target="_blank">Official page</a></li>
+<li><a href="http://packages.python.org/django-lfc/index.html" target="_blank">Documentation on PyPI</a></li>
+<li><a href="http://pypi.python.org/pypi/django-lfc" target="_blank">Releases on PyPI</a></li>
+<li><a href="http://bitbucket.org/diefenbach/django-lfc" target="_blank">Source code on bitbucket.org</a></li>
+<li><a href="http://groups.google.com/group/django-lfc" target="_blank">Google Group</a></li>
+<li><a href="http://twitter.com/lfcproject" target="_blank">lfsproject on Twitter</a></li>
+<li><a href="irc://irc.freenode.net/django-lfc" target="_blank">IRC</a></li>
 </ul>
 """
 
@@ -66,10 +66,11 @@ class Command(BaseCommand):
         permissions.utils.grant_permission(portal, reviewer, submit_perm)
 
         # Workflows
+        import workflows.utils
         from workflows.models import Workflow
         from workflows.models import State
         from workflows.models import Transition
-        from workflows.models import WorkflowPermissionRelation, 
+        from workflows.models import WorkflowPermissionRelation 
         from workflows.models import StatePermissionRelation
         from workflows.models import StateInheritanceBlock
         from lfc.models import WorkflowStatesInformation
@@ -241,6 +242,7 @@ class Command(BaseCommand):
 
         # Page
         page = Page.objects.create(title="Welcome to LFC", slug="welcome-to-lfc", text=WELCOME_DESCRIPTION)
+        workflows.utils.set_state(page, public)
 
 
 def create_plain_workflow():
