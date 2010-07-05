@@ -1886,10 +1886,7 @@ def save_workflow_data(request, id):
 
     for permission in Permission.objects.all():
         if str(permission.id) in selected:
-            try:
-                WorkflowPermissionRelation.objects.create(workflow=workflow, permission=permission)
-            except IntegrityError:
-                pass
+            WorkflowPermissionRelation.objects.get_or_create(workflow=workflow, permission=permission)
         else:
             try:
                 wpr = WorkflowPermissionRelation.objects.get(workflow=workflow, permission=permission)
