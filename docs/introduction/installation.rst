@@ -7,13 +7,13 @@ For Users
 
 The easiest way is to use the provided installer:
 
-1. Download the installer
+1. Download the latest installer from
 
-   http://pypi.python.org/packages/source/d/django-lfc/django-lfc-installer-1.0b1.tar.gz
+   http://pypi.python.org/packages/source/d/django-lfc/django-lfc-installer-1.0b3.tar.gz
 
 2. Unpack the tarball::
 
-    $ tar xzf django-lfc-installer-1.0b1.tar.gz
+    $ tar xzf django-lfc-installer-1.0b3.tar.gz
 
 3. Execute the buildout::
 
@@ -88,14 +88,14 @@ do some further steps.
 
  You can choose from two different setups:
 
- simple
-     Creates default portlets, templates, content types and a simple
-     workflow for a simple site::
-
-      $ bin/django runscript lfc_initialize_simple
-
  portal
      Creates default portlets, templates, content types, roles and
      permissions and workflows for a larger portal::
 
-      $ bin/django runscript lfc_initialize_portal
+      $ bin/django runscript lfc_init
+      
+ simple
+     Creates default portlets, templates, content types and a simple
+     workflow for a simple site::
+
+      $ bin/django lfc_init_simple
