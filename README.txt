@@ -26,6 +26,26 @@ Code
 Changes
 =======
 
+1.0 beta 3 (2010-07-07)
+-----------------------
+
+* Added: lfc_init management commands
+* Changed: using own contact form in order to use portal emails; 
+  Moved contact urls from lfc_project/urls.py to lfc/urls.py
+* Changed: cache keys are using CACHE_MIDDLEWARE_PREFIX now (Maciej
+  Wisniowski)
+* Bugfix caching: added language to cache key
+* Bugfix portlets. Show error if add/edit form doesn't validate. Issue #16
+* Bugfix: do not allow to upload images if content is not yet created. Issue #18 
+  (Maciej Wisniowski)
+* Bugfix mass uploading: added missing element with id=divStatus to display 
+  upload completed status; hide it via CSS for now; Issue #13
+* Bugfix Management panel: IE7 problem. Issue #20
+* Bugfix views.save_workflow_data: removed except IntegrityError. Issue #15
+* Bugfix BaseContent.get_allowed_transitions: removed obj parameter from call 
+  to self.has_permission()
+* Fixed some typos. Issue #17
+
 1.0 beta 2 (2010-05-21)
 -----------------------
 
