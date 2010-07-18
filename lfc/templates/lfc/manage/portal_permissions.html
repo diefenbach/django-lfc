@@ -16,7 +16,7 @@
         </tr>
         {% for permission in permissions %}
             <tr>
-                <td>{{ permission.name }}</td>
+                <td>{% trans permission.name %}</td>
                 {% for role in permission.roles %}
                     <td><input type="checkbox" name="permission" value="{{ role.id }}|{{ permission.codename }}" {% if role.has_permission %}checked="checked"{% endif %}/></td>
                 {% endfor %}
