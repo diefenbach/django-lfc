@@ -250,7 +250,7 @@ def portal_permissions(request, template_name="lfc/manage/portal_permissions.htm
     portal = get_portal()
 
     my_permissions = []
-    for permission in Permission.objects.all():
+    for permission in Permission.objects.order_by("name"):
         roles = []
         for role in Role.objects.all():
             roles.append({
@@ -764,7 +764,7 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
 
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
     my_permissions = []
-    for permission in Permission.objects.filter(q):
+    for permission in Permission.objects.filter(q).order_by("name"):
         roles = []
         for role in Role.objects.all():
             roles.append({
