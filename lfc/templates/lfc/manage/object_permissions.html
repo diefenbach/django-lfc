@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load lfc_tags %}
 
-{% ifhasperm edit %}
+{% ifhasperm manage_content %}
     <h2 class="first-heading">
         {% trans 'Worflow' %}
     </h2>
@@ -80,7 +80,10 @@
         {% endfor %}
     </table>
 {% endifhasperm %}
-<div id="local-roles">
-    {{ local_roles|safe }}
-</div>
+
+{% ifhasperm manage_content %}
+    <div id="local-roles">
+        {{ local_roles|safe }}
+    </div>
+{% endifhasperm %}
 
