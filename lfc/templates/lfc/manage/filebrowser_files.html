@@ -34,25 +34,25 @@
             </p>
         {% endif %}
 
+    {% endif %}
+
+    {% if global_files %}
         <h1 class="middle">{% trans "Global files" %}</h1>
-
-        {% if global_files %}
-
-            <ul>
-                {% for file in global_files %}
-                    <li>
-                        <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
-                            {{ file.title }}"
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>
-                {% trans "There are no local files yet." %}
-            </p>
-        {% endif %}
-
+        <ul>
+            {% for file in global_files %}
+                <li>
+                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
+                        {{ file.title }}"
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>
+            {% trans "There are no global files yet." %}
+        </p>
+    {% endif %}
+    {% if obj_id %}
         <h1 class="middle">{% trans "Upload local files" %}</h1>
         <form action="{% url lfc_fb_upload_file %}"
               method="post"
