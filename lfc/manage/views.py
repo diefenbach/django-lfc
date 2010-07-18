@@ -1576,14 +1576,13 @@ def filebrowser(request):
             "images" : images,
             "portal_images" : portal.images.all(),
         }))
-    else:
+    else:    
         portal = lfc.utils.get_portal()
+        global_files = portal.files.all()
         if obj:
             local_files = obj.files.all()
-            global_files = portal.files.all()
         else:
             local_files = []
-            global_files = obj.files.all()
         base_contents = []
         for base_content in BaseContent.objects.filter(parent=None, language__in=("0", language)):
             base_contents.append({

@@ -1,5 +1,6 @@
 # django imports
 from django.test import TestCase
+from django.utils import translation
 
 # permissions imports
 import permissions.utils
@@ -90,3 +91,11 @@ class PortalTestCase(TestCase):
         """
         self.assertEqual(self.p.get_notification_emails(), ["john@doe.com", "jane@doe.com"])
 
+    def test_get_absolute_url(self):
+        """
+        """
+        translation.activate("en")
+        self.assertEqual("/", self.p.get_absolute_url())
+
+        translation.activate("de")
+        self.assertEqual("/de", self.p.get_absolute_url())
