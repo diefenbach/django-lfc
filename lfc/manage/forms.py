@@ -1,6 +1,7 @@
 # django imports
 from django import forms
 from django.conf import settings
+from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.forms.util import ErrorList
@@ -286,6 +287,12 @@ class MetaDataForm(forms.ModelForm):
         fields = ("template", "standard", "language", "canonical",
             "exclude_from_navigation", "exclude_from_search", "creator", 
             "publication_date", "start_date", "end_date")
+
+    def __init__(self, *args, **kwargs):
+        super(MetaDataForm, self).__init__(*args, **kwargs)
+        self.fields["publication_date"].widget = widgets.AdminSplitDateTime()
+        self.fields["start_date"].widget = widgets.AdminSplitDateTime()
+        self.fields["end_date"].widget = widgets.AdminSplitDateTime()
 
 class PortalCoreForm(forms.ModelForm):
     """Form for portal core data.

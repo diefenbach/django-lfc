@@ -54,3 +54,11 @@
     </div>
 
 {% endifhasperm %}
+
+{% if request.is_ajax %}
+    <script type="text/javascript">
+        $(function() {
+            DateTimeShortcuts.init();
+        });    
+    </script>    
+{% endif %}
