@@ -5,6 +5,10 @@ import sys
 
 # django settings
 from django.conf import settings
+from django.contrib.auth import SESSION_KEY
+from django.contrib.auth import BACKEND_SESSION_KEY
+from django.contrib.auth import load_backend
+from django.contrib.auth.models import AnonymousUser
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.http import Http404
@@ -126,10 +130,33 @@ def get_portal(pk=1):
     cache.set(cache_key, portal)
     return portal
 
-def login_form():
+def get_user_from_session_key(session_key):
+    """Returns the user from the passes session_key.
+    
+    This is a workaround for SWFUpload, which is used to mass upload images
+    and files.
+    """
+    try:
+        session_engine = __import__(settings.SESSION_ENGINE, {}, {}, [''])
+        session_wrapper = session_engine.SessionStore(session_key)
+        user_id = session_wrapper.get(SESSION_KEY)
+        auth_backend = load_backend(session_wrapper.get(BACKEND_SESSION_KEY))
+        if user_id and auth_backend:
+            return auth_backend.get_user(user_id)
+        else:
+            return AnonymousUser()
+    except AttributeError:
+        return AnonymousUser()
+            
+def login_form(next=None):
     """Returns the lfc login form.
     """
-    return HttpResponseRedirect(reverse("lfc_login"))
+    if next:
+        url = "%s?next=%s" % (reverse("lfc_login"), next)
+    else:
+        url = reverse("lfc_login") 
+        
+    return HttpResponseRedirect(url)
 
 def traverse_object(request, path):
     """Returns the the object with the given path.

@@ -39,6 +39,7 @@
         <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.queue.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/fileprogress.js"></script>
         <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/handlers.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.cookies.js"></script>
 
         {% block javascript %}{% endblock %}
 
@@ -74,28 +75,34 @@
                                 <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
                             {% if LFC_MANAGE_USERS %}
-                                <li>
-                                    <a>{% trans "User" %}</a>
-                                    <ul>
-                                        <li>
-                                            <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
-                                        </li>
-                                        <li>
-                                            <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
-                                        </li>
-                                        <li>
-                                            <a href="{% url lfc_manage_group %}">{% trans 'Groups' %}</a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                {% ifportalhasperm manage_portal  %}
+                                    <li>
+                                        <a>{% trans "User" %}</a>
+                                        <ul>
+                                            <li>
+                                                <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
+                                            </li>
+                                            <li>
+                                                <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
+                                            </li>
+                                            <li>
+                                                <a href="{% url lfc_manage_group %}">{% trans 'Groups' %}</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                {% endifportalhasperm %}
                             {% endif %}
                             {% if LFC_MANAGE_WORKFLOWS %}
-                                <li>
-                                    <a href="{% url lfc_manage_review %}">{% trans 'Review' %}</a>
-                                </li>
-                                <li>
-                                    <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
-                                </li>
+                                {% ifportalhasperm review %}
+                                    <li>
+                                        <a href="{% url lfc_manage_review %}">{% trans 'Review' %}</a>
+                                    </li>
+                                {% endifportalhasperm %}
+                                {% ifportalhasperm manage_portal %}
+                                    <li>
+                                        <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
+                                    </li>               
+                                {% endifportalhasperm %}
                             {% endif %}
                             {% if LFC_MANAGE_APPLICATIONS %}
                                 {% ifportalhasperm manage_portal  %}

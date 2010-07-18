@@ -14,33 +14,41 @@
             {% endfor %}
             </ul>
         {% else %}
-            {% for content_type in content_types %}                    
+            {% for content_type in content_types %}
                 <a href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
             {% endfor %}
         {% endif %}
         </li>
-    {% endifhasperm %}    
-    <li>
-        <a>{% trans "Actions" %}</a>
-        <ul>
-            <li>
-                <a href="{% url lfc_copy obj.id %}">{% trans 'Copy' %}</a>
-            </li>
-            <li>
-                <a href="{% url lfc_cut obj.id %}">{% trans 'Cut' %}</a>
-            </li>
-            {% if display_paste %}
+    {% endifhasperm %}
+    {% if display_action_menu %}
+        <li>
+            <a>{% trans "Actions" %}</a>
+            <ul>
+                {% ifhasperm add %}
                 <li>
-                    <a href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
-                </li>                        
-            {% endif %}
-            {% ifhasperm delete %}
-                <li>
-                    <a class="delete-link" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                    <a href="{% url lfc_copy obj.id %}">{% trans 'Copy' %}</a>
                 </li>
-            {% endifhasperm %}
-        </ul>                        
-    </li>
+                {% endifhasperm %}
+                {% ifhasperm delete %}
+                    <li>
+                        <a href="{% url lfc_cut obj.id %}">{% trans 'Cut' %}</a>
+                    </li>
+                {% endifhasperm %}
+                {% if display_paste %}
+                    {% ifhasperm add %}
+                        <li>
+                            <a href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
+                        </li>
+                    {% endifhasperm %}
+                {% endif %}
+                {% ifhasperm delete %}
+                    <li>
+                        <a class="delete-link" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                    </li>
+                {% endifhasperm %}
+            </ul>
+        </li>
+    {% endif %}
     {% if LFC_MULTILANGUAGE %}
     <li>
         {% if translations %}
@@ -88,7 +96,7 @@
             {% endif %}
         </li>
     {% endifhasperm %}
-    
+
     {% endif %}
     {% if state %}
         <li>

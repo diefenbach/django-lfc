@@ -10,11 +10,15 @@ from django.http import Http404
 from django.http import HttpResponseServerError
 from django.utils import translation
 
+# permissions imports
+from permissions.exceptions import Unauthorized
+
 # lfc imports
-from lfc.settings import LFC_LANGUAGE_IDS
+import lfc.utils
 from lfc.utils import traverse_object
 from lfc.utils import get_portal
 from lfc.utils import get_content_object
+from lfc.settings import LFC_LANGUAGE_IDS
 
 class ProfileMiddleware(object):
     """
@@ -73,10 +77,18 @@ class AJAXSimpleExceptionResponse:
                 return HttpResponseServerError(response)
 
 class LFCMiddleware:
-    """Traverses the requested object, store this within request.META and sets
-    the correct language.
+    """LFC specific middleware
     """
+    def process_exception(self, request, exception):
+        """Catches Unauthorized exceptions to display the login form.
+        """
+        if isinstance(exception, Unauthorized):
+            return lfc.utils.login_form(next=request.META.get("PATH_INFO")) 
+
     def process_view(self, request, view_func, view_args, view_kwargs):
+        """Traverses the requested object, store this within request.META and sets
+        the correct language.
+        """    
         language = view_kwargs.get("language")
         slug = view_kwargs.get("slug")
 

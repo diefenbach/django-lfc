@@ -35,6 +35,7 @@ from workflows.models import State
 
 # permissions imports
 from permissions import PermissionBase
+from permissions.exceptions import Unauthorized
 from permissions.models import Role
 
 # lfc imports
@@ -293,6 +294,13 @@ class Portal(models.Model, PermissionBase):
             pass
 
         return super(Portal, self).has_permission(user, codename, roles)
+
+    def check_permission(self, user, codename):
+        """Overwrites django-permissions' check_permission in order to add LFC
+        specific groups.
+        """
+        if not self.has_permission(user, codename):
+            raise Unauthorized("%s doesn't have permission %s for portal" % (user, codename))
 
 class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
     """The root of all content types. It provides the inheritable
@@ -756,6 +764,13 @@ class BaseContent(AbstractBaseContent):
         # set cache
         cache.set(cache_key, result)
         return result
+
+    def check_permission(self, user, codename):
+        """Overwrites django-permissions' check_permission in order to add LFC
+        specific groups.
+        """
+        if not self.has_permission(user, codename):
+            raise Unauthorized("%s doesn't have permission %s for object %s" % (user, codename, self.slug))
 
     def is_active(self, user):
         """Returns True if now is between start and end date of the object.
