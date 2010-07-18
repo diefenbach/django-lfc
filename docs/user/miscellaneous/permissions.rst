@@ -16,20 +16,41 @@ Permissions
 
 Add
 
-    Needed to add children to an content object.
+    Needed to add content objects.
 
 Delete
 
-    Needed to delete an content object.
+    Needed to delete a content object.
 
 Edit
 
-    Needed to edit an content object.
+    Needed to modify a content object.
 
+Manage content
+
+    Needed to manage a content object's permissions and local roles.
+    
 Manage portal
 
-    Needed to edit the portal object.
+    Needed to edit the portal object an to manage users, groups, roles, 
+    workflows, permissions, etc.
 
+Publish
+    
+    Needed to publish a content object.
+    
+Reject
+    
+    Needed to reject a content object.
+    
+Review
+    
+    Needed to review submitted content objects.
+
+Submit
+    
+    Needed to submit a content object for review.
+    
 View
 
     Needed to view a content object.

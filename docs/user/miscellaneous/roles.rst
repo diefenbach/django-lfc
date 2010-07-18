@@ -27,15 +27,19 @@ Anonymous
 
 Owner
 
-    Can do anything on the content object.
+    Can do anything on own content objects, except change permissions.
 
 Editor
 
-    Can do anything on the content object.
+    Can do anything on the content object, except change permissions.
 
 Reader
 
     Can read public content objects.
+
+Manager
+    
+    Can do everything.
 
 Portal workflow
 ===============
@@ -46,11 +50,15 @@ Anonymous
 
 Owner
 
-    Can do anything on his own private content objects.
+    Can do anything on his own private content objects, except change
+    permissions. 
+    
+    Once the object is submitted or published the owner has to retract the 
+    object to be able to modfiy it.    
 
 Editor
 
-    Can do anything on content objects.
+    Can do anything on content objects, except change permissions.
 
 Reader
 
@@ -58,8 +66,12 @@ Reader
 
 Reviewer
 
-    Can do anything on submitted content objects.
+    Can publish submitted content objects.
 
+Manager
+    
+    Can do everything.
+    
 .. seealso::
 
    * :doc:`permissions`
