@@ -236,9 +236,9 @@ class Portal(models.Model, PermissionBase):
         """
         language = translation.get_language()
         if language == settings.LANGUAGE_CODE:
-            return reverse("lfc_portal")
+            return reverse("lfc_base_view")
         else:
-            return reverse("lfc_portal", kwargs={"language" : language})
+            return reverse("lfc_base_view", kwargs={"language" : language})
 
     def get_notification_emails(self):
         """Returns the notification e-mail addresses as list.
