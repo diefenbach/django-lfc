@@ -237,6 +237,10 @@ class MetaDataForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(MetaDataForm, self).__init__(*args, **kwargs)
 
+        self.fields["publication_date"].widget = widgets.AdminSplitDateTime()
+        self.fields["start_date"].widget = widgets.AdminSplitDateTime()
+        self.fields["end_date"].widget = widgets.AdminSplitDateTime(attrs={"required" : False})
+
         instance = kwargs.get("instance").get_content_object()
         language = instance.language
         ctr = get_info(instance)
@@ -281,18 +285,27 @@ class MetaDataForm(forms.ModelForm):
         # Position
         if not ctr.display_position:
             del self.fields["position"]
+    
+    def clean(self):
+        """Workaround for AdminSplitDateTime, which displays an required message
+        even if the fields are not required by the model.
+        """        
+        if (self.data.get("publication_date_0") == "") and (self.data.get("publication_date_1") == ""):
+            del self._errors["publication_date"]
 
+        if (self.data.get("start_date_0") == "") and (self.data.get("start_date_1") == ""):
+            del self._errors["start_date"]
+
+        if (self.data.get("end_date_0") == "") and (self.data.get("end_date_1") == ""):        
+            del self._errors["end_date"]
+            
+        return self.cleaned_data
+        
     class Meta:
         model = Page
         fields = ("template", "standard", "language", "canonical",
             "exclude_from_navigation", "exclude_from_search", "creator", 
             "publication_date", "start_date", "end_date")
-
-    def __init__(self, *args, **kwargs):
-        super(MetaDataForm, self).__init__(*args, **kwargs)
-        self.fields["publication_date"].widget = widgets.AdminSplitDateTime()
-        self.fields["start_date"].widget = widgets.AdminSplitDateTime()
-        self.fields["end_date"].widget = widgets.AdminSplitDateTime()
 
 class PortalCoreForm(forms.ModelForm):
     """Form for portal core data.
