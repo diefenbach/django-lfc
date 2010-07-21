@@ -669,3 +669,11 @@ ul.timelist, .timelist li {
 .timelist a {
     padding: 2px;
 }
+
+.datetime img {
+    position: relative; top: 4px;
+}
+
+.datetime input {
+    margin-bottom: 6px;
+}

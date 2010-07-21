@@ -62,6 +62,7 @@ class Command(BaseCommand):
         delete = permissions.utils.register_permission("Delete", "delete")
         edit = permissions.utils.register_permission("Edit", "edit")
         view = permissions.utils.register_permission("View", "view")
+        manage_content = permissions.utils.register_permission("Manage content", "manage_content")
 
         ctype = ContentType.objects.get_for_model(Portal)
 
@@ -69,7 +70,7 @@ class Command(BaseCommand):
         submit = permissions.utils.register_permission("Submit", "submit")
         reject = permissions.utils.register_permission("Reject", "reject")
 
-        manage_portal = permissions.utils.register_permission("Manage Portal", "manage_portal", [ctype])
+        manage_portal = permissions.utils.register_permission("Manage portal", "manage_portal", [ctype])
         review = permissions.utils.register_permission("Review", "review", [ctype])
 
         # Create slots
@@ -88,6 +89,7 @@ class Command(BaseCommand):
         permissions.utils.grant_permission(portal, manager, "delete")
         permissions.utils.grant_permission(portal, manager, "edit")
         permissions.utils.grant_permission(portal, manager, "manage_portal")
+        permissions.utils.grant_permission(portal, manager, "manage_content")
         permissions.utils.grant_permission(portal, manager, "view")
         permissions.utils.grant_permission(portal, manager, "submit")
         permissions.utils.grant_permission(portal, manager, "reject")

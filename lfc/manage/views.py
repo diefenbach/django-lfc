@@ -250,7 +250,7 @@ def portal_permissions(request, template_name="lfc/manage/portal_permissions.htm
     portal = get_portal()
 
     my_permissions = []
-    for permission in Permission.objects.all():
+    for permission in Permission.objects.order_by("name"):
         roles = []
         for role in Role.objects.all():
             roles.append({
@@ -633,8 +633,11 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
         form = MetaDataForm(instance=obj, data=request.POST)
 
         if form.is_valid():
+            message = _(u"Meta data has been saved.")
             form.save()
             form = MetaDataForm(instance=_update_positions(obj, True))
+        else:
+            message = _(u"An error has been occured.")
 
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -645,9 +648,10 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
             ("#meta_data", html),
             ("#navigation", navigation(request, obj)),
         )
+
         result = simplejson.dumps({
             "html" : html,
-            "message" : _(u"Meta data has been saved."),
+            "message" : message,
         }, cls = LazyEncoder)
 
         result = HttpResponse(result)
@@ -760,7 +764,7 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
 
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types = None)
     my_permissions = []
-    for permission in Permission.objects.filter(q):
+    for permission in Permission.objects.filter(q).order_by("name"):
         roles = []
         for role in Role.objects.all():
             roles.append({
@@ -1038,7 +1042,7 @@ def add_object_images(request, id):
     The images are passed within the request body (request.FILES).
     """
     obj = lfc.utils.get_content_object(pk=id)
-    
+
     request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))
     obj.check_permission(request.user, "edit")
 
@@ -1077,7 +1081,7 @@ def add_object_files(request, id):
     """
     obj = lfc.utils.get_content_object(pk=id)
 
-    request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))    
+    request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))
     obj.check_permission(request.user, "edit")
 
     if request.method == "POST":
@@ -1576,7 +1580,7 @@ def filebrowser(request):
             "images" : images,
             "portal_images" : portal.images.all(),
         }))
-    else:    
+    else:
         portal = lfc.utils.get_portal()
         global_files = portal.files.all()
         if obj:

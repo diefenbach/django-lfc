@@ -323,4 +323,4 @@ the stuff we have added.
         unregister_template("Event 2")
 
         # unregister portlet
-        unregister_portlet("Events")
+        unregister_portlet(EventsPortlet)

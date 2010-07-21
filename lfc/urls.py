@@ -34,7 +34,7 @@ feeds = {
 }
 
 urlpatterns += patterns('',
-    url(r'(?P<url>rss.*)/$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name="feed"),
+    url(r'(?P<url>rss.*)$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name="feed"),
 )
 
 # Contact form
