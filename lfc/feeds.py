@@ -10,18 +10,16 @@ import lfc.utils
 from lfc.models import BaseContent
 
 class PageTagFeed(Feed):
-    """Provides a feed for a given page and a given tag passed by the bits of an
-    url.
+    """Provides a feed for a given object restricted by given tags
+    url, e.g.
+
+    http://www.lfcproject.com/information/blog?tags=python
     """
     def get_object(self, bits):
-        if len(bits) not in (1, 2):
+        if len(bits) < 1:
             raise ObjectDoesNotExist
 
-        if len(bits) == 2:
-            self.tag = bits[1]
-        else:
-            self.tag = None
-        return BaseContent.objects.get(slug__exact=bits[0])
+        return lfc.utils.traverse_object(self.request, "/".join(bits))
 
     def title(self, obj):
         portal = lfc.utils.get_portal()
@@ -30,12 +28,19 @@ class PageTagFeed(Feed):
     def link(self, obj):
         return obj.get_absolute_url()
 
-    # def description(self, obj):
-    #     return obj.description
+    def description(self, obj):
+        return obj.description
 
     def items(self, obj):
-        objs = obj.children.filter(active=True)
-        if self.tag:
-            objs = ModelTaggedItemManager().with_all(self.tag, objs)
+        paths_objs = obj.get_descendants()
 
-        return objs
+        tags = self.request.GET.getlist("tags")
+        if not tags:
+            return paths_objs
+        else:
+            objs = []
+            tagged_objs = ModelTaggedItemManager().with_all(tags, BaseContent.objects.all())
+            for obj in tagged_objs:
+                if obj.get_content_object() in paths_objs:
+                    objs.append(obj)
+            return objs
