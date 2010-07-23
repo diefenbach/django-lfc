@@ -26,6 +26,16 @@ Code
 Changes
 =======
 
+1.0 beta 4 (2010-07-23)
+-----------------------
+
+* Added detailed access control
+* Added date time picker to date fields in manage forms. Issue #12
+* Changed: order permissions alphabetical by name
+* Bugfix add form: Don't try to get local files. Issue #26
+* Bugfix Portal.get_absolute_url: using url lfc_base_view. Issue #28
+* Bugfix RSS feeds: make them work again
+
 1.0 beta 3 (2010-07-07)
 -----------------------
 
