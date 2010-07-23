@@ -203,6 +203,7 @@ class Command(BaseCommand):
 
         # Add transitions
         private.transitions.add(submit_t)
+        private.transitions.add(make_public)
         submitted.transitions.add(make_public)
         submitted.transitions.add(reject_t)
         public.transitions.add(make_private)
