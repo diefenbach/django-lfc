@@ -294,8 +294,14 @@ def fiveohoh(request, template_name="500.html"):
     except IndexError:
         pass
     else:
+        try:
+            portal = lfc.utils.get_portal()
+            name = portal.title
+        except:
+            name = "LFC"
+
         mail = EmailMessage(
-            subject="Error LFC", body=response, from_email=from_email, to=to_emails)
+            subject="Error %s" % name, body=response, from_email=from_email, to=to_emails)
         mail.send(fail_silently=True)
 
     return base_view(request, slug="500")
