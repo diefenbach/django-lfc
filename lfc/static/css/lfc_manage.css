@@ -470,8 +470,10 @@ body.filebrowser {
 }
 
 .filebrowser ul {
-    padding-left: 10px;
+    margin:0;
+    padding:0;
 }
+
 .filebrowser li {
     list-style: square inside;
 }
