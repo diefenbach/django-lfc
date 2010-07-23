@@ -16,14 +16,14 @@
     </ul>
 
     {% if obj_id %}
-        <h1 class="middle">{% trans "Local files" %}</h1>
+        <h1 class="middle-heading">{% trans "Local files" %}</h1>
 
         {% if local_files %}
             <ul>
                 {% for file in local_files %}
                     <li>
                         <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
-                            {{ file.title }}"
+                            {{ file.title }}
                         </a>
                     </li>
                 {% endfor %}
@@ -36,8 +36,8 @@
 
     {% endif %}
 
-    {% if global_files %}
-        <h1 class="middle">{% trans "Global files" %}</h1>
+    <h1 class="middle-heading">{% trans "Global files" %}</h1>
+    {% if global_files %}        
         <ul>
             {% for file in global_files %}
                 <li>
@@ -53,7 +53,7 @@
         </p>
     {% endif %}
     {% if obj_id %}
-        <h1 class="middle">{% trans "Upload local files" %}</h1>
+        <h1 class="middle-heading">{% trans "Upload local files" %}</h1>
         <form action="{% url lfc_fb_upload_file %}"
               method="post"
               enctype="multipart/form-data">
