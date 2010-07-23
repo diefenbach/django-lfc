@@ -26,6 +26,12 @@ Code
 Changes
 =======
 
+1.0 beta 5 (2010-07-23)
+-----------------------
+
+* Added dependencies to setup.py
+* Filebrowser: cleaned up appearance
+
 1.0 beta 4 (2010-07-23)
 -----------------------
 
