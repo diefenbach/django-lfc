@@ -20,6 +20,7 @@ Features
 * RSS Feeds
 * Search
 * Tagging
+* Time-based publication
 * Users, Groups and Roles
 * Variable Templates
 * Variable Portlets

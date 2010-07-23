@@ -74,7 +74,7 @@ Portlets
 The portlets tab manages the root portlets to the site. By default portlets
 are inherited from child objects.
 
-:term:`Portlets` a pieces of content which are displayed in :term:`Slots` left
+:term:`Portlets <portlet>` a pieces of content which are displayed in :term:`Slots <slot>` left
 and right of your page.
 
 Slots

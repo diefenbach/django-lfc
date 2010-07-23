@@ -53,7 +53,7 @@ Overview
 Portlets
 ========
 
-Every object can have so-called :term:`portlets`, which are displayed in a 
+Every object can have so-called :term:`portlets <portlet>`, which are displayed in a 
 :term:`slots`. By default there is a left and a right slot and  just a few 
 portlets (more slots and portlets can be added by developers):
 
