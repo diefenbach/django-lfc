@@ -4,9 +4,7 @@
 {% ifhasperm edit %}
     <form action="{% url lfc_save_seo obj.id %}"
           method="POST">
-        <table>
-            {% include "lfc/manage/lfc_form.html" %}
-        </table>
+        {% include "lfc/manage/lfc_form.html" %}
 
         <input class="ajax-save-button"
                type="submit"

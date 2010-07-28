@@ -9,12 +9,14 @@
             <h2>{% trans 'Blocked parent slots' %}</h2>
 
             <table class="lfs-manage-table half">
-                <th class="tiny padr">
-                    {% trans "Blocked" %}
-                </th>
-                <th>
-                    {% trans "Slot" %}
-                </th>
+                <tr>
+                    <th class="tiny padr">
+                        {% trans "Blocked" %}
+                    </th>
+                    <th>
+                        {% trans "Slot" %}
+                    </th>
+                </tr>
                 {% for slot in slots.items %}
                     <tr>
                         <td>
