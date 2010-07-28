@@ -750,6 +750,13 @@ def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
             "obj" : obj,
         }))
 
+def load_object_permissions(request, id):
+    """Loads object_permissions via ajax.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    obj.check_permission(request.user, "view")
+    return HttpResponse(object_permissions(request, obj))
+
 def object_permissions(request, obj, template_name="lfc/manage/object_permissions.html"):
     """Displays the permissions tab of the content object with passed id.
     """
