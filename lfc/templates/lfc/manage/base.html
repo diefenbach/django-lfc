@@ -1,46 +1,16 @@
 {% load i18n %}
 {% load adminmedia %}
 {% load lfc_tags %}
-
+{% load resources_tags %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title>{% block title %}{% endblock %}</title>
-
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/yui/reset-min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/lightbox/css/jquery.lightbox-0.5.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/jquery-ui-themeroller/jquery-ui-themeroller.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/jquery.jgrowl.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/superfish/superfish.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/autocomplete/jquery.autocomplete.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/css/lfc_manage.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/swfupload/default.css" />
-
+        {% css "manage" %}
+        {% block css %}{% endblock %}
+        
         <script type="text/javascript" src="/admin/jsi18n/"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/calendar.js"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/admin/DateTimeShortcuts.js"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/urlify.js"></script>
-
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.tools.min.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.livequery.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.form.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.jgrowl_minimized.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.cookie.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/superfish/superfish.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery-ui-personalized-1.5.3.packed.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/json2.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/tinymce.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/lfc_manage.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.queue.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/fileprogress.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/handlers.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.cookies.js"></script>
-
+        {% javascript "manage" %}        
         {% block javascript %}{% endblock %}
 
     </head>
