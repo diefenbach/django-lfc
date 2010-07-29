@@ -11,10 +11,11 @@ from lfc.models import RandomPortlet
 from lfc.models import TextPortlet
 
 # resources imports
+import resources.utils
 from resources.utils import register_resource 
-from resources.utils import create_resources
 from resources.config import CSS, JS
-def initialize():
+
+def initialize(create_resources=False):
     """Registers default portlets, templates and content types.
     """
     # Portlets
@@ -28,7 +29,7 @@ def initialize():
     register_template(name = "Article", path="lfc/templates/article.html")
     register_template(name = "Gallery", path="lfc/templates/gallery.html", images_columns=3)
     register_template(name = "Overview", path="lfc/templates/overview.html")
-
+    
     # Register Resources
     register_resource(type=CSS, group="lfc", path="/lfc/yui/reset-fonts.css")
     register_resource(type=CSS, group="lfc", path="/lfc/lightbox/css/jquery.lightbox-0.5.css")
@@ -40,7 +41,6 @@ def initialize():
     register_resource(type=JS, group="lfc", path="/lfc/jquery/jquery.tools.min.js")
     register_resource(type=JS, group="lfc", path="/lfc/lightbox/js/jquery.lightbox-0.5.js")
     register_resource(type=JS, group="lfc", path="/lfc_theme/js/lfctheme.js")
-
 
     register_resource(type=CSS, group="manage", path="/lfc/yui/reset-min.css")
     register_resource(type=CSS, group="manage", path="/lfc/lightbox/css/jquery.lightbox-0.5.css")
@@ -74,8 +74,9 @@ def initialize():
     register_resource(type=JS, group="manage", path="/lfc/swfupload/handlers.js")
     register_resource(type=JS, group="manage", path="/lfc/swfupload/swfupload.cookies.js")
     register_resource(type=JS, group="manage", path="/lfc/js/lfc_manage.js")
-    
-    create_resources()
+
+    if create_resources:    
+        resources.utils.create_resources()
     
     # Content Types
     register_content_type(
