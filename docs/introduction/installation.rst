@@ -1,101 +1,41 @@
+.. index:: Installation
+
 ============
 Installation
 ============
 
-For Users
-=========
+Prequisites
+===========
 
-The easiest way is to use the provided installer:
+Make sure you have installed:
 
-1. Download the latest installer from
+   * Python 2.6.x
+   * A RDBMS of your choice (PostgreSQL, MySQL, SQLite or Oracle)
 
-   http://pypi.python.org/packages/source/d/django-lfc/django-lfc-installer-1.0b3.tar.gz
+Installation
+============
 
-2. Unpack the tarball::
+The installation is straightforward and should last just a few minutes.
 
-    $ tar xzf django-lfc-installer-1.0b3.tar.gz
+   1. Download the installer from http://pypi.python.org/pypi/django-lfc
+   2. $ tar xzf django-lfc-installer-<version>.tar.gz
+   3. $ cd lfc-installer
+   4. $ python bootstrap.py
+   5. $ bin/buildout -v
+   6. Enter your database settings to lfc_project/settings.py
+   7. $ bin/django syncdb
+   8. $ bin/django lfc_init
+   9. Browse to http://localhost:8000/
 
-3. Execute the buildout::
+That's all!
 
-    $ cd lfc-installer
-    $ python bootstrap
-    $ bin/buildout -v
+**Please note**
 
-4. Run the tests::
+* If you encounter problems during ``bin/buildout -v`` or on the first
+  run on a Debian or Ubuntu server make sure you have the build tools and
+  Python dev packages installed::
 
-    $ bin/django test lfc
-
-5. Start the server::
-
-    $ bin/django runserver
-
-6. Login::
-
-    http://localhost:8000/login/ (admin/admin)
-
-7. Go to the management interface::
-
-    http://localhost:8000/manage/
-
-For Developers
-==============
-
-This will checkout the latest versions within trunk.
-
-1. Install mercurial::
-
-    $ easy_install mercurial
-
-2. Get the buildout::
-
-    hg clone http://bitbucket.org/diefenbach/lfc-buildout-development/
-
-3. Execute the buildout::
-
-    $ cd lfc-buildout-development
-    $ python bootstrap
-    $ bin/buildout -v
-
-4. Run the tests::
-
-    $ bin/django test lfc
-
-5. Start the server::
-
-    $ bin/django runserver
-
-6. Login::
-
-    http://localhost:8000/login/ (admin/admin)
-
-7. Go to the management interface::
-
-    http://localhost:8000/manage/
-
-Using a own database
-====================
-
-If you don't want to use the provided and prepared sqlite database you have to
-do some further steps.
-
-1. Change settings.py according to your database
-
-2. Sync the database::
-
-    $ bin/django syncdb
-
-3. Initialize the database
-
- You can choose from two different setups:
-
- portal
-     Creates default portlets, templates, content types, roles and
-     permissions and workflows for a larger portal::
-
-      $ bin/django runscript lfc_init
-      
- simple
-     Creates default portlets, templates, content types and a simple
-     workflow for a simple site::
-
-      $ bin/django lfc_init_simple
+    apt-get install build-essential
+    apt-get install python-dev
+    apt-get install python-all-dev
+    apt-get install python-profiler (multiverse repository)
