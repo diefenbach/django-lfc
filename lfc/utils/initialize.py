@@ -55,7 +55,6 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", merge=0, path="/lfc/tiny_mce/jscripts/tiny_mce/tiny_mce.js")
     register_resource(type=JS, group="manage", path="/admin/js/core.js")
     register_resource(type=JS, group="manage", path="/admin/js/calendar.js")
-    register_resource(type=JS, group="manage", path="/admin/js/admin/DateTimeShortcuts.js")
     register_resource(type=JS, group="manage", path="/admin/js/urlify.js")
     register_resource(type=JS, group="manage", path="/lfc/jquery/jquery.min.js")
     register_resource(type=JS, group="manage", path="/lfc/jquery/jquery.tools.min.js")
@@ -74,6 +73,7 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", path="/lfc/swfupload/handlers.js")
     register_resource(type=JS, group="manage", path="/lfc/swfupload/swfupload.cookies.js")
     register_resource(type=JS, group="manage", path="/lfc/js/lfc_manage.js")
+    register_resource(type=JS, group="manage", merge=0, path="/admin/js/admin/DateTimeShortcuts.js")
 
     if create_resources:    
         resources.utils.create_resources()
