@@ -511,10 +511,10 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     if not lfc.utils.registration.get_info(obj):
         raise Http404()
 
-    # if settings.LFC_MANAGE_PERMISSIONS:
-    #     permissions = object_permissions(request, obj)
-    # else:
-    #     permissions = ""
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = object_permissions(request, obj)
+    else:
+        permissions = ""
 
     return render_to_response(template_name, RequestContext(request, {
         "navigation" : navigation(request, obj),
@@ -527,7 +527,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : object_children(request, obj),
-        # "permissions" : permissions,
+        "permissions" : permissions,
         "content_type_name" : get_info(obj).name,
         "display_paste" : _display_paste(request),
         "obj" : obj,
@@ -750,13 +750,6 @@ def object_seo_data(request, id, template_name="lfc/manage/object_seo.html"):
             "obj" : obj,
         }))
 
-def load_object_permissions(request, id):
-    """Loads object_permissions via ajax.
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-    obj.check_permission(request.user, "view")
-    return HttpResponse(object_permissions(request, obj))
-    
 def object_permissions(request, obj, template_name="lfc/manage/object_permissions.html"):
     """Displays the permissions tab of the content object with passed id.
     """

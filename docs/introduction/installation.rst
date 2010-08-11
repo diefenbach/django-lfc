@@ -25,8 +25,7 @@ The installation is straightforward and should last just a few minutes.
    6. Enter your database settings to lfc_project/settings.py
    7. $ bin/django syncdb
    8. $ bin/django lfc_init
-   9. $ bin/django runserver
-   10. Browse to http://localhost:8000/
+   9. Browse to http://localhost:8000/
 
 That's all!
 

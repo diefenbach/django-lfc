@@ -60,7 +60,6 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-portal-children$', "update_portal_children", name="lfc_update_portal_children"),
 
     # permissions
-    url(r'^load-object-permissions/(?P<id>\d+)$', "load_object_permissions", name="lfc_load_update_object_permissions"),
     url(r'^update-object-permissions/(?P<id>\d+)$', "update_object_permissions", name="lfc_update_object_permissions"),
     url(r'^update-portal-permissions$', "update_portal_permissions", name="lfc_update_portal_permissions"),
 
