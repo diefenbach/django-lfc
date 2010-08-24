@@ -16,7 +16,7 @@
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/css/lfc_manage.css" />
         <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/swfupload/default.css" />
 
-        <script type="text/javascript" src="/admin/jsi18n/"></script>
+        <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
         <script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script>
         <script type="text/javascript" src="{% admin_media_prefix %}js/calendar.js"></script>
         <script type="text/javascript" src="{% admin_media_prefix %}js/admin/DateTimeShortcuts.js"></script>
