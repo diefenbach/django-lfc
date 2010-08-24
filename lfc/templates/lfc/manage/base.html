@@ -9,9 +9,10 @@
         {% css "manage" %}
         {% block css %}{% endblock %}
         
-        <script type="text/javascript" src="/admin/jsi18n/"></script>
-        {% javascript "manage" %}        
+        {% javascript "manage" %}
+        
         {% block javascript %}{% endblock %}
+        <link rel="shortcut icon" href="{{ MEDIA_URL }}lfc/img/favicon.ico" type="image/ico" />
 
     </head>
     <body class="{% block body_class %}{% endblock %}">
@@ -42,7 +43,7 @@
                         <ul class="sf-menu"
                             width="100%">
                             <li>
-                                <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
+                                <a href="{% url lfc_manage_portal %}#type=portal&amp;id=1">{% trans 'Content' %}</a>
                             </li>
                             {% if LFC_MANAGE_USERS %}
                                 {% ifportalhasperm manage_portal  %}

@@ -1,4 +1,9 @@
 /* ui-tabs overwrites */
+#id_text,
+#id_add-text {
+    height: 250px;
+}
+
 body {
     font-size: 77% !important;
     background-color: white;

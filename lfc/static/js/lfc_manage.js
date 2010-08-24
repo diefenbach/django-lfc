@@ -1,5 +1,109 @@
 $(function() {
 
+    load();
+
+    var overlay = $("#overlay").overlay({
+            closeOnClick: false,
+            api:true,
+            speed:1,
+            expose: {color: '#222', loadSpeed:1 }
+    });
+
+    $(".object-add").livequery("click", function() {
+        var url = $(this).attr("href");
+        $.get(url, function(data) {
+            $("#overlay .content").html(data);
+            overlay.load();
+        })
+        return false;
+    });
+    
+    $(".close-button").livequery("click", function() {
+        overlay.close();
+        return false;
+    });
+    
+    $(".object-save-button").livequery("click", function() {
+        var action = $(this).attr("name");
+        $(this).parents("form:first").ajaxSubmit({
+            data : { "action" : action },
+            success : function(data) {
+                data = JSON.parse(data);
+                for (var html in data["html"])
+                    $(data["html"][html][0]).html(data["html"][html][1]);
+
+                $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+
+                create_menu()
+                
+                if (data["message"])
+                    $.jGrowl(data["message"]);
+                
+                if (data["id"]) {
+                    $.bbq.pushState({ "object" : data["id"] });
+                    overlay.close();
+                };
+            }
+        })
+        return false;
+    });
+
+    function create_menu() {
+        $('ul.sf-menu').superfish({
+            speed: "fast",
+            delay: "200"
+        });
+    };
+
+    function load_object(url, tabs) {
+        $.get(url, function(data) {
+            data = JSON.parse(data);
+            for (var html in data["html"])
+                $(data["html"][html][0]).html(data["html"][html][1]);
+            create_menu();
+
+            if (tabs)
+                $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+
+            if (data["message"])
+                $.jGrowl(data["message"]);
+                $.cookie("message", null, { path: '/' });
+        })
+    };
+
+    // Load objects
+    $(".manage-portal").livequery("click", function() {
+        $.bbq.pushState({ "type" : "portal", "id" : 1 });
+        return false
+    });
+
+    $(".manage-page").livequery("click", function() {
+        var id = $(this).attr("id");
+        $.bbq.pushState({ "type" : "object", "id" : id });
+        return false
+    });
+
+    function load() {
+        type = $.bbq.getState('type');
+        id = $.bbq.getState('id');
+        
+        if (type == "portal") {
+            load_object("/manage/load-portal", true);
+        }
+        else {
+            if ($("#portal").length | !$("#core_data").length) {
+                load_object("/manage/load-object/" + id, true);
+            }
+            else {
+                load_object("/manage/load-object-parts/" + id, false);
+            }
+        }
+    }
+
+    $(window).bind('hashchange', function( event ) {
+        load()
+    });
+
     // Message
     var message = $.cookie("message");
 
@@ -20,17 +124,13 @@ $(function() {
     // Generic ajax save button
     $(".ajax-save-button").livequery("click", function() {
         $(".ajax-loading").show()
-        var action = $(this).attr("name")
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_text');
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_short_text');
+        var action = $(this).attr("name");
         $(this).parents("form:first").ajaxSubmit({
-            data : {"action" : action},
+            data : {"action" : action },
             success : function(data) {
                 data = JSON.parse(data);
                 for (var html in data["html"])
                     $(data["html"][html][0]).html(data["html"][html][1]);
-                tinyMCE.execCommand('mceAddControl', true, 'id_text');
-                tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
                 $('ul.sf-menu').superfish({
                     speed: "fast",
                     delay: "200"
@@ -55,6 +155,8 @@ $(function() {
             if (data["message"]) {
                 $.jGrowl(data["message"]);
             }
+
+            create_menu();
         });
 
         return false;
@@ -74,22 +176,6 @@ $(function() {
             for (var html in data["html"])
                 $(data["html"][html][0]).html(data["html"][html][1]);
         });
-    });
-
-    // Confirmation link
-    var confirmation;
-    $(".confirmation-link-no").livequery("click", function() {
-        $(this).parent().replaceWith(confirmation);
-        return false;
-    });
-
-    $(".confirmation-link").livequery("click", function() {
-        confirmation = $(this);
-        var url = $(this).attr("href");
-        var data = $(this).attr("data");
-        var cls = $(this).attr("class");
-        $(this).replaceWith("<span><span class='" + cls + "'>" + data + "</span> <a href='" + url + "'>Yes</a> <a class='confirmation-link-no' href=''>No</a></span>");
-        return false;
     });
 
     // Page / Images
@@ -167,31 +253,25 @@ $(function() {
     });
 
     // Portlets
-    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100, expose: {color: '#222', loadSpeed:100 } });
     $(".portlet-edit-button").livequery("click", function() {
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
         var url = $(this).attr("href");
         $.get(url, function(data) {
             $("#overlay .content").html(data);
             overlay.load();
-            tinyMCE.execCommand('mceAddControl', true, 'id_portlet-text');
         });
         return false;
     });
 
     $(".portlet-add-button").livequery("click", function() {
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
         $(this).parents("form:first").ajaxSubmit({
             success : function(data) {
                 $("#overlay .content").html(data);
                 overlay.load();
-                tinyMCE.execCommand('mceAddControl', true, 'id_portlet-text');
         }});
         return false;
     });
 
     $(".ajax-portlet-save-button").livequery("click", function() {
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
         $(this).parents("form:first").ajaxSubmit({
             success : function(data) {
                 data = JSON.parse(data);
@@ -229,15 +309,13 @@ $(function() {
         return false;
     });
 
-    var buttons = $("#yesno button").click(function(e) {
+    var buttons = $("#yesno button").livequery("click", function(e) {
         delete_dialog.close();
         var yes = buttons.index(this) === 0;
         var url = $("#delete-url").html();
         if (yes) {
-            window.location.href = url;
+            load_object(url, true);
         }
-
-
     });
 
 });

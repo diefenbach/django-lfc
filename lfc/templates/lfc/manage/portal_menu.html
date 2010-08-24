@@ -8,13 +8,15 @@
                 <ul>
                 {% for content_type in content_types %}
                     <li>
-                        <a href="{% url lfc_add_top_object %}?type={{content_type.type}}">{% trans content_type.name %}</a>
+                        <a class="object-add"
+                           href="{% url lfc_add_top_object %}?type={{content_type.type}}">{% trans content_type.name %}</a>
                    </li>
                 {% endfor %}
                 </ul>
             {% else %}
                 {% for content_type in content_types %}
-                    <a href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
+                    <a class="object-add"
+                       href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
                 {% endfor %}
             {% endif %}
         </li>

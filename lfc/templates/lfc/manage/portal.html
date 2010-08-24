@@ -3,49 +3,15 @@
 
 {% block left_slot %}
     <div id="navigation">
-        {{ navigation }}
     </div>
 {% endblock %}
 
 {% block content %}
-
     <div id="menu"
          class="site-actions">
-        {{ menu|safe }}
     </div>
-
+    
     <div style="clear:both" id="manage-tabs">
-        <ul>
-            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Portal' %}</a></li>
-            <li class="ui-tabs-nav-item"><a href="#children">{% trans 'Children' %}</a></li>
-            <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
-            <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
-            <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
-            {% if LFC_MANAGE_PERMISSIONS %}
-                <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
-            {% endif %}
-
-        </ul>
-
-        <div id="data">
-            {{ core_data|safe }}
-        </div>
-        <div id="children">
-            {{ children|safe }}
-        </div>
-        <div id="images">
-            {{ images|safe }}
-        </div>
-        <div id="files">
-            {{ files|safe }}
-        </div>
-        <div id="portlets">
-            {{ portlets|safe }}
-        </div>
-        {% if LFC_MANAGE_PERMISSIONS %}
-            <div id="permissions">
-                {{ permissions|safe }}
-            </div>
-        {% endif %}
     </div>
+    
 {% endblock %}

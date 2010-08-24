@@ -111,8 +111,8 @@ def add_object(request, language=None, id=None):
         language = settings.LANGUAGE_CODE
 
     if request.method == "POST":
-        form = form(data=request.POST, initial={"creator" : request.user})
-        if request.POST.get("save"):
+        form = form(prefix="add", data=request.POST, initial={"creator" : request.user})
+        if request.POST.get("action") == "save":
             if form.is_valid():
                 # figure out language for new object
                 if parent_object:
@@ -142,19 +142,34 @@ def add_object(request, language=None, id=None):
                 lfc.signals.post_content_added.send(new_object)
 
                 # _update_positions(new_object, True)
-                url = reverse("lfc_manage_object", kwargs={"id": new_object.id})
-                msg = _(u"Page has been added.")
 
-                return MessageHttpResponseRedirect(url, msg)
+                # Ugly, but works for now. The reason is that object_core
+                # called via object_tabs tries to validate the form if the
+                # request method is POST.
+                request.method = "GET"
 
-        else:
-            referer = request.POST.get("referer")
-            return HttpResponseRedirect(referer)
+                result = simplejson.dumps({
+                    "message" : _(u"Object has been added."),
+                    "id" : new_object.id
+                    }, cls = LazyEncoder)
+
+                return HttpResponse(result)
+            else:
+                form = render_to_string("lfc/manage/object_add.html", RequestContext(request, {
+                    "type" : type,
+                    "name" : get_info(type).name,
+                    "form" : form,
+                    "language" : language,
+                    "id" : id,
+                }))
+                
+                html = ((".overlay", form),)
+                return return_as_json(html, _(u"An error has been occured."))                    
     else:
         if parent_object is not None:
-            form = form(initial={"parent" : parent_object.id})
+            form = form(prefix="add", initial={"parent" : parent_object.id})
         else:
-            form = form()
+            form = form(prefix="add")
 
     if parent_object:
         parent_object = parent_object.get_content_object()
@@ -165,8 +180,6 @@ def add_object(request, language=None, id=None):
         "form" : form,
         "language" : language,
         "id" : id,
-        "referer" : request.POST.get("referer", request.META.get("HTTP_REFERER")),
-        "navigation" : navigation(request, parent_object)
     }))
 
 def delete_object(request, id):
@@ -198,51 +211,31 @@ def delete_object(request, id):
         ObjectPermissionInheritanceBlock.objects.filter(content_id=obj.id, content_type=ctype).delete()
 
         obj.delete()
-        msg = _(u"The object has been deleted.")
+        message = _(u"The object has been deleted.")
 
     if parent:
-        url = reverse("lfc_manage_object", kwargs={"id": parent.id})
+        return load_object(request, parent.id, message)
     else:
-        url = reverse("lfc_manage_portal")
-
-
-    return MessageHttpResponseRedirect(url, msg)
+        return load_portal(request, message)
 
 # Portal #####################################################################
 ##############################################################################
 
+def load_portal(request):
+    """Loads the portal per ajax.
+    """
+    html = (
+        ("#navigation", navigation(request, None)),
+        ("#menu", portal_menu(request)),
+        ("#manage-tabs", portal_tabs(request)),
+    )
+
+    return return_as_json(html, "")
+
 def portal(request, template_name="lfc/manage/portal.html"):
     """Displays the main management screen of the portal with all tabs.
     """
-    portal = get_portal()
-    if not portal.has_permission(request.user, "manage_portal"):
-        try:
-            if portal.standard:
-                obj = portal.standard
-            else:
-                obj = BaseContent.objects.filter()[0]
-        except IndexError:
-            return lfc.utils.login_form()
-        else:
-            obj.check_permission(request.user, "edit")
-            return HttpResponseRedirect(reverse("lfc_manage_object", kwargs = {"id" : obj.id }))
-
-    if settings.LFC_MANAGE_PERMISSIONS:
-        permissions = portal_permissions(request)
-    else:
-        permissions = ""
-
-    return render_to_response(template_name, RequestContext(request, {
-        "menu" : portal_menu(request),
-        "display_paste" : _display_paste(request),
-        "core_data" : portal_core(request),
-        "children" : portal_children(request),
-        "portlets" : portlets_inline(request, get_portal()),
-        "navigation" : navigation(request, None),
-        "images" : portal_images(request, as_string=True),
-        "files" : portal_files(request, as_string=True),
-        "permissions" : permissions,
-    }))
+    return render_to_response(template_name, RequestContext(request, {}))
 
 def portal_permissions(request, template_name="lfc/manage/portal_permissions.html"):
     """Displays the permissions tab of the portal.
@@ -299,6 +292,36 @@ def update_portal_permissions(request):
     }, cls = LazyEncoder)
 
     return HttpResponse(result)
+
+def portal_tabs(request, template_name="lfc/manage/portal_tabs.html"):
+    """Displays the tabs of the portal.
+    """
+    portal = get_portal()
+    if not portal.has_permission(request.user, "manage_portal"):
+        try:
+            if portal.standard:
+                obj = portal.standard
+            else:
+                obj = BaseContent.objects.filter()[0]
+        except IndexError:
+            return lfc.utils.login_form()
+        else:
+            obj.check_permission(request.user, "edit")
+            return HttpResponseRedirect(reverse("lfc_manage_object", kwargs = {"id" : obj.id }))
+
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = portal_permissions(request)
+    else:
+        permissions = ""
+
+    return render_to_string(template_name, RequestContext(request, {
+        "core_data" : portal_core(request),
+        "children" : portal_children(request),
+        "portlets" : portlets_inline(request, get_portal()),
+        "images" : portal_images(request, as_string=True),
+        "files" : portal_files(request, as_string=True),
+        "permissions" : permissions,
+    }))
 
 def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
     """Displays the manage menu of the portal.
@@ -496,6 +519,42 @@ def update_portal_files(request):
 ##############################################################################
 
 @login_required
+def load_object(request, id, message=""):
+    """Loads specific object content parts per ajax.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    html = (
+        ("#navigation", navigation(request, obj)),
+        ("#menu", object_menu(request, obj)),
+        ("#manage-tabs", object_tabs(request, id)),
+    )
+
+    return return_as_json(html, "")
+
+@login_required
+def load_object_parts(request, id, message=""):
+    """Loads specific object content parts per ajax.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+
+    html = (
+        ("#navigation", navigation(request, obj)),
+        ("#menu", object_menu(request, obj)),
+        ("#core_data", object_core_data(request, obj.id)),
+        ("#meta_data", object_meta_data(request, obj.id)),
+        ("#seo_data", object_seo_data(request, obj.id)),
+        ("#images", object_images(request, obj.id, as_string=True)),
+        ("#files", object_files(request, obj.id, as_string=True)),
+        ("#comments", comments(request, obj)),
+        ("#portlets", portlets_inline(request, obj)),
+        ("#children", object_children(request, obj)),
+        ("#permissions", ""),
+    )
+
+    return return_as_json(html, "")
+
+@login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
     """Displays the main management screen with all tabs of the content object
     with passed id.
@@ -516,22 +575,20 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     else:
         permissions = ""
 
-    return render_to_response(template_name, RequestContext(request, {
+    result = render_to_string(template_name, RequestContext(request, {
         "navigation" : navigation(request, obj),
         "menu" : object_menu(request, obj),
-        "core_data" : object_core_data(request, id),
-        "meta_data" : object_meta_data(request, id),
-        "seo_data" : object_seo_data(request, id),
-        "images" : object_images(request, id, as_string=True),
-        "files" : object_files(request, id, as_string=True),
-        "comments" : comments(request, obj),
-        "portlets" : portlets_inline(request, obj),
-        "children" : object_children(request, obj),
-        "permissions" : permissions,
-        "content_type_name" : get_info(obj).name,
-        "display_paste" : _display_paste(request),
-        "obj" : obj,
+        "tabs" : object_tabs(request, id),
     }))
+
+    if request.is_ajax():
+        html = (
+            ("body", result),
+        )
+        return return_as_json(html, "")
+
+    else:
+        return HttpResponse(result)
 
 def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
     """Displays the manage menu for the passed object.
@@ -573,6 +630,30 @@ def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
         "state" : state,
     }))
 
+def object_tabs(request, id, template_name="lfc/manage/object_tabs.html"):
+    """Displays the tabs for the object with the passed id.
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = object_permissions(request, obj)
+    else:
+        permissions = ""
+    
+    return render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
+        "core_data" : object_core_data(request, id),
+        "meta_data" : object_meta_data(request, id),
+        "seo_data" : object_seo_data(request, id),
+        "images" : object_images(request, id, as_string=True),
+        "files" : object_files(request, id, as_string=True),
+        "comments" : comments(request, obj),
+        "portlets" : portlets_inline(request, obj),
+        "children" : object_children(request, obj),
+        "permissions" : permissions,
+        "content_type_name" : get_info(obj).name,
+    }))
+
 def object_core_data(request, id, template_name="lfc/manage/object_data.html"):
     """Displays/Updates the core data tab of the content object with passed id.
     """
@@ -601,9 +682,13 @@ def object_core_data(request, id, template_name="lfc/manage/object_data.html"):
             "obj" : obj,
         }))
 
+        link = render_to_string("lfc/manage/object_view_link.html", RequestContext(request, {
+            "obj" : obj,
+        }))
+
         html = (
-            ("#core_data", html),
             ("#navigation", navigation(request, obj)),
+            ("#object-view-link", link),
         )
 
         result = simplejson.dumps({
@@ -1388,17 +1473,17 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
     # Display all objs which are neutral or in default language
     q = Q(parent = None) & Q(language__in = ("0", nav_tree_lang))
 
-    temp = lfc.utils.get_content_objects(request, q)
+    temps = lfc.utils.get_content_objects(request, q)
 
     objs = []
-    for obj in temp:
-        obj = obj.get_content_object()
+    for temp in temps:
+        temp = temp.get_content_object()
 
-        if not obj.has_permission(request.user, "view"):
+        if not temp.has_permission(request.user, "view"):
             continue
 
-        if obj in current_objs:
-            children = _navigation_children(request, current_objs, obj, start_level)
+        if temp in current_objs:
+            children = _navigation_children(request, current_objs, temp, start_level)
             is_current = True
         else:
             children = ""
@@ -1406,12 +1491,12 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
 
         translations = []
         objs.append({
-            "id" : obj.id,
-            "title" : obj.title,
+            "id" : temp.id,
+            "title" : temp.title,
             "is_current" : is_current,
             "children" : children,
             "level" : 2,
-            "translations" : obj.translations.all(),
+            "translations" : temp.translations.all(),
         })
 
     languages = []
@@ -1424,6 +1509,7 @@ def navigation(request, obj, start_level=1, template_name="lfc/manage/navigation
         })
 
     return render_to_string(template_name, RequestContext(request, {
+        "obj" : obj,
         "objs" : objs,
         "show_level" : start_level==2,
         "level" : 2,
@@ -1472,10 +1558,24 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
 def set_navigation_tree_language(request, language):
     """Sets the language for the navigation tree.
     """
-    get_portal().check_permission(request.user, "manage_portal")
-
+    portal = get_portal()
+    
+    portal.check_permission(request.user, "manage_portal")
+    
+    id = request.REQUEST.get("id")
+    if id:
+        obj = lfc.utils.get_content_object(pk=id)
+    else:
+        obj = None
+        
     request.session["nav-tree-lang"] = language
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+    html = (
+        ("#navigation", navigation(request, obj)),
+    )
+
+    return return_as_json(html, _(u"Tree language has been changed."))
+
 
 def set_language(request, language):
     """Sets the language of the portal.
@@ -1845,7 +1945,22 @@ def do_transition(request, id):
                 obj.publication_date = datetime.datetime.now()
                 obj.save()
 
-    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = object_permissions(request, obj)
+    else:
+        permissions = ""
+
+    html = (
+        ("#menu", object_menu(request, obj)),
+        ("#permissions", permissions),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+        "message" : _(u"The state has been changed."),
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
 
 def manage_workflow(request, id=None, template_name="lfc/manage/workflow.html"):
     """Main page to manage a workflow.
@@ -2226,10 +2341,13 @@ def lfc_copy(request, id):
     request.session["clipboard"] = [id]
     request.session["clipboard_action"] = COPY
 
-    url = reverse("lfc_manage_object", kwargs = { "id" : id })
-    msg = _(u"The object has been put to the clipboard.")
+    obj = lfc.utils.get_content_object(pk=id)
 
-    return MessageHttpResponseRedirect(url, msg)
+    html = (
+        ("#menu", object_menu(request, obj)),
+    )
+
+    return return_as_json(html, _(u"The object has been put to the clipboard."))
 
 @login_required
 def cut(request, id):
@@ -2239,26 +2357,33 @@ def cut(request, id):
     request.session["clipboard"] = [id]
     request.session["clipboard_action"] = CUT
 
-    url = reverse("lfc_manage_object", kwargs = { "id" : id })
-    msg = _(u"The object has been put to the clipboard.")
+    obj = lfc.utils.get_content_object(pk=id)
 
-    return MessageHttpResponseRedirect(url, msg)
+    html = (
+        ("#menu", object_menu(request, obj)),
+    )
+
+    return return_as_json(html, _(u"The object has been put to the clipboard."))
 
 @login_required
 def paste(request, id=None):
     """Paste the object in the clipboard to object with given id.
     """
     if id:
-        url = reverse("lfc_manage_object", kwargs = { "id" : id })
         obj = lfc.utils.get_content_object(pk=id)
         obj.check_permission(request.user, "delete")
 
     else:
-        url = reverse("lfc_manage_portal")
         obj = None
 
-    msg = _paste(request, obj)
-    return MessageHttpResponseRedirect(url, msg)
+    message = _paste(request, obj)
+
+    html = (
+        ("#menu", object_menu(request, obj)),
+        ("#navigation", navigation(request, obj)),
+    )
+
+    return return_as_json(html, message)
 
 def _paste(request, obj):
     """

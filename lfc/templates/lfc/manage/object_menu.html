@@ -9,13 +9,15 @@
             <ul>
             {% for content_type in content_types %}
                 <li>
-                    <a href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans content_type.name %}</a>
+                    <a class="object-add"
+                       href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans content_type.name %}</a>
                </li>
             {% endfor %}
             </ul>
         {% else %}
             {% for content_type in content_types %}
-                <a href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
+                <a class="object-add"
+                   href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
             {% endfor %}
         {% endif %}
         </li>
@@ -26,18 +28,21 @@
             <ul>
                 {% ifhasperm add %}
                 <li>
-                    <a href="{% url lfc_copy obj.id %}">{% trans 'Copy' %}</a>
+                    <a class="ajax-link"
+                       href="{% url lfc_copy obj.id %}">{% trans 'Copy' %}</a>
                 </li>
                 {% endifhasperm %}
                 {% ifhasperm delete %}
                     <li>
-                        <a href="{% url lfc_cut obj.id %}">{% trans 'Cut' %}</a>
+                        <a class="ajax-link"
+                           href="{% url lfc_cut obj.id %}">{% trans 'Cut' %}</a>
                     </li>
                 {% endifhasperm %}
                 {% if display_paste %}
                     {% ifhasperm add %}
                         <li>
-                            <a href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
+                            <a class="ajax-link"
+                               href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
                         </li>
                     {% endifhasperm %}
                 {% endif %}
@@ -105,7 +110,8 @@
                 <ul>
                     {% for transition in transitions %}
                         <li>
-                            <a href="{% url lfc_manage_do_transition obj.id %}?transition={{ transition.id }}">
+                            <a class="ajax-link"
+                                href="{% url lfc_manage_do_transition obj.id %}?transition={{ transition.id }}">
                                 {% trans transition.name %}
                             </a>
                         </li>
@@ -115,7 +121,8 @@
         </li>
     {% endif %}
     <li>
-        <a accesskey="v"
-           href="{{ obj.get_absolute_url }}">{% trans 'View' %}</a>
+        <div id="object-view-link">
+            {% include "lfc/manage/object_view_link.html" %}
+        </div>
     </li>
 </ul>

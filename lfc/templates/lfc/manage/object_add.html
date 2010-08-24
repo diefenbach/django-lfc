@@ -1,60 +1,25 @@
-{% extends "lfc/manage/base.html" %}
 {% load i18n %}
 
-{% block javascript %}
-    {{ form.media }}
-    <script>
-        $(function() {
-            $("#id_title").livequery("keyup", function() {
-                var slug = $("#id_title").val()
-                slug = URLify(slug, 200)
-                $("#id_slug").val(slug);
-            });
-        });
-    </script>
-{% endblock %}
+<h1>{% trans "Add" %}: {% trans name %}</h1>
 
-{% block left_slot %}
-    <div id="navigation">
-        {{ navigation }}
-    </div>
-{% endblock %}
+<form class="lfc-form"
+      method="post"
+      action="{% url lfc_add_object language id %}">
+    <table>
+        {% include "lfc/manage/lfc_form.html" %}
+    </table>
+    <input type="hidden" name="type" value="{{ type }}" />
+    <input type="hidden" name="referer" value="{{ referer }}" />
+    <input class="object-save-button" type="submit" name="save" value="{% trans 'Save' %}" />
+    <input class="close-button" type="button" name="cancel" value="{% trans 'Cancel' %}" />
+</form>
 
-{% block content %}
+<script type="text/javascript">
+    $("#id_add-title").focus();
 
-    <div class="site-actions">
-        <ul class="sf-menu">
-            <li><a>{% trans "Add" %}: {% trans name %}</a></li>
-        </ul>
-    </div>
-
-    <div id="manage-tabs">
-
-        <ul>
-            <li class="ui-tabs-nav-item"><a href="#data">{% trans 'Data' %}</a></li>
-        </ul>
-
-        <div id="data">
-            <form class="lfc-form"
-                  method="post"
-                  action="{% url lfc_add_object language id %}">
-                <table>
-                    {% include "lfc/manage/lfc_form.html" %}
-                </table>
-                <input type="hidden" name="type" value="{{ type }}" />
-                <input type="hidden" name="referer" value="{{ referer }}" />
-                <input type="submit" name="save" value="{% trans 'Save' %}" />
-                <input type="submit" name="cancel" value="{% trans 'Cancel' %}" />
-            </form>
-        </div>
-    </div>
-
-    <script type="text/javascript">
-        $(function() {
-            $("#id_title").focus();
-            tinyMCE.execCommand('mceAddControl', true, 'id_text');
-            tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
-        })
-    </script>
-
-{% endblock %}
+    $("#id_add-title").livequery("keyup", function() {
+        var slug = $("#id_add-title").val()
+        slug = URLify(slug, 200)
+        $("#id_add-slug").val(slug);
+    });
+</script>

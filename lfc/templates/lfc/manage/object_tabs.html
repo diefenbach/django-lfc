@@ -1,0 +1,55 @@
+{% load i18n %}
+{% load lfc_tags %}
+
+{% ifhasperm edit %}
+    <ul>
+        <li class="ui-tabs-nav-item"><a href="#core_data">{% trans content_type_name %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#meta_data">{% trans 'Metadata' %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#children">{% trans 'Children' %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#images">{% trans 'Images' %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#files">{% trans 'Files' %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#portlets">{% trans 'Portlets' %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#comments">{% trans 'Comments' %}</a></li>
+        <li class="ui-tabs-nav-item"><a href="#seo_data">{% trans 'SEO' %}</a></li>
+        {% if LFC_MANAGE_PERMISSIONS %}
+            <li class="ui-tabs-nav-item"><a href="{% url lfc_load_update_object_permissions obj.id %}">{% trans 'Permissions' %}</a></li>
+        {% endif %}
+    </ul>
+
+    <div id="core_data">
+        {{ core_data|safe }}
+    </div>
+    <div id="meta_data">
+        {{ meta_data|safe }}
+    </div>
+    <div id="seo_data">
+        {{ seo_data|safe }}
+    </div>
+    <div id="images">
+        {{ images }}
+    </div>
+    <div id="files">
+        {{ files }}
+    </div>
+    <div id="portlets">
+        {{ portlets }}
+    </div>
+    <div id="children">
+        {{ children }}
+    </div>
+    <div id="comments">
+        {{ comments }}
+    </div>
+    {# <script type="text/javascript"> #}
+    {#     tinyMCE.execCommand('mceAddControl', true, 'id_text'); #}
+    {#     tinyMCE.execCommand('mceAddControl', true, 'id_short_text'); #}
+    {# </script> #}
+{% else %}
+    <ul>
+        <li class="ui-tabs-nav-item"><a href="#core_data">{% trans content_type_name %}</a></li>
+    </ul>
+
+    <div id="core_data">
+        {{ core_data|safe }}
+    </div>
+{% endifhasperm %}

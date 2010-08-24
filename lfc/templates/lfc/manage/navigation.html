@@ -8,7 +8,8 @@
             <ul>
                 {% for language in languages %}
                     <li>
-                        <a href="{% url lfc_set_navigation_tree_language language.code %}">{% trans language.name %}</a>
+                        <a class="ajax-link"
+                           href="{% url lfc_set_navigation_tree_language language.code %}?id={{ obj.id }}">{% trans language.name %}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -20,7 +21,8 @@
     <ul class="level-1">
         {% ifportalhasperm manage_portal %}
             <li {% if is_portal %}class="current"{% endif %}>
-                <a href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
+                <a class="manage-portal"
+                   href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
             </li>
         {% endifportalhasperm %}
         <li>
@@ -28,7 +30,9 @@
                 {% for obj in objs %}
                     <li {% if obj.is_current %}class="current"{% endif %}>
                         <span>
-                            <a href="{% url lfc_manage_object obj.id %}">
+                            <a class="manage-page" 
+                               id="{{ obj.id }}"
+                               href="{% url lfc_manage_object obj.id %}">
                                 {{ obj.title }}
                             </a>
                         </span>
