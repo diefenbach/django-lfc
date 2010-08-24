@@ -1,5 +1,7 @@
 # python imports
 import datetime
+import re
+import uuid
 
 # django import
 from django import template
@@ -8,7 +10,9 @@ from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import Http404
+from django.shortcuts import render_to_response
 from django.template import Node, TemplateSyntaxError
+from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
@@ -151,7 +155,7 @@ def tabs(context):
     language = context.get("LANGUAGE_CODE")
 
     lfc_context = context.get("lfc_context")
-    
+
     # CACHE
     if lfc_context:
         cache_key = "%s-tabs-%s-%s-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
@@ -236,6 +240,46 @@ def rss(context, url, limit=5):
         "LANGUAGE_CODE" : context.get("LANGUAGE_CODE"),
         "link" : feed["feed"]["link"],
     }
+
+@register.inclusion_tag('lfc/tags/rss_ajax.html', takes_context=True)
+def rss_ajax(context, url, limit=5):
+    """An inclusion tag which displays an rss feed.
+    """
+    return {
+        "url" : url,
+        "limit" : limit,
+        "id" : uuid.uuid1(),
+    }
+
+def get_rss_entries(request, limit=5, template_name="lfc/tags/rss_ajax_entries.html"):
+    """Loads the entries for rss_ajax tag.
+    """
+    url = request.GET.get("url")
+    feed = feedparser.parse(url)
+    try:
+        name = feed["feed"]["link"].split("/")[-1]
+    except (KeyError, IndexError, AttributeError):
+        return {
+            "entries" : [],
+            "link" : "",
+            "LANGUAGE_CODE" : "",
+        }
+
+    entries = []
+    for entry in feed.entries[0:limit]:
+        summary = entry.summary.replace("%s: " % name, "")
+        summary = re.subn("#\S+", "", summary)[0]
+        summary = re.subn("(http://\S+)", "<a href='\g<1>'>\g<1></a>", summary)[0]
+
+        entries.append({
+            "summary" : summary,
+            "date" : datetime.datetime(*entry["updated_parsed"][0:6])
+        })
+
+    return render_to_response(template_name, RequestContext(request, {
+        "entries" : entries,
+        "link" : feed["feed"]["link"],
+    }))
 
 @register.inclusion_tag('lfc/tags/navigation.html', takes_context=True)
 def navigation(context, start_level=1, expand_level=0):
