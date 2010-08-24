@@ -1,5 +1,6 @@
 # django imports
 from django.core.management.base import BaseCommand
+from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from django.contrib.contenttypes.models import ContentType
 
@@ -292,7 +293,8 @@ class Command(BaseCommand):
         workflows.utils.set_workflow_for_model(ctype, portal_workflow)
 
         # Welcome Page
-        page = Page.objects.create(title="Welcome to LFC", slug="welcome-to-lfc", text=WELCOME_DESCRIPTION)
+        creator = User.objects.filter()[0]
+        page = Page.objects.create(title="Welcome to LFC", slug="welcome-to-lfc", text=WELCOME_DESCRIPTION, creator=creator)        
         workflows.utils.set_state(page, public)
 
         portal.standard = page
