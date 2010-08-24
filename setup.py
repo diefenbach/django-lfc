@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0b5'
+version = '1.0'
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.txt')).read()
@@ -30,11 +30,11 @@ setup(name='django-lfc',
         'setuptools',
         'django-contact-form',
         'django-pagination == 1.0.7',
-        'django-permissions >0.9,<=1.0',
-        'django-portlets >0.9,<=1.0',
-        'django-workflows >0.9,<=1.0',
+        'django-permissions >=1.0,<1.1',
+        'django-portlets >=1.0,<1.1',
+        'django-workflows >=1.0,<1.1',
         'tagging == 0.5',
         'feedparser',
-        'lfc_theme >0.9,<=1.0',
+        'lfc_theme >=1.0,<1.1',
       ],
       )

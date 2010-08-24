@@ -26,6 +26,12 @@ Code
 Changes
 =======
 
+1.0 (2010-08-24)
+----------------
+
+* First final release
+* Bugfix management: access to jsi18n; issue #33
+
 1.0 beta 5 (2010-07-23)
 -----------------------
 
