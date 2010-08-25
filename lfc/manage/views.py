@@ -538,6 +538,11 @@ def load_object_parts(request, id, message=""):
     """
     obj = lfc.utils.get_content_object(pk=id)
 
+    if settings.LFC_MANAGE_PERMISSIONS:
+        permissions = object_permissions(request, obj)
+    else:
+        permissions = ""
+
     html = (
         ("#navigation", navigation(request, obj)),
         ("#menu", object_menu(request, obj)),
@@ -549,7 +554,7 @@ def load_object_parts(request, id, message=""):
         ("#comments", comments(request, obj)),
         ("#portlets", portlets_inline(request, obj)),
         ("#children", object_children(request, obj)),
-        ("#permissions", ""),
+        ("#permissions", permissions),
     )
 
     return return_as_json(html, "")
