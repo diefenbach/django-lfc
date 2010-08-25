@@ -1,7 +1,63 @@
 $(function() {
-
+    
     load();
 
+    // adjust ajax loading message
+    // var height = $(document).height();
+    // var width = $(document).width();
+    // $(".ajax-loading").css({"position": "absolute", "top" : (height/2)-200, "left" : (width/2)-100});
+    
+    // central methods to show/hide ajax loading message
+    function show_ajax_loading() {
+        $(".ajax-loading").show();
+    };
+
+    function hide_ajax_loading() {
+        $(".ajax-loading").hide();
+    };   
+
+    function create_menu() {
+        $('ul.sf-menu').superfish({
+            speed: "fast",
+            delay: "200"
+        });
+    };
+
+    function load_object(url, tabs) {
+        show_ajax_loading();
+        $.get(url, function(data) {
+            data = JSON.parse(data);
+            for (var html in data["html"])
+                $(data["html"][html][0]).html(data["html"][html][1]);
+            create_menu();
+
+            if (tabs)
+                $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+
+            if (data["message"])
+                $.jGrowl(data["message"]);
+                $.cookie("message", null, { path: '/' });
+            hide_ajax_loading();
+        })
+    };
+
+    function load() {
+        type = $.bbq.getState('type');
+        id = $.bbq.getState('id');
+        
+        if (type == "portal") {
+            load_object("/manage/load-portal", true);
+        }
+        else {
+            if ($("#portal").length | !$("#core_data").length) {
+                load_object("/manage/load-object/" + id, true);
+            }
+            else {
+                load_object("/manage/load-object-parts/" + id, false);
+            }
+        }
+    }
+        
     var overlay = $("#overlay").overlay({
             closeOnClick: false,
             api:true,
@@ -40,36 +96,13 @@ $(function() {
                     $.jGrowl(data["message"]);
                 
                 if (data["id"]) {
-                    $.bbq.pushState({ "object" : data["id"] });
+                    $.bbq.pushState({ "type" : "object", "id" : data["id"] });
                     overlay.close();
                 };
             }
         })
         return false;
     });
-
-    function create_menu() {
-        $('ul.sf-menu').superfish({
-            speed: "fast",
-            delay: "200"
-        });
-    };
-
-    function load_object(url, tabs) {
-        $.get(url, function(data) {
-            data = JSON.parse(data);
-            for (var html in data["html"])
-                $(data["html"][html][0]).html(data["html"][html][1]);
-            create_menu();
-
-            if (tabs)
-                $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
-
-            if (data["message"])
-                $.jGrowl(data["message"]);
-                $.cookie("message", null, { path: '/' });
-        })
-    };
 
     // Load objects
     $(".manage-portal").livequery("click", function() {
@@ -82,23 +115,6 @@ $(function() {
         $.bbq.pushState({ "type" : "object", "id" : id });
         return false
     });
-
-    function load() {
-        type = $.bbq.getState('type');
-        id = $.bbq.getState('id');
-        
-        if (type == "portal") {
-            load_object("/manage/load-portal", true);
-        }
-        else {
-            if ($("#portal").length | !$("#core_data").length) {
-                load_object("/manage/load-object/" + id, true);
-            }
-            else {
-                load_object("/manage/load-object-parts/" + id, false);
-            }
-        }
-    }
 
     $(window).bind('hashchange', function( event ) {
         load()
@@ -123,7 +139,7 @@ $(function() {
 
     // Generic ajax save button
     $(".ajax-save-button").livequery("click", function() {
-        $(".ajax-loading").show()
+        show_ajax_loading();
         var action = $(this).attr("name");
         $(this).parents("form:first").ajaxSubmit({
             data : {"action" : action },
@@ -137,7 +153,7 @@ $(function() {
                 });
                 if (data["message"])
                     $.jGrowl(data["message"]);
-                $(".ajax-loading").hide();
+                hide_ajax_loading();
             }
         })
         return false;
@@ -145,6 +161,7 @@ $(function() {
 
     // Generic ajax link
     $(".ajax-link").livequery("click", function() {
+        show_ajax_loading();        
         var url = $(this).attr("href");
 
         $.get(url, function(data) {
@@ -157,6 +174,7 @@ $(function() {
             }
 
             create_menu();
+            hide_ajax_loading();
         });
 
         return false;

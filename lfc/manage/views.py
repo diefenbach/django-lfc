@@ -2377,14 +2377,15 @@ def paste(request, id=None):
     if id:
         obj = lfc.utils.get_content_object(pk=id)
         obj.check_permission(request.user, "delete")
-
+        menu = object_menu(request, obj)
     else:
         obj = None
+        menu = portal_menu(request)
 
     message = _paste(request, obj)
-
+    
     html = (
-        ("#menu", object_menu(request, obj)),
+        ("#menu", menu),
         ("#navigation", navigation(request, obj)),
     )
 

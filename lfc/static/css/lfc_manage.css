@@ -1,4 +1,8 @@
 /* ui-tabs overwrites */
+.ajax-loading {
+    padding: 4px 0 0 4px;
+}
+
 #id_text,
 #id_add-text {
     height: 250px;
@@ -481,12 +485,6 @@ body.filebrowser {
 
 .filebrowser li {
     list-style: square inside;
-}
-
-.ajax-loading {
-    padding-left: 10px;
-    display: none;
-    color: #555;
 }
 
 .field-wrapper {
