@@ -1,11 +1,70 @@
 $(function() {
+
+    // Image plugin
+    $.cleditor.buttons.myimage = {
+        name: "myimage",
+        image: "table.gif",
+        title: "Insert Image",
+        useCSS: true,
+        buttonClick: helloClick,
+    };
+    
+    $.cleditor.defaultOptions.width = 670;
+    $.cleditor.defaultOptions.height = 400;
+    $.cleditor.defaultOptions.controls = "bold italic underline strikethrough subscript superscript " +
+                                         "style | color highlight removeformat | bullets numbering | outdent " +
+                                         "indent | alignleft center alignright justify | undo redo | " +
+                                         "myimage link unlink | html"
+    
+    $.cleditor.defaultOptions.docCSSFile = "/media/tiny.css";
+    $.cleditor.defaultOptions.styles = [["Paragraph", "<p>"], ["Header 1", "<h1>"], ["Header 2", "<h2>"], ["Header 3", "<h3>"]]
+
+    var overlay = $("#overlay").overlay({
+            closeOnClick: false,
+            api:true,
+            speed:1,
+            expose: {color: '#222', loadSpeed:1 }
+    });
+
+    var editor;
+    
+    // Handle the hello button click event
+    function helloClick(e, data) {
+        editor = data.editor;
+        editor.focus();        
+        $.get("/manage/filebrowser?obj_id=1&type=image", function(data) {
+            $("#overlay .content").html(data);
+        });        
+        overlay.load();
+    }
+    
+    $("input.image").live("click", function(e) {
+        var html = "<img src='" + $(this).attr("value") + "' />"
+        $("#image-preview").html(html)
+    })
+
+    $("#insert-image").live("click", function(e) {            
+        var url = $("input.image:checked").attr("value");
+        var size = $("#image-size").val();
+        var klass = $("#image-class").val();
+    
+        if (size)
+            url = url.replace("200x200", size);
+        else
+            url = url.replace(".200x200", "");
+        
+        if (klass)
+            html = "<img class='" + klass + "' src='" + url + "' />"
+        else
+            html = "<img src='" + url + "' />"
+            
+        editor.focus();
+        editor.execCommand("inserthtml", html, null, null);
+        overlay.close();
+        return false;
+    })
     
     load();
-
-    // adjust ajax loading message
-    // var height = $(document).height();
-    // var width = $(document).width();
-    // $(".ajax-loading").css({"position": "absolute", "top" : (height/2)-200, "left" : (width/2)-100});
     
     // central methods to show/hide ajax loading message
     function show_ajax_loading() {
@@ -32,7 +91,7 @@ $(function() {
             create_menu();
 
             if (tabs)
-                $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+                $('#manage-tabs').tabs();
 
             if (data["message"])
                 $.jGrowl(data["message"]);
@@ -58,14 +117,7 @@ $(function() {
         }
     }
         
-    var overlay = $("#overlay").overlay({
-            closeOnClick: false,
-            api:true,
-            speed:1,
-            expose: {color: '#222', loadSpeed:1 }
-    });
-
-    $(".object-add").livequery("click", function() {
+    $(".object-add").live("click", function() {
         var url = $(this).attr("href");
         $.get(url, function(data) {
             $("#overlay .content").html(data);
@@ -74,12 +126,21 @@ $(function() {
         return false;
     });
     
-    $(".close-button").livequery("click", function() {
+    $(".close-button").live("click", function() {
         overlay.close();
         return false;
     });
+
+    $(".image-button").live("click", function() {
+        $(this).parents("form:first").ajaxSubmit({
+            success : function(data) {
+                $("#hurz").html(data);
+            }
+        })
+        return false;
+    });
     
-    $(".object-save-button").livequery("click", function() {
+    $(".object-save-button").live("click", function() {
         var action = $(this).attr("name");
         $(this).parents("form:first").ajaxSubmit({
             data : { "action" : action },
@@ -88,7 +149,7 @@ $(function() {
                 for (var html in data["html"])
                     $(data["html"][html][0]).html(data["html"][html][1]);
 
-                $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+                // $('#manage-tabs').tabs();
 
                 create_menu()
                 
@@ -105,12 +166,12 @@ $(function() {
     });
 
     // Load objects
-    $(".manage-portal").livequery("click", function() {
+    $(".manage-portal").live("click", function() {
         $.bbq.pushState({ "type" : "portal", "id" : 1 });
         return false
     });
 
-    $(".manage-page").livequery("click", function() {
+    $(".manage-page").live("click", function() {
         var id = $(this).attr("id");
         $.bbq.pushState({ "type" : "object", "id" : id });
         return false
@@ -135,10 +196,10 @@ $(function() {
     });
 
     // Tabs
-    $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+    $("#manage-tabs").tabs();
 
     // Generic ajax save button
-    $(".ajax-save-button").livequery("click", function() {
+    $(".ajax-save-button").live("click", function() {
         show_ajax_loading();
         var action = $(this).attr("name");
         $(this).parents("form:first").ajaxSubmit({
@@ -160,7 +221,7 @@ $(function() {
     });
 
     // Generic ajax link
-    $(".ajax-link").livequery("click", function() {
+    $(".ajax-link").live("click", function() {
         show_ajax_loading();        
         var url = $(this).attr("href");
 
@@ -180,13 +241,13 @@ $(function() {
         return false;
     });
 
-    $(".reset-link").livequery("click", function() {
+    $(".reset-link").live("click", function() {
         $("input[name=name_filter]").val("");
         $("select[name=active_filter]").val("");
         return false;
     });
 
-    $(".user-name-filter").livequery("keyup", function() {
+    $(".user-name-filter").live("keyup", function() {
         var url = $(this).attr("data");
         var value = $(this).attr("value");
         $.get(url, { "user_name_filter" : value }, function(data) {
@@ -197,21 +258,21 @@ $(function() {
     });
 
     // Page / Images
-    $(".upload-file").livequery("change", function() {
+    $(".upload-file").live("change", function() {
         var name = $(this).attr("name");
         var number = parseInt(name.split("_")[1])
         number += 1;
         $(this).parent().after("<div><input type='file' class='upload-file' name='file_" + number + "' /></div>");
     });
 
-    $("#page-images-save-button").livequery("click", function() {
+    $("#page-images-save-button").live("click", function() {
         $("#page-images-form").ajaxSubmit({
             target : "#images"
         });
         return false;
     });
 
-    $(".object-images-update-button").livequery("click", function() {
+    $(".object-images-update-button").live("click", function() {
         var action = $(this).attr("name")
         $("#object-images-update-form").ajaxSubmit({
             data : {"action" : action},
@@ -227,14 +288,14 @@ $(function() {
     // Page / Files
     // Todo: merge this with Pages / Images
 
-    $("#object-files-save-button").livequery("click", function() {
+    $("#object-files-save-button").live("click", function() {
         $("#object-files-form").ajaxSubmit({
             target : "#files"
         });
         return false;
     });
 
-    $(".object-files-update-button").livequery("click", function() {
+    $(".object-files-update-button").live("click", function() {
         var action = $(this).attr("name")
         $("#object-files-update-form").ajaxSubmit({
             data : {"action" : action},
@@ -248,7 +309,7 @@ $(function() {
     });
 
     // Select all
-    $(".select-all").livequery("click", function() {
+    $(".select-all").live("click", function() {
         var checked = this.checked;
         var selector = ".select-" + $(this).attr("value")
         $(selector).each(function() {
@@ -256,14 +317,14 @@ $(function() {
         });
     });
 
-    $(".select-all-1").livequery("click", function() {
+    $(".select-all-1").live("click", function() {
         var checked = this.checked;
         $(".select-1").each(function() {
             this.checked = checked;
         });
     });
 
-    $(".select-all-2").livequery("click", function() {
+    $(".select-all-2").live("click", function() {
         var checked = this.checked;
         $(".select-2").each(function() {
             this.checked = checked;
@@ -271,7 +332,7 @@ $(function() {
     });
 
     // Portlets
-    $(".portlet-edit-button").livequery("click", function() {
+    $(".portlet-edit-button").live("click", function() {
         var url = $(this).attr("href");
         $.get(url, function(data) {
             $("#overlay .content").html(data);
@@ -280,7 +341,7 @@ $(function() {
         return false;
     });
 
-    $(".portlet-add-button").livequery("click", function() {
+    $(".portlet-add-button").live("click", function() {
         $(this).parents("form:first").ajaxSubmit({
             success : function(data) {
                 $("#overlay .content").html(data);
@@ -289,7 +350,7 @@ $(function() {
         return false;
     });
 
-    $(".ajax-portlet-save-button").livequery("click", function() {
+    $(".ajax-portlet-save-button").live("click", function() {
         $(this).parents("form:first").ajaxSubmit({
             success : function(data) {
                 data = JSON.parse(data);
@@ -306,7 +367,7 @@ $(function() {
         return false;
     });
 
-    $(".overlay-link").livequery("click", function() {
+    $(".overlay-link").live("click", function() {
         var url = $(this).attr("href");
         $.get(url, function(data) {
             $("#overlay .content").html(data);
@@ -315,19 +376,19 @@ $(function() {
         return false;
     });
 
-    $(".overlay-close").livequery("click", function() {
+    $(".overlay-close").live("click", function() {
         overlay.close()
     });
 
     // Delete dialog
     var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, top: '25%', expose: {color: '#222', loadSpeed:100 } });
-    $(".delete-link").livequery("click", function() {
+    $(".delete-link").live("click", function() {
         $("#delete-url").html($(this).attr("href"));
         delete_dialog.load();
         return false;
     });
 
-    var buttons = $("#yesno button").livequery("click", function(e) {
+    var buttons = $("#yesno button").live("click", function(e) {
         delete_dialog.close();
         var yes = buttons.index(this) === 0;
         var url = $("#delete-url").html();
@@ -335,5 +396,4 @@ $(function() {
             load_object(url, true);
         }
     });
-
 });

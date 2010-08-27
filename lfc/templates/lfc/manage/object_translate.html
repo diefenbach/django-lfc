@@ -5,7 +5,7 @@
     {{ form.media }}
     <script>
         $(function() {
-            $("#id_translation-title").livequery("keyup", function() {
+            $("#id_translation-title").live("keyup", function() {
                 var slug = $("#id_translation-title").val()
                 slug = URLify(slug, 200)
                 $("#id_translation-slug").val(slug);
@@ -84,8 +84,10 @@
         </form>
     </div>    
     <script type="text/javascript">
-        tinyMCE.execCommand('mceAddControl', true, 'id_canonical-text');
-        tinyMCE.execCommand('mceAddControl', true, 'id_translation-text');
+        $(function(){
+            $("#id_canonical-text").cleditor();   
+            $("#id_translation-text").cleditor();            
+        })
     </script>
 
 {% endblock %}

@@ -162,9 +162,9 @@ def add_object(request, language=None, id=None):
                     "language" : language,
                     "id" : id,
                 }))
-                
+
                 html = ((".overlay", form),)
-                return return_as_json(html, _(u"An error has been occured."))                    
+                return return_as_json(html, _(u"An error has been occured."))
     else:
         if parent_object is not None:
             form = form(prefix="add", initial={"parent" : parent_object.id})
@@ -227,7 +227,7 @@ def load_portal(request):
     html = (
         ("#navigation", navigation(request, None)),
         ("#menu", portal_menu(request)),
-        ("#manage-tabs", portal_tabs(request)),
+        ("#tabs-inline", portal_tabs(request)),
     )
 
     return return_as_json(html, "")
@@ -527,7 +527,7 @@ def load_object(request, id, message=""):
     html = (
         ("#navigation", navigation(request, obj)),
         ("#menu", object_menu(request, obj)),
-        ("#manage-tabs", object_tabs(request, id)),
+        ("#tabs-inline", object_tabs(request, id)),
     )
 
     return return_as_json(html, "")
@@ -639,12 +639,12 @@ def object_tabs(request, id, template_name="lfc/manage/object_tabs.html"):
     """Displays the tabs for the object with the passed id.
     """
     obj = lfc.utils.get_content_object(pk=id)
-    
+
     if settings.LFC_MANAGE_PERMISSIONS:
         permissions = object_permissions(request, obj)
     else:
         permissions = ""
-    
+
     return render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
         "core_data" : object_core_data(request, id),
@@ -1564,15 +1564,15 @@ def set_navigation_tree_language(request, language):
     """Sets the language for the navigation tree.
     """
     portal = get_portal()
-    
+
     portal.check_permission(request.user, "manage_portal")
-    
+
     id = request.REQUEST.get("id")
     if id:
         obj = lfc.utils.get_content_object(pk=id)
     else:
         obj = None
-        
+
     request.session["nav-tree-lang"] = language
 
     html = (
@@ -1664,11 +1664,11 @@ def update_comments(request, id):
 # Filebrowser ################################################################
 ##############################################################################
 
-def filebrowser(request):
+def filebrowser(request, typ="image", as_string=False, obj_id=None):
     """Displays files/images of the current object within the file browser
     popup of TinyMCE.
     """
-    obj_id = request.GET.get("obj_id")
+    obj_id = request.GET.get("obj_id", obj_id)
     try:
         obj = lfc.utils.get_content_object(pk=obj_id)
         obj.check_permission(request.user, "edit")
@@ -1679,19 +1679,24 @@ def filebrowser(request):
     else:
         language = obj.language
 
-    if request.GET.get("type") == "image":
+    if request.GET.get("type", typ) == "image":
         portal = get_portal()
 
         if obj:
             images = obj.images.all()
         else:
             images = []
-        return render_to_response("lfc/manage/filebrowser_images.html",
-            RequestContext(request, {
+
+        result = render_to_string("lfc/manage/filebrowser_images.html", RequestContext(request, {
             "obj_id" : obj_id,
             "images" : images,
             "portal_images" : portal.images.all(),
         }))
+
+        if as_string:
+            return result
+        else:
+            return HttpResponse(result)
     else:
         portal = lfc.utils.get_portal()
         global_files = portal.files.all()
@@ -1707,7 +1712,7 @@ def filebrowser(request):
                 "children" : _filebrowser_children(request, base_content),
             })
 
-        return render_to_response("lfc/manage/filebrowser_files.html",
+        return render_to_string("lfc/manage/filebrowser_files.html",
             RequestContext(request, {
             "obj_id" : obj_id,
             "local_files" : local_files,
@@ -1746,6 +1751,9 @@ def fb_upload_image(request):
     for i, image in enumerate(obj.images.all()):
         image.position = (i+1) * 10
         image.save()
+        
+    result = filebrowser(request, typ="image", as_string=True, obj_id=obj_id)
+    return HttpResponse(result)
 
     url = "%s?obj_id=%s&amp;type=image" % (reverse("lfc_filebrowser"), obj_id)
     return HttpResponseRedirect(url)
@@ -1765,6 +1773,7 @@ def fb_upload_file(request):
     for i, file in enumerate(obj.files.all()):
         file.position = (i+1) * 10
         file.save()
+
 
     url = "%s?obj_id=%s" % (reverse("lfc_filebrowser"), obj_id)
     return HttpResponseRedirect(url)
@@ -2383,7 +2392,7 @@ def paste(request, id=None):
         menu = portal_menu(request)
 
     message = _paste(request, obj)
-    
+
     html = (
         ("#menu", menu),
         ("#navigation", navigation(request, obj)),

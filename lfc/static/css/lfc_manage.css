@@ -1,4 +1,22 @@
 /* ui-tabs overwrites */
+
+img.left {
+    float: left;
+}
+
+img.right {
+    float: right;    
+}
+
+#hurz {
+    max-height: 400px;
+    width: 400px;
+    overflow: auto;
+}
+.cl-image-upload {
+    position: absolute !important;
+}
+
 .ajax-loading {
     padding: 4px 0 0 4px;
 }
@@ -149,6 +167,10 @@ th.last, td.last {
 table.lfs-manage-table {
     border-collapse: collapse;
     margin-bottom: 30px;
+}
+
+.lfs-manage-table td {
+    vertical-align: top;
 }
 
 .lfs-manage-table th {

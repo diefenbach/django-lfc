@@ -17,7 +17,7 @@
 <script type="text/javascript">
     $("#id_add-title").focus();
 
-    $("#id_add-title").livequery("keyup", function() {
+    $("#id_add-title").live("keyup", function() {
         var slug = $("#id_add-title").val()
         slug = URLify(slug, 200)
         $("#id_add-slug").val(slug);
