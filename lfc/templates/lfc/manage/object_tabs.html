@@ -4,7 +4,7 @@
 <div id="manage-tabs">
     {% ifhasperm edit %}
         <ul>
-            <li><a href="#core_data">{% trans content_type_name %}</a></li>
+            <li><a id="core_name" href="#core_data">{% trans content_type_name %}</a></li>
             <li><a href="#meta_data">{% trans 'Metadata' %}</a></li>
             <li><a href="#children">{% trans 'Children' %}</a></li>
             <li><a href="#images">{% trans 'Images' %}</a></li>

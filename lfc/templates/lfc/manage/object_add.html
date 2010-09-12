@@ -10,16 +10,21 @@
     </table>
     <input type="hidden" name="type" value="{{ type }}" />
     <input type="hidden" name="referer" value="{{ referer }}" />
-    <input class="object-save-button" type="submit" name="save" value="{% trans 'Save' %}" />
-    <input class="close-button" type="button" name="cancel" value="{% trans 'Cancel' %}" />
+    <input class="ajax-submit" type="submit" name="save" value="{% trans 'Save' %}" />
+    <input class="overlay-close" type="button" name="cancel" value="{% trans 'Cancel' %}" />
 </form>
 
 <script type="text/javascript">
-    $("#id_add-title").focus();
 
-    $("#id_add-title").live("keyup", function() {
-        var slug = $("#id_add-title").val()
-        slug = URLify(slug, 200)
-        $("#id_add-slug").val(slug);
-    });
+    $(function() {
+        $("#id_add-text").cleditor();
+        
+        $("#id_add-title").focus();
+
+        $("#id_add-title").live("keyup", function() {
+            var slug = $("#id_add-title").val()
+            slug = URLify(slug, 200)
+            $("#id_add-slug").val(slug);
+        });    
+    })    
 </script>

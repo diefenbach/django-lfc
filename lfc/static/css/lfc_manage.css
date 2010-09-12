@@ -1,4 +1,24 @@
-/* ui-tabs overwrites */
+table.lfc-compositor-default {
+    width: 100%;
+}
+
+table.lfc-compositor-default td {
+    padding-right: 20px;
+}
+
+table.lfc-compositor-default td.last {
+    padding-right: 0;
+}
+
+
+.extern-form,
+.email-form {
+    display: none;
+}
+
+#manage-tabs {
+    clear: both;
+}
 
 img.left {
     float: left;
@@ -19,6 +39,7 @@ img.right {
 
 .ajax-loading {
     padding: 4px 0 0 4px;
+    display: none;
 }
 
 #id_text,
@@ -217,6 +238,7 @@ table.lfs-manage-table {
     padding-right: 10px;
 }
 
+div .right,
 .lfs-manage-table .right {
     text-align: right;
 }
@@ -447,19 +469,20 @@ label {
     padding: 10px 0;
 }
 
+div.overlay2,
 div.overlay {
     background-color: #fff;
     display: none;
     padding: 15px 50px 15px 15px;
     text-align: left;
-    z-index: 1000;
+    z-index: 1;
     -webkit-border-radius: 6px;
     -moz-border-radius: 10px;
     -webkit-box-shadow: 10px 10px 5px #222;
     -moz-box-shadow: 10px 10px 5px #222;
 }
 
-
+div.overlay2 div.close,
 div.overlay div.close {
     background-image: url(../img/close.png);
     position: absolute;
@@ -704,3 +727,4 @@ ul.timelist, .timelist li {
 .datetime input {
     margin-bottom: 6px;
 }
+

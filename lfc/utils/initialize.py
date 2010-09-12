@@ -44,7 +44,7 @@ def initialize(create_resources=False):
 
     register_resource(type=CSS, group="manage", path="lfc/yui/reset-min.css")
     register_resource(type=CSS, group="manage", path="lfc/lightbox/css/jquery.lightbox-0.5.css")
-    register_resource(type=CSS, group="manage", path="lfc/jquery/jquery-ui-themeroller/jquery-ui-themeroller.css")
+    register_resource(type=CSS, group="manage", path="lfc/jquery-ui-1.8.4.custom/css/smoothness/jquery-ui-1.8.4.custom.css")
     register_resource(type=CSS, group="manage", path="lfc/jquery/jquery.jgrowl.css")
     register_resource(type=CSS, group="manage", path="lfc/jquery/superfish/superfish.css")
     register_resource(type=CSS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.css")
@@ -64,7 +64,7 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", path="lfc/jquery/jquery.cookie.pack.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/superfish/superfish.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/jquery.ba-bbq.min.js")
-    register_resource(type=JS, group="manage", path="lfc/jquery/jquery-ui-personalized-1.5.3.packed.js")
+    register_resource(type=JS, group="manage", path="lfc/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.pack.js")
     register_resource(type=JS, group="manage", path="lfc/js/json2.js")
     register_resource(type=JS, group="manage", minify=0, path="lfc/swfupload/swfupload.js")

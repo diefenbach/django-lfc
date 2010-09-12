@@ -1,65 +1,205 @@
-{% extends "lfc/manage/filebrowser_base.html" %}
 {% load i18n %}
 
-{% block content %}
-    <h1 class="middle">{% trans "Content" %}</h1>
-    <ul>
-        {% for obj in objs %}
-            <li>
-                <a href="javascript:FileBrowserDialogue.fileSubmit('{{ obj.url }}');" title="{% trans 'Select content' %}">
-                    {{ obj.title }}
-                </a>
-            </li>
-            {{ obj.children|safe }}
+<div id="filebrowser"
+     style="min-width:800px">
+    <h1>{% trans "Files" %}</h1>
 
-        {% endfor %}
-    </ul>
+    <div style="padding-bottom:10px">
+        <table width="100%">
+            <tr>
+                <td>
+                    <span>{% trans "Your are here" %}:</span>
+                    <a class="fb-obj"
+                       href="{% url lfc_filebrowser %}?obj_id=">{% trans "Portal" %}</a>
 
-    {% if obj_id %}
-        <h1 class="middle-heading">{% trans "Local files" %}</h1>
+                    {% for obj in objs %}
+                        &gt;
+                        <a class="fb-obj"
+                           href="{% url lfc_filebrowser %}?obj_id={{ obj.id }}">{{ obj.title }}</a>
+                    {% endfor %}
+                </td>
+                <td align="right">
+                    <a class="fb-obj"
+                       href="{% url lfc_filebrowser %}?obj_id={{ current_id }}">{% trans "Current Object" %}</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-        {% if local_files %}
-            <ul>
-                {% for file in local_files %}
-                    <li>
-                        <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
-                            {{ file.title }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>
-                {% trans "There are no local files yet." %}
-            </p>
-        {% endif %}
+    <table class="lfs-manage-table" width="100%">
+        <tr>
+            <td width="200px">
+                <table width="100%">
+                    <tr>
+                        <th>
+                            {% trans "Type" %}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>
+                                <a class="content-form-link"
+                                   href=".">{% trans "Content" %}</a>
+                            </div>
+                            <div>
+                                <a class="email-form-link"
+                                   href=".">{% trans "Mail" %}</a>
+                            </div>
+                            <div>
+                                <a class="extern-form-link"
+                                   href=".">{% trans "Extern" %}</a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td width="350px">
+                
+                <table width="100%"
+                       class="email-form">
+                    <tr>
+                        <th colspan="2">
+                            {% trans "E-Mail" %}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                           <form>
+                               <label>{% trans "E-mail" %}</label>
+                               <input class="fb-email" type="text" />
+                           </form>
+                       </td>
+                    </tr>
+                </table>
 
-    {% endif %}
+                <table width="100%"
+                       class="extern-form">
+                    <tr>
+                        <th>
+                            {% trans "External Link" %}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                           <form>
+                               <select class="fb-extern-protocol" style="width:80px">
+                                   <option>http://</option>
+                                   <option>https://</option>
+                               </select>
+                               <input class="fb-extern" type="text" />
+                           </form>
+                       </td>
+                    </tr>
+                </table>
 
-    <h1 class="middle-heading">{% trans "Global files" %}</h1>
-    {% if global_files %}        
-        <ul>
-            {% for file in global_files %}
-                <li>
-                    <a href="javascript:FileBrowserDialogue.fileSubmit('{{ file.file.url }}');" title="{% trans 'Select File' %}">
-                        {{ file.title }}"
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>
-            {% trans "There are no global files yet." %}
-        </p>
-    {% endif %}
-    {% if obj_id %}
-        <h1 class="middle-heading">{% trans "Upload local files" %}</h1>
-        <form action="{% url lfc_fb_upload_file %}"
+                <table width="100%"
+                       class="content-form">
+                    <tr>
+                        <th colspan="2" width="300px">
+                            {% trans "Content" %}
+                        </th>
+                    </tr>
+                    {% if children %}
+                        <tr>
+                            <td colspan="2">
+                                {% trans "Children" %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% for child in children %}
+                        <tr>
+                            <td width="10px">
+                                <input class="child" name="child" value="{{ child.get_absolute_url }}" type="radio" />
+                            </td>
+                            <td>
+                                <div>
+                                    <a class="fb-obj"
+                                       href="{% url lfc_filebrowser %}?obj_id={{ child.id }}">{{ child.title }}</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% if files %}
+                        <tr>
+                            <td colspan="2">
+                                {% trans "Files" %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% for file in files %}
+                        <tr>
+                            <td width="10px">
+                                <input class="child" name="child" value="{{ file.get_absolute_url }}" type="radio" />
+                            </td>
+                            <td valign="top">
+                                {{ file.title }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% if images %}
+                        <tr>
+                            <td colspan="2">
+                                {% trans "Images" %}
+                            </td>
+                        </tr>
+                    {% endif %}
+                    {% for image in images %}
+                        <tr>
+                            <td width="10px">
+                                <input class="child" name="child" value="{{ image.image.url }}" type="radio" />
+                            </td>
+                            <td valign="top">
+                                {{ image.title }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <th>
+                            {% trans "Attributes" %}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>
+                                <label>{% trans "Title" %}</label>
+                            </div>
+                            <input type="text" name="title" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>
+                                <label>{% trans "Target" %}</label>
+                            </div>
+                            <select id="file-class">
+                                <option value="same">{% trans "Same window" %}</option>
+                                <option value="new">{% trans "New window" %}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div class="right">
+        <input type="button" value='{% trans "Insert" %}' id="insert-file" />
+    </div>
+    
+    <h1>{% trans "Upload file" %}</h1>
+    {% if display_upload %}
+        <form action="{% url lfc_fb_upload_image %}"
               method="post"
               enctype="multipart/form-data">
             <input type="hidden" name="obj_id" value="{{ obj_id }}">
-            <input type="file" name="file" />
-            <input type="submit" />
+            <input type="file" name="image" />
+            <input class="image-button"
+                   type="submit" />
         </form>
+    {% else %}
+        {% trans "You have to save content object before you can upload images for it." %}
     {% endif %}
-{% endblock %}
+</div>

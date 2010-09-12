@@ -3,15 +3,18 @@
 
 {% block left_slot %}
     <div id="navigation">
+        {{ navigation }}
     </div>
 {% endblock %}
 
 {% block content %}
     <div id="menu"
          class="site-actions">
+         {{ menu }}
     </div>
     
     <div style="clear:both" id="tabs-inline">
+        {{ tabs }}        
     </div>
     
 {% endblock %}

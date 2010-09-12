@@ -11,7 +11,8 @@
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
-                               class="select-all-2" />
+                               class="select-all"
+                               value="file" />
                     </th>
                     <th>
                         {% trans 'Title' %}
@@ -30,7 +31,7 @@
                     <tr>
                         <td>
                             <input type="checkbox"
-                                   class="select-2"
+                                   class="select-file"
                                    name="delete-files"
                                    value="{{ file.id }}"
                                    style="float:left" />
@@ -55,9 +56,9 @@
                 {% endfor %}
             </table>
 
-            <input class="object-files-update-button"
+            <input class="ajax-submit"
                    type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="object-files-update-button"
+            <input class="ajax-submit"
                    type="submit" name="delete" value="{% trans 'Delete' %}" />
 
         </form>

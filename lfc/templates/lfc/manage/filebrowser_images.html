@@ -1,134 +1,136 @@
 {% load i18n %}
 
-{# <h1>{% trans "Global images" %}</h1> #}
-{# <table class="lfs-manage-table" width="100%"> #}
-{#     <tr> #}
-{#         <th width="70px"> #}
-{#             {% trans "Image" %} #}
-{#         </th> #}
-{#         <th> #}
-{#             {% trans "Sizes" %} #}
-{#         </th> #}
-{#     </tr> #}
-{#  #}
-{#     {% for image in portal_images %} #}
-{#         <tr> #}
-{#             <td valign="top"> #}
-{#                 <img src="{{ image.image.url_60x60 }}" /> #}
-{#             </td> #}
-{#             <td valign="top"> #}
-{#                 <a href="{{ image.image.url }}" class="fb_selectlink" title="{% trans 'Select File' %}"> #}
-{#                     {% trans "Original" %} #}
-{#                 </a> / #}
-{#                 <a href="{{ image.image.url_60x60 }}" class="fb_selectlink" title="{% trans 'Select File' %}"> #}
-{#                     60 x 60 #}
-{#                 </a> / #}
-{#                 <a href="{{ image.image.url_200x200 }}" class="fb_selectlink" title="{% trans 'Select File' %}"> #}
-{#                     200 x 200 #}
-{#                 </a> / #}
-{#                 <a href="{{ image.image.url_400x400 }}" class="fb_selectlink" title="{% trans 'Select File' %}"> #}
-{#                     400 x 400 #}
-{#                 </a> / #}
-{#                 <a href="{{ image.image.url_600x600 }}" class="fb_selectlink" title="{% trans 'Select File' %}"> #}
-{#                     600 x 600 #}
-{#                 </a> #}
-{#             </td> #}
-{#         </tr> #}
-{#     {% empty %} #}
-{#         <tr> #}
-{#             <td colspan="2"> #}
-{#                 {% trans "There are no global images." %} #}
-{#             </td> #}
-{#         </tr> #}
-{#     {% endfor %} #}
-{# </table> #}
+<div id="filebrowser"
+     style="min-width:800px">
+    <h1>{% trans "Local images" %}</h1>
 
-<h1>{% trans "Local images" %}</h1>
+    <div style="padding-bottom:10px">
+        <table width="100%">
+            <tr>
+                <td>
+                    <span>{% trans "Your are here" %}:</span>
+                    <a class="fb-obj"
+                       href="{% url lfc_imagebrowser %}?obj_id=">{% trans "Portal" %}</a>
 
-<table class="lfs-manage-table" width="100%">
-    <tr>
-        <td>
-            <table>
-                <tr>
-                    <th colspan="2" width="70px">
-                        {% trans "Select Image" %}
-                    </th>
-                </tr>
+                    {% for obj in objs %}
+                        &gt;
+                        <a class="fb-obj"
+                           href="{% url lfc_imagebrowser %}?obj_id={{ obj.id }}">{{ obj.title }}</a>
+                    {% endfor %}
+                </td>
+                <td align="right">
+                    <a class="fb-obj"
+                       href="{% url lfc_imagebrowser %}?obj_id={{ current_id }}">{% trans "Current Object" %}</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-                {% for image in images %}
+    <table class="lfs-manage-table" width="100%">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <th width="300px">
+                            {% trans "Children" %}
+                        </th>
+                    </tr>
                     <tr>
                         <td>
-                            <input class="image" name="image" value="{{ image.image.url_200x200 }}" type="radio" />
-                        </td>
-                        <td valign="top">
-                            {{ image.title }}
+                            {% for child in children %}
+                                <div>
+                                    <a class="fb-obj"
+                                       href="{% url lfc_imagebrowser %}?obj_id={{ child.id }}">{{ child.title }}</a>
+                                </div>
+                            {% empty %}
+                                <div>{% trans "There are no children" %}</div>
+                            {% endfor %}
                         </td>
                     </tr>
-                {% empty %}
+                </table>
+            </td>
+            <td>
+                <table>
                     <tr>
-                        <td colspan="2">
-                            {% trans "There are no local images yet" %}
+                        <th colspan="2" width="300px">
+                            {% trans "Images" %}
+                        </th>
+                    </tr>
+
+                    {% for image in images %}
+                        <tr>
+                            <td width="10px">
+                                <input class="image" name="image" value="{{ image.image.url_200x200 }}" type="radio" />
+                            </td>
+                            <td valign="top">
+                                {{ image.title }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="2">
+                                {% trans "There are no local images yet" %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tr>
+                        <th>
+                            {% trans "Preview" %}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="min-height:200px" id="image-preview">
+                                {% trans "No image selcted" %}
+                            </div>
                         </td>
                     </tr>
-                {% endfor %}
-                
-            </table>
-        </td>
-        <td>
-            <table>
-                <tr>
-                    <th>
-                        {% trans "Preview" %}
-                    </th>                    
-                </tr>
-                <tr>
-                    <td>
-                        <div style="min-height:200px" id="image-preview">
-                            {% trans "No image selcted" %}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <select id="image-class">
-                            <option value="inline">{% trans "inline" %}</option>
-                            <option value="left">{% trans "left" %}</option>
-                            <option value="right">{% trans "right" %}</option>
-                        </select>                        
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <select id="image-size">
-                            <option value="">{% trans "Original" %}</option>
-                            <option value="60x60">60 x 60</option>
-                            <option value="200x200">200 x 200</option>
-                            <option value="400x400">400 x 400</option>
-                            <option value="600x600">600 x 600</option>
-                        </select>                        
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="button" value='{% trans "Insert" %}' id="insert-image" />                        
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
+                    <tr>
+                        <td>
+                            <select id="image-class">
+                                <option value="inline">{% trans "inline" %}</option>
+                                <option value="left">{% trans "left" %}</option>
+                                <option value="right">{% trans "right" %}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="image-size">
+                                <option value="">{% trans "Original" %}</option>
+                                <option value="60x60">60 x 60</option>
+                                <option value="200x200">200 x 200</option>
+                                <option value="400x400">400 x 400</option>
+                                <option value="600x600">600 x 600</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="button" value='{% trans "Insert" %}' id="insert-image" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 
-<h1>{% trans "Upload local images" %}</h1>
-{% if not obj_id %}
-    {% trans "You have to save content object before you can upload images for it." %}
-{% else %}
-<form action="{% url lfc_fb_upload_image %}"
-      method="post"
-      enctype="multipart/form-data">
-    <input type="hidden" name="obj_id" value="{{ obj_id }}">
-    <input type="file" name="image" />
-    <input class="image-button"
-           type="submit" />
-</form>
-{% endif %}
-
+    <h1>{% trans "Upload images" %}</h1>
+    {% if display_upload %}
+        <form action="{% url lfc_fb_upload_image %}"
+              method="post"
+              enctype="multipart/form-data">
+            <input type="hidden" name="obj_id" value="{{ obj_id }}">
+            <input type="file" name="image" />
+            <input class="image-button"
+                   type="submit" />
+        </form>
+    {% else %}
+        {% trans "You have to save content object before you can upload images for it." %}
+    {% endif %}
+</div>

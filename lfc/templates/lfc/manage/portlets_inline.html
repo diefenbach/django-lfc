@@ -33,7 +33,7 @@
             </table>
             <div class="padding-b">
                 <input type="submit"
-                       class="ajax-save-button"
+                       class="ajax-submit"
                        value="{% trans 'Save blocked parent slots' %}" />
             </div>
 
@@ -44,7 +44,7 @@
 
     {% for slot in slots.items %}
         <h3 {% if forloop.first %}class="first-heading"{% endif %}>
-            {% trans 'Slot' %}: {{ slot.name }}
+            {{ slot.name }}
         </h3>
 
         {% if slot.portlets %}
@@ -64,26 +64,38 @@
                 {% for portlet in slot.portlets %}
                     <tr>
                         <td>
-                            <a class="portlet-edit-button"
+                            <a class="ajax-link"
                                href="{% url lfc_edit_portlet portlet.pa_id %}">
                                 {{ portlet.type }}
                             </a>
                         </td>
                         <td>
-                            <a class="portlet-edit-button"
+                            <a class="ajax-link"
                                href="{% url lfc_edit_portlet portlet.pa_id %}">
                                 {{ portlet.title }}
                             </a>
                         </td>
-                        <td class="right">
-                            <a class="edit portlet-edit-button"
+                        <td class="left">
+                            <a class="edit ajax-link"
                                title='{% trans "Edit" %}'
                                href="{% url lfc_edit_portlet portlet.pa_id %}"></a>
-
+                            
                             <a class="delete delete-link"
                                title='{% trans "Delete" %}'
                                href="{% url lfc_delete_portlet portlet.pa_id %}"></a>
-                        </td>
+                            {% if not forloop.first %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_portlet portlet.pa_id %}?direction=0">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
+                                </a>                                
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <a class="ajax-link"
+                                   title='{% trans "Move Down" %}'
+                                   href="{% url lfc_move_portlet portlet.pa_id %}?direction=1">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
+                                </a>                                
+                            {% endif %}
                     </tr>
                 {% endfor %}
             </table>
@@ -108,7 +120,7 @@
             {% endfor %}
         </select>
 
-        <input class="portlet-add-button"
+        <input class="ajax-submit"
                type="submit"
                value="{% trans 'Add portlet' %}" />
     </form>

@@ -8,7 +8,7 @@
             <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
         </a>
         
-        <a class="overlay-link" href="{% url lfc_manage_transition transition.id %}">
+        <a class="in-overlay" href="{% url lfc_manage_transition transition.id %}">
             {{ transition.name }}
         </a>
     </h3>
@@ -20,7 +20,7 @@
                 </td>
                 <td>
                     {% if transition.destination %}
-                        <a class="overlay-link" href="{% url lfc_manage_state transition.destination.id %}">
+                        <a class="in-overlay" href="{% url lfc_manage_state transition.destination.id %}">
                             {{ transition.destination.name }}
                         </a>
                     {% else %}
@@ -61,6 +61,6 @@
 <form action="{% url lfc_manage_add_workflow_transition workflow.id %}"
       method="POST">
     <input name="name" type="text" />
-    <input class="ajax-save-button"
+    <input class="ajax-submit"
            type="submit" value='{% trans "Add transition" %}' />
 </form>

@@ -11,14 +11,13 @@
         <div class="field">
             <div>
                 {{ form.allow_comments }}
-                <input class="ajax-save-button"
+                <input class="ajax-submit"
                        name="allow_comments"
                        type="submit"
                        value="{% trans 'Save' %}" />
             </div>
         </div>
     </form>
-
 
     <h2 class="middle-heading">
         {% trans 'Comments' %}
@@ -32,7 +31,8 @@
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
-                               class="select-all-1" />
+                               class="select-all"
+                               value="comments" />
                     </th>
                     <th class="tiny right-padding">
                         {% trans 'SNR' %}
@@ -53,24 +53,24 @@
                             <input type="hidden"
                                    name="comment_id-{{ comment.id }}" />
                             <input type="checkbox"
-                                   class="select-1"
-                                   name="delete-{{comment.id}}"
+                                   class="select-comments"
+                                   name="delete-{{ comment.id }}"
                                    style="float:left" />
                         </td>
                         <td>
                             {{ forloop.counter }}.
                         </td>
                         <td>
-                            {{comment.name}}
+                            {{ comment.name }}
                         </td>
                         <td>
                             <input type="checkbox"
-                                   name="is_public-{{comment.id}}"
+                                   name="is_public-{{ comment.id }}"
                                    style="float:left"
                                    {% if comment.is_public %}checked="checked"{% endif %} />
                         </td>
                         <td class="right-padding">
-                            <a href="/admin/comments/comment/{{comment.id}}">
+                            <a href="/admin/comments/comment/{{ comment.id }}">
                                 <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
                                      alt="{% trans 'Edit' %}"
                                      title="{% trans 'Edit object' %}" />
@@ -80,9 +80,9 @@
                 {% endfor %}
             </table>
             <div class="manage-form-buttons">
-                <input class="ajax-save-button"
+                <input class="ajax-submit"
                        type="submit" name="update" value="{% trans 'Update comments' %}" />
-                <input class="ajax-save-button"
+                <input class="ajax-submit"
                        type="submit" name="delete" value="{% trans 'Delete comments' %}" />
             </div>
         </form>
@@ -100,7 +100,7 @@
     <h2 class="first-heading">
         {% trans 'Comments' %}
     </h2>
-    
+
     {% if comments %}
         <table class="lfs-manage-table half">
             <tr>
@@ -128,6 +128,5 @@
         </table>
     {% else %}
         <span>{% trans 'There are no comments' %}</span>
-    {% endif %}    
+    {% endif %}
 {% endifhasperm %}
-

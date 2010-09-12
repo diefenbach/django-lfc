@@ -14,7 +14,8 @@
                 <tr>
                     <th width="1%">
                         <input type="checkbox"
-                               class="select-all-1" />
+                               class="select-all"
+                               value="child" />
                     </th>
                     <th width="10%">
                         {% trans 'Position' %}
@@ -38,7 +39,7 @@
                             <input type="hidden"
                                    name="obj_id-{{ child.id }}" />
                             <input type="checkbox"
-                                   class="select-1"
+                                   class="select-child"
                                    name="delete-{{ child.id }}"
                                    style="float:left" />
                         </td>
@@ -77,17 +78,17 @@
                 {% endfor %}
             </table>
             <div class="manage-form-buttons">
-                <input class="ajax-save-button"
+                <input class="ajax-submit display-loading"
                        type="submit" name="update" value="{% trans 'Update' %}" />
-                <input class="ajax-save-button"
+                <input class="ajax-submit display-loading"
                        type="submit" name="delete" value="{% trans 'Delete' %}" />
-                <input class="ajax-save-button"
+                <input class="ajax-submit display-loading"
                        type="submit" name="copy" value="{% trans 'Copy' %}" />
-                <input class="ajax-save-button"
+                <input class="ajax-submit display-loading"
                        type="submit" name="cut" value="{% trans 'Cut' %}" />
 
                 {% if display_paste %}
-                    <input class="ajax-save-button"
+                    <input class="ajax-submit"
                            type="submit" name="paste" value="{% trans 'Paste' %}" />
                 {% endif %}
             </div>
@@ -96,7 +97,7 @@
 
             {% if display_paste %}
                 <div class="manage-form-buttons">
-                    <input class="ajax-save-button"
+                    <input class="ajax-submit"
                            type="submit" name="paste" value="{% trans 'Paste' %}" />
                 </div>
             {% endif %}

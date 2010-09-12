@@ -21,6 +21,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^content-type/(?P<id>\d+)$', "content_type", name="lfc_content_type"),
 
     # filebrowser
+    url(r'^imagebrowser$', "imagebrowser", name="lfc_imagebrowser"),
     url(r'^filebrowser$', "filebrowser", name="lfc_filebrowser"),
     url(r'^fb-upload-image$', "fb_upload_image", name="lfc_fb_upload_image"),
     url(r'^fb-upload-file$', "fb_upload_file", name="lfc_fb_upload_file"),
@@ -88,6 +89,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^update-portlets/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets", name="lfc_update_portlets"),
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
+    url(r'^move-portlet/(?P<portletassignment_id>\d+)$', "move_portlet", name="lfc_move_portlet"),
 
     url(r'^review$', "review_objects", name="lfc_manage_review"),
 
@@ -137,7 +139,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^delete-role/(?P<id>\d+)$', "delete_role", name="lfc_manage_delete_role"),
 
     # content
-    url(r'^$', "portal", name="lfc_manage_portal"),
+    url(r'^portal', "portal", name="lfc_manage_portal"),
     url(r'^(?P<id>\d+)$', "manage_object", name="lfc_manage_object"),
     url(r'^load-object-parts/(?P<id>\d+)$', "load_object_parts", name="lfc_load_object_parts"),
     url(r'^load-object/(?P<id>\d+)$', "load_object", name="lfc_load_object"),

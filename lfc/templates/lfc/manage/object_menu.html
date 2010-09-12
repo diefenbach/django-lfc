@@ -9,14 +9,14 @@
             <ul>
             {% for content_type in content_types %}
                 <li>
-                    <a class="object-add"
+                    <a class="ajax-link"
                        href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans content_type.name %}</a>
                </li>
             {% endfor %}
             </ul>
         {% else %}
             {% for content_type in content_types %}
-                <a class="object-add"
+                <a class="ajax-link"
                    href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
             {% endfor %}
         {% endif %}

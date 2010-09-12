@@ -9,7 +9,8 @@
             <tr>
                 <th class="tiny">
                     <input type="checkbox"
-                           class="select-all-1" />
+                           class="select-all"´
+                           value="image" />
                 </th>
                 <th class="small">
                     {% trans 'Image' %}
@@ -28,7 +29,7 @@
                 <tr>
                     <td>
                         <input type="checkbox"
-                               class="select-1"
+                               class="select-image"
                                name="delete-images"
                                value="{{ image.id }}"
                                style="float:left" />
@@ -53,9 +54,9 @@
             {% endfor %}
         </table>
         <div class="manage-form-buttons">
-            <input class="object-images-update-button"
+            <input class="ajax-submit"
                    type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="object-images-update-button"
+            <input class="ajax-submit"
                    type="submit" name="delete" value="{% trans 'Delete' %}" />
         </div>
     </form>

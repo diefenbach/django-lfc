@@ -8,12 +8,13 @@
         <title>{% block title %}{% endblock %}</title>
         {% css "manage" %}
         {% block css %}{% endblock %}
-        
+
         {% javascript "manage" %}
         {% block javascript %}{% endblock %}
         <link rel="shortcut icon" href="{{ MEDIA_URL }}lfc/img/favicon.ico" type="image/ico" />
 
     </head>
+
     <body class="{% block body_class %}{% endblock %}">
         <div class="lfc-header">
             <div class="logo">
@@ -42,7 +43,7 @@
                         <ul class="sf-menu"
                             width="100%">
                             <li>
-                                <a href="{% url lfc_manage_portal %}#type=portal&amp;id=1">{% trans 'Content' %}</a>
+                                <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
                             {% if LFC_MANAGE_USERS %}
                                 {% ifportalhasperm manage_portal  %}
@@ -71,7 +72,7 @@
                                 {% ifportalhasperm manage_portal %}
                                     <li>
                                         <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
-                                    </li>               
+                                    </li>
                                 {% endifportalhasperm %}
                             {% endif %}
                             {% if LFC_MANAGE_APPLICATIONS %}
@@ -83,7 +84,7 @@
                                                 <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
                                             </li>
                                             <li>
-                                                <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
+                                                <a href="{% url lfc_applications %}">{% trans 'Installation' %}</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -136,14 +137,16 @@
             <div class="content"></div>
         </div>
 
+        <div class="overlay" id="overlay-2">
+            <div class="content"></div>
+        </div>
+
         <div class="delete-dialog" id="yesno">
             <p>
                 {% trans "Do you really want to delete this object?" %}
             </p>
-
             <button> Yes </button>
             <button> No </button>
-
             <div style="display:none" id="delete-url">url</div>
         </div>
 

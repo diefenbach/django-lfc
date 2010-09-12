@@ -4,7 +4,7 @@
 {% ifhasperm edit %}
     <h2 class="middle-heading">
         {% trans 'Local roles' %}
-        <a class="overlay-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
+        <a class="ajax-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
             <img style="position:relative; top:2px" src="{{ MEDIA_URL }}lfc/icons/add.png" />
         </a>
     </h2>
@@ -82,8 +82,8 @@
                         {% endfor %}
                     </table>
                 {% endif %}
-            <input class="ajax-save-button" type="submit" name="delete" value='{% trans "Delete local roles" %}' />
-            <input class="ajax-save-button" type="submit" name="save" value='{% trans "Save local roles" %}' />
+            <input class="ajax-submit" type="submit" name="delete" value='{% trans "Delete local roles" %}' />
+            <input class="ajax-submit" type="submit" name="save" value='{% trans "Save local roles" %}' />
         </form>
     {% else %}
         <p class="padt">{% trans "This object has no local roles." %}</p>
@@ -91,7 +91,7 @@
 {% else %}
     <h2 class="middle-heading">
         {% trans 'Local roles' %}
-        <a class="overlay-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
+        <a class="ajax-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
             <img style="position:relative; top:2px" src="{{ MEDIA_URL }}lfc/icons/add.png" />
         </a>
     </h2>
