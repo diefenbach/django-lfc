@@ -22,6 +22,17 @@ from django.utils import translation
 # lfc imports
 import lfc.models
 
+class HttpJsonResponse(HttpResponse):
+    def __init__(self, content, mimetype=None, status=None, content_type=None, **kwargs):
+        
+        if mimetype is None:
+            mimetype = "application/json"
+
+        content = render_to_json(content, **kwargs)
+
+        HttpResponse.__init__(self, content=content,
+            mimetype=mimetype, status=status, content_type=content_type)
+
 # TODO: Checkout Django's new message feature
 class MessageHttpResponseRedirect(HttpResponseRedirect):
     """Specific HttpResponseRedirect to set a cookie with a message.

@@ -82,6 +82,7 @@ from lfc.models import Image
 from lfc.settings import COPY, CUT
 from lfc.utils import LazyEncoder
 from lfc.utils import MessageHttpResponseRedirect
+from lfc.utils import HttpJsonResponse
 from lfc.utils import return_as_json
 from lfc.utils import get_portal
 from lfc.utils import import_module
@@ -1732,11 +1733,12 @@ def update_comments(request, id):
 # Filebrowser ################################################################
 ##############################################################################
 
-def imagebrowser(request, obj_id=None):
+def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage/filebrowser_images.html"):
     """Displays a browser for images.
     """
     obj_id = request.GET.get("obj_id", obj_id)
     current_id = request.GET.get("current_id", obj_id)
+    current_obj = lfc.utils.get_content_object(pk=current_id)    
 
     portal = get_portal()
 
@@ -1755,7 +1757,7 @@ def imagebrowser(request, obj_id=None):
         objs.insert(0, temp)
         temp = temp.parent
 
-    result = render_to_string("lfc/manage/filebrowser_images.html", RequestContext(request, {
+    result = render_to_string(template_name, RequestContext(request, {
         "portal" : portal,
         "obj" : obj,
         "obj_id" : obj_id,
@@ -1763,16 +1765,21 @@ def imagebrowser(request, obj_id=None):
         "children" : obj.get_children(request),
         "images" : obj.images.all(),
         "current_id" : current_id,
+        "current_obj" : current_obj,
         "display_upload" : is_portal or obj_id,
     }))
 
-    return HttpResponse(result)
+    if as_string:
+        return result
+    else:
+        return HttpResponse(result)
 
-def filebrowser(request, obj_id=None):
+def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage/filebrowser_files.html"):
     """Displays a file browser.
     """
     obj_id = request.GET.get("obj_id", obj_id)
     current_id = request.GET.get("current_id", obj_id)
+    current_obj = lfc.utils.get_content_object(pk=current_id)
 
     portal = get_portal()
 
@@ -1791,7 +1798,7 @@ def filebrowser(request, obj_id=None):
         objs.insert(0, temp)
         temp = temp.parent
 
-    result = render_to_string("lfc/manage/filebrowser_files.html", RequestContext(request, {
+    result = render_to_string(template_name, RequestContext(request, {
         "portal" : portal,
         "obj" : obj,
         "obj_id" : obj_id,
@@ -1800,15 +1807,19 @@ def filebrowser(request, obj_id=None):
         "files" : obj.files.all(),
         "images" : obj.images.all(),
         "current_id" : current_id,
+        "current_obj" : current_obj,
         "display_upload" : is_portal or obj_id,
     }))
 
-    return HttpResponse(result)
+    if as_string:
+        return result
+    else:
+        return HttpResponse(result)
 
 def fb_upload_image(request):
     """Uploads an image within filebrowser.
     """
-    obj_id = request.POST.get("obj_id")
+    obj_id = request.POST.get("obj-id")
     obj = lfc.utils.get_content_object(pk=obj_id)
     obj.check_permission(request.user, "edit")
 
@@ -1822,13 +1833,16 @@ def fb_upload_image(request):
         image.position = (i+1) * 10
         image.save()
 
-    result = filebrowser_images(request, obj_id=obj_id)
-    return HttpResponse(result)
+    html = (
+        ("#overlay-2 .content", imagebrowser(request, obj_id, as_string=True)),
+    )
+
+    return HttpJsonResponse(html)
 
 def fb_upload_file(request):
     """Uploads file within filebrowser.
     """
-    obj_id = request.POST.get("obj_id")
+    obj_id = request.POST.get("obj-id")
     obj = lfc.utils.get_content_object(pk=obj_id)
     obj.check_permission(request.user, "edit")
 
@@ -1842,8 +1856,11 @@ def fb_upload_file(request):
         file.save()
 
 
-    url = "%s?obj_id=%s" % (reverse("lfc_filebrowser"), obj_id)
-    return HttpResponseRedirect(url)
+    html = (
+        ("#overlay-2 .content", filebrowser(request, obj_id, as_string=True)),
+    )
+
+    return HttpJsonResponse(html)
 
 # Translations ###############################################################
 ##############################################################################

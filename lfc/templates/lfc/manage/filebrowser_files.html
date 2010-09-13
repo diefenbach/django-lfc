@@ -189,14 +189,14 @@
         <input type="button" value='{% trans "Insert" %}' id="insert-file" />
     </div>
     
-    <h1>{% trans "Upload file" %}</h1>
+    <h1>{% trans "Upload file to" %} {{ current_obj.title }}</h1>
     {% if display_upload %}
-        <form action="{% url lfc_fb_upload_image %}"
+        <form action="{% url lfc_fb_upload_file %}"
               method="post"
               enctype="multipart/form-data">
             <input type="hidden" name="obj_id" value="{{ obj_id }}">
             <input type="file" name="image" />
-            <input class="image-button"
+            <input class="ajax-submit"
                    type="submit" />
         </form>
     {% else %}

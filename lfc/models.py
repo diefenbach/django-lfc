@@ -586,6 +586,13 @@ class BaseContent(AbstractBaseContent):
 
         return result
 
+    def has_children(self, request=None, *args, **kwargs):
+        """Returns True if the object has children. If the request is
+        passed the permissions of the current user is taken into account.
+        Other valid filters can be passed also, e.g. slug = "page-1".
+        """
+        return len(lfc.utils.get_content_objects(request, parent=self, **kwargs)) > 0
+
     def get_children(self, request=None, *args, **kwargs):
         """Returns the children of the content object. If the request is
         passed the permissions of the current user is taken into account.

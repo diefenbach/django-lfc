@@ -36,7 +36,7 @@ function load_content() {
 function load_url(url, tabs) {
     show_ajax_loading();
     $.get(url, function(data) {
-        data = JSON.parse(data);
+        data = $.parseJSON(data);
         for (var html in data["html"])
             $(data["html"][html][0]).html(data["html"][html][1]);
 
@@ -44,7 +44,7 @@ function load_url(url, tabs) {
 
         if (tabs)
             create_tabs();
-            
+
         if (data["message"])
             show_message(data["message"])
 
@@ -91,7 +91,7 @@ $(function() {
     create_menu();
     create_tabs();
     load_content();
-    
+
     // Class which closes the overlay.
     $(".overlay-close").live("click", function() {
         overlay.close()
@@ -105,11 +105,12 @@ $(function() {
             show_ajax_loading();
 
         var action = $(this).attr("name");
+        var obj_id = $("#obj-id").attr("data");
+        
         $(this).parents("form:first").ajaxSubmit({
-            data : {"action" : action },
+            data : {"action" : action, "obj-id" : obj_id  },
+            dataType: "json",
             success : function(data) {
-                data = JSON.parse(data);
-                
                 for (var html in data["html"])
                     $(data["html"][html][0]).html(data["html"][html][1]);
 
@@ -157,7 +158,7 @@ $(function() {
         var url = $(this).attr("href");
 
         $.get(url, function(data) {
-            data = JSON.parse(data);
+            data = $.parseJSON(data);
             for (var html in data["html"])
                 $(data["html"][html][0]).html(data["html"][html][1]);
 
@@ -181,7 +182,7 @@ $(function() {
 
         return false;
     });
-    
+
     // User filter
     $(".reset-link").live("click", function() {
         $("input[name=name_filter]").val("");
@@ -193,13 +194,13 @@ $(function() {
         var url = $(this).attr("data");
         var value = $(this).attr("value");
         $.get(url, { "user_name_filter" : value }, function(data) {
-            data = JSON.parse(data);
+            data = $.parseJSON(data);
             for (var html in data["html"])
                 $(data["html"][html][0]).html(data["html"][html][1]);
         });
     });
-    
-    // Generic select all checkboxes class: selects all checkboxes with class 
+
+    // Generic select all checkboxes class: selects all checkboxes with class
     // "select-xxx" where xxx is the value of the select-all checkbox.
     $(".select-all").live("click", function() {
         var checked = this.checked;

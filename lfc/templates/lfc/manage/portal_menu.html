@@ -15,7 +15,7 @@
                 </ul>
             {% else %}
                 {% for content_type in content_types %}
-                    <a class="in-overlay"
+                    <a class="ajax-link"
                        href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
                 {% endfor %}
             {% endif %}

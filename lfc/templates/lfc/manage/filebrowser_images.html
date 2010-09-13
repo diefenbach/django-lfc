@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div id="filebrowser"
+<div id="imagebrowser"
      style="min-width:800px">
     <h1>{% trans "Local images" %}</h1>
 
@@ -120,14 +120,14 @@
         </tr>
     </table>
 
-    <h1>{% trans "Upload images" %}</h1>
+    <h1>{% trans "Upload image to" %} {{ current_obj.title }}</h1>
     {% if display_upload %}
         <form action="{% url lfc_fb_upload_image %}"
               method="post"
               enctype="multipart/form-data">
             <input type="hidden" name="obj_id" value="{{ obj_id }}">
             <input type="file" name="image" />
-            <input class="image-button"
+            <input class="ajax-submit"
                    type="submit" />
         </form>
     {% else %}
