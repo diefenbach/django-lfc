@@ -25,6 +25,7 @@ from lfc.utils import MessageHttpResponseRedirect
 from lfc.models import File
 from lfc.models import BaseContent
 from lfc.models import Portal
+from lfc.settings import LFC_LANGUAGE_IDS
 
 # workflows imports
 from workflows.models import Transition
@@ -33,7 +34,7 @@ from workflows.models import Transition
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 
-def portal(request, obj, template_name="lfc/portal.html"):
+def portal(request, template_name="lfc/portal.html"):
     """Displays the the portal.
     """
     return render_to_response(template_name, RequestContext(request, {
@@ -43,18 +44,43 @@ def portal(request, obj, template_name="lfc/portal.html"):
 def base_view(request, language=None, slug=None, obj=None):
     """Displays the object for given language and slug.
     """
+    if language:
+        if language not in LFC_LANGUAGE_IDS:
+            raise Http404
+
+        translation.activate(language)
+    else:
+        translation.activate(settings.LANGUAGE_CODE)
+
+    if slug:
+        obj = lfc.utils.traverse_object(request, slug)
+    else:
+        the_portal = lfc.utils.get_portal()
+        if the_portal.standard:
+            obj = get_content_object(portal=the_portal)
+            if obj.language != language:
+                if obj.is_canonical():
+                    t = obj.get_translation(request, language)
+                    if t:
+                        obj = t
+                else:
+                    canonical = obj.get_canonical(request)
+                    if canonical:
+                        obj = canonical
+        else:
+            obj = the_portal
+
+    request.META["lfc_context"] = obj
+
     language = translation.get_language()
     # If the given language is the default language redirect to the url without
     # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
-
-    # Get the obj (passed my LFC Middleware)
-    obj = request.META.get("lfc_context")
 
     if obj is None:
         raise Http404()
 
     if isinstance(obj, Portal):
-        return portal(request, obj)
+        return portal(request)
 
     if lfc.utils.registration.get_info(obj) is None:
         raise Http404()
@@ -71,7 +97,7 @@ def base_view(request, language=None, slug=None, obj=None):
         return HttpResponseRedirect(url)
 
     # Template
-    # CACHE 
+    # CACHE
     template_cache_key = "%s-template-%s-%s" % \
                 (settings.CACHE_MIDDLEWARE_KEY_PREFIX, obj.content_type, obj.id)
     obj_template = cache.get(template_cache_key)
@@ -173,7 +199,7 @@ def live_search_results(request, language=None, template_name="lfc/live_search_r
         obj = None
 
     results = lfc.utils.get_content_objects(request, f)
-    
+
     quantity = len(results)
     return render_to_response(template_name, RequestContext(request, {
         "lfc_context" : obj,
@@ -182,7 +208,7 @@ def live_search_results(request, language=None, template_name="lfc/live_search_r
         "quantity" : quantity,
         "see_all" : quantity > 10,
     }))
-    
+
 def search_results(request, language=None, template_name="lfc/search_results.html"):
     """Displays the search result for passed language and query.
     """
