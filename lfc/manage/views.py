@@ -1429,7 +1429,7 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
     """Renders the children of the given obj (recursively)
     """
     obj = obj.get_content_object()
-    temp = obj.children.all()
+    temp = obj.get_children(request)
 
     objs = []
     for obj in temp:
