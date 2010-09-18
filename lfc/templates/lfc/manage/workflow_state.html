@@ -7,7 +7,7 @@
     <form action="{% url lfc_manage_save_workflow_state state.id %}"
           method="POST">
             {% include "lfc/manage/lfc_form.html" %}
-        
+
         <div class="field">
             <div class="label">
                 <label>{% trans "Type" %}:</label>
@@ -20,9 +20,9 @@
                 <input type="checkbox" name="review" {% if review %}checked="checked"{% endif %} />
                 <label> {% trans "Review" %}</label>
             </div>
-            
-        </div>    
-        
+
+        </div>
+
         <div class="field">
             <div class="label">
                 <label>{% trans "Permissions" %}:</label>
@@ -63,15 +63,10 @@
                 </table>
             </div>
         </div>
-        
 
         <div class="manage-form-buttons">
             <input class="ajax-submit"
                    type="submit" value='{% trans "Save" %}' />
-
-            <input class="ajax-submit overlay-close"
-                   type="submit" value='{% trans "Save &amp; close" %}' />
-
         </div>
     </form>
 </div>

@@ -1596,7 +1596,7 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
     """Renders the children of the given obj (recursively)
     """
     obj = obj.get_content_object()
-    temp = obj.children.all()
+    temp = obj.get_children(request)
 
     objs = []
     for obj in temp:
@@ -1738,7 +1738,7 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
     """
     obj_id = request.GET.get("obj_id", obj_id)
     current_id = request.GET.get("current_id", obj_id)
-    current_obj = lfc.utils.get_content_object(pk=current_id)    
+    current_obj = lfc.utils.get_content_object(pk=current_id)
 
     portal = get_portal()
 
@@ -2260,7 +2260,7 @@ def manage_state(request, id, template_name="lfc/manage/workflow_state.html"):
         public = wsi.public
         review = wsi.review
 
-    return render_to_response(template_name, RequestContext(request, {
+    content = render_to_string(template_name, RequestContext(request, {
         "state" : state,
         "form" : form,
         "permissions" : permissions,
@@ -2268,6 +2268,12 @@ def manage_state(request, id, template_name="lfc/manage/workflow_state.html"):
         "public" : public,
         "review" : review,
     }))
+
+    return HttpJsonResponse(
+        content = [["#overlay .content", content]],
+        open_overlay=True,
+        mimetype = "text/plain",
+    )
 
 def save_workflow_state(request, id):
     """Saves the workflow state with passed id.
@@ -2323,12 +2329,17 @@ def save_workflow_state(request, id):
                 else:
                     spr.delete()
 
-    html = (
+    content = (
         ("#data", workflow_data(request, state.workflow)),
         ("#states", workflow_states(request, state.workflow)),
     )
 
-    return return_as_json(html, _(u"State has been saved."))
+    return HttpJsonResponse(
+        content = content,
+        message = _(u"State has been saved."),
+        close_overlay = True,
+        mimetype = "text/plain"
+    )
 
 def add_workflow_state(request, id):
     """
@@ -2356,14 +2367,18 @@ def delete_workflow_state(request, id):
     except State.DoesNotExist:
         pass
     else:
+        workflow = state.workflow
         if state.workflow.get_initial_state() == state:
             state.workflow.initial_state = None
             state.workflow.save()
         state.delete()
 
-    return MessageHttpResponseRedirect(
-        request.META.get("HTTP_REFERER"), _(u"State has been deleted.")
+    html = (
+        ("#data", workflow_data(request, workflow)),
+        ("#states", workflow_states(request, workflow)),
     )
+
+    return return_as_json(html, _(u"State has been deleted."))
 
 # Workflow transition ########################################################
 ##############################################################################
@@ -2375,10 +2390,16 @@ def manage_transition(request, id, template_name="lfc/manage/workflow_transition
     transition = Transition.objects.get(pk=id)
     form = TransitionForm(instance=transition)
 
-    return render_to_response(template_name, RequestContext(request, {
+    content = render_to_string(template_name, RequestContext(request, {
         "transition" : transition,
         "form" : form,
     }))
+
+    return HttpJsonResponse(
+        content = [["#overlay .content", content]],
+        open_overlay=True,
+        mimetype = "text/plain",
+    )
 
 def save_workflow_transition(request, id):
     """Saves the workflow state with passed id.
@@ -2390,12 +2411,17 @@ def save_workflow_transition(request, id):
     if form.is_valid:
         form.save()
 
-    html = (
+    content = (
         ("#transitions", workflow_transitions(request, transition.workflow)),
         ("#states", workflow_states(request, transition.workflow)),
     )
 
-    return return_as_json(html, _(u"Transition has been saved."))
+    return HttpJsonResponse(
+        content = content,
+        message = _(u"Transition has been saved."),
+        close_overlay = True,
+        mimetype = "text/plain",
+    )
 
 def add_workflow_transition(request, id):
     """Adds a transition to workflow with passed id.
@@ -2420,14 +2446,17 @@ def delete_workflow_transition(request, id):
 
     try:
         transition = Transition.objects.get(pk=id)
+        workflow = transition.workflow
     except Transition.DoesNotExist:
         pass
     else:
         transition.delete()
 
-    return MessageHttpResponseRedirect(
-        request.META.get("HTTP_REFERER"), _(u"Transition has been deleted.")
+    html = (
+        ("#transitions", workflow_transitions(request, workflow)),
     )
+
+    return return_as_json(html, _(u"Transition has been deleted."))
 
 # Cut/Copy and paste #########################################################
 ##############################################################################
