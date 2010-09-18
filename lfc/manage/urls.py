@@ -55,6 +55,7 @@ urlpatterns = patterns('lfc.manage.views',
 
     # comments
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),
+    url(r'^edit-comment/(?P<id>\d+)$', "edit_comment", name="lfc_edit_comment"),
 
     # children
     url(r'^update-children/(?P<id>\d+)$', "update_object_children", name="lfc_update_object_children"),

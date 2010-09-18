@@ -63,6 +63,7 @@ from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import Portal
 from lfc.models import WorkflowStatesInformation
+from lfc.manage.forms import CommentForm
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import ContentTypeRegistrationForm
 from lfc.manage.forms import GroupForm
@@ -1729,6 +1730,45 @@ def update_comments(request, id):
     }, cls = LazyEncoder)
 
     return HttpResponse(result)
+
+def edit_comment(request, id, template_name="lfc/manage/comment.html"):
+    """
+    """
+    comment = Comment.objects.get(pk=id)
+    if request.method == "GET":
+        form = CommentForm(instance=comment)
+
+        html = render_to_string("lfc/manage/comment.html", RequestContext(request, {
+            "form" : form,
+            "comment" : comment,
+        }))
+
+        return HttpJsonResponse(
+            content = [["#overlay .content", html]],
+            open_overlay = True,
+            mimetype = "text/plain",
+        )
+    else:        
+        form = CommentForm(instance=comment, data=request.POST)
+        if form.is_valid():
+            comment = form.save()
+            html = comments(request, comment.content_object)
+
+            return HttpJsonResponse(
+                content = [["#comments", html]],
+                close_overlay = True,
+                message = _(u"Comment has been modified.")
+            )
+        else:
+            html = render_to_string("lfc/manage/comment.html", RequestContext(request, {
+                "form" : form,
+                "comment" : comment,
+            }))
+
+            return HttpJsonResponse(
+                content = [["#overlay .content", html]],
+                mimetype = "text/plain",
+            )
 
 # Filebrowser ################################################################
 ##############################################################################

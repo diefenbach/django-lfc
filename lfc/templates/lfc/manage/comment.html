@@ -1,0 +1,13 @@
+{% load i18n %}
+
+<h1>{% trans "Edit Comment" %}</h1>
+
+<form class="lfc-form"
+      method="post"
+      action="{% url lfc_edit_comment comment.id %}">
+
+    {% include "lfc/manage/lfc_form.html" %}
+
+    <input class="ajax-submit" type="submit" name="save" value="{% trans 'Save' %}" />
+    <input class="overlay-close" type="button" name="cancel" value="{% trans 'Cancel' %}" />
+</form>

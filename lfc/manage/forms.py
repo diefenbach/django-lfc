@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.contrib.comments.models import Comment
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
@@ -208,8 +209,15 @@ class ContentTypeRegistrationForm(forms.ModelForm):
         model = ContentTypeRegistration
         exclude = ("type", "name")
 
-class CommentsForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):
+    """Form to edit a comment.
     """
+    class Meta:
+        model = Comment
+        exclude = ("content_type", "object_pk", "site")
+
+class CommentsForm(forms.ModelForm):
+    """Form to update/delete comments.
     """
     class Meta:
         model = Page

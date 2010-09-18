@@ -217,6 +217,11 @@ table.lfs-manage-table {
     width: 50%;
 }
 
+.lfs-manage-table.large {
+    min-width: 800px;
+    width: 800px;
+}
+
 .lfs-manage-table .large {
     width: 300px;
 }

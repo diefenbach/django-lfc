@@ -27,23 +27,26 @@
         <form action="{% url lfc_update_comments obj.id %}"
               method="post">
 
-            <table class="lfs-manage-table half">
+            <table class="lfs-manage-table large">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
                                class="select-all"
                                value="comments" />
                     </th>
-                    <th class="tiny right-padding">
-                        {% trans 'SNR' %}
-                    </th>
-                    <th class="middle">
+                    <th class="small">
                         {% trans 'Name' %}
+                    </th>
+                    <th class="small">
+                        {% trans 'URL' %}
+                    </th>
+                    <th>
+                        {% trans 'Comment' %}
                     </th>
                     <th class="tiny right-padding">
                         {% trans 'Public' %}
                     </th>
-                    <th class="right-padding">
+                    <th class="tiny right-padding">
                         {% trans 'Edit' %}
                     </th>
                 </tr>
@@ -58,10 +61,21 @@
                                    style="float:left" />
                         </td>
                         <td>
-                            {{ forloop.counter }}.
+                            {% if comment.email %}
+                                <a href="mailto:{{ comment.email }}">
+                                    {{ comment.name }}
+                                </a>
+                            {% else %}
+                                {{ comment.name }}
+                            {% endif %}                            
                         </td>
                         <td>
-                            {{ comment.name }}
+                            {% if comment.user_url %}
+                                <a target="_blank" href="{{ comment.user_url }}">{{ comment.user_url }}</a>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ comment.comment|truncatewords:6 }}
                         </td>
                         <td>
                             <input type="checkbox"
@@ -70,7 +84,8 @@
                                    {% if comment.is_public %}checked="checked"{% endif %} />
                         </td>
                         <td class="right-padding">
-                            <a href="/admin/comments/comment/{{ comment.id }}">
+                            <a class="ajax-link" 
+                               href="{% url lfc_edit_comment comment.id %}">
                                 <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
                                      alt="{% trans 'Edit' %}"
                                      title="{% trans 'Edit object' %}" />

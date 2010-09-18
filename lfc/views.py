@@ -57,7 +57,7 @@ def base_view(request, language=None, slug=None, obj=None):
     else:
         the_portal = lfc.utils.get_portal()
         if the_portal.standard:
-            obj = get_content_object(portal=the_portal)
+            obj = lfc.utils.get_content_object(portal=the_portal)
             if obj.language != language:
                 if obj.is_canonical():
                     t = obj.get_translation(request, language)
