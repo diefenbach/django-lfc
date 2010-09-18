@@ -229,7 +229,7 @@ class SEOForm(forms.ModelForm):
     """
     class Meta:
         model = Page
-        fields = ( "meta_keywords", "meta_description")
+        fields = ("meta_title", "meta_keywords", "meta_description")
 
 class MetaDataForm(forms.ModelForm):
     """

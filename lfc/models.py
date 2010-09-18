@@ -327,14 +327,14 @@ class BaseContent(AbstractBaseContent):
         The content type of the specific content object.
 
     title
-        The title of the object. By default this displayed on top of very
-        object within the title tag of the HTML page (together with the portal's
-        title).
+        The title of the object. By default this is displayed on top of every
+        object.
 
     display_title
         Set to false to hide the title within the HTML of the object. This can
         be helpful to provide a custom title within the text field of an
         object.
+
     slug
         The part of URL within the parent object. By default the absolute URL
         of an object is created by all involved content objects.
@@ -396,6 +396,10 @@ class BaseContent(AbstractBaseContent):
         if given the object is only public when the end date is not reached
         yet.
 
+    meta_title
+        The meta title of the page. This is displayed within the title tag of
+        the rendered HTML.
+
     meta_keywords
         The meta keywords of the object. This is displayed within the meta
         keywords tag of the rendered HTML.
@@ -449,6 +453,7 @@ class BaseContent(AbstractBaseContent):
     start_date = models.DateTimeField(_(u"Start date"), null=True, blank=True)
     end_date = models.DateTimeField(_(u"End date"), null=True, blank=True)
 
+    meta_title = models.CharField(_(u"Meta title"), max_length=100, default="<title>")
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
 
@@ -609,6 +614,14 @@ class BaseContent(AbstractBaseContent):
             return images[0]
         except IndexError:
             return None
+
+    def get_meta_title(self):
+        """Returns the meta title of the instance. Replaces some placeholders
+        with the according content.
+        """
+        title = self.meta_title.replace("<title>", self.title)
+        title = title.replace("<portal_title>", lfc.utils.get_portal().title)
+        return title
 
     def get_meta_keywords(self):
         """Returns the meta keywords of the instance. Replaces some
