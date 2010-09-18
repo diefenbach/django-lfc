@@ -139,13 +139,13 @@ $(function() {
     // Browser history
     $(".manage-portal").live("click", function() {
         $.bbq.pushState({ "type" : "portal", "id" : 1 });
-        return false
+        return false;
     });
 
     $(".manage-page").live("click", function() {
         var id = $(this).attr("id");
         $.bbq.pushState({ "type" : "object", "id" : id });
-        return false
+        return false;
     });
 
     $(window).bind('hashchange', function( event ) {
