@@ -1748,7 +1748,7 @@ def edit_comment(request, id, template_name="lfc/manage/comment.html"):
             open_overlay = True,
             mimetype = "text/plain",
         )
-    else:        
+    else:
         form = CommentForm(instance=comment, data=request.POST)
         if form.is_valid():
             comment = form.save()
@@ -2546,9 +2546,15 @@ def paste(request, id=None):
 
     message = _paste(request, obj)
 
+    if obj:
+        children = object_children(request, obj)
+    else:
+        children = portal_children(request)
+
     html = (
         ("#menu", menu),
         ("#navigation", navigation(request, obj)),
+        ("#children", children),
     )
 
     return return_as_json(html, message)
