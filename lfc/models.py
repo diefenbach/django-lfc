@@ -891,7 +891,6 @@ class Image(models.Model):
 
     position = models.SmallIntegerField(default=999)
     caption = models.CharField(blank=True, max_length=100)
-    short_description = models.TextField(blank=True)
     description = models.TextField(blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     image = ImageWithThumbsField(_(u"Image"), upload_to="uploads",
@@ -940,7 +939,7 @@ class File(models.Model):
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
 
     position = models.SmallIntegerField(default=999)
-    description = models.CharField(blank=True, max_length=100)
+    description = models.TextField(blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     file = models.FileField(upload_to="files")
 

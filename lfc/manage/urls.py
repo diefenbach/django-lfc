@@ -39,6 +39,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^page-images/(?P<id>\d+)$', "object_images", name="lfc_images"),
     url(r'^add-images/(?P<id>\d+)$', "add_object_images", name="lfc_add_images"),
     url(r'^update-images/(?P<id>\d+)$', "update_object_images", name="lfc_update_images"),
+    url(r'^edit-image/(?P<id>\d+)$', "edit_image", name="lfc_edit_image"),
 
     url(r'^portal-images$', "portal_images", name="lfc_portal_images"),
     url(r'^add-portal-images$', "add_portal_images", name="lfc_add_portal_images"),
@@ -52,6 +53,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^portal-files$', "portal_files", name="lfc_portal_files"),
     url(r'^add-portal-files$', "add_portal_files", name="lfc_add_portal_files"),
     url(r'^update-portal-files$', "update_portal_files", name="lfc_update_portal_files"),
+    url(r'^edit-file/(?P<id>\d+)$', "edit_file", name="lfc_edit_file"),
 
     # comments
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),

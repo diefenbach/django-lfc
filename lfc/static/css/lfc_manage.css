@@ -213,6 +213,10 @@ table.lfs-manage-table {
     width: 100%;
 }
 
+.lfs-manage-table.three-fourths {
+    width: 75%;
+}
+
 .lfs-manage-table.half {
     width: 50%;
 }
@@ -236,6 +240,10 @@ table.lfs-manage-table {
 
 .lfs-manage-table .tiny {
     width: 1px;
+}
+
+.lfs-manage-table .padding {
+    padding: 0 10px;
 }
 
 .lfs-manage-table .right-padding {

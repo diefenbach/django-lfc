@@ -66,7 +66,9 @@ from lfc.models import WorkflowStatesInformation
 from lfc.manage.forms import CommentForm
 from lfc.manage.forms import CommentsForm
 from lfc.manage.forms import ContentTypeRegistrationForm
+from lfc.manage.forms import FileForm
 from lfc.manage.forms import GroupForm
+from lfc.manage.forms import ImageForm
 from lfc.manage.forms import PortalCoreForm
 from lfc.manage.forms import MetaDataForm
 from lfc.manage.forms import RoleForm
@@ -493,6 +495,45 @@ def add_portal_images(request):
 
     return HttpResponse(portal_images(request, as_string=True))
 
+def edit_image(request, id):
+    """Provides a form to edit the image with passed id.
+    """
+    image = Image.objects.get(pk=id)
+    if request.method == "GET":
+        form = ImageForm(prefix="image", instance=image)
+
+        html = render_to_string("lfc/manage/image.html", RequestContext(request, {
+            "form" : form,
+            "image" : image,
+        }))
+
+        return HttpJsonResponse(
+            content = [["#overlay .content", html]],
+            open_overlay = True,
+            mimetype = "text/plain",
+        )
+    else:
+        form = ImageForm(prefix="image", instance=image, data=request.POST)
+        if form.is_valid():
+            image = form.save()
+            images = object_images(request, image.content.id, as_string=True)
+
+            return HttpJsonResponse(
+                content = [["#images", images]],
+                close_overlay = True,
+                message = _(u"Image has been saved.")
+            )
+        else:
+            html = render_to_string("lfc/manage/image.html", RequestContext(request, {
+                "form" : form,
+                "image" : image,
+            }))
+
+            return HttpJsonResponse(
+                content = [["#overlay .content", html]],
+                mimetype = "text/plain",
+            )
+    
 def add_portal_files(request):
     """Addes files to the portal.
     """
@@ -526,6 +567,46 @@ def update_portal_files(request):
     )
 
     return HttpResponse(json)
+
+def edit_file(request, id):
+    """Provides a form to edit the file with passed id.
+    """
+    file = File.objects.get(pk=id)
+    if request.method == "GET":
+        form = FileForm(prefix="file", instance=file)
+
+        html = render_to_string("lfc/manage/file.html", RequestContext(request, {
+            "form" : form,
+            "file" : file,
+        }))
+
+        return HttpJsonResponse(
+            content = [["#overlay .content", html]],
+            open_overlay = True,
+            mimetype = "text/plain",
+        )
+    else:
+        form = FileForm(prefix="file", instance=file, data=request.POST)
+        if form.is_valid():
+            file = form.save()
+            files = object_files(request, file.content.id, as_string=True)
+
+            return HttpJsonResponse(
+                content = [["#files", files]],
+                close_overlay = True,
+                message = _(u"File has been saved.")
+            )
+        else:
+            html = render_to_string("lfc/manage/file.html", RequestContext(request, {
+                "form" : form,
+                "file" : file,
+            }))
+
+            return HttpJsonResponse(
+                content = [["#overlay .content", html]],
+                mimetype = "text/plain",
+            )
+    
 
 # Objects ####################################################################
 ##############################################################################
@@ -1757,7 +1838,7 @@ def edit_comment(request, id, template_name="lfc/manage/comment.html"):
             return HttpJsonResponse(
                 content = [["#comments", html]],
                 close_overlay = True,
-                message = _(u"Comment has been modified.")
+                message = _(u"Comment has been saved.")
             )
         else:
             html = render_to_string("lfc/manage/comment.html", RequestContext(request, {
@@ -3529,6 +3610,7 @@ def _update_images(request, obj):
 
         for image in obj.images.all():
             image.title = request.POST.get("title-%s" % image.id)
+            image.caption = request.POST.get("caption-%s" % image.id)
             image.position = request.POST.get("position-%s" % image.id)
             image.save()
 

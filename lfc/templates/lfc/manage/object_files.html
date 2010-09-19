@@ -7,7 +7,7 @@
               action="{% url lfc_update_files obj.id %}"
               method="post">
 
-            <table class="lfs-manage-table full">
+            <table class="lfs-manage-table three-fourths">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
@@ -17,14 +17,14 @@
                     <th>
                         {% trans 'Title' %}
                     </th>
-                    <th class="small right-padding">
+                    <th>
+                        {% trans 'Description' %}
+                    </th>
+                    <th class="tiny right-padding">
                         {% trans 'Position' %}
                     </th>
-                    <th class="middle right-padding">
-                        {% trans 'Creation date' %}
-                    </th>
-                    <th class="small right-padding">
-                        {% trans 'Download' %}
+                    <th class="tiny right-padding">
+                        {% trans 'Manage' %}
                     </th>
                 </tr>
                 {% for file in obj.files.all %}
@@ -37,13 +37,13 @@
                                    style="float:left" />
                         </td>
                         <td>
-                            <input type="text" name="title-{{file.id}}" value="{{file.title}}" />
+                            <input type="text" name="title-{{ file.id }}" value="{{ file.title }}" />
+                        </td>
+                        <td>
+                            {{ file.description|truncatewords_html:5|safe }}
                         </td>
                         <td class="right">
-                            <input class="position" type="text" name="position-{{file.id}}" value="{{file.position}}" />
-                        </td>
-                        <td class="right">
-                            {{ file.creation_date|date:"Y-m-d H:i:s" }}
+                            <input class="position" type="text" name="position-{{ file.id }}" value="{{ file.position }}" />
                         </td>
                         <td class="right">
                             <a href="{{ file.get_absolute_url }}">
@@ -51,7 +51,14 @@
                                        alt='{% trans "Download" %}' 
                                        title='{% trans "Download" %}' />
                             </a>
-                        </td>
+                            <a class="ajax-link"
+                               title='{% trans "Edit" %}'
+                               href="{% url lfc_edit_file file.id %}">
+                                <image src="{{ MEDIA_URL }}lfc/icons/edit.png" 
+                                       alt='{% trans "Edit" %}' 
+                                       title='{% trans "Edit" %}' />                               
+                            </a>
+                        </td>                                           
                     </tr>
                 {% endfor %}
             </table>

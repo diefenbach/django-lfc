@@ -22,11 +22,27 @@ from workflows.models import Transition
 
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
-from lfc.models import Page
 from lfc.models import BaseContent
-from lfc.models import Portal
 from lfc.models import ContentTypeRegistration
+from lfc.models import File
+from lfc.models import Image
+from lfc.models import Page
+from lfc.models import Portal
 from lfc.utils.registration import get_info
+
+class ImageForm(forms.ModelForm):
+    """Form to edit an Image.
+    """
+    class Meta:
+        model = Image
+        exclude = ("image", "content_type", "content_id", "slug", "position")
+
+class FileForm(forms.ModelForm):
+    """Form to edit a File.
+    """
+    class Meta:
+        model = File
+        exclude = ("file", "content_type", "content_id", "slug", "position")
 
 class WorkflowAddForm(forms.ModelForm):
     """Form to add a workflow.
@@ -293,26 +309,26 @@ class MetaDataForm(forms.ModelForm):
         # Position
         if not ctr.display_position:
             del self.fields["position"]
-    
+
     def clean(self):
         """Workaround for AdminSplitDateTime, which displays an required message
         even if the fields are not required by the model.
-        """        
+        """
         if (self.data.get("publication_date_0") == "") and (self.data.get("publication_date_1") == ""):
             del self._errors["publication_date"]
 
         if (self.data.get("start_date_0") == "") and (self.data.get("start_date_1") == ""):
             del self._errors["start_date"]
 
-        if (self.data.get("end_date_0") == "") and (self.data.get("end_date_1") == ""):        
+        if (self.data.get("end_date_0") == "") and (self.data.get("end_date_1") == ""):
             del self._errors["end_date"]
-            
+
         return self.cleaned_data
-        
+
     class Meta:
         model = Page
         fields = ("template", "standard", "language", "canonical",
-            "exclude_from_navigation", "exclude_from_search", "creator", 
+            "exclude_from_navigation", "exclude_from_search", "creator",
             "publication_date", "start_date", "end_date")
 
 class PortalCoreForm(forms.ModelForm):
