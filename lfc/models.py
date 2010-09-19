@@ -453,7 +453,7 @@ class BaseContent(AbstractBaseContent):
     start_date = models.DateTimeField(_(u"Start date"), null=True, blank=True)
     end_date = models.DateTimeField(_(u"End date"), null=True, blank=True)
 
-    meta_title = models.CharField(_(u"Meta title"), max_length=100, default="<title>")
+    meta_title = models.CharField(_(u"Meta title"), max_length=100, default="<portal_title> - <title>")
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
 
