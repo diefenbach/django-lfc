@@ -55,53 +55,55 @@
         </li>
     {% endif %}
     {% if LFC_MULTILANGUAGE %}
-    <li>
-        {% if translations %}
-            <a>{{ obj.get_language_display }}</a>
-            <ul>
-                <li>
-                    <a {% ifequal canonical.language obj.language %}class="selected"{% endifequal %}
-                       href="{% url lfc_manage_object canonical.id %}">
-                        {{ canonical.get_language_display }}
-                    </a>
-                </li>
-                {% for translation in translations %}
+        <li>
+            {% if translations %}
+                <a>{{ obj.get_language_display }}</a>
+                <ul>
                     <li>
-                        <a {% ifequal translation.language obj.language %}class="selected"{% endifequal %}
-                            href="{% url lfc_manage_object translation.id %}">
-                            {{ translation.get_language_display }}
+                        <a {% ifequal canonical.language obj.language %}class="selected"{% endifequal %}
+                           href="{% url lfc_manage_object canonical.id %}">
+                            {{ canonical.get_language_display }}
                         </a>
                     </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </li>
-    {% ifhasperm edit %}
-        <li>
-            {% if obj.is_canonical %}
-                <a>{% trans 'Translate to' %}</a>
-                <ul>
-                    {% for language in languages %}
+                    {% for translation in translations %}
                         <li>
-                            <a href="{% url lfc_translate_object obj.id language.code %}">{{ language.name }}</a>
+                            <a {% ifequal translation.language obj.language %}class="selected"{% endifequal %}
+                                href="{% url lfc_manage_object translation.id %}">
+                                {{ translation.get_language_display }}
+                            </a>
                         </li>
                     {% endfor %}
                 </ul>
-            {% else %}
-                {% if obj.canonical %}
+            {% endif %}
+        </li>
+        {% ifhasperm edit %}
+            <li>
+                {% if obj.is_canonical %}
                     <a>{% trans 'Translate to' %}</a>
                     <ul>
                         {% for language in languages %}
-                        <li>
-                            <a href="{% url lfc_translate_object obj.canonical.id language.code %}">{{ language.name }}</a>
-                        </li>
+                            <li>
+                                <a href="{% url lfc_translate_object obj.id language.code %}">{{ language.name }}</a>
+                            </li>
                         {% endfor %}
                     </ul>
+                {% else %}
+                    {% if obj.canonical %}
+                        <a>{% trans 'Translate to' %}</a>
+                        <ul>
+                            {% for language in languages %}
+                            <li>
+                                <a href="{% url lfc_translate_object obj.canonical.id language.code %}">{{ language.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
-        </li>
-    {% endifhasperm %}
-
+            </li>
+        {% endifhasperm %}
+    {% endif %}
+    {% if LFC_MANAGE_WORKFLOWS %}
+        
     {% endif %}
     {% if state %}
         <li>

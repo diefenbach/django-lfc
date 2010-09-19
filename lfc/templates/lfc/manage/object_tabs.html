@@ -10,8 +10,12 @@
             <li><a href="#images">{% trans 'Images' %}</a></li>
             <li><a href="#files">{% trans 'Files' %}</a></li>
             <li><a href="#portlets">{% trans 'Portlets' %}</a></li>
-            <li><a href="#comments">{% trans 'Comments' %}</a></li>
-            <li><a href="#seo_data">{% trans 'SEO' %}</a></li>
+            {% if LFC_MANAGE_COMMENTS %}
+                <li><a href="#comments">{% trans 'Comments' %}</a></li>
+            {% endif %}                
+            {% if LFC_MANAGE_SEO %}
+                <li><a href="#seo_data">{% trans 'SEO' %}</a></li>
+            {% endif %}
             {% if LFC_MANAGE_PERMISSIONS %}
                 <li class="ui-tabs-nav-item"><a href="{% url lfc_load_update_object_permissions obj.id %}">{% trans 'Permissions' %}</a></li>
             {% endif %}
@@ -23,9 +27,11 @@
         <div id="meta_data">
             {{ meta_data|safe }}
         </div>
-        <div id="seo_data">
-            {{ seo_data|safe }}
-        </div>
+        {% if LFC_MANAGE_SEO %}
+            <div id="seo_data">
+                {{ seo_data|safe }}
+            </div>
+        {% endif %}
         <div id="images">
             {{ images }}
         </div>
@@ -38,9 +44,11 @@
         <div id="children">
             {{ children }}
         </div>
-        <div id="comments">
-            {{ comments }}
-        </div>
+        {% if LFC_MANAGE_COMMENTS %}
+            <div id="comments">
+                {{ comments }}
+            </div>
+        {% endif %}
     {% else %}
         <ul>
             <li class="ui-tabs-nav-item"><a href="#core_data">{% trans content_type_name %}</a></li>
