@@ -857,8 +857,9 @@ class Image(models.Model):
     various sizes.
 
     title
-        The title of the image. Used within the title and alt tag
-        of the image
+        The title of the image. Used within the title and alt tag of the 
+        image.
+
     slug
         The URL of the image
 
@@ -871,12 +872,8 @@ class Image(models.Model):
     caption
         The caption of the image. Can be used within the content (optional)
 
-    short_description
-        A short description of the image. Can be used within the content
-        (optional)
-
     description
-        A long description of the image. Can be used within the content
+        A description of the image. Can be used within the content
         (optional)
 
     image
@@ -912,20 +909,19 @@ class File(models.Model):
     **Attributes:**
 
     title
-        The title of the image. Used within the title and alt tag
-        of the image.
+        The title of the file.
 
     slug
-        The URL of the image.
+        The URL of the file.
 
     content
         The content object the file belongs to (optional).
 
     position
-        The ordinal number within the content object. Used to order the images.
+        The ordinal number within the content object. Used to order the files.
 
     description
-        A long description of the image. Can be used within the content
+        A long description of the file. Can be used within the content
         (optional).
 
     file
