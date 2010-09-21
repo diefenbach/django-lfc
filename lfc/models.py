@@ -327,14 +327,14 @@ class BaseContent(AbstractBaseContent):
         The content type of the specific content object.
 
     title
-        The title of the object. By default this displayed on top of very
-        object within the title tag of the HTML page (together with the portal's
-        title).
+        The title of the object. By default this is displayed on top of every
+        object.
 
     display_title
         Set to false to hide the title within the HTML of the object. This can
         be helpful to provide a custom title within the text field of an
         object.
+
     slug
         The part of URL within the parent object. By default the absolute URL
         of an object is created by all involved content objects.
@@ -396,6 +396,10 @@ class BaseContent(AbstractBaseContent):
         if given the object is only public when the end date is not reached
         yet.
 
+    meta_title
+        The meta title of the page. This is displayed within the title tag of
+        the rendered HTML.
+
     meta_keywords
         The meta keywords of the object. This is displayed within the meta
         keywords tag of the rendered HTML.
@@ -449,6 +453,7 @@ class BaseContent(AbstractBaseContent):
     start_date = models.DateTimeField(_(u"Start date"), null=True, blank=True)
     end_date = models.DateTimeField(_(u"End date"), null=True, blank=True)
 
+    meta_title = models.CharField(_(u"Meta title"), max_length=100, default="<portal_title> - <title>")
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
 
@@ -586,6 +591,13 @@ class BaseContent(AbstractBaseContent):
 
         return result
 
+    def has_children(self, request=None, *args, **kwargs):
+        """Returns True if the object has children. If the request is
+        passed the permissions of the current user is taken into account.
+        Other valid filters can be passed also, e.g. slug = "page-1".
+        """
+        return len(lfc.utils.get_content_objects(request, parent=self, **kwargs)) > 0
+
     def get_children(self, request=None, *args, **kwargs):
         """Returns the children of the content object. If the request is
         passed the permissions of the current user is taken into account.
@@ -602,6 +614,14 @@ class BaseContent(AbstractBaseContent):
             return images[0]
         except IndexError:
             return None
+
+    def get_meta_title(self):
+        """Returns the meta title of the instance. Replaces some placeholders
+        with the according content.
+        """
+        title = self.meta_title.replace("<title>", self.title)
+        title = title.replace("<portal_title>", lfc.utils.get_portal().title)
+        return title
 
     def get_meta_keywords(self):
         """Returns the meta keywords of the instance. Replaces some
@@ -837,8 +857,9 @@ class Image(models.Model):
     various sizes.
 
     title
-        The title of the image. Used within the title and alt tag
-        of the image
+        The title of the image. Used within the title and alt tag of the 
+        image.
+
     slug
         The URL of the image
 
@@ -851,12 +872,8 @@ class Image(models.Model):
     caption
         The caption of the image. Can be used within the content (optional)
 
-    short_description
-        A short description of the image. Can be used within the content
-        (optional)
-
     description
-        A long description of the image. Can be used within the content
+        A description of the image. Can be used within the content
         (optional)
 
     image
@@ -871,7 +888,6 @@ class Image(models.Model):
 
     position = models.SmallIntegerField(default=999)
     caption = models.CharField(blank=True, max_length=100)
-    short_description = models.TextField(blank=True)
     description = models.TextField(blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     image = ImageWithThumbsField(_(u"Image"), upload_to="uploads",
@@ -893,20 +909,19 @@ class File(models.Model):
     **Attributes:**
 
     title
-        The title of the image. Used within the title and alt tag
-        of the image.
+        The title of the file.
 
     slug
-        The URL of the image.
+        The URL of the file.
 
     content
         The content object the file belongs to (optional).
 
     position
-        The ordinal number within the content object. Used to order the images.
+        The ordinal number within the content object. Used to order the files.
 
     description
-        A long description of the image. Can be used within the content
+        A long description of the file. Can be used within the content
         (optional).
 
     file
@@ -920,7 +935,7 @@ class File(models.Model):
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
 
     position = models.SmallIntegerField(default=999)
-    description = models.CharField(blank=True, max_length=100)
+    description = models.TextField(blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     file = models.FileField(upload_to="files")
 

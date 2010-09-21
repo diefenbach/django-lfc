@@ -15,6 +15,12 @@ from lfc.models import Template
 from workflows.models import Workflow
 from workflows.models import WorkflowModelRelation
 
+# Make it available for import from lfc.utils.registration
+from resources.utils import register_resource
+from resources.utils import unregister_resource
+from resources.config import CSS
+from resources.config import JS
+
 def get_info(obj_or_type):
     """Returns the ContentTypeRegistration for the passed object or type.
     Returns None if the content type registry is not found.

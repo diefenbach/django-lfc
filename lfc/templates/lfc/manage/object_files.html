@@ -7,42 +7,43 @@
               action="{% url lfc_update_files obj.id %}"
               method="post">
 
-            <table class="lfs-manage-table full">
+            <table class="lfs-manage-table three-fourths">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
-                               class="select-all-2" />
+                               class="select-all"
+                               value="file" />
                     </th>
                     <th>
                         {% trans 'Title' %}
                     </th>
-                    <th class="small right-padding">
+                    <th>
+                        {% trans 'Description' %}
+                    </th>
+                    <th class="tiny right-padding">
                         {% trans 'Position' %}
                     </th>
-                    <th class="middle right-padding">
-                        {% trans 'Creation date' %}
-                    </th>
-                    <th class="small right-padding">
-                        {% trans 'Download' %}
+                    <th class="tiny right-padding">
+                        {% trans 'Manage' %}
                     </th>
                 </tr>
                 {% for file in obj.files.all %}
                     <tr>
                         <td>
                             <input type="checkbox"
-                                   class="select-2"
+                                   class="select-file"
                                    name="delete-files"
                                    value="{{ file.id }}"
                                    style="float:left" />
                         </td>
                         <td>
-                            <input type="text" name="title-{{file.id}}" value="{{file.title}}" />
+                            <input type="text" name="title-{{ file.id }}" value="{{ file.title }}" />
+                        </td>
+                        <td>
+                            {{ file.description|truncatewords_html:5|safe }}
                         </td>
                         <td class="right">
-                            <input class="position" type="text" name="position-{{file.id}}" value="{{file.position}}" />
-                        </td>
-                        <td class="right">
-                            {{ file.creation_date|date:"Y-m-d H:i:s" }}
+                            <input class="position" type="text" name="position-{{ file.id }}" value="{{ file.position }}" />
                         </td>
                         <td class="right">
                             <a href="{{ file.get_absolute_url }}">
@@ -50,14 +51,21 @@
                                        alt='{% trans "Download" %}' 
                                        title='{% trans "Download" %}' />
                             </a>
-                        </td>
+                            <a class="ajax-link"
+                               title='{% trans "Edit" %}'
+                               href="{% url lfc_edit_file file.id %}">
+                                <image src="{{ MEDIA_URL }}lfc/icons/edit.png" 
+                                       alt='{% trans "Edit" %}' 
+                                       title='{% trans "Edit" %}' />                               
+                            </a>
+                        </td>                                           
                     </tr>
                 {% endfor %}
             </table>
 
-            <input class="object-files-update-button"
+            <input class="ajax-submit"
                    type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="object-files-update-button"
+            <input class="ajax-submit"
                    type="submit" name="delete" value="{% trans 'Delete' %}" />
 
         </form>
@@ -93,7 +101,7 @@
     </form>
     <script>
         var swfu;
-
+    
         var settings = {
             flash_url : "{{ MEDIA_URL }}lfc/swfupload/swfupload.swf",
             upload_url: "{% url lfc_add_files obj.id %}",
@@ -107,7 +115,7 @@
                 cancelButtonId : "btnCancel"
             },
             debug: false,
-
+    
             // Button settings
             button_width: "100",
             button_height: "22",
@@ -116,7 +124,7 @@
             button_text_top_padding: 13,
             button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
             button_cursor : SWFUpload.CURSOR.HAND,
-
+    
             // The event handler functions are defined in handlers.js
             file_queued_handler : fileQueued,
             file_queue_error_handler : fileQueueError,
@@ -128,7 +136,7 @@
             upload_complete_handler : uploadFilesComplete,
             queue_complete_handler : queueComplete  // Queue plugin event
         };
-
+    
         swfu = new SWFUpload(settings);
     </script>
 {% else %}

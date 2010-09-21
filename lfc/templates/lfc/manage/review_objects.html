@@ -1,9 +1,9 @@
 {% extends "lfc/manage/base.html" %}
 {% load i18n %}
-
 {% block left-slot-wrapper %}{% endblock %}
 {% block content %}
-    <div style="margin-top:20px; margin-left: 20px">
+    <div style="margin:20px 0 0 20px">
+        <h1>{% trans "Review Content" %}</h1>
         {% if objs %}
             <table class="lfs-manage-table" style="width:99%;">
                 <tr>
