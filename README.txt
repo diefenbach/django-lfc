@@ -26,6 +26,18 @@ Code
 Changes
 =======
 
+1.0.1 (2010-09-21)
+------------------
+
+Bugfix release
+
+* Fix for issue #34: Make removing of dates (within Metadata tab) possible
+* Fix for issue #35: Don't require "manage_portal"-permission to change
+  languages within management UI
+* Fix for issue #36: Typo in object_permissions.html
+* Fix for issue #37: Password change form: change password of selected user
+  (not current logged-in user)
+
 1.0 (2010-08-24)
 ----------------
 
