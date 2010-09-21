@@ -1471,16 +1471,12 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
 def set_navigation_tree_language(request, language):
     """Sets the language for the navigation tree.
     """
-    get_portal().check_permission(request.user, "manage_portal")
-
     request.session["nav-tree-lang"] = language
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 def set_language(request, language):
     """Sets the language of the portal.
     """
-    get_portal().check_permission(request.user, "manage_portal")
-
     translation.activate(language)
     response = HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
