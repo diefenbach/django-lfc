@@ -2748,6 +2748,7 @@ def user_password(request, id, form=None, template_name="lfc/manage/user_passwor
 
     return render_to_string(template_name, RequestContext(request, {
         "form" : form,
+        "user_id" : user.id,
     }))
 
 def user_navigation(request, id, template_name="lfc/manage/user_navigation.html"):
