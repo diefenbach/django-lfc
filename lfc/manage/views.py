@@ -631,8 +631,14 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
     if request.method == "POST":
         obj.check_permission(request.user, "edit")
         form = MetaDataForm(instance=obj, data=request.POST)
-
         if form.is_valid():
+
+            if request.POST.get("start_date_0", "") == "" and request.POST.get("start_date_1", "") == "":
+                obj.start_date = None
+            if request.POST.get("end_date_0", "") == "" and request.POST.get("end_date_1", "") == "":
+                obj.end_date = None
+            if request.POST.get("publication_date_0", "") == "" and request.POST.get("publication_date_1", "") == "":
+                obj.publication_date = None
             message = _(u"Meta data has been saved.")
             form.save()
             form = MetaDataForm(instance=_update_positions(obj, True))
