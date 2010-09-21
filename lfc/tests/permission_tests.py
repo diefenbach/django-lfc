@@ -285,11 +285,12 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # language
+        # Note: All logged in user are allowed to change the language
         result = self.client.get(reverse("lfc_set_navigation_tree_language", kwargs={"language" : "en"}))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        self.failIf(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_manage_set_language", kwargs={"language" : "en"}))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        self.failIf(result._headers["location"][1].startswith("http://testserver/login"))
 
         # template
         result = self.client.post(reverse("lfc_set_template"), {"obj_id" : self.page.id})

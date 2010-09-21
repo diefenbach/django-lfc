@@ -1468,12 +1468,14 @@ def _navigation_children(request, current_objs, obj, start_level, level=3):
     return result
 
 # actions
+@login_required
 def set_navigation_tree_language(request, language):
     """Sets the language for the navigation tree.
     """
     request.session["nav-tree-lang"] = language
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
+@login_required
 def set_language(request, language):
     """Sets the language of the portal.
     """
