@@ -1,4 +1,5 @@
 # django imports
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
@@ -8,6 +9,7 @@ from django.test.client import Client
 
 # permissions imports
 from permissions.models import Role
+import permissions.utils
 
 # workflows imports
 from workflows.models import Transition
@@ -26,6 +28,145 @@ from lfc.models import Portal
 
 class DummyPortlet(Portlet):
     pass
+
+class InheritancePermissionTestCase(TestCase):
+    """
+    """
+    fixtures = ["superuser.xml"]
+
+class LFCPermissionTestCase2(TestCase):
+    """
+    """
+    fixtures = ["superuser.xml"]
+    def setUp(self):
+        """
+        """
+        Portal.objects.create()
+        self.editor = Role.objects.create(name="editor")
+        self.user = User.objects.create(username="user", is_active=True)
+        self.user.set_password("secret")
+        self.user.save()
+
+        self.group = Group.objects.create(name="group")
+
+        self.page_1 = Page.objects.create(title="Page 1", slug="page-1")
+        self.page_2 = Page.objects.create(title="Page 2", slug="page-2", parent=self.page_1)
+        self.page_3 = Page.objects.create(title="Page 3", slug="page-3", parent=self.page_2)
+
+    def test_local_roles_from_parent_1(self):
+        """
+        """
+        permissions.utils.add_local_role(self.page_1, self.user, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor])
+
+    def test_local_roles_from_parent_2(self):
+        """
+        """
+        permissions.utils.add_local_role(self.page_2, self.user, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor])
+
+    def test_local_roles_from_parent_3(self):
+        """
+        """
+        permissions.utils.add_local_role(self.page_3, self.user, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor])
+
+    def test_local_roles_from_group_1(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 3
+        permissions.utils.add_local_role(self.page_1, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor])
+
+    def test_local_roles_from_group_2(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 2
+        permissions.utils.add_local_role(self.page_2, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor])
+
+    def test_local_roles_from_group_3(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 3
+        permissions.utils.add_local_role(self.page_3, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor])
+
+    def test_local_roles_from_group_4(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 2 and 3
+        permissions.utils.add_local_role(self.page_3, self.group, self.editor)
+        permissions.utils.add_local_role(self.page_2, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(roles, [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(roles, [self.editor])
+        
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(roles, [self.editor, self.editor])
 
 class LFCPermissionTestCase(TestCase):
     """
@@ -121,7 +262,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_save_seo", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        # object images        
+        # object images
         result = self.client.post(reverse("lfc_add_images", kwargs={"id" : self.page.id}), {"sessionid" : self.client.session.session_key })
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
