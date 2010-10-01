@@ -545,18 +545,18 @@ body.filebrowser {
     list-style: square inside;
 }
 
-.field-wrapper {
+.read-only {
     border: 1px solid #aaa;
     padding: 10px 5px;
     width: 600px;
     margin-bottom: 10px;
 }
 
-.description.field-wrapper {
+.description.read-only {
     height: 100px;
 }
 
-.text.field-wrapper {
+.text.read-only {
     height: 400px;
     overflow: auto;
 }
