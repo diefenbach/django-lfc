@@ -59,13 +59,13 @@ class LFCPermissionTestCase2(TestCase):
         permissions.utils.add_local_role(self.page_1, self.user, self.editor)
 
         roles = permissions.utils.get_roles(self.user, self.page_1)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
         roles = permissions.utils.get_roles(self.user, self.page_2)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
     def test_local_roles_from_parent_2(self):
         """
@@ -76,10 +76,10 @@ class LFCPermissionTestCase2(TestCase):
         self.assertEqual(roles, [])
 
         roles = permissions.utils.get_roles(self.user, self.page_2)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
     def test_local_roles_from_parent_3(self):
         """
@@ -93,7 +93,7 @@ class LFCPermissionTestCase2(TestCase):
         self.assertEqual(roles, [])
 
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
     def test_local_roles_from_group_1(self):
         """
@@ -105,13 +105,13 @@ class LFCPermissionTestCase2(TestCase):
         permissions.utils.add_local_role(self.page_1, self.group, self.editor)
 
         roles = permissions.utils.get_roles(self.user, self.page_1)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
         roles = permissions.utils.get_roles(self.user, self.page_2)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
     def test_local_roles_from_group_2(self):
         """
@@ -126,10 +126,10 @@ class LFCPermissionTestCase2(TestCase):
         self.assertEqual(roles, [])
 
         roles = permissions.utils.get_roles(self.user, self.page_2)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
     def test_local_roles_from_group_3(self):
         """
@@ -147,7 +147,7 @@ class LFCPermissionTestCase2(TestCase):
         self.assertEqual(roles, [])
 
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
 
     def test_local_roles_from_group_4(self):
         """
@@ -163,10 +163,10 @@ class LFCPermissionTestCase2(TestCase):
         self.assertEqual(roles, [])
 
         roles = permissions.utils.get_roles(self.user, self.page_2)
-        self.assertEqual(roles, [self.editor])
+        self.assertEqual(roles, [self.editor.id])
         
         roles = permissions.utils.get_roles(self.user, self.page_3)
-        self.assertEqual(roles, [self.editor, self.editor])
+        self.assertEqual(roles, [self.editor.id, self.editor.id])
 
 class LFCPermissionTestCase(TestCase):
     """
