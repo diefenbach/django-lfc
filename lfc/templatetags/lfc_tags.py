@@ -9,6 +9,11 @@ from django.conf import settings
 from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
+from django.forms import ChoiceField
+from django.forms import FileField
+from django.forms import CharField
+from django.forms import Textarea
+from django.forms import BooleanField
 from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import Node, TemplateSyntaxError
@@ -18,7 +23,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
 # contact_form imports
-from contact_form.forms import ContactForm
+from lfc.forms import ContactForm
 
 # tagging imports
 from tagging.managers import ModelTaggedItemManager
@@ -477,8 +482,6 @@ def previous_next_by_position(context, obj):
         "next" : next,
     }
 
-from django.forms import ChoiceField, FileField, CharField, Textarea
-
 @register.filter(name='field_value')
 def field_value(field):
     """ Returns the value for this BoundField, as rendered in widgets.
@@ -503,12 +506,20 @@ def display_value(field):
     """
     value = field_value(field)
     if isinstance(field.field, CharField) and isinstance(field.field.widget, Textarea):
-        value = """<div class="%s field-wrapper">%s</div>""" % (field.name, value)
+        value = "<br>".join(value.split("\n"))
+        value = """<div class="%s">%s</div>""" % (field.name, value)
 
     if isinstance(field.field, ChoiceField):
         for (val, desc) in field.field.choices:
             if val == value:
                 return desc
+
+    if isinstance(field.field, BooleanField):
+        if value == False:
+            value = _(u"No")
+        else:
+            value = _(u"Yes")
+
     return value
 
 class PermissionComparisonNode(template.Node):
