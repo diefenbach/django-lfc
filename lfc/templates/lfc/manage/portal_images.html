@@ -1,39 +1,159 @@
 {% load i18n %}
+{% load lfc_tags %}
 
-{% if obj.images.all %}
-    <form id="object-images-update-form"
-          action="{% url lfc_update_portal_images %}"
-          method="post">
+<h2 class="first-heading">
+    {% trans "Images" %}
+</h2>
+{% ifportalhasperm manage_portal %}
+    {% if obj.images.all %}
+        <form id="object-images-update-form"
+              action="{% url lfc_update_portal_images %}"
+              method="post">
 
-        <table class="lfs-manage-table full">
+            <table class="lfs-manage-table full">
+                <tr>
+                    <th class="tiny">
+                        <input type="checkbox"
+                               class="select-all"´
+                               value="image" />
+                    </th>
+                    <th class="small">
+                        {% trans 'Image' %}
+                    </th>
+                    <th>
+                        {% trans 'Title' %}
+                    </th>
+                    <th class="small right-padding">
+                        {% trans 'Position' %}
+                    </th>
+                    <th class="middle right-padding">
+                        {% trans 'Creation date' %}
+                    </th>
+                </tr>
+                {% for image in obj.images.all %}
+                    <tr>
+                        <td>
+                            <input type="checkbox"
+                                   class="select-image"
+                                   name="delete-images"
+                                   value="{{ image.id }}"
+                                   style="float:left" />
+                        </td>
+                        <td>
+                            <img src="{{ image.image.url_60x60 }}"
+                                 alt="{{ image.title }}"
+                                 title="{{ image_title }}"
+                                 style="float:left"/>
+
+                        </td>
+                        <td>
+                            <input type="text" name="title-{{ image.id }}" value="{{ image.title }}" />
+                        </td>
+                        <td class="right last">
+                            <input class="position" type="text" name="position-{{ image.id }}" value="{{ image.position }}" />
+                        </td>
+                        <td class="right last">
+                            {{ image.creation_date|date:"Y-m-d H:i:s" }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="manage-form-buttons">
+                <input class="ajax-submit"
+                       type="submit" name="update" value="{% trans 'Update' %}" />
+                <input class="ajax-submit"
+                       type="submit" name="delete" value="{% trans 'Delete' %}" />
+            </div>
+        </form>
+    {% else %}
+        <span>{% trans 'There are no images' %}</span>
+    {% endif %}
+
+    <h2 class="middle-heading">{% trans 'Add images' %}</h2>
+
+    <div id="content">
+        <form id="images-form"
+              action="."
+              data="{% url lfc_portal_images %}"
+              method="post"
+              enctype="multipart/form-data">
+
+            {# <span class="legend">{% trans 'Upload Queue' %}</span> #}
+            <div class="fieldset flash" id="fsUploadProgress"></div>
+            <div id="divStatus"></div>
+            <div>
+                <span id="spanButtonPlaceHolder"></span>
+                <input id="btnUpload"
+                       type="button"
+                       value='{% trans "Select Images" %}'
+                       style="width: 100px; height: 22px; font-size: 8pt;" />
+
+                <input id="btnCancel"
+                       type="button"
+                       value="Cancel All Uploads"
+                       onclick="swfu.cancelQueue();"
+                       disabled="disabled"
+                       style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+            </div>
+
+        </form>
+    </div>
+    <script>
+        var swfu;
+
+        var settings = {
+            flash_url : "{{ MEDIA_URL }}lfc/swfupload/swfupload.swf",
+            upload_url: "{% url lfc_add_portal_images %}",
+            file_size_limit : "100 MB",
+            file_types : "*.*",
+            file_types_description : "All Files",
+            file_upload_limit : 100,
+            file_queue_limit : 0,
+            custom_settings : {
+                progressTarget : "fsUploadProgress",
+                cancelButtonId : "btnCancel"
+            },
+            debug: false,
+
+            // Button settings
+            button_width: "100",
+            button_height: "22",
+            button_placeholder_id: "spanButtonPlaceHolder",
+            button_text_left_padding: 0,
+            button_text_top_padding: 13,
+            button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
+            button_cursor : SWFUpload.CURSOR.HAND,
+
+            // The event handler functions are defined in handlers.js
+            file_queued_handler : fileQueued,
+            file_queue_error_handler : fileQueueError,
+            file_dialog_complete_handler : fileDialogComplete,
+            upload_start_handler : uploadStart,
+            upload_progress_handler : uploadProgress,
+            upload_error_handler : uploadError,
+            upload_success_handler : uploadSuccess,
+            upload_complete_handler : uploadComplete,
+            queue_complete_handler : queueComplete  // Queue plugin event
+        };
+
+        swfu = new SWFUpload(settings);
+    </script>
+{% else %}
+    {% if obj.images.all %}
+        <table class="lfs-manage-table half">
             <tr>
                 <th class="tiny">
-                    <input type="checkbox"
-                           class="select-all"´
-                           value="image" />
-                </th>
-                <th class="small">
                     {% trans 'Image' %}
                 </th>
                 <th>
                     {% trans 'Title' %}
                 </th>
-                <th class="small right-padding">
-                    {% trans 'Position' %}
-                </th>
                 <th class="middle right-padding">
                     {% trans 'Creation date' %}
-                </th>
+                </th>                
             </tr>
             {% for image in obj.images.all %}
                 <tr>
-                    <td>
-                        <input type="checkbox"
-                               class="select-image"
-                               name="delete-images"
-                               value="{{ image.id }}"
-                               style="float:left" />
-                    </td>
                     <td>
                         <img src="{{ image.image.url_60x60 }}"
                              alt="{{ image.title }}"
@@ -42,94 +162,15 @@
 
                     </td>
                     <td>
-                        <input type="text" name="title-{{ image.id }}" value="{{ image.title }}" />
+                        {{ image.title }}
                     </td>
-                    <td class="right last">
-                        <input class="position" type="text" name="position-{{ image.id }}" value="{{ image.position }}" />
-                    </td>
-                    <td class="right last">
+                    <td class="right">
                         {{ image.creation_date|date:"Y-m-d H:i:s" }}
-                    </td>
+                    </td>                    
                 </tr>
             {% endfor %}
         </table>
-        <div class="manage-form-buttons">
-            <input class="ajax-submit"
-                   type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="ajax-submit"
-                   type="submit" name="delete" value="{% trans 'Delete' %}" />
-        </div>
-    </form>
-{% else %}
-    <span>{% trans 'There are no images' %}</span>
-{% endif %}
-
-<h2 class="middle-heading">{% trans 'Add images' %}</h2>
-
-<div id="content">
-    <form id="images-form"
-          action="."
-          data="{% url lfc_portal_images %}"
-          method="post"
-          enctype="multipart/form-data">
-
-        {# <span class="legend">{% trans 'Upload Queue' %}</span> #}
-        <div class="fieldset flash" id="fsUploadProgress"></div>
-        <div id="divStatus"></div>
-        <div>
-            <span id="spanButtonPlaceHolder"></span>
-            <input id="btnUpload"
-                   type="button"
-                   value='{% trans "Select Images" %}'
-                   style="width: 100px; height: 22px; font-size: 8pt;" />
-
-            <input id="btnCancel"
-                   type="button"
-                   value="Cancel All Uploads"
-                   onclick="swfu.cancelQueue();"
-                   disabled="disabled"
-                   style="margin-left: 2px; font-size: 8pt; height: 29px;" />
-        </div>
-
-    </form>
-</div>
-<script>
-    var swfu;
-
-    var settings = {
-        flash_url : "{{ MEDIA_URL }}lfc/swfupload/swfupload.swf",
-        upload_url: "{% url lfc_add_portal_images %}",
-        file_size_limit : "100 MB",
-        file_types : "*.*",
-        file_types_description : "All Files",
-        file_upload_limit : 100,
-        file_queue_limit : 0,
-        custom_settings : {
-            progressTarget : "fsUploadProgress",
-            cancelButtonId : "btnCancel"
-        },
-        debug: false,
-
-        // Button settings
-        button_width: "100",
-        button_height: "22",
-        button_placeholder_id: "spanButtonPlaceHolder",
-        button_text_left_padding: 0,
-        button_text_top_padding: 13,
-        button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
-        button_cursor : SWFUpload.CURSOR.HAND,
-
-        // The event handler functions are defined in handlers.js
-        file_queued_handler : fileQueued,
-        file_queue_error_handler : fileQueueError,
-        file_dialog_complete_handler : fileDialogComplete,
-        upload_start_handler : uploadStart,
-        upload_progress_handler : uploadProgress,
-        upload_error_handler : uploadError,
-        upload_success_handler : uploadSuccess,
-        upload_complete_handler : uploadComplete,
-        queue_complete_handler : queueComplete  // Queue plugin event
-    };
-
-    swfu = new SWFUpload(settings);
-</script>
+    {% else %}
+        <span>{% trans 'There are no images' %}</span>
+    {% endif %}        
+{% endifportalhasperm %}

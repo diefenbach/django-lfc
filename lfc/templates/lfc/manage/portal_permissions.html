@@ -1,29 +1,55 @@
 {% load i18n %}
+{% load lfc_tags %}
 
 <h2 class="first-heading">
     {% trans 'Permissions' %}
 </h2>
 
-<form action="{% url lfc_update_portal_permissions %}"
-      method="post">
+{% ifportalhasperm manage_content %}
+    <form action="{% url lfc_update_portal_permissions %}"
+          method="post">
 
+        <table class="lfs-manage-table full">
+            <tr>
+                <th class="middle">{% trans "Permission" %}</th>
+                {% for role in roles %}
+                    <th class="middle">{{ role.name }}</th>
+                {% endfor %}
+            </tr>
+            {% for permission in permissions %}
+                <tr>
+                    <td>{% trans permission.name %}</td>
+                    {% for role in permission.roles %}
+                        <td><input type="checkbox" name="permission" value="{{ role.id }}|{{ permission.codename }}" {% if role.has_permission %}checked="checked"{% endif %}/></td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+
+        <input class="ajax-submit"
+               type="submit" name="paste" value="{% trans 'Save permissions' %}" />
+    </form>
+{% else %}
     <table class="lfs-manage-table full">
         <tr>
             <th class="middle">{% trans "Permission" %}</th>
             {% for role in roles %}
-                <th class="middle">{{ role.name }}</th>
+                <th class="large">{% trans role.name %} </th>
             {% endfor %}
         </tr>
         {% for permission in permissions %}
-            <tr>
-                <td>{% trans permission.name %}</td>
+            <tr {% if permission.is_wf_permission %}class="wf_permission"{% endif %}>
+                <td class="permission emphasized">{% trans permission.name %}</td>
                 {% for role in permission.roles %}
-                    <td><input type="checkbox" name="permission" value="{{ role.id }}|{{ permission.codename }}" {% if role.has_permission %}checked="checked"{% endif %}/></td>
+                    <td>
+                        {% if role.has_permission %}
+                            <img src="{{ MEDIA_URL }}lfc/icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}'/>
+                        {# {% else %} #}
+                        {#     <img src="{{ MEDIA_URL }}lfc/icons/cross.png" alt='{% trans "No" %}'  title='{% trans "No" %}' /> #}
+                        {% endif %}
+                    </td>
                 {% endfor %}
             </tr>
         {% endfor %}
-    </table>
-
-    <input class="ajax-submit"
-           type="submit" name="paste" value="{% trans 'Save permissions' %}" />
-</form>
+    </table>        
+{% endifportalhasperm %}

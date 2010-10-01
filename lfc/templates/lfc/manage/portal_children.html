@@ -1,55 +1,131 @@
 {% load i18n %}
+{% load lfc_tags %}
 
 <h2 class="first-heading">
     {% trans 'Children' %}
 </h2>
 
-<form action="{% url lfc_update_portal_children %}"
-      method="post">
+{% ifportalhasperm manage_portal %}
+    <form action="{% url lfc_update_portal_children %}"
+          method="post">
 
+        {% if children %}
+            <table class="lfs-manage-table" width="100%">
+                <tr>
+                    <th width="1%">
+                        <input type="checkbox"
+                               class="select-all"
+                               value="child" />
+                    </th>
+                    <th width="10%">
+                        {% trans 'Position' %}
+                    </th>
+                    <th width="20%">
+                        {% trans 'Title' %}
+                    </th>
+                    <th width="20%">
+                        {% trans 'State' %}
+                    </th>
+                    <th width="20%">
+                        {% trans 'Type' %}
+                    </th>
+                    <th class="right last small">
+                        {% trans 'Manage' %}
+                    </th>
+                </tr>
+                {% for child in children %}
+                    <tr>
+                        <td>
+                            <input type="hidden"
+                                   name="obj_id-{{ child.id }}" />
+                            <input type="checkbox"
+                                   class="select-child"
+                                   name="delete-{{ child.id }}"
+                                   style="float:left" />
+                        </td>
+                        <td>
+                            <input type="text"
+                                   class="position"
+                                   name="position-{{ child.id }}"
+                                   value="{{ child.position }}" />
+                        </td>
+                        <td>
+                            <a href="{% url lfc_manage_object child.id %}">
+                                {{ child.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {{ child.get_state.name }}
+                        </td>
+                        <td>
+                            {{ child.get_content_type }}
+                        </td>
+                        <td class="right last">
+                            <a href="{% url lfc_manage_object child.id %}">
+                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                     alt="{% trans 'Edit' %}"
+                                     title="{% trans 'Edit object' %}" />
+                            </a>
+                            <a href="{{ child.get_absolute_url }}">
+                                <img src="{{ MEDIA_URL }}lfc/icons/zoom.png"
+                                     alt="{% trans 'View' %}"
+                                     title="{% trans 'View object' %}" />
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="manage-form-buttons">
+                <input class="ajax-submit"
+                       type="submit" name="update" value="{% trans 'Update' %}" />
+                <input class="ajax-submit"
+                       type="submit" name="delete" value="{% trans 'Delete' %}" />
+                <input class="ajax-submit"
+                       type="submit" name="copy" value="{% trans 'Copy' %}" />
+                <input class="ajax-submit"
+                       type="submit" name="cut" value="{% trans 'Cut' %}" />
+
+                {% if display_paste %}
+                    <input class="ajax-submit"
+                           type="submit" name="paste" value="{% trans 'Paste' %}" />
+                {% endif %}
+            </div>
+
+        {% else %}
+            <div>{% trans 'There are no children' %}</div>
+
+            {% if display_paste %}
+                <div class="manage-form-buttons">
+                    <input class="ajax-submit"
+                           type="submit" name="paste" value="{% trans 'Paste' %}" />
+                </div>
+            {% endif %}
+        {% endif %}
+    </form>
+{% else %}
     {% if children %}
-        <table class="lfs-manage-table" width="100%">
+        <table class="lfs-manage-table">
             <tr>
-                <th width="1%">
-                    <input type="checkbox"
-                           class="select-all"
-                           value="child" />
-                </th>
-                <th width="10%">
-                    {% trans 'Position' %}
-                </th>
-                <th width="20%">
+                <th class="middle">
                     {% trans 'Title' %}
                 </th>
-                <th width="20%">
+                <th class="middle">
                     {% trans 'State' %}
                 </th>
-                <th width="20%">
+                <th class="middle">
                     {% trans 'Type' %}
                 </th>
-                <th class="right last small">
+                <th class="small right-padding">
                     {% trans 'Manage' %}
                 </th>
             </tr>
             {% for child in children %}
                 <tr>
                     <td>
-                        <input type="hidden"
-                               name="obj_id-{{ child.id }}" />
-                        <input type="checkbox"
-                               class="select-child"
-                               name="delete-{{ child.id }}"
-                               style="float:left" />
-                    </td>
-                    <td>
-                        <input type="text"
-                               class="position"
-                               name="position-{{ child.id }}"
-                               value="{{ child.position }}" />
-                    </td>
-                    <td>
                         <a href="{% url lfc_manage_object child.id %}">
-                            {{ child.title }}
+                            <a href="{% url lfc_manage_object child.id %}">
+                                {{ child.title }}
+                            </a>
                         </a>
                     </td>
                     <td>
@@ -73,30 +149,7 @@
                 </tr>
             {% endfor %}
         </table>
-        <div class="manage-form-buttons">
-            <input class="ajax-submit"
-                   type="submit" name="update" value="{% trans 'Update' %}" />
-            <input class="ajax-submit"
-                   type="submit" name="delete" value="{% trans 'Delete' %}" />
-            <input class="ajax-submit"
-                   type="submit" name="copy" value="{% trans 'Copy' %}" />
-            <input class="ajax-submit"
-                   type="submit" name="cut" value="{% trans 'Cut' %}" />
-
-            {% if display_paste %}
-                <input class="ajax-submit"
-                       type="submit" name="paste" value="{% trans 'Paste' %}" />
-            {% endif %}
-        </div>
-
     {% else %}
         <div>{% trans 'There are no children' %}</div>
-
-        {% if display_paste %}
-            <div class="manage-form-buttons">
-                <input class="ajax-submit"
-                       type="submit" name="paste" value="{% trans 'Paste' %}" />
-            </div>
-        {% endif %}
-    {% endif %}
-</form>
+    {% endif %}    
+{% endifportalhasperm %}
