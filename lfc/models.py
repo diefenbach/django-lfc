@@ -230,6 +230,10 @@ class Portal(models.Model, PermissionBase):
     def __unicode__(self):
         return self.title
 
+    @property
+    def content_type(self):
+        return u"portal"
+
     def get_absolute_url(self):
         """Returns the absolute url of the portal. It takes the current
         language into account.
@@ -282,14 +286,14 @@ class Portal(models.Model, PermissionBase):
         """
         # Every user is also anonymous user
         try:
-            roles = [Role.objects.get(name="Anonymous")]
+            roles = [Role.objects.get(name="Anonymous").id]
         except Role.DoesNotExist:
             roles = []
 
         # Check whether the current user is the creator of the current object.
         try:
             if user == self.creator:
-                roles.append(Role.objects.get(name="Owner"))
+                roles.append(Role.objects.get(name="Owner").id)
         except (AttributeError, Role.DoesNotExist):
             pass
 
@@ -857,7 +861,7 @@ class Image(models.Model):
     various sizes.
 
     title
-        The title of the image. Used within the title and alt tag of the 
+        The title of the image. Used within the title and alt tag of the
         image.
 
     slug
