@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load lfc_tags %}
 
-{% ifhasperm edit %}
+{% if display_edit %}
     {% if parent_for_portlets %}
         <form class="portlets-form"
               action="{% url lfc_update_portlets object_type_id, obj.id %}"
@@ -151,7 +151,7 @@
         </table>
     {% endif %}
 
-    <h2 class="middle-heading">{% trans 'Slots' %}</h2>
+    <h2 class="first-heading">{% trans 'Slots' %}</h2>
 
     {% for slot in slots.items %}
         <h3 {% if forloop.first %}class="first-heading"{% endif %}>
@@ -184,5 +184,5 @@
             <p class="no-portlets">{% trans 'There are no portlets assigend' %}</p>
         {% endif %}
     {% endfor %}
-{% endifhasperm %}
+{% endif %}
 
