@@ -310,19 +310,6 @@ def update_portal_permissions(request):
 def portal_tabs(request, template_name="lfc/manage/portal_tabs.html"):
     """Displays the tabs of the portal.
     """
-    portal = get_portal()
-    if not portal.has_permission(request.user, "manage_portal"):
-        try:
-            if portal.standard:
-                obj = portal.standard
-            else:
-                obj = BaseContent.objects.filter()[0]
-        except IndexError:
-            return lfc.utils.login_form()
-        else:
-            obj.check_permission(request.user, "edit")
-            return HttpResponseRedirect(reverse("lfc_manage_object", kwargs = {"id" : obj.id }))
-
     if settings.LFC_MANAGE_PERMISSIONS:
         permissions = portal_permissions(request)
     else:
@@ -353,7 +340,7 @@ def portal_core(request, template_name="lfc/manage/portal_core.html"):
     portal = get_portal()
 
     if request.method == "POST":
-        portal.check_permission(request.user, "edit")
+        portal.check_permission(request.user, "manage_portal")
         form = PortalCoreForm(instance=portal, data=request.POST)
         if form.is_valid():
             message = _(u"Portal data has been saved.")
@@ -401,8 +388,6 @@ def portal_images(request, as_string=False, template_name="lfc/manage/portal_ima
     """Displays the images tab of the portal management screen.
     """
     portal = get_portal()
-    portal.check_permission(request.user, "manage_portal")
-
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : portal,
         "images" : portal.images.all(),
@@ -422,8 +407,6 @@ def portal_files(request, as_string=False, template_name="lfc/manage/portal_file
     """Displays the files tab of the portal management screen.
     """
     portal = lfc.utils.get_portal()
-    portal.check_permission(request.user, "manage_portal")
-
     result = render_to_string(template_name, RequestContext(request, {
         "obj" : portal,
     }))
@@ -533,7 +516,7 @@ def edit_image(request, id):
                 content = [["#overlay .content", html]],
                 mimetype = "text/plain",
             )
-    
+
 def add_portal_files(request):
     """Addes files to the portal.
     """
@@ -606,7 +589,7 @@ def edit_file(request, id):
                 content = [["#overlay .content", html]],
                 mimetype = "text/plain",
             )
-    
+
 
 # Objects ####################################################################
 ##############################################################################
@@ -1374,6 +1357,11 @@ def portlets_inline(request, obj, template_name="lfc/manage/portlets_inline.html
     else:
         parent_slots = None
 
+    if obj.content_type == "portal":
+        display_edit = obj.has_permission(request.user, "manage_portlet")
+    else:
+        display_edit = obj.has_permission(request.user, "edit")
+
     return render_to_string(template_name, RequestContext(request, {
         "slots" : get_slots(obj),
         "parent_slots" : parent_slots,
@@ -1381,6 +1369,7 @@ def portlets_inline(request, obj, template_name="lfc/manage/portlets_inline.html
         "portlet_types" : PortletRegistration.objects.all(),
         "obj" : obj,
         "object_type_id" : ct.id,
+        "display_edit" : display_edit,
     }))
 
 def update_portlets(request, object_type_id, object_id):
