@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+<h2 class="first-heading">
+    {% trans "SEO" %}
+</h2>
+
 {% ifhasperm edit %}
     <form action="{% url lfc_save_seo obj.id %}"
           method="POST">
@@ -15,7 +19,16 @@
         <div class="label">
             <label>{% trans "Meta Keywords" %}:</label>
         </div>
-        <div class="field-wrapper">
+        <div class="read-only">
+            {{ obj.meta_title }}
+        </div>
+    </div>    
+
+    <div class="field">
+        <div class="label">
+            <label>{% trans "Meta Keywords" %}:</label>
+        </div>
+        <div class="read-only">
             {{ obj.meta_keywords }}
         </div>
     </div>    
@@ -24,7 +37,7 @@
         <div class="label">
             <label>{% trans "Meta description" %}:</label>
         </div>
-        <div class="field-wrapper">
+        <div class="read-only">
             {{ obj.meta_description }}
         </div>
     </div>    

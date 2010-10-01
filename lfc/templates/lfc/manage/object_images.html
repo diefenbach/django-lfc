@@ -1,6 +1,9 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+<h2 class="first-heading">
+    {% trans "Images" %}
+</h2>
 {% ifhasperm edit %}
     {% if obj.images.all %}
         <form id="object-images-update-form"

@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+<h2 class="first-heading">
+    {% trans "Data" %}
+</h2>
+
 {% ifhasperm edit %}
     <form action="{% url lfc_save_object_core_data obj.id %}"
           method="POST">
@@ -9,13 +13,12 @@
 
         <input class="ajax-submit"
                type="submit"
-               value="{% trans 'Save core data' %}" />        
+               value="{% trans 'Save core data' %}" />
     </form>
-    
+
     <div style="padding-top:20px" id="core-data-extra">
         {{ extra }}
     </div>
-    
 {% else %}
     {% include "lfc/manage/lfc_form_view.html" %}
 {% endifhasperm %}
@@ -23,5 +26,5 @@
 <script>
     $(function() {
         $("#id_text").cleditor();
-    })    
+    })
 </script>

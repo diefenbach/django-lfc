@@ -1,6 +1,9 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+<h2 class="first-heading">
+    {% trans "Files" %}
+</h2>
 {% ifhasperm edit %}
     {% if obj.files.all %}
         <form id="object-files-update-form"

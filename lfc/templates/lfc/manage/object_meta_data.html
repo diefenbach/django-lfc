@@ -1,6 +1,10 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+<h2 class="first-heading">
+    {% trans "Metadata" %}
+</h2>
+
 {% ifhasperm edit %}
     <form action="{% url lfc_save_meta_data obj.id %}"
           method="POST">
