@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load lfc_tags %}
 <ul class="sf-menu">
-    {% ifportalhasperm add_content  %}
+    {% ifportalhasperm add %}
         <li>
             {% if display_content_menu %}
                 <a>{% trans "Add" %}</a>
