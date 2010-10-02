@@ -506,7 +506,6 @@ def display_value(field):
     """
     value = field_value(field)
     if isinstance(field.field, CharField) and isinstance(field.field.widget, Textarea):
-        value = "<br>".join(value.split("\n"))
         value = """<div class="%s">%s</div>""" % (field.name, value)
 
     if isinstance(field.field, ChoiceField):
