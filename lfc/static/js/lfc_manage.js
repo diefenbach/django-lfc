@@ -106,7 +106,7 @@ $(function() {
 
         var action = $(this).attr("name");
         var obj_id = $("#obj-id").attr("data");
-        
+
         $(this).parents("form:first").ajaxSubmit({
             data : {"action" : action, "obj-id" : obj_id  },
             dataType: "json",
@@ -172,6 +172,9 @@ $(function() {
 
             if (data["close_overlay"])
                 overlay.close()
+
+            if (data["tabs"])
+                create_tabs()
 
             if (data["id"]) {
                 $.bbq.pushState({ "type" : "object", "id" : data["id"] });
