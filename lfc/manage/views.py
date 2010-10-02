@@ -330,8 +330,8 @@ def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
     content_types = get_allowed_subtypes()
     return render_to_string(template_name, RequestContext(request, {
         "display_paste" : _display_paste(request),
-        "display_content_menu" : len(get_allowed_subtypes()) > 1,
-        "content_types" : get_allowed_subtypes(),
+        "display_content_menu" : len(content_types) > 1,
+        "content_types" : content_types,
     }))
 
 def portal_core(request, template_name="lfc/manage/portal_core.html"):
@@ -2163,10 +2163,12 @@ def do_transition(request, id):
     html = (
         ("#menu", object_menu(request, obj)),
         ("#permissions", permissions),
+        ("#tabs-inline", object_tabs(request, id)),        
     )
 
     result = simplejson.dumps({
         "html" : html,
+        "tabs" : True,
         "message" : _(u"The state has been changed."),
     }, cls = LazyEncoder)
 
