@@ -16,6 +16,10 @@ table.lfc-compositor-default td.last {
     display: none;
 }
 
+#manage-tabs.alone {
+    margin-top: 20px;
+}
+
 #manage-tabs {
     clear: both;
 }
