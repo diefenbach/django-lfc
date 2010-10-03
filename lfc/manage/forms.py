@@ -159,8 +159,7 @@ class UserForm(forms.ModelForm):
     def save(self, commit=True):
         """
         """
-        role_ids = self.data.get("roles", [])
-
+        role_ids = self.data.getlist("roles")
         for role in Role.objects.all():
 
             if str(role.id) in role_ids:
