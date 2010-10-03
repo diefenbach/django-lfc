@@ -199,14 +199,14 @@ def live_search_results(request, language=None, template_name="lfc/live_search_r
         obj = None
 
     results = lfc.utils.get_content_objects(request, f)
-
     quantity = len(results)
+    
     return render_to_response(template_name, RequestContext(request, {
         "lfc_context" : obj,
         "query" : query,
-        "results" : results,
+        "results" : results[:20],
         "quantity" : quantity,
-        "see_all" : quantity > 10,
+        "see_all" : quantity > 20,
     }))
 
 def search_results(request, language=None, template_name="lfc/search_results.html"):
