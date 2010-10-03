@@ -242,6 +242,7 @@ def load_portal(request, message=""):
 
     return return_as_json(html, message)
 
+@login_required
 def portal(request, template_name="lfc/manage/portal.html"):
     """Displays the main management screen of the portal with all tabs.
     """
@@ -1043,8 +1044,7 @@ def local_roles_add_form(request, id, template_name="lfc/manage/local_roles_add.
     """Displays a form to add local roles to object with passed id.
     """
     obj = lfc.utils.get_content_object(pk=id)
-    obj.check_permission(request.user, "manage_portal")
-
+    obj.check_permission(request.user, "manage_local_roles")
 
     form = render_to_string(template_name, RequestContext(request, {
         "obj_id" : id,
@@ -1358,7 +1358,7 @@ def portlets_inline(request, obj, template_name="lfc/manage/portlets_inline.html
         parent_slots = None
 
     if obj.content_type == "portal":
-        display_edit = obj.has_permission(request.user, "manage_portlet")
+        display_edit = obj.has_permission(request.user, "manage_portal")
     else:
         display_edit = obj.has_permission(request.user, "edit")
 
@@ -2163,7 +2163,7 @@ def do_transition(request, id):
     html = (
         ("#menu", object_menu(request, obj)),
         ("#permissions", permissions),
-        ("#tabs-inline", object_tabs(request, id)),        
+        ("#tabs-inline", object_tabs(request, id)),
     )
 
     result = simplejson.dumps({
