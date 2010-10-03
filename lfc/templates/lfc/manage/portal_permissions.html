@@ -5,7 +5,7 @@
     {% trans 'Permissions' %}
 </h2>
 
-{% ifportalhasperm manage_content %}
+{% ifportalhasperm manage_portal %}
     <form action="{% url lfc_update_portal_permissions %}"
           method="post">
 
