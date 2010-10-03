@@ -2,7 +2,7 @@
 {% load lfc_tags %}
 
 <div id="permissions">
-    {% ifhasperm manage_content %}
+    {% ifhasperm manage_permissions %}
         <h2 class="first-heading">
         {% trans 'Workflow' %}
         </h2>
@@ -82,9 +82,7 @@
         </table>
     {% endifhasperm %}
 
-    {% ifhasperm manage_content %}
-        <div id="local-roles">
-            {{ local_roles|safe }}
-        </div>
-    {% endifhasperm %}
+    <div id="local-roles">
+        {{ local_roles|safe }}
+    </div>
 </div>

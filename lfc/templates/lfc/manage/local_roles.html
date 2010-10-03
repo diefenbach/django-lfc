@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load lfc_tags %}
 
-{% ifhasperm edit %}
+{% ifhasperm manage_local_roles %}
     <h2 class="middle-heading">
         {% trans 'Local roles' %}
         <a class="ajax-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
@@ -91,9 +91,6 @@
 {% else %}
     <h2 class="middle-heading">
         {% trans 'Local roles' %}
-        <a class="ajax-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
-            <img style="position:relative; top:2px" src="{{ MEDIA_URL }}lfc/icons/add.png" />
-        </a>
     </h2>
 
     {% if users or groups %}
