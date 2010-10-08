@@ -2216,10 +2216,12 @@ def delete_workflow_transition(request, id):
 # Cut/Copy and paste #########################################################
 ##############################################################################
 
-@login_required
 def lfc_copy(request, id):
     """Puts the object with passed id into the clipboard.
     """
+    obj = lfc.utils.get_content_object(pk=id)
+    obj.check_permission(request.user, "add")
+
     request.session["clipboard"] = [id]
     request.session["clipboard_action"] = COPY
 
@@ -2228,11 +2230,13 @@ def lfc_copy(request, id):
 
     return MessageHttpResponseRedirect(url, msg)
 
-@login_required
 def cut(request, id):
     """Puts the object within passed id into the clipboard and marks action
     as cut.
     """
+    obj = lfc.utils.get_content_object(pk=id)
+    obj.check_permission(request.user, "delete")
+
     request.session["clipboard"] = [id]
     request.session["clipboard_action"] = CUT
 
