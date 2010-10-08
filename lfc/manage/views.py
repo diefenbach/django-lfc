@@ -630,7 +630,7 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
 
     if request.method == "POST":
         obj.check_permission(request.user, "edit")
-        form = MetaDataForm(instance=obj, data=request.POST)
+        form = MetaDataForm(request=request, instance=obj, data=request.POST)
         if form.is_valid():
 
             if request.POST.get("start_date_0", "") == "" and request.POST.get("start_date_1", "") == "":
@@ -641,7 +641,7 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
                 obj.publication_date = None
             message = _(u"Meta data has been saved.")
             form.save()
-            form = MetaDataForm(instance=_update_positions(obj, True))
+            form = MetaDataForm(request=request, instance=_update_positions(obj, True))
         else:
             message = _(u"An error has been occured.")
 
@@ -664,7 +664,7 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
 
     else:
         obj.check_permission(request.user, "view")
-        form = MetaDataForm(instance=obj)
+        form = MetaDataForm(request=request, instance=obj)
 
         result = render_to_string(template_name, RequestContext(request, {
             "form" : form,

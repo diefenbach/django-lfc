@@ -21,6 +21,7 @@ from workflows.models import Transition
 
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
+from lfc.fields.readonly import ReadOnlyInput
 from lfc.models import Page
 from lfc.models import BaseContent
 from lfc.models import Portal
@@ -232,9 +233,9 @@ class SEOForm(forms.ModelForm):
         fields = ( "meta_keywords", "meta_description")
 
 class MetaDataForm(forms.ModelForm):
+    """Form to display object metadata form.
     """
-    """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(MetaDataForm, self).__init__(*args, **kwargs)
 
         self.fields["publication_date"].widget = widgets.AdminSplitDateTime()
@@ -242,6 +243,10 @@ class MetaDataForm(forms.ModelForm):
         self.fields["end_date"].widget = widgets.AdminSplitDateTime(attrs={"required" : False})
 
         instance = kwargs.get("instance").get_content_object()
+
+        if not instance.has_permission(request.user, "manage_content"):
+            self.fields["creator"].widget = ReadOnlyInput()
+
         language = instance.language
         ctr = get_info(instance)
 
@@ -285,26 +290,26 @@ class MetaDataForm(forms.ModelForm):
         # Position
         if not ctr.display_position:
             del self.fields["position"]
-    
+
     def clean(self):
         """Workaround for AdminSplitDateTime, which displays an required message
         even if the fields are not required by the model.
-        """        
+        """
         if (self.data.get("publication_date_0") == "") and (self.data.get("publication_date_1") == ""):
             del self._errors["publication_date"]
 
         if (self.data.get("start_date_0") == "") and (self.data.get("start_date_1") == ""):
             del self._errors["start_date"]
 
-        if (self.data.get("end_date_0") == "") and (self.data.get("end_date_1") == ""):        
+        if (self.data.get("end_date_0") == "") and (self.data.get("end_date_1") == ""):
             del self._errors["end_date"]
-            
+
         return self.cleaned_data
-        
+
     class Meta:
         model = Page
         fields = ("template", "standard", "language", "canonical",
-            "exclude_from_navigation", "exclude_from_search", "creator", 
+            "exclude_from_navigation", "exclude_from_search", "creator",
             "publication_date", "start_date", "end_date")
 
 class PortalCoreForm(forms.ModelForm):
