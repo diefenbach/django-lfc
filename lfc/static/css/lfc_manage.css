@@ -551,9 +551,28 @@ body.filebrowser {
 
 .read-only {
     border: 1px solid #aaa;
-    padding: 10px 5px;
+    background-color: #eee;
+    padding: 10px 10px;
     width: 600px;
-    margin-bottom: 10px;
+    margin-bottom: 10px;    
+    min-height: 12px;
+}
+
+.read-only h1,
+.read-only h2 {
+    border: none;
+}
+
+.read-only h1.middle-heading,
+.read-only h2.middle-heading {
+    margin-top: 10px;
+}
+
+.read-only ul {
+    line-height: 1.5em;
+}
+.read-only li {
+    list-style: square inside;
 }
 
 .description.read-only {
