@@ -2248,7 +2248,7 @@ def paste(request, id=None):
     if id:
         url = reverse("lfc_manage_object", kwargs = { "id" : id })
         obj = lfc.utils.get_content_object(pk=id)
-        obj.check_permission(request.user, "delete")
+        obj.check_permission(request.user, "add")
 
     else:
         url = reverse("lfc_manage_portal")
@@ -3180,7 +3180,7 @@ def _update_children(request, obj):
             if key.startswith("delete-"):
                 id = key.split("-")[1]
                 child = lfc.utils.get_content_object(pk=id)
-                if not child.has_permission(request.user, "paste"):
+                if not child.has_permission(request.user, "add"):
                     not_copied_objs = True
                 else:
                     ids.append(id)
