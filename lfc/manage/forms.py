@@ -22,6 +22,7 @@ from workflows.models import Transition
 
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
+from lfc.fields.readonly import ReadOnlyInput
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import File
@@ -255,9 +256,9 @@ class SEOForm(forms.ModelForm):
         fields = ("meta_title", "meta_keywords", "meta_description")
 
 class MetaDataForm(forms.ModelForm):
+    """Form to display object metadata form.
     """
-    """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, request, *args, **kwargs):
         super(MetaDataForm, self).__init__(*args, **kwargs)
 
         self.fields["publication_date"].widget = widgets.AdminSplitDateTime()
@@ -265,6 +266,10 @@ class MetaDataForm(forms.ModelForm):
         self.fields["end_date"].widget = widgets.AdminSplitDateTime(attrs={"required" : False})
 
         instance = kwargs.get("instance").get_content_object()
+
+        if not instance.has_permission(request.user, "manage_content"):
+            self.fields["creator"].widget = ReadOnlyInput()
+
         language = instance.language
         ctr = get_info(instance)
 

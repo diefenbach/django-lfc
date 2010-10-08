@@ -330,7 +330,7 @@ def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
     """
     content_types = get_allowed_subtypes()
     return render_to_string(template_name, RequestContext(request, {
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, get_portal()),
         "display_content_menu" : len(content_types) > 1,
         "content_types" : content_types,
     }))
@@ -382,7 +382,7 @@ def portal_children(request, template_name="lfc/manage/portal_children.html"):
     children = lfc.utils.get_content_objects(parent = None, language__in=("0", language))
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, get_portal()),
     }))
 
 def portal_images(request, as_string=False, template_name="lfc/manage/portal_images.html"):
@@ -702,7 +702,7 @@ def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
         "languages" : languages,
         "canonical" : canonical,
         "obj" : obj,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, obj),
         "transitions" : transitions,
         "state" : state,
     }))
@@ -799,7 +799,7 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
 
     if request.method == "POST":
         obj.check_permission(request.user, "edit")
-        form = MetaDataForm(instance=obj, data=request.POST)
+        form = MetaDataForm(request=request, instance=obj, data=request.POST)
         if form.is_valid():
 
             if request.POST.get("start_date_0", "") == "" and request.POST.get("start_date_1", "") == "":
@@ -810,7 +810,7 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
                 obj.publication_date = None
             message = _(u"Meta data has been saved.")
             form.save()
-            form = MetaDataForm(instance=_update_positions(obj, True))
+            form = MetaDataForm(request=request, instance=_update_positions(obj, True))
         else:
             message = _(u"An error has been occured.")
 
@@ -833,7 +833,7 @@ def object_meta_data(request, id, template_name="lfc/manage/object_meta_data.htm
 
     else:
         obj.check_permission(request.user, "view")
-        form = MetaDataForm(instance=obj)
+        form = MetaDataForm(request=request, instance=obj)
 
         result = render_to_string(template_name, RequestContext(request, {
             "form" : form,
@@ -848,7 +848,7 @@ def object_children(request, obj, template_name="lfc/manage/object_children.html
     return render_to_string(template_name, RequestContext(request, {
         "children" : obj.get_children(request),
         "obj" : obj,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, obj),
     }))
 
 def object_images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
@@ -2575,10 +2575,12 @@ def delete_workflow_transition(request, id):
 # Cut/Copy and paste #########################################################
 ##############################################################################
 
-@login_required
 def lfc_copy(request, id):
     """Puts the object with passed id into the clipboard.
     """
+    obj = lfc.utils.get_content_object(pk=id)
+    obj.check_permission(request.user, "add")
+
     request.session["clipboard"] = [id]
     request.session["clipboard_action"] = COPY
 
@@ -2590,11 +2592,13 @@ def lfc_copy(request, id):
 
     return return_as_json(html, _(u"The object has been put to the clipboard."))
 
-@login_required
 def cut(request, id):
     """Puts the object within passed id into the clipboard and marks action
     as cut.
     """
+    obj = lfc.utils.get_content_object(pk=id)
+    obj.check_permission(request.user, "delete")
+
     request.session["clipboard"] = [id]
     request.session["clipboard_action"] = CUT
 
@@ -2612,7 +2616,7 @@ def paste(request, id=None):
     """
     if id:
         obj = lfc.utils.get_content_object(pk=id)
-        obj.check_permission(request.user, "delete")
+        obj.check_permission(request.user, "add")
         menu = object_menu(request, obj)
     else:
         obj = None
@@ -2660,7 +2664,8 @@ def _paste(request, obj):
         except BaseContent.DoesNotExist:
             error_msg = _(u"Some cut/copied objects has been deleted in the meanwhile.")
             continue
-
+        
+            
         # Copy only allowed sub types to target
         allowed_subtypes = get_allowed_subtypes(target)
         ctr_source = get_info(source_obj)
@@ -3510,58 +3515,86 @@ def _update_children(request, obj):
     """
     action = request.POST.get("action")
     if action == "delete":
-        message = _(u"Objects has been deleted.")
+        not_deleted_objs = False
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 try:
                     id = key.split("-")[1]
                     child = lfc.utils.get_content_object(pk=id)
-                    ctype = ContentType.objects.get_for_model(child)
-                    _remove_fks(child)
+                    if not child.has_permission(request.user, "delete"):
+                        not_deleted_objs = True
+                    else:
+                        ctype = ContentType.objects.get_for_model(child)
+                        _remove_fks(child)
 
-                    # Deletes files on file system
-                    child.images.all().delete()
-                    child.files.all().delete()
+                        # Deletes files on file system
+                        child.images.all().delete()
+                        child.files.all().delete()
 
-                    # Delete workflows stuff
-                    StateObjectRelation.objects.filter(
-                        content_id=child.id, content_type=ctype).delete()
+                        # Delete workflows stuff
+                        StateObjectRelation.objects.filter(
+                            content_id=child.id, content_type=ctype).delete()
 
-                    # Delete permissions stuff
-                    ObjectPermission.objects.filter(
-                        content_id=child.id, content_type=ctype).delete()
-                    ObjectPermissionInheritanceBlock.objects.filter(
-                        content_id=child.id, content_type=ctype).delete()
+                        # Delete permissions stuff
+                        ObjectPermission.objects.filter(
+                            content_id=child.id, content_type=ctype).delete()
+                        ObjectPermissionInheritanceBlock.objects.filter(
+                            content_id=child.id, content_type=ctype).delete()
 
-                    child.delete()
+                        child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
 
+        if not_deleted_objs:
+            message = _(u"Objects have been deleted. (Note: Some objects are not deleted because you haven't the permission to do that).")
+        else:
+            message = _(u"Objects have been deleted.")
         if isinstance(obj, Portal):
             _update_positions(None)
         else:
             _update_positions(obj)
 
     elif action == "copy":
-        message = _(u"Objects have been put to the clipboard.")
+        not_copied_objs = False
         ids = []
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 id = key.split("-")[1]
-                ids.append(id)
+                child = lfc.utils.get_content_object(pk=id)
+                if not child.has_permission(request.user, "add"):
+                    not_copied_objs = True
+                else:
+                    ids.append(id)
             request.session["clipboard"] = ids
             request.session["clipboard_action"] = COPY
+        if not_copied_objs:
+            message = _(u"Objects have been put to the clipboard. (Note: Some objects are not put into clipboard because you haven't the permission to do that).")
+        else:
+            message = _(u"Objects have been put to the clipboard.")
+
     elif action == "cut":
-        message = _(u"Objects have been put to the clipboard.")
+        not_cutted_objs = False
         ids = []
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 id = key.split("-")[1]
-                ids.append(id)
+                child = lfc.utils.get_content_object(pk=id)
+                if not child.has_permission(request.user, "delete"):
+                    not_cutted_objs = True
+                else:
+                    ids.append(id)
             request.session["clipboard"] = ids
             request.session["clipboard_action"] = CUT
+        if not_cutted_objs:
+            message = _(u"Objects have been put to the clipboard. (Note: Some objects are not put into clipboard because you haven't the permission to do that).")
+        else:
+            message = _(u"Objects have been put to the clipboard.")
+
     elif action == "paste":
-        message = _paste(request, obj)
+        if not obj.has_permission(request.user, "add"):
+            message = _("You are not allowed to paste to this object.")
+        else:
+            message = _paste(request, obj)
     else:
         message = _(u"Objects has been updated.")
         for key in request.POST.keys():
@@ -3642,10 +3675,11 @@ def _update_files(request, obj):
 
     return message
 
-def _display_paste(request):
+def _display_paste(request, obj):
     """Returns true if the paste button should be displayed.
     """
-    return request.session.has_key("clipboard")
+    return obj.has_permission(request.user, "add") and \
+        request.session.has_key("clipboard")
 
 def _display_action_menu(request, obj):
     """Returns true if the action menu should be displayed.
