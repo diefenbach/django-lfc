@@ -3134,56 +3134,81 @@ def _update_children(request, obj):
     """
     action = request.POST.get("action")
     if action == "delete":
-        message = _(u"Objects has been deleted.")
+        not_deleted_objs = False
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 try:
                     id = key.split("-")[1]
                     child = lfc.utils.get_content_object(pk=id)
-                    ctype = ContentType.objects.get_for_model(child)
-                    _remove_fks(child)
+                    if not child.has_permission(request.user, "delete"):
+                        not_deleted_objs = True
+                    else:
+                        ctype = ContentType.objects.get_for_model(child)
+                        _remove_fks(child)
 
-                    # Deletes files on file system
-                    child.images.all().delete()
-                    child.files.all().delete()
+                        # Deletes files on file system
+                        child.images.all().delete()
+                        child.files.all().delete()
 
-                    # Delete workflows stuff
-                    StateObjectRelation.objects.filter(
-                        content_id=child.id, content_type=ctype).delete()
+                        # Delete workflows stuff
+                        StateObjectRelation.objects.filter(
+                            content_id=child.id, content_type=ctype).delete()
 
-                    # Delete permissions stuff
-                    ObjectPermission.objects.filter(
-                        content_id=child.id, content_type=ctype).delete()
-                    ObjectPermissionInheritanceBlock.objects.filter(
-                        content_id=child.id, content_type=ctype).delete()
+                        # Delete permissions stuff
+                        ObjectPermission.objects.filter(
+                            content_id=child.id, content_type=ctype).delete()
+                        ObjectPermissionInheritanceBlock.objects.filter(
+                            content_id=child.id, content_type=ctype).delete()
 
-                    child.delete()
+                        child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
 
+        if not_deleted_objs:
+            message = _(u"Objects have been deleted. (Note: Some objects are not deleted because you haven't the permission to do that).")
+        else:
+            message = _(u"Objects have been deleted.")
         if isinstance(obj, Portal):
             _update_positions(None)
         else:
             _update_positions(obj)
 
     elif action == "copy":
-        message = _(u"Objects have been put to the clipboard.")
+        not_copied_objs = False
         ids = []
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 id = key.split("-")[1]
-                ids.append(id)
+                child = lfc.utils.get_content_object(pk=id)
+                if not child.has_permission(request.user, "paste"):
+                    not_copied_objs = True
+                else:
+                    ids.append(id)
             request.session["clipboard"] = ids
             request.session["clipboard_action"] = COPY
+        if not_copied_objs:
+            message = _(u"Objects have been put to the clipboard. (Note: Some objects are not put into clipboard because you haven't the permission to do that).")
+        else:
+            message = _(u"Objects have been put to the clipboard.")
+
     elif action == "cut":
-        message = _(u"Objects have been put to the clipboard.")
+        not_cutted_objs = False
         ids = []
         for key in request.POST.keys():
             if key.startswith("delete-"):
                 id = key.split("-")[1]
-                ids.append(id)
+                child = lfc.utils.get_content_object(pk=id)
+                if not child.has_permission(request.user, "delete"):
+                    not_cutted_objs = True
+                else:
+                    ids.append(id)
             request.session["clipboard"] = ids
             request.session["clipboard_action"] = CUT
+        if not_cutted_objs:
+            message = _(u"Objects have been put to the clipboard. (Note: Some objects are not put into clipboard because you haven't the permission to do that).")
+        else:
+            message = _(u"Objects have been put to the clipboard.")
+
     elif action == "paste":
         message = _paste(request, obj)
     else:
