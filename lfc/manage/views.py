@@ -234,7 +234,7 @@ def portal(request, template_name="lfc/manage/portal.html"):
 
     return render_to_response(template_name, RequestContext(request, {
         "menu" : portal_menu(request),
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, portal),
         "core_data" : portal_core(request),
         "children" : portal_children(request),
         "portlets" : portlets_inline(request, get_portal()),
@@ -305,7 +305,7 @@ def portal_menu(request, template_name="lfc/manage/portal_menu.html"):
     """
     content_types = get_allowed_subtypes()
     return render_to_string(template_name, RequestContext(request, {
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, get_portal()),
         "display_content_menu" : len(get_allowed_subtypes()) > 1,
         "content_types" : get_allowed_subtypes(),
     }))
@@ -357,7 +357,7 @@ def portal_children(request, template_name="lfc/manage/portal_children.html"):
     children = lfc.utils.get_content_objects(parent = None, language__in=("0", language))
     return render_to_string(template_name, RequestContext(request, {
         "children" : children,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, get_portal()),
     }))
 
 def portal_images(request, as_string=False, template_name="lfc/manage/portal_images.html"):
@@ -529,7 +529,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         "children" : object_children(request, obj),
         "permissions" : permissions,
         "content_type_name" : get_info(obj).name,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, obj),
         "obj" : obj,
     }))
 
@@ -568,7 +568,7 @@ def object_menu(request, obj, template_name="lfc/manage/object_menu.html"):
         "languages" : languages,
         "canonical" : canonical,
         "obj" : obj,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, obj),
         "transitions" : transitions,
         "state" : state,
     }))
@@ -679,7 +679,7 @@ def object_children(request, obj, template_name="lfc/manage/object_children.html
     return render_to_string(template_name, RequestContext(request, {
         "children" : obj.get_children(request),
         "obj" : obj,
-        "display_paste" : _display_paste(request),
+        "display_paste" : _display_paste(request, obj),
     }))
 
 def object_images(request, id, as_string=False, template_name="lfc/manage/object_images.html"):
@@ -2288,7 +2288,8 @@ def _paste(request, obj):
         except BaseContent.DoesNotExist:
             error_msg = _(u"Some cut/copied objects has been deleted in the meanwhile.")
             continue
-
+        
+            
         # Copy only allowed sub types to target
         allowed_subtypes = get_allowed_subtypes(target)
         ctr_source = get_info(source_obj)
@@ -3214,7 +3215,10 @@ def _update_children(request, obj):
             message = _(u"Objects have been put to the clipboard.")
 
     elif action == "paste":
-        message = _paste(request, obj)
+        if not obj.has_permission(request.user, "add"):
+            message = _("You are not allowed to paste to this object.")
+        else:
+            message = _paste(request, obj)
     else:
         message = _(u"Objects has been updated.")
         for key in request.POST.keys():
@@ -3294,10 +3298,11 @@ def _update_files(request, obj):
 
     return message
 
-def _display_paste(request):
+def _display_paste(request, obj):
     """Returns true if the paste button should be displayed.
     """
-    return request.session.has_key("clipboard")
+    return obj.has_permission(request.user, "add") and \
+        request.session.has_key("clipboard")
 
 def _display_action_menu(request, obj):
     """Returns true if the action menu should be displayed.
