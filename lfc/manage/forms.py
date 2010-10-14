@@ -247,7 +247,7 @@ class CommentsForm(forms.ModelForm):
         fields = ("allow_comments", )
 
 class CoreDataForm(forms.ModelForm):
-    """Core date form for pages.
+    """Core data form for pages.
     """
     tags = TagField(widget=AutoCompleteTagInput(), required=False)
 
