@@ -923,7 +923,7 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
         "content_type_name" : get_info(obj).name,
     }))
 
-def object_core_data(request, obj, template_name="lfc/manage/object_data.html"):
+def object_core_data(request, obj=None, id=None, template_name="lfc/manage/object_data.html"):
     """Displays/Updates the core data tab of the content object with passed id.
 
     **Parameters:**
@@ -937,6 +937,9 @@ def object_core_data(request, obj, template_name="lfc/manage/object_data.html"):
         * edit (POST)
         * view (GET)
     """
+    if obj is None:
+        obj = lfc.utils.get_content_object(pk=id)
+    
     obj_ct = ContentType.objects.filter(model=obj.content_type)[0]
 
     Form = obj.edit_form
@@ -956,7 +959,7 @@ def object_core_data(request, obj, template_name="lfc/manage/object_data.html"):
             else:
                 form.errors["slug"] = _("An object with this slug already exists.")
 
-        html =  render_to_string(template_name, RequestContext(request, {
+        data =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "obj" : obj,
         }))
@@ -968,14 +971,14 @@ def object_core_data(request, obj, template_name="lfc/manage/object_data.html"):
         html = (
             ("#navigation", navigation(request, obj)),
             ("#object-view-link", link),
+            ("#core_data", data),            
         )
 
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : message,
-        }, cls = LazyEncoder)
-
-        result = HttpResponse(result)
+        return HttpJsonResponse(
+            content = html,
+            message = message,
+            mimetype = "text/plain",
+        )
 
     else:
         obj.check_permission(request.user, "view")
@@ -986,15 +989,13 @@ def object_core_data(request, obj, template_name="lfc/manage/object_data.html"):
         except AttributeError:
             extra = ""
 
-        result = render_to_string(template_name, RequestContext(request, {
+        return render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "obj" : obj,
             "extra" : extra,
         }))
 
-    return result
-
-def object_meta_data(request, obj, template_name="lfc/manage/object_meta_data.html"):
+def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/object_meta_data.html"):
     """Displays/Updates the meta tab of the content object with passed id.
 
     **Parameters:**
@@ -1008,6 +1009,8 @@ def object_meta_data(request, obj, template_name="lfc/manage/object_meta_data.ht
         * edit (POST)
         * view (GET)
     """
+    if obj is None:
+        obj = lfc.utils.get_content_object(pk=id)
     if request.method == "POST":
         obj.check_permission(request.user, "edit")
         form = MetaDataForm(request=request, instance=obj, data=request.POST)
@@ -1035,23 +1038,20 @@ def object_meta_data(request, obj, template_name="lfc/manage/object_meta_data.ht
             ("#navigation", navigation(request, obj)),
         )
 
-        result = simplejson.dumps({
-            "html" : html,
-            "message" : message,
-        }, cls = LazyEncoder)
-
-        result = HttpResponse(result)
+        return HttpJsonResponse(
+            content = html,
+            message = message,
+            mimetype = "text/plain",
+        )
 
     else:
         obj.check_permission(request.user, "view")
         form = MetaDataForm(request=request, instance=obj)
 
-        result = render_to_string(template_name, RequestContext(request, {
+        return render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "obj" : obj,
         }))
-
-    return result
 
 def object_children(request, obj, template_name="lfc/manage/object_children.html"):
     """Displays the children tab of the passed content object.
