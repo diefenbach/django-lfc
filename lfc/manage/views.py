@@ -985,14 +985,25 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
         form = Form(instance=obj)
 
         try:
-            extra = form.extra(request)
+            above_form = form.above_form(request)
         except AttributeError:
-            extra = ""
+            above_form = ""
+
+        try:
+            below_form = form.below_form(request)
+        except AttributeError:
+            below_form = ""
+        
+        try:
+            template_name = form.template_name
+        except AttributeError:
+            pass
 
         return render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "obj" : obj,
-            "extra" : extra,
+            "above_form" : above_form,
+            "below_form" : below_form,
         }))
 
 def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/object_meta_data.html"):

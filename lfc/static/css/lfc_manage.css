@@ -32,15 +32,6 @@ img.right {
     float: right;    
 }
 
-#hurz {
-    max-height: 400px;
-    width: 400px;
-    overflow: auto;
-}
-.cl-image-upload {
-    position: absolute !important;
-}
-
 .ajax-loading {
     padding: 4px 0 0 4px;
     display: none;
@@ -167,6 +158,14 @@ img.icon-padding {
     float:left;
     padding: 0 0 15px 60px;
     height: 93px;
+}
+
+#core-data-below-form {
+    padding-top: 20px;
+}
+
+#core-data-above-form {
+    padding-bottom: 20px;
 }
 
 /* Tables */

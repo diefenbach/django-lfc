@@ -60,7 +60,7 @@ class WorkflowAddForm(forms.ModelForm):
         exclude = ("permissions", "initial_state")
 
 class WorkflowForm(forms.ModelForm):
-    """Form to manage a workflow.
+    """Form to add/edit a workflow.
     """
     def __init__(self, *args, **kwargs):
         super(WorkflowForm, self).__init__(*args, **kwargs)
@@ -74,7 +74,7 @@ class WorkflowForm(forms.ModelForm):
         exclude = ("permissions", )
 
 class StateForm(forms.ModelForm):
-    """Form to manage a workflow state.
+    """Form to edit a workflow state.
     """
     def __init__(self, *args, **kwargs):
         super(StateForm, self).__init__(*args, **kwargs)
@@ -88,7 +88,7 @@ class StateForm(forms.ModelForm):
         exclude = ["workflow"]
 
 class TransitionForm(forms.ModelForm):
-    """Form to manage a workflow transition.
+    """Form to edit a workflow transition.
     """
     def __init__(self, *args, **kwargs):
         super(TransitionForm, self).__init__(*args, **kwargs)
@@ -104,13 +104,13 @@ class TransitionForm(forms.ModelForm):
         exclude = ["workflow"]
 
 class RoleForm(forms.ModelForm):
-    """
+    """Form to add/edit a Role.
     """
     class Meta:
         model = Role
 
 class GroupForm(forms.ModelForm):
-    """
+    """Form to add/edit a Group.
     """
     roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
 
@@ -128,8 +128,6 @@ class GroupForm(forms.ModelForm):
             "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance)]})
 
     def save(self, commit=True):
-        """
-        """
         role_ids = self.data.getlist("roles")
 
         for role in Role.objects.all():
@@ -151,7 +149,7 @@ class GroupForm(forms.ModelForm):
         return super(GroupForm, self).save(commit)
 
 class UserForm(forms.ModelForm):
-    """
+    """Form to add/edit an User.
     """
     roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
 
@@ -165,8 +163,6 @@ class UserForm(forms.ModelForm):
             "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(user=self.instance)]})
 
     def save(self, commit=True):
-        """
-        """
         role_ids = self.data.getlist("roles")
         for role in Role.objects.all():
 
@@ -226,7 +222,7 @@ class UserAddForm(forms.ModelForm):
         exclude = ("user_permissions", "password", "last_login", "date_joined")
 
 class ContentTypeRegistrationForm(forms.ModelForm):
-    """
+    """Form to display content type registration.
     """
     class Meta:
         model = ContentTypeRegistration
@@ -256,7 +252,7 @@ class CoreDataForm(forms.ModelForm):
         fields = ("title", "display_title", "slug", "description", "text", "tags")
 
 class SEOForm(forms.ModelForm):
-    """
+    """SEO form for objects.
     """
     class Meta:
         model = Page

@@ -6,6 +6,10 @@
 </h2>
 
 {% ifhasperm edit %}
+    <div id="core-data-above-form">
+        {{ above_form }}
+    </div>
+
     <form action="{% url lfc_save_object_core_data obj.id %}"
           method="POST">
 
@@ -16,8 +20,8 @@
                value="{% trans 'Save core data' %}" />
     </form>
 
-    <div style="padding-top:20px" id="core-data-extra">
-        {{ extra }}
+    <div id="core-data-below-form">
+        {{ below_form }}
     </div>
 {% else %}
     {% include "lfc/manage/lfc_form_view.html" %}
