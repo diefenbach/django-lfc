@@ -31,6 +31,13 @@ from lfc.models import Page
 from lfc.models import Portal
 from lfc.utils.registration import get_info
 
+class AddForm(forms.Form):
+    """The default add form for content objects.
+    """
+    title = forms.CharField()
+    slug = forms.CharField()
+    description = forms.CharField(required=False, widget=forms.Textarea)
+
 class ImageForm(forms.ModelForm):
     """Form to edit an Image.
     """

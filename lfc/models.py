@@ -549,12 +549,17 @@ class BaseContent(AbstractBaseContent):
         """
         result = self.title + " " + self.description
         return result.strip()
-
-    def form(self, **kwargs):
-        """Returns the add/edit form for the object. This method has to be
-        overwritten and implemented by sub classes.
-        """
+    
+    def edit_form(self, **kwargs):
+        """Returns the edit form for the object.
+        """    
         raise NotImplementedError, "form has to be implemented by sub classed"
+        
+    def add_form(self, **kwargs):
+        """Returns the add/edit form for the object.
+        """
+        from lfc.manage.forms import AddForm
+        return AddForm(**kwargs)
 
     def get_ancestors(self):
         """Returns all ancestors of a content object.
@@ -850,8 +855,8 @@ class Page(BaseContent):
         result = self.title + " " + self.description + " " + self.text
         return result.strip()
 
-    def form(self, **kwargs):
-        """Returns the add/edit form of the page.
+    def edit_form(self, **kwargs):
+        """Returns the edit form of the page.
         """
         from lfc.manage.forms import CoreDataForm
         return CoreDataForm(**kwargs)
