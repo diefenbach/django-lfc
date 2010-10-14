@@ -24,6 +24,7 @@ sys.path.append(os.path.abspath("../../../parts/tagging"))
 sys.path.append(os.path.abspath("../../../parts/portlets"))
 sys.path.append(os.path.abspath("../../../parts/permissions"))
 sys.path.append(os.path.abspath("../../../parts/workflows"))
+sys.path.append(os.path.abspath("../../../parts/resources"))
 
 # -- General configuration -----------------------------------------------------
 

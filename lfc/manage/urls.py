@@ -36,21 +36,21 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^save-seo/(?P<id>\d+)$', "object_seo_data", name="lfc_save_seo"),
 
     # images
-    url(r'^page-images/(?P<id>\d+)$', "object_images", name="lfc_images"),
+    url(r'^load-object-images/(?P<id>\d+)$', "load_object_images", name="lfc_load_object_images"),
     url(r'^add-images/(?P<id>\d+)$', "add_object_images", name="lfc_add_images"),
     url(r'^update-images/(?P<id>\d+)$', "update_object_images", name="lfc_update_images"),
     url(r'^edit-image/(?P<id>\d+)$', "edit_image", name="lfc_edit_image"),
 
-    url(r'^portal-images$', "portal_images", name="lfc_portal_images"),
+    url(r'^load-portal-images$', "load_portal_images", name="lfc_load_portal_images"),
     url(r'^add-portal-images$', "add_portal_images", name="lfc_add_portal_images"),
     url(r'^update-portal-images$', "update_portal_images", name="lfc_update_portal_images"),
 
     # files
-    url(r'^object-files/(?P<id>\d+)$', "object_files", name="lfc_files"),
+    url(r'^load-object-files/(?P<id>\d+)$', "load_object_files", name="lfc_load_object_files"),
     url(r'^add-object-files/(?P<id>\d+)$', "add_object_files", name="lfc_add_files"),
     url(r'^update-object-files/(?P<id>\d+)$', "update_object_files", name="lfc_update_files"),
 
-    url(r'^portal-files$', "portal_files", name="lfc_portal_files"),
+    url(r'^load-portal-files$', "load_portal_files", name="lfc_load_portal_files"),
     url(r'^add-portal-files$', "add_portal_files", name="lfc_add_portal_files"),
     url(r'^update-portal-files$', "update_portal_files", name="lfc_update_portal_files"),
     url(r'^edit-file/(?P<id>\d+)$', "edit_file", name="lfc_edit_file"),
@@ -89,7 +89,7 @@ urlpatterns = patterns('lfc.manage.views',
 
     # portlets
     url(r'^add-portlet/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "add_portlet", name="lfc_add_portlet"),
-    url(r'^update-portlets/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets", name="lfc_update_portlets"),
+    url(r'^update-portlets-blocking/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets_blocking", name="lfc_update_portlets_blocking"),
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
     url(r'^move-portlet/(?P<portletassignment_id>\d+)$', "move_portlet", name="lfc_move_portlet"),

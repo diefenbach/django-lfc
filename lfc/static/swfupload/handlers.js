@@ -216,7 +216,7 @@ function uploadComplete(file) {
         url = $("#images-form").attr("data");
         $.get(url, function(data) {
             var data = JSON.parse(data)
-            $("#images").html(data["images"]);
+            $("#images").html(data["html"]);
             $.jGrowl(data["message"]);
         });
     }
@@ -228,7 +228,7 @@ function uploadFilesComplete(file) {
         url = $("#files-form").attr("data");
         $.get(url, function(data) {
             var data = JSON.parse(data)
-            $("#files").html(data["files"]);
+            $("#files").html(data["html"]);
             $.jGrowl(data["message"]);
         });
     }

@@ -269,7 +269,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_images", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_images", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_images", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("images") == -1)
 
         # portal images
@@ -289,7 +289,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_files", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_files", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_files", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("files") == -1)
 
         # portal files
@@ -588,7 +588,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_images", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_images", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_images", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("images") == -1)
 
         # portal images
@@ -608,7 +608,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_files", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_files", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_files", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("files") == -1)
 
         # portal files

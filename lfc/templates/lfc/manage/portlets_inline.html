@@ -4,7 +4,7 @@
 {% if display_edit %}
     {% if parent_for_portlets %}
         <form class="portlets-form"
-              action="{% url lfc_update_portlets object_type_id, obj.id %}"
+              action="{% url lfc_update_portlets_blocking object_type_id, obj.id %}"
               method="post">
             <h2>{% trans 'Blocked parent slots' %}</h2>
 
