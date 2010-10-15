@@ -24,8 +24,8 @@ def comment_was_posted_listener(sender, **kwargs):
     body = "Name: %s\n" % comment.name
     body += "E-Mail: %s\n" % comment.email
     body += "URL: %s\n" % comment.url
-    body += "Comment %s\n" % comment.comment
-    body += "Comment URL: %s" % "http://" + site.domain + "admin/comments/comment/%s" % comment.id
+    body += "Comment: \n%s\n\n\n" % comment.comment
+    body += "Comment URL: %s" % "http://" + site.domain + "%s" % comment.content_object.get_absolute_url()
 
     mail = EmailMessage(
         subject    = subject,

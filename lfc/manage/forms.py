@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from django.contrib.comments.models import Comment
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
@@ -22,11 +23,34 @@ from workflows.models import Transition
 # lfc imports
 from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.fields.readonly import ReadOnlyInput
-from lfc.models import Page
 from lfc.models import BaseContent
-from lfc.models import Portal
 from lfc.models import ContentTypeRegistration
+from lfc.models import File
+from lfc.models import Image
+from lfc.models import Page
+from lfc.models import Portal
 from lfc.utils.registration import get_info
+
+class AddForm(forms.Form):
+    """The default add form for content objects.
+    """
+    title = forms.CharField()
+    slug = forms.CharField()
+    description = forms.CharField(required=False, widget=forms.Textarea)
+
+class ImageForm(forms.ModelForm):
+    """Form to edit an Image.
+    """
+    class Meta:
+        model = Image
+        exclude = ("image", "content_type", "content_id", "slug", "position")
+
+class FileForm(forms.ModelForm):
+    """Form to edit a File.
+    """
+    class Meta:
+        model = File
+        exclude = ("file", "content_type", "content_id", "slug", "position")
 
 class WorkflowAddForm(forms.ModelForm):
     """Form to add a workflow.
@@ -36,7 +60,7 @@ class WorkflowAddForm(forms.ModelForm):
         exclude = ("permissions", "initial_state")
 
 class WorkflowForm(forms.ModelForm):
-    """Form to manage a workflow.
+    """Form to add/edit a workflow.
     """
     def __init__(self, *args, **kwargs):
         super(WorkflowForm, self).__init__(*args, **kwargs)
@@ -50,7 +74,7 @@ class WorkflowForm(forms.ModelForm):
         exclude = ("permissions", )
 
 class StateForm(forms.ModelForm):
-    """Form to manage a workflow state.
+    """Form to edit a workflow state.
     """
     def __init__(self, *args, **kwargs):
         super(StateForm, self).__init__(*args, **kwargs)
@@ -64,7 +88,7 @@ class StateForm(forms.ModelForm):
         exclude = ["workflow"]
 
 class TransitionForm(forms.ModelForm):
-    """Form to manage a workflow transition.
+    """Form to edit a workflow transition.
     """
     def __init__(self, *args, **kwargs):
         super(TransitionForm, self).__init__(*args, **kwargs)
@@ -80,13 +104,13 @@ class TransitionForm(forms.ModelForm):
         exclude = ["workflow"]
 
 class RoleForm(forms.ModelForm):
-    """
+    """Form to add/edit a Role.
     """
     class Meta:
         model = Role
 
 class GroupForm(forms.ModelForm):
-    """
+    """Form to add/edit a Group.
     """
     roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
 
@@ -104,8 +128,6 @@ class GroupForm(forms.ModelForm):
             "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance)]})
 
     def save(self, commit=True):
-        """
-        """
         role_ids = self.data.getlist("roles")
 
         for role in Role.objects.all():
@@ -127,7 +149,7 @@ class GroupForm(forms.ModelForm):
         return super(GroupForm, self).save(commit)
 
 class UserForm(forms.ModelForm):
-    """
+    """Form to add/edit an User.
     """
     roles = forms.MultipleChoiceField(label=_("Roles"), required=False)
 
@@ -141,10 +163,7 @@ class UserForm(forms.ModelForm):
             "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(user=self.instance)]})
 
     def save(self, commit=True):
-        """
-        """
-        role_ids = self.data.get("roles", [])
-
+        role_ids = self.data.getlist("roles")
         for role in Role.objects.all():
 
             if str(role.id) in role_ids:
@@ -203,21 +222,28 @@ class UserAddForm(forms.ModelForm):
         exclude = ("user_permissions", "password", "last_login", "date_joined")
 
 class ContentTypeRegistrationForm(forms.ModelForm):
-    """
+    """Form to display content type registration.
     """
     class Meta:
         model = ContentTypeRegistration
         exclude = ("type", "name")
 
-class CommentsForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):
+    """Form to edit a comment.
     """
+    class Meta:
+        model = Comment
+        exclude = ("content_type", "object_pk", "site")
+
+class CommentsForm(forms.ModelForm):
+    """Form to update/delete comments.
     """
     class Meta:
         model = Page
         fields = ("allow_comments", )
 
 class CoreDataForm(forms.ModelForm):
-    """Core date form for pages.
+    """Core data form for pages.
     """
     tags = TagField(widget=AutoCompleteTagInput(), required=False)
 
@@ -226,11 +252,11 @@ class CoreDataForm(forms.ModelForm):
         fields = ("title", "display_title", "slug", "description", "text", "tags")
 
 class SEOForm(forms.ModelForm):
-    """
+    """SEO form for objects.
     """
     class Meta:
         model = Page
-        fields = ( "meta_keywords", "meta_description")
+        fields = ("meta_title", "meta_keywords", "meta_description")
 
 class MetaDataForm(forms.ModelForm):
     """Form to display object metadata form.

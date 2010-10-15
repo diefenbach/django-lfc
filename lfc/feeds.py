@@ -42,5 +42,5 @@ class PageTagFeed(Feed):
             tagged_objs = ModelTaggedItemManager().with_all(tags, BaseContent.objects.all())
             for obj in tagged_objs:
                 if obj.get_content_object() in paths_objs:
-                    objs.append(obj)
+                    objs.append(obj.get_content_object())
             return objs

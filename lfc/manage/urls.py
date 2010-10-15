@@ -21,6 +21,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^content-type/(?P<id>\d+)$', "content_type", name="lfc_content_type"),
 
     # filebrowser
+    url(r'^imagebrowser$', "imagebrowser", name="lfc_imagebrowser"),
     url(r'^filebrowser$', "filebrowser", name="lfc_filebrowser"),
     url(r'^fb-upload-image$', "fb_upload_image", name="lfc_fb_upload_image"),
     url(r'^fb-upload-file$', "fb_upload_file", name="lfc_fb_upload_file"),
@@ -35,31 +36,35 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^save-seo/(?P<id>\d+)$', "object_seo_data", name="lfc_save_seo"),
 
     # images
-    url(r'^page-images/(?P<id>\d+)$', "object_images", name="lfc_images"),
+    url(r'^load-object-images/(?P<id>\d+)$', "load_object_images", name="lfc_load_object_images"),
     url(r'^add-images/(?P<id>\d+)$', "add_object_images", name="lfc_add_images"),
     url(r'^update-images/(?P<id>\d+)$', "update_object_images", name="lfc_update_images"),
+    url(r'^edit-image/(?P<id>\d+)$', "edit_image", name="lfc_edit_image"),
 
-    url(r'^portal-images$', "portal_images", name="lfc_portal_images"),
+    url(r'^load-portal-images$', "load_portal_images", name="lfc_load_portal_images"),
     url(r'^add-portal-images$', "add_portal_images", name="lfc_add_portal_images"),
     url(r'^update-portal-images$', "update_portal_images", name="lfc_update_portal_images"),
 
     # files
-    url(r'^object-files/(?P<id>\d+)$', "object_files", name="lfc_files"),
+    url(r'^load-object-files/(?P<id>\d+)$', "load_object_files", name="lfc_load_object_files"),
     url(r'^add-object-files/(?P<id>\d+)$', "add_object_files", name="lfc_add_files"),
     url(r'^update-object-files/(?P<id>\d+)$', "update_object_files", name="lfc_update_files"),
 
-    url(r'^portal-files$', "portal_files", name="lfc_portal_files"),
+    url(r'^load-portal-files$', "load_portal_files", name="lfc_load_portal_files"),
     url(r'^add-portal-files$', "add_portal_files", name="lfc_add_portal_files"),
     url(r'^update-portal-files$', "update_portal_files", name="lfc_update_portal_files"),
+    url(r'^edit-file/(?P<id>\d+)$', "edit_file", name="lfc_edit_file"),
 
     # comments
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),
+    url(r'^edit-comment/(?P<id>\d+)$', "edit_comment", name="lfc_edit_comment"),
 
     # children
     url(r'^update-children/(?P<id>\d+)$', "update_object_children", name="lfc_update_object_children"),
     url(r'^update-portal-children$', "update_portal_children", name="lfc_update_portal_children"),
 
     # permissions
+    url(r'^load-object-permissions/(?P<id>\d+)$', "load_object_permissions", name="lfc_load_update_object_permissions"),
     url(r'^update-object-permissions/(?P<id>\d+)$', "update_object_permissions", name="lfc_update_object_permissions"),
     url(r'^update-portal-permissions$', "update_portal_permissions", name="lfc_update_portal_permissions"),
 
@@ -84,9 +89,10 @@ urlpatterns = patterns('lfc.manage.views',
 
     # portlets
     url(r'^add-portlet/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "add_portlet", name="lfc_add_portlet"),
-    url(r'^update-portlets/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets", name="lfc_update_portlets"),
+    url(r'^update-portlets-blocking/(?P<object_type_id>\d+)/(?P<object_id>\d+)$', "update_portlets_blocking", name="lfc_update_portlets_blocking"),
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
+    url(r'^move-portlet/(?P<portletassignment_id>\d+)$', "move_portlet", name="lfc_move_portlet"),
 
     url(r'^review$', "review_objects", name="lfc_manage_review"),
 
@@ -136,6 +142,10 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^delete-role/(?P<id>\d+)$', "delete_role", name="lfc_manage_delete_role"),
 
     # content
-    url(r'^$', "portal", name="lfc_manage_portal"),
+    url(r'^portal', "portal", name="lfc_manage_portal"),
     url(r'^(?P<id>\d+)$', "manage_object", name="lfc_manage_object"),
+    url(r'^load-object-parts/(?P<id>\d+)$', "load_object_parts", name="lfc_load_object_parts"),
+    url(r'^load-object/(?P<id>\d+)$', "load_object", name="lfc_load_object"),
+    url(r'^load-portal$', "load_portal", name="lfc_load_portal"),
+    url(r'^/#page=(?P<id>\d+)$', "load_object", name="lfc_load_object"),
 )

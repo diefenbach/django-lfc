@@ -8,14 +8,12 @@
 {% endblock %}
 
 {% block content %}
-
     <div id="menu"
          class="site-actions">
         {{ menu|safe}}
     </div>
 
-    <div style="clear:both" id="manage-tabs">
-
+    <div id="manage-tabs">
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#states">{% trans 'States' %}</a></li>
@@ -32,5 +30,4 @@
             {{ transitions|safe }}
         </div>
     </div>
-
 {% endblock %}

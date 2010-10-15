@@ -22,6 +22,17 @@ from django.utils import translation
 # lfc imports
 import lfc.models
 
+class HttpJsonResponse(HttpResponse):
+    def __init__(self, content, mimetype=None, status=None, content_type=None, **kwargs):
+        
+        if mimetype is None:
+            mimetype = "application/json"
+
+        content = render_to_json(content, **kwargs)
+
+        HttpResponse.__init__(self, content=content,
+            mimetype=mimetype, status=status, content_type=content_type)
+
 # TODO: Checkout Django's new message feature
 class MessageHttpResponseRedirect(HttpResponseRedirect):
     """Specific HttpResponseRedirect to set a cookie with a message.
@@ -48,6 +59,14 @@ def set_message_to_reponse(response, msg):
 
     response.set_cookie("message", lfc_quote(msg), max_age=max_age, expires=expires)
     return response
+
+def render_to_json(html, **kwargs):
+    """Renders given data to jsnon
+    """
+    data = { "html" : html }
+    data.update(**kwargs)
+
+    return simplejson.dumps(data, cls = LazyEncoder)
 
 def return_as_json(html, message):
     """
@@ -132,7 +151,7 @@ def get_portal(pk=1):
 
 def get_user_from_session_key(session_key):
     """Returns the user from the passes session_key.
-    
+
     This is a workaround for SWFUpload, which is used to mass upload images
     and files.
     """
@@ -147,22 +166,22 @@ def get_user_from_session_key(session_key):
             return AnonymousUser()
     except AttributeError:
         return AnonymousUser()
-            
+
 def login_form(next=None):
     """Returns the lfc login form.
     """
     if next:
         url = "%s?next=%s" % (reverse("lfc_login"), next)
     else:
-        url = reverse("lfc_login") 
-        
+        url = reverse("lfc_login")
+
     return HttpResponseRedirect(url)
 
 def traverse_object(request, path):
     """Returns the the object with the given path.
     """
     language = translation.get_language()
-    
+
     # CACHE
     cache_key = "%s-traverse-obj-%s-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
                                               path, request.user.id, language)

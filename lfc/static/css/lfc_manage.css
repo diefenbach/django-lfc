@@ -1,4 +1,47 @@
-/* ui-tabs overwrites */
+table.lfc-compositor-default {
+    width: 100%;
+}
+
+table.lfc-compositor-default td {
+    padding-right: 20px;
+}
+
+table.lfc-compositor-default td.last {
+    padding-right: 0;
+}
+
+
+.extern-form,
+.email-form {
+    display: none;
+}
+
+#manage-tabs.alone {
+    margin-top: 20px;
+}
+
+#manage-tabs {
+    clear: both;
+}
+
+img.left {
+    float: left;
+}
+
+img.right {
+    float: right;    
+}
+
+.ajax-loading {
+    padding: 4px 0 0 4px;
+    display: none;
+}
+
+#id_text,
+#id_add-text {
+    height: 250px;
+}
+
 body {
     font-size: 77% !important;
     background-color: white;
@@ -117,6 +160,14 @@ img.icon-padding {
     height: 93px;
 }
 
+#core-data-below-form {
+    padding-top: 20px;
+}
+
+#core-data-above-form {
+    padding-bottom: 20px;
+}
+
 /* Tables */
 table.main {
     width: 99%;
@@ -142,6 +193,10 @@ table.lfs-manage-table {
     margin-bottom: 30px;
 }
 
+.lfs-manage-table td {
+    vertical-align: top;
+}
+
 .lfs-manage-table th {
     min-height: 30px;
     height: 30px;
@@ -161,8 +216,17 @@ table.lfs-manage-table {
     width: 100%;
 }
 
+.lfs-manage-table.three-fourths {
+    width: 75%;
+}
+
 .lfs-manage-table.half {
     width: 50%;
+}
+
+.lfs-manage-table.large {
+    min-width: 800px;
+    width: 800px;
 }
 
 .lfs-manage-table .large {
@@ -181,11 +245,16 @@ table.lfs-manage-table {
     width: 1px;
 }
 
+.lfs-manage-table .padding {
+    padding: 0 10px;
+}
+
 .lfs-manage-table .right-padding {
     text-align: right;
     padding-right: 10px;
 }
 
+div .right,
 .lfs-manage-table .right {
     text-align: right;
 }
@@ -416,19 +485,20 @@ label {
     padding: 10px 0;
 }
 
+div.overlay2,
 div.overlay {
     background-color: #fff;
     display: none;
     padding: 15px 50px 15px 15px;
     text-align: left;
-    z-index: 1000;
+    z-index: 1;
     -webkit-border-radius: 6px;
     -moz-border-radius: 10px;
     -webkit-box-shadow: 10px 10px 5px #222;
     -moz-box-shadow: 10px 10px 5px #222;
 }
 
-
+div.overlay2 div.close,
 div.overlay div.close {
     background-image: url(../img/close.png);
     position: absolute;
@@ -478,24 +548,37 @@ body.filebrowser {
     list-style: square inside;
 }
 
-.ajax-loading {
-    padding-left: 10px;
-    display: none;
-    color: #555;
-}
-
-.field-wrapper {
+.read-only {
     border: 1px solid #aaa;
-    padding: 10px 5px;
+    background-color: #eee;
+    padding: 10px 10px;
     width: 600px;
-    margin-bottom: 10px;
+    margin-bottom: 10px;    
+    min-height: 12px;
 }
 
-.description.field-wrapper {
+.read-only h1,
+.read-only h2 {
+    border: none;
+}
+
+.read-only h1.middle-heading,
+.read-only h2.middle-heading {
+    margin-top: 10px;
+}
+
+.read-only ul {
+    line-height: 1.5em;
+}
+.read-only li {
+    list-style: square inside;
+}
+
+.description.read-only {
     height: 100px;
 }
 
-.text.field-wrapper {
+.text.read-only {
     height: 400px;
     overflow: auto;
 }
@@ -679,3 +762,4 @@ ul.timelist, .timelist li {
 .datetime input {
     margin-bottom: 6px;
 }
+

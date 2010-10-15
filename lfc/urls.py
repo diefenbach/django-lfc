@@ -53,10 +53,17 @@ urlpatterns += patterns('django.views.generic.simple',
     (r'^robots.txt', 'direct_to_template', {'template': 'lfc/robots.txt'}),
 )
 
+urlpatterns += patterns('lfc.templatetags.lfc_tags',
+    url(r"^get-entries", "get_rss_entries", name="lfc_rss_get_entries"),
+)
+
 # LFC
 urlpatterns += patterns('lfc.views',
     url(r'^(?P<language>[-\w]{2})/search-results', "search_results", name="lfc_search"),
     url(r'^search-results', "search_results", name="lfc_search"),
+
+    url(r'^(?P<language>[-\w]{2})/live-search-results', "live_search_results", name="lfc_live_search"),
+    url(r'^live-search-results', "live_search_results", name="lfc_live_search"),
 
     url(r'^set-language/(?P<language>[-\w]{2})/$', 'set_language', name="lfc_set_language"),
     url(r'^set-language/(?P<language>[-\w]{2})/(?P<id>\d+)/$', 'set_language', name="lfc_set_language"),

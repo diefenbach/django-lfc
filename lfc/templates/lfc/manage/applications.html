@@ -4,46 +4,54 @@
 {% block left-slot-wrapper %}{% endblock %}
 
 {% block content %}
-    <div style="clear:both; padding:20px 20px 0 20px" id="manage-tabs">
-        <ul>
-            <li class="ui-tabs-nav-item"><a href="#applications">{% trans "Applications" %}</a></li>
-        </ul>
 
-        <div id="applications">
-            <table class="lfs-manage-table"
-                   style="width:100%">
+    <div style="margin:20px 10px 0 20px">
+
+        <h1>{% trans "Install Applications" %}</h1>
+
+        <table class="lfs-manage-table"
+               style="width:100%">
+            <tr>
+                <th width="20%">
+                    {% trans "Application" %}
+                </th>
+                <th>
+                    {% trans "Description" %}
+                </th>
+                <th width="15%">
+                    {% trans "Status" %}
+                </th>
+                <th width="15%">
+                    {% trans "Manage" %}
+                </th>
+            </tr>
+            {% for application in applications %}
                 <tr>
-                    <th width="20%">
-                        {% trans "Application" %}
-                    </th>
-                    <th width="30%">
-                        {% trans "Description" %}
-                    </th>
-                    <th>
-                        {% trans "Manage" %}
-                    </th>
+                    <td>
+                        {% trans application.pretty_name %}
+                    </td>
+                    <td>
+                        {% if application.description %}
+                            {% trans application.description %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if application.installed %}
+                            {% trans "Installed" %}
+                        {% else %}
+                            {% trans "Not Installed" %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if application.installed %}
+                            <a href="{% url lfc_uninstall_application name=application.name %}">{% trans "Uninstall" %}</a> |
+                            <a href="{% url lfc_reinstall_application name=application.name %}">{% trans "Reinstall" %}</a>
+                        {% else %}
+                            <a href="{% url lfc_install_application name=application.name %}">{% trans "Install" %}</a>
+                        {% endif %}
+                    </td>
                 </tr>
-                {% for application in applications %}
-                    <tr>
-                        <td>
-                            {% trans application.pretty_name %}
-                        </td>
-                        <td>
-                            {% if application.description %}
-                                {% trans application.description %}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if application.installed %}
-                                <a href="{% url lfc_uninstall_application name=application.name %}">{% trans "Uninstall" %}</a> |
-                                <a href="{% url lfc_reinstall_application name=application.name %}">{% trans "Reinstall" %}</a>
-                            {% else %}
-                                <a href="{% url lfc_install_application name=application.name %}">{% trans "Install" %}</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </table>
-        </div>
+            {% endfor %}
+        </table>
     </div>
 {% endblock %}
