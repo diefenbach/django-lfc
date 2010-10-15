@@ -1,3 +1,8 @@
+function set_focus() {
+    $("#core_data input:first").focus();
+    $("#seo_data input:first").focus();    
+}
+
 function create_menu() {
     $('ul.sf-menu').superfish({
         speed: "fast",
@@ -49,6 +54,7 @@ function load_url(url, tabs) {
             show_message(data["message"])
 
         hide_ajax_loading();
+        set_focus();
     })
 };
 
@@ -95,6 +101,7 @@ $(function() {
     // Class which closes the overlay.
     $(".overlay-close").live("click", function() {
         overlay.close()
+        set_focus();
         return false;
     });
 
@@ -149,7 +156,7 @@ $(function() {
     });
 
     $(window).bind('hashchange', function( event ) {
-        load_content()
+        load_content();
     });
 
     // Generic ajax link
@@ -167,11 +174,15 @@ $(function() {
             if (data["message"])
                 show_message(data["message"]);
 
-            if (data["open_overlay"])
+            if (data["open_overlay"]) {
                 overlay.load()
+                $("#overlay input:first").focus();
+            }
 
-            if (data["close_overlay"])
+            if (data["close_overlay"]) {
                 overlay.close()
+                set_focus();
+            }
 
             if (data["tabs"])
                 create_tabs()

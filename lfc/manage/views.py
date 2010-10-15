@@ -96,7 +96,7 @@ from lfc.utils.registration import get_info
 # Global #####################################################################
 ##############################################################################
 
-def add_object(request, language=None, id=None):
+def add_object(request, language=None, id=None, template_name="lfc/manage/object_add.html"):
     """Displays an add form (GET) and adds a new child content object to the
     object with the passed id (POST). If the passed id is None the content
     object is added to the portal.
@@ -178,7 +178,7 @@ def add_object(request, language=None, id=None):
 
             return HttpResponse(result)
         else:
-            form = render_to_string("lfc/manage/object_add.html", RequestContext(request, {
+            form = render_to_string(template_name, RequestContext(request, {
                 "type" : type,
                 "name" : get_info(type).name,
                 "form" : form,

@@ -6,9 +6,11 @@
 </h2>
 
 {% ifhasperm edit %}
-    <div id="core-data-above-form">
-        {{ above_form }}
-    </div>
+    {% if above_form %}
+        <div id="core-data-above-form">
+            {{ above_form }}
+        </div>        
+    {% endif %}
 
     <form action="{% url lfc_save_object_core_data obj.id %}"
           method="POST">
@@ -19,16 +21,12 @@
                type="submit"
                value="{% trans 'Save core data' %}" />
     </form>
-
-    <div id="core-data-below-form">
-        {{ below_form }}
-    </div>
+    
+    {% if below_form %}
+        <div id="core-data-below-form">
+            {{ below_form }}
+        </div>
+    {% endif %}
 {% else %}
     {% include "lfc/manage/lfc_form_view.html" %}
 {% endifhasperm %}
-
-<script>
-    $(function() {
-        $("#id_text").cleditor();
-    })
-</script>

@@ -17,10 +17,6 @@
 <script type="text/javascript">
 
     $(function() {
-        $("#id_add-text").cleditor();
-        
-        $("#id_add-title").focus();
-
         $("#id_add-title").live("keyup", function() {
             var slug = $("#id_add-title").val()
             slug = URLify(slug, 200)
