@@ -1,6 +1,7 @@
 function set_focus() {
     $("#core_data input:first").focus();
-    $("#seo_data input:first").focus();    
+    $("#data input:first").focus();
+    $("#seo_data input:first").focus();
 }
 
 function create_menu() {
@@ -78,7 +79,8 @@ $(function() {
         oneInstance: false,
         api:true,
         speed:1,
-        expose: {color: '#222', loadSpeed:1 }
+        expose: {color: '#222', loadSpeed:1 },
+        onClose: function() { set_focus(); },
     });
 
     overlay_2 = $("#overlay-2").overlay({
@@ -175,7 +177,7 @@ $(function() {
                 show_message(data["message"]);
 
             if (data["open_overlay"]) {
-                overlay.load()
+                overlay.load();
                 $("#overlay input:first").focus();
             }
 
