@@ -10,24 +10,30 @@
               action="{% url lfc_update_portal_images %}"
               method="post">
 
-            <table class="lfs-manage-table full">
+            <table class="lfs-manage-table three-fourths">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
-                               class="select-all"´
+                               class="select-all"
                                value="image" />
                     </th>
                     <th class="small">
                         {% trans 'Image' %}
                     </th>
-                    <th>
+                    <th class="small">
                         {% trans 'Title' %}
                     </th>
-                    <th class="small right-padding">
+                    <th class="small">
+                        {% trans 'Caption' %}
+                    </th>
+                    <th>
+                        {% trans 'Description' %}
+                    </th>
+                    <th class="tiny padding">
                         {% trans 'Position' %}
                     </th>
-                    <th class="middle right-padding">
-                        {% trans 'Creation date' %}
+                    <th class="right-padding">
+                        {% trans 'Manage' %}
                     </th>
                 </tr>
                 {% for image in obj.images.all %}
@@ -49,11 +55,34 @@
                         <td>
                             <input type="text" name="title-{{ image.id }}" value="{{ image.title }}" />
                         </td>
-                        <td class="right last">
+                        <td>
+                            <input type="text" name="caption-{{ image.id }}" value="{{ image.caption }}" />
+                        </td>
+                        <td>
+                            {{ image.description|truncatewords_html:15|safe }}
+                        </td>
+                        <td class="right">
                             <input class="position" type="text" name="position-{{ image.id }}" value="{{ image.position }}" />
                         </td>
-                        <td class="right last">
-                            {{ image.creation_date|date:"Y-m-d H:i:s" }}
+                        <td class="right-padding">
+
+                            {% if not forloop.first %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_image image.id %}?direction=0">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
+                                </a>
+                            {% endif %}
+
+                            {% if not forloop.last %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_image image.id %}?direction=1">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
+                                </a>
+                            {% endif %}
+
+                            <a class="edit ajax-link"
+                               title='{% trans "Edit" %}'
+                               href="{% url lfc_edit_image image.id %}"></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -148,9 +177,6 @@
                 <th>
                     {% trans 'Title' %}
                 </th>
-                <th class="middle right-padding">
-                    {% trans 'Creation date' %}
-                </th>                
             </tr>
             {% for image in obj.images.all %}
                 <tr>
@@ -164,13 +190,10 @@
                     <td>
                         {{ image.title }}
                     </td>
-                    <td class="right">
-                        {{ image.creation_date|date:"Y-m-d H:i:s" }}
-                    </td>                    
                 </tr>
             {% endfor %}
         </table>
     {% else %}
         <span>{% trans 'There are no images' %}</span>
-    {% endif %}        
+    {% endif %}
 {% endifportalhasperm %}

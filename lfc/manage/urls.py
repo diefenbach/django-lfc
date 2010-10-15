@@ -40,6 +40,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-images/(?P<id>\d+)$', "add_object_images", name="lfc_add_images"),
     url(r'^update-images/(?P<id>\d+)$', "update_object_images", name="lfc_update_images"),
     url(r'^edit-image/(?P<id>\d+)$', "edit_image", name="lfc_edit_image"),
+    url(r'^move-image/(?P<id>\d+)$', "move_image", name="lfc_move_image"),
 
     url(r'^load-portal-images$', "load_portal_images", name="lfc_load_portal_images"),
     url(r'^add-portal-images$', "add_portal_images", name="lfc_add_portal_images"),

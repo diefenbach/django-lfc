@@ -140,7 +140,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
                 language = parent_object.language
             else:
                 language = request.session.get("nav-tree-lang", settings.LANGUAGE_CODE)
-            
+
             data = form.cleaned_data
             new_object = mc.objects.create(**data)
 
@@ -530,6 +530,24 @@ def load_portal_images(request):
 def update_portal_images(request):
     """Updates/Deletes images of the portal.
 
+    **Query String:**
+
+        action
+            The action which should be performed. One of: delete, update
+
+        delete-images
+            A list of ids of the images which should be deleted. Used for
+            delete action
+
+        title-x
+            The title of the image with id x. Used for update action.
+
+        position-x
+            The position of the image with id x. Used for update action.
+            
+        caption-x
+            The title of the image with id x. Used for update action.
+
     **Permission:**
 
         manage_portal
@@ -569,6 +587,58 @@ def add_portal_images(request):
         image.save()
 
     return HttpResponse("")
+
+def move_image(request, id):
+    """Moves the image with passed id up or down.
+
+    **Parameters:**
+
+        id
+            The id of the image which should be edited.
+
+    **Query String:**
+
+        direction
+            The direction in which the image should be moved. One of 0 (up)
+            or 1 (down).
+
+    **Permission:**
+
+        edit (of the belonging content object)
+    """
+    image = Image.objects.get(pk=id)
+
+    obj = image.content
+    if obj is None:
+        obj = lfc.utils.get_portal()
+
+    obj.check_permission(request.user, "edit")
+
+    direction = request.GET.get("direction", 0)
+
+    if direction == "1":
+        image.position += 15
+    else:
+        image.position -= 15
+        if image.position < 0:
+            image.position = 10
+
+    image.save()
+
+    # Refresh positions
+    for i, image in enumerate(obj.images.all()):
+        image.position = (i + 1) * 10
+        image.save()
+
+    if isinstance(obj, Portal):
+        images = portal_images(request, obj)
+    else:
+        images = object_images(request, obj)
+
+    return HttpJsonResponse(
+        content = [["#images", images]],
+        mimetype = "text/plain",
+    )
 
 def edit_image(request, id):
     """Displays a form to edit the image with passed id.
@@ -939,7 +1009,7 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
     """
     if obj is None:
         obj = lfc.utils.get_content_object(pk=id)
-    
+
     obj_ct = ContentType.objects.filter(model=obj.content_type)[0]
 
     Form = obj.edit_form
@@ -971,7 +1041,7 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
         html = (
             ("#navigation", navigation(request, obj)),
             ("#object-view-link", link),
-            ("#core_data", data),            
+            ("#core_data", data),
         )
 
         return HttpJsonResponse(
@@ -993,7 +1063,7 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
             below_form = form.below_form(request)
         except AttributeError:
             below_form = ""
-        
+
         try:
             template_name = form.template_name
         except AttributeError:
@@ -1622,6 +1692,9 @@ def update_object_images(request, id):
 
         position-x
             The position of the image with id x. Used for update action.
+            
+        caption-x
+            The title of the image with id x. Used for update action.
 
     **Permission:**
 
@@ -4445,7 +4518,7 @@ def _delete_filter(request, name):
         del request.session[name]
 
 def _update_filter(request, name):
-    """Updates filter with passed name. 
+    """Updates filter with passed name.
     """
     filter = request.GET.get(name, "")
     if filter != "":
@@ -4583,6 +4656,7 @@ def _update_images(request, obj):
         for image in obj.images.all():
             image.title = request.POST.get("title-%s" % image.id)
             image.position = request.POST.get("position-%s" % image.id)
+            image.caption = request.POST.get("caption-%s" % image.id)
             image.save()
 
     # Refresh positions
@@ -4638,9 +4712,9 @@ def _display_action_menu(request, obj):
 def _remove_fks(obj):
     """Removes the objects from foreign key fields (in order to not delete
     these related objects).
-    
+
     **Parameters:**
-    
+
         obj
             The obj for which the foreign keys should be removes.
     """
