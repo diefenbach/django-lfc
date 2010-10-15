@@ -1297,6 +1297,7 @@ def delete_portlet(request, portletassignment_id):
     except PortletAssignment.DoesNotExist:
         pass
     else:
+        pa.portlet.delete()
         pa.delete()
         lfc.utils.clear_cache()
         url = request.META.get("HTTP_REFERER")
@@ -2245,7 +2246,6 @@ def cut(request, id):
 
     return MessageHttpResponseRedirect(url, msg)
 
-@login_required
 def paste(request, id=None):
     """Paste the object in the clipboard to object with given id.
     """
@@ -2255,6 +2255,7 @@ def paste(request, id=None):
         obj.check_permission(request.user, "add")
 
     else:
+        get_portal().check_permission(request.user, "add")
         url = reverse("lfc_manage_portal")
         obj = None
 
