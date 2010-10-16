@@ -55,6 +55,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-portal-files$', "add_portal_files", name="lfc_add_portal_files"),
     url(r'^update-portal-files$', "update_portal_files", name="lfc_update_portal_files"),
     url(r'^edit-file/(?P<id>\d+)$', "edit_file", name="lfc_edit_file"),
+    url(r'^move-file/(?P<id>\d+)$', "move_file", name="lfc_move_file"),
 
     # comments
     url(r'^update-comments/(?P<id>\d+)$', "update_comments", name="lfc_update_comments"),

@@ -753,6 +753,58 @@ def update_portal_files(request):
 
     return HttpResponse(json)
 
+def move_file(request, id):
+    """Moves the image with passed id up or down.
+
+    **Parameters:**
+
+        id
+            The id of the image which should be edited.
+
+    **Query String:**
+
+        direction
+            The direction in which the image should be moved. One of 0 (up)
+            or 1 (down).
+
+    **Permission:**
+
+        edit (of the belonging content object)
+    """
+    file = File.objects.get(pk=id)
+
+    obj = file.content
+    if obj is None:
+        obj = lfc.utils.get_portal()
+
+    obj.check_permission(request.user, "edit")
+
+    direction = request.GET.get("direction", 0)
+
+    if direction == "1":
+        file.position += 15
+    else:
+        file.position -= 15
+        if file.position < 0:
+            file.position = 10
+
+    file.save()
+
+    # Refresh positions
+    for i, file in enumerate(obj.files.all()):
+        file.position = (i + 1) * 10
+        file.save()
+
+    if isinstance(obj, Portal):
+        files = portal_files(request, obj)
+    else:
+        files = object_files(request, obj)
+
+    return HttpJsonResponse(
+        content = [["#files", files]],
+        mimetype = "text/plain",
+    )
+
 def edit_file(request, id):
     """Displays a edit form (GET) for a file and saves it (POST).
 
@@ -2726,13 +2778,13 @@ def translate_object(request, language, id=None, form_translation=None,
         translation_id = translation.id
 
     if form_canonical is None:
-        form_canonical = canonical.get_content_object().form(instance=canonical.get_content_object(), prefix="canonical")
+        form_canonical = canonical.get_content_object().edit_form(instance=canonical.get_content_object(), prefix="canonical")
 
     if translation:
         translation = translation.get_content_object()
 
     if form_translation is None:
-        form_translation = canonical.get_content_object().form(instance=translation, prefix = "translation")
+        form_translation = canonical.get_content_object().edit_form(instance=translation, prefix = "translation")
 
     return render_to_response(template_name, RequestContext(request, {
         "canonical" : canonical,
@@ -2801,14 +2853,14 @@ def save_translation(request):
     except (AttributeError, IndexError):
         standard_translation = None
 
-    form_canonical = canonical.form(
+    form_canonical = canonical.edit_form(
         prefix="canonical",
         instance = canonical,
         data=request.POST,
         files=request.FILES,
     )
 
-    form_translation = canonical.form(
+    form_translation = canonical.edit_form(
         prefix="translation",
         instance = translation,
         data=request.POST,

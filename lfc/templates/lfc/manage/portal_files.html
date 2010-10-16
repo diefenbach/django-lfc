@@ -10,24 +10,24 @@
               action="{% url lfc_update_portal_files %}"
               method="post">
 
-            <table class="lfs-manage-table full">
+            <table class="lfs-manage-table">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
                                class="select-all"
                                value="file" />
                     </th>
-                    <th>
+                    <th class="small">
                         {% trans 'Title' %}
                     </th>
-                    <th class="small right-padding">
+                    <th class="middle">
+                        {% trans 'Description' %}
+                    </th>
+                    <th class="tiny right-padding">
                         {% trans 'Position' %}
                     </th>
-                    <th class="middle right-padding">
-                        {% trans 'Creation date' %}
-                    </th>
                     <th class="small right-padding">
-                        {% trans 'Download' %}
+                        {% trans 'Manage' %}
                     </th>
                 </tr>
                 {% for file in obj.files.all %}
@@ -43,16 +43,37 @@
                             <input type="text" name="title-{{ file.id }}" value="{{ file.title }}" />
                         </td>
                         <td class="right">
+                            {{ file.description|truncatewords_html:5|safe }}
+                        </td>
+                        <td class="right">
                             <input class="position" type="text" name="position-{{ file.id }}" value="{{ file.position }}" />
                         </td>
                         <td class="right">
-                            {{ file.creation_date|date:"Y-m-d H:i:s" }}
-                        </td>
-                        <td class="right last">
+                            {% if not forloop.first %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_file file.id %}?direction=0">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
+                                </a>
+                            {% endif %}
+
+                            {% if not forloop.last %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_file file.id %}?direction=1">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
+                                </a>
+                            {% endif %}
+
                             <a href="{{ file.get_absolute_url }}">
-                                <image src="{{ MEDIA_URL }}lfc/icons/disk.png" 
-                                       alt='{% trans "Download" %}' 
+                                <image src="{{ MEDIA_URL }}lfc/icons/disk.png"
+                                       alt='{% trans "Download" %}'
                                        title='{% trans "Download" %}' />
+                            </a>
+                            <a class="ajax-link"
+                               title='{% trans "Edit" %}'
+                               href="{% url lfc_edit_file file.id %}">
+                                <image src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                       alt='{% trans "Edit" %}'
+                                       title='{% trans "Edit" %}' />
                             </a>
                         </td>
                     </tr>

@@ -10,23 +10,23 @@
               action="{% url lfc_update_files obj.id %}"
               method="post">
 
-            <table class="lfs-manage-table three-fourths">
+            <table class="lfs-manage-table">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
                                class="select-all"
                                value="file" />
                     </th>
-                    <th>
+                    <th class="small">
                         {% trans 'Title' %}
                     </th>
-                    <th>
+                    <th class="middle">
                         {% trans 'Description' %}
                     </th>
                     <th class="tiny right-padding">
                         {% trans 'Position' %}
                     </th>
-                    <th class="tiny right-padding">
+                    <th class="small right-padding">
                         {% trans 'Manage' %}
                     </th>
                 </tr>
@@ -49,19 +49,33 @@
                             <input class="position" type="text" name="position-{{ file.id }}" value="{{ file.position }}" />
                         </td>
                         <td class="right">
+                            {% if not forloop.first %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_file file.id %}?direction=0">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
+                                </a>
+                            {% endif %}
+
+                            {% if not forloop.last %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_file file.id %}?direction=1">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
+                                </a>
+                            {% endif %}
+
                             <a href="{{ file.get_absolute_url }}">
-                                <image src="{{ MEDIA_URL }}lfc/icons/disk.png" 
-                                       alt='{% trans "Download" %}' 
+                                <image src="{{ MEDIA_URL }}lfc/icons/disk.png"
+                                       alt='{% trans "Download" %}'
                                        title='{% trans "Download" %}' />
                             </a>
                             <a class="ajax-link"
                                title='{% trans "Edit" %}'
                                href="{% url lfc_edit_file file.id %}">
-                                <image src="{{ MEDIA_URL }}lfc/icons/edit.png" 
-                                       alt='{% trans "Edit" %}' 
-                                       title='{% trans "Edit" %}' />                               
+                                <image src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                       alt='{% trans "Edit" %}'
+                                       title='{% trans "Edit" %}' />
                             </a>
-                        </td>                                           
+                        </td>
                     </tr>
                 {% endfor %}
             </table>
@@ -104,7 +118,7 @@
     </form>
     <script>
         var swfu;
-    
+
         var settings = {
             flash_url : "{{ MEDIA_URL }}lfc/swfupload/swfupload.swf",
             upload_url: "{% url lfc_add_files obj.id %}",
@@ -118,7 +132,7 @@
                 cancelButtonId : "btnCancel"
             },
             debug: false,
-    
+
             // Button settings
             button_width: "100",
             button_height: "22",
@@ -127,7 +141,7 @@
             button_text_top_padding: 13,
             button_window_mode: SWFUpload.WINDOW_MODE.TRANSPARENT,
             button_cursor : SWFUpload.CURSOR.HAND,
-    
+
             // The event handler functions are defined in handlers.js
             file_queued_handler : fileQueued,
             file_queue_error_handler : fileQueueError,
@@ -139,7 +153,7 @@
             upload_complete_handler : uploadFilesComplete,
             queue_complete_handler : queueComplete  // Queue plugin event
         };
-    
+
         swfu = new SWFUpload(settings);
     </script>
 {% else %}
@@ -160,6 +174,6 @@
         </table>
     {% else %}
         <span>{% trans 'There are no files' %}</span>
-    {% endif %}    
+    {% endif %}
 {% endifhasperm %}
 
