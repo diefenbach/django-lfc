@@ -26,6 +26,17 @@ Code
 Changes
 =======
 
+1.0.2 (2010-10-16)
+------------------
+
+Bugfix release
+
+* Fix for issue #43: User needs permission 'manage_content' in order to change creator
+* Fix for issue #44: Take care of user's permissions within children tab
+* Fix for issue #45: Delete Portlet within delete_portlet (not only PortletAssignment)
+* Bugfix: Corrected several needed permissions for cut/copy'n paste
+* Don't display paste button, if the user hasn't the right permission
+
 1.0.1 (2010-09-21)
 ------------------
 
@@ -41,7 +52,8 @@ Bugfix release
 1.0 (2010-08-24)
 ----------------
 
-* First final release
+First final release
+
 * Bugfix management: access to jsi18n; issue #33
 
 1.0 beta 5 (2010-07-23)
