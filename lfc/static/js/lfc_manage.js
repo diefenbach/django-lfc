@@ -11,8 +11,38 @@ function create_menu() {
     });
 };
 
+function set_tab() {
+    var cookiestr = $.cookie("tab");
+    var array = cookiestr.split("|");
+
+    var portal2object = [0, 2, 3, 4, 5, 8]
+    var object2portal = [0, 0, 1, 2, 3, 4, 0, 0, 5]
+
+    var is_portal = $("#portal").length
+    var index = parseInt(array[1]);
+
+    if (parseInt(array[0]) != is_portal) {
+        if (is_portal) {
+            index = object2portal[index];
+        }
+        else {
+            index = portal2object[index];
+        }
+    }
+
+    $('#manage-tabs').tabs('select', index)
+}
+
 function create_tabs() {
     $('#manage-tabs').tabs();
+
+    $('#manage-tabs').bind('tabsshow', function(event, ui) {
+        set_focus();
+        var cookiestr = $("#portal").length + "|" + ui.index
+        $.cookie("tab", cookiestr);
+    });
+
+    set_tab();
 }
 
 // Loads the portal or object based on the hash state (history)
@@ -48,8 +78,9 @@ function load_url(url, tabs) {
 
         create_menu();
 
-        if (tabs)
+        if (tabs) {
             create_tabs();
+        }
 
         if (data["message"])
             show_message(data["message"])
