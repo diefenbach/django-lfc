@@ -13,6 +13,11 @@ function create_menu() {
 
 function set_tab() {
     var cookiestr = $.cookie("tab");
+
+    if (!cookiestr) {
+        cookiestr = "0|0";
+    }
+
     var array = cookiestr.split("|");
 
     var portal2object = [0, 2, 3, 4, 5, 8]
@@ -175,7 +180,7 @@ $(function() {
         })
         return false;
     });
-
+    
     // Browser history
     $(".manage-portal").live("click", function() {
         $.bbq.pushState({ "type" : "portal", "id" : 1 });

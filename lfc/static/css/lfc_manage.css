@@ -33,7 +33,7 @@ img.right {
 }
 
 .ajax-loading {
-    padding: 4px 0 0 4px;
+    padding: 4px 0 0 10px;
     display: none;
 }
 
@@ -367,6 +367,10 @@ a {
 
 a:hover {
     color: blue;
+}
+
+a.pointer {
+    cursor: pointer;
 }
 
 /* Buttons */

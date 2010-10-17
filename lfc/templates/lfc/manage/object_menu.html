@@ -123,6 +123,11 @@
         </li>
     {% endif %}
     <li>
+        <a accesskey="r"
+           onclick="javascript:load_content()"
+           class="pointer">{% trans "Reload" %}</a>
+    </li>
+    <li>
         <div id="object-view-link">
             {% include "lfc/manage/object_view_link.html" %}
         </div>
