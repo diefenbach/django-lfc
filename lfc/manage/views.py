@@ -174,6 +174,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
                 "message" : _(u"Object has been added."),
                 "id" : new_object.id,
                 "close_overlay" : True,
+                "tab" : 0,
                 }, cls = LazyEncoder)
 
             return HttpResponse(result)
@@ -206,7 +207,12 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
     }))
 
     html = ((".overlay .content", form),)
-    return HttpResponse(render_to_json(html, open_overlay=True))
+    
+    return HttpJsonResponse(
+        content = html,
+        open_overlay = True,
+        mimetype = "text/plain",
+    )
 
 def delete_object(request, id):
     """Deletes the content object with passed id.

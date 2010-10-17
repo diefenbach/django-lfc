@@ -170,9 +170,11 @@ $(function() {
                 if (data["close_overlay"])
                     overlay.close()
 
-                if (data["id"]) {
+                if (data["tab"] != undefined)
+                    $('#manage-tabs').tabs('select', parseInt(data["tab"]));
+
+                if (data["id"])
                     $.bbq.pushState({ "type" : "object", "id" : data["id"] });
-                };
 
                 if (clicked.hasClass("display-loading"))
                     hide_ajax_loading();
@@ -180,7 +182,7 @@ $(function() {
         })
         return false;
     });
-    
+
     // Browser history
     $(".manage-portal").live("click", function() {
         $.bbq.pushState({ "type" : "portal", "id" : 1 });
