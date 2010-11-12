@@ -24,7 +24,7 @@ import lfc.models
 
 class HttpJsonResponse(HttpResponse):
     def __init__(self, content, mimetype=None, status=None, content_type=None, **kwargs):
-        
+
         if mimetype is None:
             mimetype = "application/json"
 
@@ -112,6 +112,10 @@ def get_content_objects(request=None, *args, **kwargs):
     You can consider this as the equivalent to Django's filter method.
     """
     objs = lfc.models.BaseContent.objects.filter(*args, **kwargs)
+    parent = kwargs.get("parent")
+
+    if parent and parent.order_by:
+        objs = objs.order_by(parent.order_by)
 
     result = []
 

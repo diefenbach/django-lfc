@@ -24,3 +24,10 @@ LFC_LANGUAGE_IDS = [l[0] for l in settings.LANGUAGES]
 
 COPY = 1
 CUT = 2
+
+ORDER_BY_CHOICES = (
+    ("position", _(u"Position ascending")),
+    ("-position", _(u"Position descending")),
+    ("publication_date", _(u"Publication date ascending")),
+    ("-publication_date", _(u"Publication date descending")),
+)

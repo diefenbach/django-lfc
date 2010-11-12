@@ -47,6 +47,7 @@ from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
 from lfc.settings import LANGUAGE_CHOICES
+from lfc.settings import ORDER_BY_CHOICES
 
 class Application(models.Model):
     """
@@ -374,6 +375,10 @@ class BaseContent(AbstractBaseContent):
         selected out of the children of the object. If there is one, this is
         displayed instead of the object itself.
 
+    order_by
+        Defines how the children of the object are ordered (default is the 
+        position).
+
     exclude_from_navigation
         If set to True, the object is not displayed within the navigation (top
         tabs and navigation tree).
@@ -446,6 +451,7 @@ class BaseContent(AbstractBaseContent):
     parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="children")
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
     standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
+    order_by = models.CharField("Order by", max_length=20, default="position", choices=ORDER_BY_CHOICES)
 
     exclude_from_navigation = models.BooleanField(_(u"Exclude from navigation"), default=False)
     exclude_from_search = models.BooleanField(_(u"Exclude from search results"), default=False)
@@ -549,12 +555,12 @@ class BaseContent(AbstractBaseContent):
         """
         result = self.title + " " + self.description
         return result.strip()
-    
+
     def edit_form(self, **kwargs):
         """Returns the edit form for the object.
-        """    
+        """
         raise NotImplementedError, "form has to be implemented by sub classed"
-        
+
     def add_form(self, **kwargs):
         """Returns the add/edit form for the object.
         """

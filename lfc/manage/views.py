@@ -410,7 +410,7 @@ def portal_menu(request, portal, template_name="lfc/manage/portal_menu.html"):
         "content_types" : content_types,
     }))
 
-def portal_core(request, portal, template_name="lfc/manage/portal_core.html"):
+def portal_core(request, portal=None, template_name="lfc/manage/portal_core.html"):
     """Displays the core data tab (GET) of the portal and saves it (POST).
 
     **Permissions:**
@@ -418,6 +418,9 @@ def portal_core(request, portal, template_name="lfc/manage/portal_core.html"):
         * view (GET)
         * manage_portal (POST)
     """
+    if portal is None:
+        portal = lfc.utils.get_portal()
+        
     if request.method == "POST":
         portal.check_permission(request.user, "manage_portal")
         form = PortalCoreForm(instance=portal, data=request.POST)
@@ -517,6 +520,8 @@ def update_portal_children(request):
 
     return HttpResponse(result)
 
+# TODO: Need permission view_management or similiar
+@login_required
 def load_portal_images(request):
     """Loads the portal images tab after images have been uploaded via
     SWFUpload (see handler.js -> uploadComplete for more information).
@@ -724,6 +729,8 @@ def add_portal_files(request):
 
     return HttpResponse("")
 
+# TODO: Need permission view_management or similiar
+@login_required
 def load_portal_files(request):
     """Loads the portal files tab after files have been uploaded via
     SWFUpload (see handler.js -> uploadComplete for more information).
@@ -933,6 +940,8 @@ def load_object_parts(request, id, message=""):
 
     return return_as_json(html, "")
 
+# TODO: Need permission view_management or similiar
+@login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
     """Displays the main management screen with all tabs of the content object
     with passed id.
@@ -1175,6 +1184,7 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
         html = (
             ("#meta_data", html),
             ("#navigation", navigation(request, obj)),
+            ("#children", object_children(request, obj)),
         )
 
         return HttpJsonResponse(
@@ -1230,6 +1240,8 @@ def object_files(request, obj, template_name="lfc/manage/object_files.html"):
         "obj" : obj,
     }))
 
+# TODO: Need permission view_management or similiar
+@login_required
 def object_seo_data(request, obj, template_name="lfc/manage/object_seo.html"):
     """Displays/Updates the SEO tab of the passed content object.
 
@@ -2979,25 +2991,19 @@ def do_transition(request, id):
                 obj.publication_date = datetime.datetime.now()
                 obj.save()
 
-    if settings.LFC_MANAGE_PERMISSIONS:
-        permissions = object_permissions(request, obj)
-    else:
-        permissions = ""
-
     html = (
         ("#menu", object_menu(request, obj)),
-        ("#permissions", permissions),
+        ("#navigation", navigation(request, obj)),
         ("#tabs-inline", object_tabs(request, obj)),
     )
 
-    result = simplejson.dumps({
-        "html" : html,
-        "tabs" : True,
-        "message" : _(u"The state has been changed."),
-    }, cls = LazyEncoder)
-
-    return HttpResponse(result)
-
+    return HttpJsonResponse(
+        content = html,
+        message = _(u"The state has been changed."),
+        tabs = True,
+        mimetype = "text/plain",
+    )
+    
 def manage_workflow(request, id=None, template_name="lfc/manage/workflow.html"):
     """Displays the main management form for the workflow with given id. If
        the id is not given an add form is displayed.
@@ -3648,6 +3654,8 @@ def paste(request, id=None):
 def content_types(request):
     """Redirects to the first content type.
     """
+    get_portal().check_permission(request.user, "manage_portal")
+
     ctr = ContentTypeRegistration.objects.filter()[0]
     url = reverse("lfc_content_type", kwargs={"id" : ctr.id })
     return HttpResponseRedirect(url)
