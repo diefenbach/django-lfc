@@ -1176,6 +1176,10 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
         else:
             message = _(u"An error has been occured.")
 
+        link = render_to_string("lfc/manage/object_view_link.html", RequestContext(request, {
+            "obj" : obj,
+        }))
+
         html =  render_to_string(template_name, RequestContext(request, {
             "form" : form,
             "obj" : obj,
@@ -1185,6 +1189,7 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
             ("#meta_data", html),
             ("#navigation", navigation(request, obj)),
             ("#children", object_children(request, obj)),
+            ("#object-view-link", link),
         )
 
         return HttpJsonResponse(
