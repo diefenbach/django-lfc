@@ -72,7 +72,11 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", path="lfc/swfupload/handlers.js")
     register_resource(type=JS, group="manage", path="lfc/swfupload/swfupload.cookies.js")
     register_resource(type=JS, group="manage", path="lfc/js/lfc_manage.js")
-    register_resource(type=JS, group="manage", path="lfc/js/lfc_editor.js")
+    
+    register_resource(type=JS, group="manage", minify=0, path="lfc/tiny_mce/jquery.tinymce.js")
+    register_resource(type=JS, group="manage", minify=1, path="lfc/js/lfc_editor.js")
+    register_resource(type=JS, group="manage", minify=1, path="lfc/js/lfc_tinymce.js")
+    
     register_resource(type=JS, group="manage", merge=0, path="admin/js/admin/DateTimeShortcuts.js")
 
     if create_resources:    
