@@ -54,7 +54,7 @@
                 </table>
             </td>
             <td width="350px">
-                
+
                 <table width="100%"
                        class="email-form">
                     <tr>
@@ -109,12 +109,16 @@
                     {% for child in children %}
                         <tr>
                             <td width="10px">
-                                <input class="child" name="child" value="{{ child.get_absolute_url }}" type="radio" />
+                                <input class="child" name="child" value="{{ child.url }}" type="radio" />
                             </td>
                             <td>
                                 <div>
-                                    <a class="fb-obj"
-                                       href="{% url lfc_filebrowser %}?obj_id={{ child.id }}">{{ child.title }}</a>
+                                    {% if child.has_children %}
+                                        <a class="fb-obj"
+                                           href="{% url lfc_filebrowser %}?obj_id={{ child.id }}">{{ child.title }} [+]</a>
+                                    {% else %}
+                                        <span class="fb-obj">{{ child.title }}</a>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
@@ -188,7 +192,7 @@
     <div class="right">
         <input type="button" value='{% trans "Insert" %}' id="insert-file" />
     </div>
-    
+
     <h1>{% trans "Upload file to" %} {{ current_obj.title }}</h1>
     {% if display_upload %}
         <form action="{% url lfc_fb_upload_file %}"

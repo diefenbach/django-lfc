@@ -39,8 +39,14 @@
                         <td>
                             {% for child in children %}
                                 <div>
-                                    <a class="fb-obj"
-                                       href="{% url lfc_imagebrowser %}?obj_id={{ child.id }}">{{ child.title }}</a>
+                                    {% if child.display %}
+                                        <a class="fb-obj"
+                                           href="{% url lfc_imagebrowser %}?obj_id={{ child.id }}">{{ child.title }} {{ child.display }}
+                                        </a>
+                                    {% else %}
+                                        <span class="fb-obj">{{ child.title }}
+                                        </span>                                        
+                                    {% endif %}
                                 </div>
                             {% empty %}
                                 <div>{% trans "There are no children" %}</div>
@@ -120,7 +126,7 @@
         </tr>
     </table>
 
-    <h1>{% trans "Upload image to" %} {{ current_obj.title }}</h1>
+    <h1>{% trans "Upload image to current object: " %} {{ current_obj.title }}</h1>
     {% if display_upload %}
         <form action="{% url lfc_fb_upload_image %}"
               method="post"

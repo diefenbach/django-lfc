@@ -2614,13 +2614,32 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
     while temp is not None:
         objs.insert(0, temp)
         temp = temp.parent
+    
+    children = []
+    for child in obj.get_children(request):
+        display = []
+        if child.has_children(request):
+            display.append(u"C")
+        if child.images.count():
+            display.append(u"I")
+            
+        display = "|".join(display)
+
+        if display:
+            display = "[%s]" % display
+        
+        children.append({
+            "id" : child.id,
+            "title" : child.title,
+            "display" : display,
+        })
 
     result = render_to_string(template_name, RequestContext(request, {
         "portal" : portal,
         "obj" : obj,
         "obj_id" : obj_id,
         "objs" : objs,
-        "children" : obj.get_children(request),
+        "children" : children,
         "images" : obj.images.all(),
         "current_id" : current_id,
         "current_obj" : current_obj,
@@ -2675,12 +2694,21 @@ def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage
         objs.insert(0, temp)
         temp = temp.parent
 
+    children = []
+    for child in obj.get_children(request):
+        children.append({
+            "id" : child.id,
+            "title" : child.title,
+            "has_children" : child.has_children(request),
+            "url" : child.get_absolute_url(),
+        })
+
     result = render_to_string(template_name, RequestContext(request, {
         "portal" : portal,
         "obj" : obj,
         "obj_id" : obj_id,
         "objs" : objs,
-        "children" : obj.get_children(request),
+        "children" : children,
         "files" : obj.files.all(),
         "images" : obj.images.all(),
         "current_id" : current_id,
