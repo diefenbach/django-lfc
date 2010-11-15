@@ -376,7 +376,7 @@ class BaseContent(AbstractBaseContent):
         displayed instead of the object itself.
 
     order_by
-        Defines how the children of the object are ordered (default is the 
+        Defines how the children of the object are ordered (default is the
         position).
 
     exclude_from_navigation
@@ -521,7 +521,10 @@ class BaseContent(AbstractBaseContent):
         if page.language == settings.LANGUAGE_CODE:
             return ("lfc_base_view", (), {"slug" : slug})
         elif page.language == "0":
-            language = translation.get_language()
+            if page.parent:
+                language = page.parent.language
+            else:
+                language = translation.get_language()
             if language == settings.LANGUAGE_CODE:
                 return ("lfc_base_view", (), {"slug" : slug})
             else:

@@ -257,6 +257,7 @@ def set_language(request, language, id=None):
             url = obj.get_absolute_url()
 
         # Coming from a object with neutral language, we stay on this object
+        # but switch to the request language.
         elif obj.language == "0":
             url = obj.get_absolute_url()
 
