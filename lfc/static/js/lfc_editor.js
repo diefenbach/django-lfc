@@ -1,63 +1,4 @@
 $(function() {
-    var editor;
-
-    $.cleditor.defaultOptions.width = 670;
-    $.cleditor.defaultOptions.height = 400;
-    $.cleditor.defaultOptions.controls = "bold italic underline strikethrough subscript superscript " +
-                                         "style | color highlight removeformat | bullets numbering | outdent " +
-                                         "indent | alignleft center alignright justify | undo redo | " +
-                                         "myimage myfile unlink | html"
-
-    $.cleditor.defaultOptions.docCSSFile = "/media/tiny.css";
-    $.cleditor.defaultOptions.styles = [["Paragraph", "<p>"], ["Header 1", "<h1>"], ["Header 2", "<h2>"], ["Header 3", "<h3>"], ["Quote", "<blockquote>"]]
-
-    // Image plugin
-    $.cleditor.buttons.myimage = {
-        name: "myimage",
-        image: "image.gif",
-        title: "Insert Image",
-        useCSS: true,
-        buttonClick: imagebrowser,
-    };
-
-    // File plugin
-    $.cleditor.buttons.myfile = {
-        name: "myfile",
-        image: "link.gif",
-        title: "Insert File",
-        useCSS: true,
-        buttonClick: filebrowser,
-    };
-
-    // Handle the image button click event
-    function imagebrowser(e, data) {
-        editor = data.editor;
-        editor.focus();
-        var id = $("#obj-id").attr("data");
-        $.get("/manage/imagebrowser?obj_id=" + id, function(data) {
-            $("#overlay-2 .content").html(data);
-        });
-        overlay_2.load();
-        $("#overlay-2").css("left", ($(document).width() - 1000) / 2);
-    }
-
-    $("input.image").live("click", function(e) {
-        var html = "<img src='" + $(this).attr("value") + "' />"
-        $("#image-preview").html(html)
-    })
-
-    // File browser
-    function filebrowser(e, data) {
-        editor = data.editor;
-        editor.focus();
-        var id = $("#obj-id").attr("data");
-        $.get("/manage/filebrowser?obj_id=" + id, function(data) {
-            $("#overlay-2 .content").html(data);
-        });
-        overlay_2.load();
-        $("#overlay-2").css("left", ($(document).width() - 1000) / 2);
-    }
-
     $("a.content-form-link").live("click", function() {
         $(".content-form").show();
         $(".extern-form").hide();
@@ -79,32 +20,36 @@ $(function() {
         return false;
     });
 
+    $("input.image").live("click", function(e) {
+        var html = "<img src='" + $(this).attr("value") + "' />"
+        $("#image-preview").html(html)
+    })
+
     $("#insert-file").live("click", function(e) {
         var html;
 
         if (!html) {
             var url = $("input.child:checked").attr("value");
             if (url)
-                html = "<a href='" + url + "'>" + editor.selectedText() + "</a>"
+                html = "<a href='" + url + "'>" + getSelectedText() + "</a>"
         }
 
         if (!html) {
             var url = $("input.fb-extern").val();
             if (url) {
                 var protocol = $(".fb-extern-protocol").val();
-                html = "<a href='" + protocol + url + "'>" + editor.selectedText() + "</a>"
+                html = "<a href='" + protocol + url + "'>" + getSelectedText() + "</a>"
             }
         }
 
         if (!html) {
             var email = $("input.fb-email").val();
             if (email != "")
-                html = "<a href='mailto:" + email + "'>" + editor.selectedText() + "</a>"
+                html = "<a href='mailto:" + email + "'>" + getSelectedText() + "</a>"
         }
 
         if (html) {
-            editor.focus();
-            editor.execCommand("inserthtml", html, null, null);
+            insertHTML(html);
         }
 
         overlay_2.close();
@@ -125,9 +70,8 @@ $(function() {
             html = "<img class='" + klass + "' src='" + url + "' />"
         else
             html = "<img src='" + url + "' />"
-
-        editor.focus();
-        editor.execCommand("inserthtml", html, null, null);
+        
+        insertHTML(html);
         overlay_2.close();
         return false;
     })
