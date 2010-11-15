@@ -8,6 +8,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 # permissions imports
+from permissions.models import PrincipalRoleRelation
 from permissions.models import Role
 import permissions.utils
 
@@ -25,6 +26,7 @@ from portlets.models import Slot
 import lfc.utils.registration
 from lfc.models import Page
 from lfc.models import Portal
+from lfc.tests.utils import create_request
 
 class DummyPortlet(Portlet):
     pass
@@ -52,6 +54,44 @@ class LFCPermissionTestCase2(TestCase):
         self.page_1 = Page.objects.create(title="Page 1", slug="page-1")
         self.page_2 = Page.objects.create(title="Page 2", slug="page-2", parent=self.page_1)
         self.page_3 = Page.objects.create(title="Page 3", slug="page-3", parent=self.page_2)
+
+    def test_delete_user(self):
+        """
+        """
+        request = create_request()
+        
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+        permissions.utils.add_local_role(self.page_1, self.user, self.editor)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 1)
+
+        from lfc.manage.views import delete_user
+        delete_user(request, self.user.id)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+    def test_delete_group(self):
+        """
+        """
+        request = create_request()
+        
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+        permissions.utils.add_local_role(self.page_1, self.group, self.editor)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 1)
+
+        from lfc.manage.views import delete_group
+        delete_group(request, self.group.id)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
 
     def test_local_roles_from_parent_1(self):
         """
@@ -164,7 +204,7 @@ class LFCPermissionTestCase2(TestCase):
 
         roles = permissions.utils.get_roles(self.user, self.page_2)
         self.assertEqual(roles, [self.editor.id])
-        
+
         roles = permissions.utils.get_roles(self.user, self.page_3)
         self.assertEqual(roles, [self.editor.id, self.editor.id])
 
@@ -279,7 +319,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_images"))
+        result = self.client.get(reverse("lfc_load_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object files
@@ -598,7 +638,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_images"))
+        result = self.client.get(reverse("lfc_load_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object files
@@ -618,7 +658,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_files"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_files"))
+        result = self.client.get(reverse("lfc_load_portal_files"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # comments
