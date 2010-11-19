@@ -2690,7 +2690,7 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
     selected_file = None
     selected_obj = None
     
-    current_view = "extern"
+    current_view = "content"
     
     if url:
         parsed_url = urlparse.urlparse(url)
