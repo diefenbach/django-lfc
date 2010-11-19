@@ -11,11 +11,6 @@ table.lfc-compositor-default td.last {
 }
 
 
-.extern-form,
-.email-form {
-    display: none;
-}
-
 #manage-tabs.alone {
     margin-top: 20px;
 }

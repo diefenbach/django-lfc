@@ -1,6 +1,7 @@
 # python imports
 import copy
 import datetime
+import urlparse
 
 # django imports
 from django.conf import settings
@@ -207,7 +208,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
     }))
 
     html = ((".overlay .content", form),)
-    
+
     return HttpJsonResponse(
         content = html,
         open_overlay = True,
@@ -420,7 +421,7 @@ def portal_core(request, portal=None, template_name="lfc/manage/portal_core.html
     """
     if portal is None:
         portal = lfc.utils.get_portal()
-        
+
     if request.method == "POST":
         portal.check_permission(request.user, "manage_portal")
         form = PortalCoreForm(instance=portal, data=request.POST)
@@ -555,7 +556,7 @@ def update_portal_images(request):
 
         position-x
             The position of the image with id x. Used for update action.
-            
+
         caption-x
             The title of the image with id x. Used for update action.
 
@@ -1767,7 +1768,7 @@ def update_object_images(request, id):
 
         position-x
             The position of the image with id x. Used for update action.
-            
+
         caption-x
             The title of the image with id x. Used for update action.
 
@@ -2614,7 +2615,7 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
     while temp is not None:
         objs.insert(0, temp)
         temp = temp.parent
-    
+
     children = []
     for child in obj.get_children(request):
         display = []
@@ -2622,12 +2623,12 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
             display.append(u"C")
         if child.images.count():
             display.append(u"I")
-            
+
         display = "|".join(display)
 
         if display:
             display = "[%s]" % display
-        
+
         children.append({
             "id" : child.id,
             "title" : child.title,
@@ -2651,7 +2652,7 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
     else:
         return HttpResponse(result)
 
-def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage/filebrowser_files.html"):
+def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_files.html"):
     """Displays a file browser.
 
     **Parameters:**
@@ -2673,19 +2674,70 @@ def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage
         edit
     """
     obj_id = request.GET.get("obj_id", obj_id)
+
+    # current_obj is the initial object which calls the filebrowser
     current_id = request.GET.get("current_id", obj_id)
     current_obj = lfc.utils.get_content_object(pk=current_id)
 
     portal = get_portal()
 
-    try:
-        obj = lfc.utils.get_content_object(pk=obj_id)
-        temp = obj
-        is_portal = False
-    except (BaseContent.DoesNotExist, ValueError):
-        temp = None
-        is_portal = True
-        obj = portal
+    obj = None
+    url = request.GET.get("url")
+    external_url = ""
+    mail_url = ""
+
+    selected_image = None
+    selected_file = None
+    selected_obj = None
+    
+    current_view = "extern"
+    
+    if url:
+        parsed_url = urlparse.urlparse(url)
+        if parsed_url.scheme == "mailto":
+            mail_url = parsed_url.path
+            current_view = "mail"
+        elif parsed_url.netloc == "localhost:8000":
+            current_view = "content"
+
+            if parsed_url.path.startswith("/file"):
+                selected_file = File.objects.get(pk=1)
+                selected_obj = selected_file.content
+                temp = obj = selected_obj
+                is_portal = False
+            elif parsed_url.path.startswith("/image"):
+                selected_image = Image.objects.get(pk=1)
+                selected_obj = selected_image.content
+                temp = obj = selected_obj
+                is_portal = False
+            else:
+                try:
+                    if selected_obj is None:
+                        selected_obj = lfc.utils.traverse_object(request, parsed_url.path[1:])
+                except Http404:
+                    selected_obj = None
+                else:
+                    if selected_obj.parent:
+                        temp = obj = selected_obj.parent
+                        is_portal = False
+                    else:
+                        temp = None
+                        is_portal = True
+                        obj = portal
+        else:
+            external_url = parsed_url.netloc + parsed_url.path
+            current_view = "extern"
+
+    if obj is None:
+        selected_obj = None
+        try:
+            obj = lfc.utils.get_content_object(pk=obj_id)
+            temp = obj
+            is_portal = False
+        except (BaseContent.DoesNotExist, ValueError):
+            temp = None
+            is_portal = True
+            obj = portal
 
     obj.check_permission(request.user, "edit")
 
@@ -2696,30 +2748,69 @@ def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage
 
     children = []
     for child in obj.get_children(request):
+
+        display = []
+        if child.has_children(request):
+            display.append(u"C")
+        if child.images.count():
+            display.append(u"I")
+        if child.files.count():
+            display.append(u"F")
+        display = "|".join(display)
+
+        if display:
+            display = "[%s]" % display
+
         children.append({
             "id" : child.id,
             "title" : child.title,
-            "has_children" : child.has_children(request),
+            "display" : display,
             "url" : child.get_absolute_url(),
+            "checked" : child == selected_obj,
         })
 
-    result = render_to_string(template_name, RequestContext(request, {
+    files = []
+    for file in obj.files.all():
+        files.append({
+            "id" : file.id,
+            "title" : file.title,
+            "checked" : file == selected_file,
+            "url" : file.get_absolute_url(),
+        })
+
+    images = []
+    for image in obj.images.all():
+        images.append({
+            "id" : image.id,
+            "title" : image.title,
+            "checked" : image == selected_image,
+            "url" : image.get_absolute_url(),
+        })
+
+    html = render_to_string(template_name, RequestContext(request, {
         "portal" : portal,
         "obj" : obj,
         "obj_id" : obj_id,
         "objs" : objs,
         "children" : children,
-        "files" : obj.files.all(),
-        "images" : obj.images.all(),
+        "files" : files,
+        "images" : images,
         "current_id" : current_id,
         "current_obj" : current_obj,
         "display_upload" : is_portal or obj_id,
+        "title" : request.GET.get("title", ""),
+        "target" : request.GET.get("target"),
+        "external_url" : external_url,
+        "mail_url" : mail_url,
     }))
 
-    if as_string:
-        return result
-    else:
-        return HttpResponse(result)
+    return HttpJsonResponse(
+        content = html,
+        current_view = current_view,
+        mimetype = "text/plain",
+    )
+
+    return HttpResponse(result)
 
 def fb_upload_image(request):
     """Uploads an image within filebrowser.
@@ -3036,7 +3127,7 @@ def do_transition(request, id):
         tabs = True,
         mimetype = "text/plain",
     )
-    
+
 def manage_workflow(request, id=None, template_name="lfc/manage/workflow.html"):
     """Displays the main management form for the workflow with given id. If
        the id is not given an add form is displayed.

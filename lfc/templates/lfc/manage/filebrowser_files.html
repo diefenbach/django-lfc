@@ -53,8 +53,10 @@
                     </tr>
                 </table>
             </td>
+            
             <td width="350px">
 
+                {#  Mail #}
                 <table width="100%"
                        class="email-form">
                     <tr>
@@ -66,12 +68,12 @@
                         <td>
                            <form>
                                <label>{% trans "E-mail" %}</label>
-                               <input class="fb-email" type="text" />
+                               <input class="fb-email" type="text" {% if mail_url %}value="{{ mail_url }}"{% endif %} />
                            </form>
                        </td>
                     </tr>
                 </table>
-
+                
                 <table width="100%"
                        class="extern-form">
                     <tr>
@@ -86,12 +88,13 @@
                                    <option>http://</option>
                                    <option>https://</option>
                                </select>
-                               <input class="fb-extern" type="text" />
+                               <input class="fb-extern" type="text" {% if external_url %}value="{{ external_url }}"{% endif %} />
                            </form>
                        </td>
                     </tr>
                 </table>
 
+                {# Content #}
                 <table width="100%"
                        class="content-form">
                     <tr>
@@ -109,13 +112,13 @@
                     {% for child in children %}
                         <tr>
                             <td width="10px">
-                                <input class="child" name="child" value="{{ child.url }}" type="radio" />
+                                <input class="child" name="child" value="{{ child.url }}" type="radio" {% if child.checked %}checked="checked"{% endif %}/>
                             </td>
                             <td>
                                 <div>
-                                    {% if child.has_children %}
+                                    {% if child.display %}
                                         <a class="fb-obj"
-                                           href="{% url lfc_filebrowser %}?obj_id={{ child.id }}">{{ child.title }} [+]</a>
+                                           href="{% url lfc_filebrowser %}?obj_id={{ child.id }}">{{ child.title }} {{ child.display }}</a>
                                     {% else %}
                                         <span class="fb-obj">{{ child.title }}</a>
                                     {% endif %}
@@ -133,7 +136,7 @@
                     {% for file in files %}
                         <tr>
                             <td width="10px">
-                                <input class="child" name="child" value="{{ file.get_absolute_url }}" type="radio" />
+                                <input class="child" name="child" value="{{ file.url }}" type="radio" {% if file.checked %}checked="checked"{% endif %} />
                             </td>
                             <td valign="top">
                                 {{ file.title }}
@@ -150,7 +153,7 @@
                     {% for image in images %}
                         <tr>
                             <td width="10px">
-                                <input class="child" name="child" value="{{ image.image.url }}" type="radio" />
+                                <input class="child" name="child" value="{{ image.url }}" type="radio" {% if file.checked %}checked="checked"{% endif %} />
                             </td>
                             <td valign="top">
                                 {{ image.title }}
@@ -171,7 +174,7 @@
                             <div>
                                 <label>{% trans "Title" %}</label>
                             </div>
-                            <input type="text" name="title" />
+                            <input id="fb-title" type="text" name="title" {% if title %}value="{{title}}"{% endif %}/>
                         </td>
                     </tr>
                     <tr>
@@ -179,9 +182,9 @@
                             <div>
                                 <label>{% trans "Target" %}</label>
                             </div>
-                            <select id="file-class">
-                                <option value="same">{% trans "Same window" %}</option>
-                                <option value="new">{% trans "New window" %}</option>
+                            <select id="fb-target">
+                                <option value="_self" {% ifequal target "_self"  %}selected="selected"{% endifequal %}>{% trans "Same window" %}</option>
+                                <option value="_blank" {% ifequal target "_blank"  %}selected="selected"{% endifequal %}>{% trans "New window" %}</option>
                             </select>
                         </td>
                     </tr>
