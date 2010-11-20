@@ -2689,9 +2689,9 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
     selected_image = None
     selected_file = None
     selected_obj = None
-    
+
     current_view = "content"
-    
+
     if url:
         parsed_url = urlparse.urlparse(url)
         if parsed_url.scheme == "mailto":
@@ -2699,15 +2699,22 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
             current_view = "mail"
         elif parsed_url.netloc == "localhost:8000":
             current_view = "content"
-
             if parsed_url.path.startswith("/file"):
-                selected_file = File.objects.get(pk=1)
-                selected_obj = selected_file.content
+                try:
+                    id = parsed_url.path.split("/")[-1]
+                    selected_file = File.objects.get(pk=id)
+                    selected_obj = selected_file.content
+                except (IndexError, Image.DoesNotExist):
+                    pass
                 temp = obj = selected_obj
                 is_portal = False
-            elif parsed_url.path.startswith("/image"):
-                selected_image = Image.objects.get(pk=1)
-                selected_obj = selected_image.content
+            elif parsed_url.path.startswith("/media/uploads"):
+                try:
+                    selected_image = Image.objects.get(
+                        image="/".join(parsed_url.path.split("/")[2:]))
+                    selected_obj = selected_image.content
+                except (IndexError, Image.DoesNotExist):
+                    pass
                 temp = obj = selected_obj
                 is_portal = False
             else:
@@ -2784,7 +2791,7 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
             "id" : image.id,
             "title" : image.title,
             "checked" : image == selected_image,
-            "url" : image.get_absolute_url(),
+            "url" : image.image.url,
         })
 
     html = render_to_string(template_name, RequestContext(request, {
@@ -2802,6 +2809,7 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
         "target" : request.GET.get("target"),
         "external_url" : external_url,
         "mail_url" : mail_url,
+        "url" : url,
     }))
 
     return HttpJsonResponse(

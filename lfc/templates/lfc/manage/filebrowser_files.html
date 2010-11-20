@@ -153,7 +153,7 @@
                     {% for image in images %}
                         <tr>
                             <td width="10px">
-                                <input class="child" name="child" value="{{ image.url }}" type="radio" {% if file.checked %}checked="checked"{% endif %} />
+                                <input class="child" name="child" value="{{ image.url }}" type="radio" {% if image.checked %}checked="checked"{% endif %} />
                             </td>
                             <td valign="top">
                                 {{ image.title }}
