@@ -90,9 +90,14 @@ function filebrowser(e, ed) {
 
 function imagebrowser(e, ed) {
     editor = ed;
+    node = editor.selection.getNode();
+    url = node.src || "";
+    title = node.title || "";
+    klass = node.className || ""
     var id = $("#obj-id").attr("data");
-    $.get("/manage/imagebrowser?obj_id=" + id, function(data) {
-        $("#overlay-2 .content").html(data);
+    $.get("/manage/imagebrowser?obj_id=" + id + "&url=" + url + "&title=" + title + "&class=" + klass, function(data) {
+        data = $.parseJSON(data);
+        $("#overlay-2 .content").html(data["html"]);
     });
     overlay_2.load();
     $("#overlay-2").css("left", ($(document).width() - 1000) / 2);

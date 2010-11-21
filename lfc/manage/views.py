@@ -2,6 +2,7 @@
 import copy
 import datetime
 import urlparse
+import re
 
 # django imports
 from django.conf import settings
@@ -2595,19 +2596,38 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
         edit
     """
     obj_id = request.GET.get("obj_id", obj_id)
+    url = request.GET.get("url")
+    selected_class = request.GET.get("class")
     current_id = request.GET.get("current_id", obj_id)
     current_obj = lfc.utils.get_content_object(pk=current_id)
-
+    
+    selected_size = None
+    selected_image = None
     portal = get_portal()
-
-    try:
-        obj = lfc.utils.get_content_object(pk=obj_id)
-        temp = obj
-        is_portal = False
-    except (BaseContent.DoesNotExist, ValueError):
-        temp = None
-        is_portal = True
-        obj = portal
+    
+    if url:
+        parsed_url = urlparse.urlparse(url)        
+        try:
+            temp_url = "/".join(parsed_url.path.split("/")[2:])
+            result = re.search("(.*)(\.)(\d+x\d+)(.*)", temp_url)
+            temp_url = result.groups()[0] + result.groups()[3]
+            selected_image = Image.objects.get(
+                image=temp_url)
+            obj = selected_image.content
+            temp = obj
+            is_portal = False
+            selected_size = result.groups()[2]
+        except (IndexError, Image.DoesNotExist):
+            pass
+    else:
+        try:
+            obj = lfc.utils.get_content_object(pk=obj_id)
+            temp = obj
+            is_portal = False
+        except (BaseContent.DoesNotExist, ValueError):
+            temp = None
+            is_portal = True
+            obj = portal
 
     obj.check_permission(request.user, "edit")
 
@@ -2635,22 +2655,49 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
             "display" : display,
         })
 
-    result = render_to_string(template_name, RequestContext(request, {
+    images = []
+    for image in obj.images.all():
+        images.append({
+            "id" : image.id,
+            "title" : image.title,
+            "checked" : image == selected_image,
+            "url" : image.image.url_200x200,
+        })
+    
+    sizes = []
+    for size in ("60x60", "200x200", "400x400", "600x600"):
+        sizes.append({
+            "value" : size,
+            "title" : size, 
+            "selected" : size == selected_size,            
+        })
+    
+    classes = []
+    for klass in ("inline", "left", "right"):
+        classes.append({
+            "value" : klass,
+            "title" : klass,
+            "selected" : klass == selected_class,
+        })
+    html = render_to_string(template_name, RequestContext(request, {
         "portal" : portal,
         "obj" : obj,
         "obj_id" : obj_id,
         "objs" : objs,
         "children" : children,
-        "images" : obj.images.all(),
+        "images" : images,
         "current_id" : current_id,
         "current_obj" : current_obj,
         "display_upload" : is_portal or obj_id,
+        "sizes" : sizes,
+        "classes" : classes,
+        "selected_image": selected_image,
     }))
 
-    if as_string:
-        return result
-    else:
-        return HttpResponse(result)
+    return HttpJsonResponse(
+        content = html,
+        mimetype = "text/plain",
+    )
 
 def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_files.html"):
     """Displays a file browser.
@@ -2817,8 +2864,6 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
         current_view = current_view,
         mimetype = "text/plain",
     )
-
-    return HttpResponse(result)
 
 def fb_upload_image(request):
     """Uploads an image within filebrowser.

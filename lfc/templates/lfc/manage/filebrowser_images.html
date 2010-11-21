@@ -66,7 +66,7 @@
                     {% for image in images %}
                         <tr>
                             <td width="10px">
-                                <input class="image" name="image" value="{{ image.image.url_200x200 }}" type="radio" />
+                                <input class="image" name="image" value="{{ image.url }}" type="radio" {% if image.checked %}checked="checked"{% endif %} />
                             </td>
                             <td valign="top">
                                 {{ image.title }}
@@ -92,16 +92,20 @@
                     <tr>
                         <td>
                             <div style="min-height:200px" id="image-preview">
-                                {% trans "No image selcted" %}
+                                {% if selected_image %}
+                                    <img src="{{ selected_image.image.url_200x200 }}" alt='{% trans "Prview" %}' />
+                                {% else %}
+                                    {% trans "No image selcted" %}
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <select id="image-class">
-                                <option value="inline">{% trans "inline" %}</option>
-                                <option value="left">{% trans "left" %}</option>
-                                <option value="right">{% trans "right" %}</option>
+                                {% for klass in classes %}
+                                    <option value="{{ klass.value }}" {% if klass.selected %}selected="selected"{% endif %}>{{ klass.title }}</option>
+                                {% endfor %}
                             </select>
                         </td>
                     </tr>
@@ -109,10 +113,9 @@
                         <td>
                             <select id="image-size">
                                 <option value="">{% trans "Original" %}</option>
-                                <option value="60x60">60 x 60</option>
-                                <option value="200x200">200 x 200</option>
-                                <option value="400x400">400 x 400</option>
-                                <option value="600x600">600 x 600</option>
+                                {% for size in sizes %}
+                                    <option value="{{ size.value }}" {% if size.selected %}selected="selected"{% endif %}>{{ size.title }}</option>                                    
+                                {% endfor %}
                             </select>
                         </td>
                     </tr>
