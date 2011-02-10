@@ -278,7 +278,11 @@ def set_language(request, language, id=None):
         else:
             canonical = obj.get_canonical(request)
             if canonical:
-                url = canonical.get_absolute_url()
+                translated = canonical.get_translation(request, language)
+                if translated:
+                    url = translated.get_absolute_url()
+                else:
+                    url = canonical.get_absolute_url()
             else:
                 if language == settings.LANGUAGE_CODE:
                     url = "/"
