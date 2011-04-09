@@ -15,7 +15,7 @@ class CopyTestCase(TestCase):
 
     def setUp(self):
         from lfc.utils.initialize import initialize
-        initialize()
+        initialize(create_resources=False)
 
         Portal.objects.create(id=1)
         self.p1 = Page.objects.create(id=1, title="Page 1", slug="page-1")
