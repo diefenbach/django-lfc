@@ -1101,13 +1101,18 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
             "obj" : obj,
         }))
 
-        link = render_to_string("lfc/manage/object_view_link.html", RequestContext(request, {
+        view_link = render_to_string("lfc/manage/object_view_link.html", RequestContext(request, {
+            "obj" : obj,
+        }))
+
+        quick_view_link = render_to_string("lfc/manage/object_quick_view_link.html", RequestContext(request, {
             "obj" : obj,
         }))
 
         html = (
             ("#navigation", navigation(request, obj)),
-            ("#object-view-link", link),
+            ("#object-view-link", view_link),
+            ("#object-quick-view-link", quick_view_link),
             ("#core_data", data),
         )
 
@@ -1176,7 +1181,11 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
         else:
             message = _(u"An error has been occured.")
 
-        link = render_to_string("lfc/manage/object_view_link.html", RequestContext(request, {
+        view_link = render_to_string("lfc/manage/object_view_link.html", RequestContext(request, {
+            "obj" : obj,
+        }))
+
+        quick_view_link = render_to_string("lfc/manage/object_quick_view_link.html", RequestContext(request, {
             "obj" : obj,
         }))
 
@@ -1189,7 +1198,8 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
             ("#meta_data", html),
             ("#navigation", navigation(request, obj)),
             ("#children", object_children(request, obj)),
-            ("#object-view-link", link),
+            ("#object-view-link", view_link),
+            ("#object-quick_view_link", quick_view_link),
         )
 
         return HttpJsonResponse(
