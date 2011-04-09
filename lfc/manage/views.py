@@ -84,7 +84,7 @@ from lfc.manage.forms import WorkflowAddForm
 from lfc.models import Application
 from lfc.models import File
 from lfc.models import Image
-from lfc.settings import COPY, CUT
+from lfc.settings import COPY, CUT, IMAGE_SIZES
 from lfc.utils import LazyEncoder
 from lfc.utils import MessageHttpResponseRedirect
 from lfc.utils import HttpJsonResponse
@@ -522,8 +522,6 @@ def update_portal_children(request):
 
     return HttpResponse(result)
 
-# TODO: Need permission view_management or similiar
-@login_required
 def load_portal_images(request):
     """Loads the portal images tab after images have been uploaded via
     SWFUpload (see handler.js -> uploadComplete for more information).
@@ -1247,8 +1245,6 @@ def object_files(request, obj, template_name="lfc/manage/object_files.html"):
         "obj" : obj,
     }))
 
-# TODO: Need permission view_management or similiar
-@login_required
 def object_seo_data(request, obj, template_name="lfc/manage/object_seo.html"):
     """Displays/Updates the SEO tab of the passed content object.
 
@@ -2600,13 +2596,13 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
     selected_class = request.GET.get("class")
     current_id = request.GET.get("current_id", obj_id)
     current_obj = lfc.utils.get_content_object(pk=current_id)
-    
+
     selected_size = None
     selected_image = None
     portal = get_portal()
-    
+
     if url:
-        parsed_url = urlparse.urlparse(url)        
+        parsed_url = urlparse.urlparse(url)
         try:
             temp_url = "/".join(parsed_url.path.split("/")[2:])
             result = re.search("(.*)(\.)(\d+x\d+)(.*)", temp_url)
@@ -2663,15 +2659,16 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
             "checked" : image == selected_image,
             "url" : image.image.url_200x200,
         })
-    
+
     sizes = []
-    for size in ("60x60", "200x200", "400x400", "600x600"):
+    for size in IMAGE_SIZES:
+        size = "%sx%s" % (size[0], size[1])
         sizes.append({
             "value" : size,
-            "title" : size, 
-            "selected" : size == selected_size,            
+            "title" : size,
+            "selected" : size == selected_size,
         })
-    
+
     classes = []
     for klass in ("inline", "left", "right"):
         classes.append({

@@ -909,8 +909,7 @@ class Image(models.Model):
     caption = models.CharField(blank=True, max_length=100)
     description = models.TextField(blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
-    image = ImageWithThumbsField(_(u"Image"), upload_to="uploads",
-        sizes=((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800)))
+    image = ImageWithThumbsField(_(u"Image"), upload_to="uploads", sizes=IMAGE_SIZES)
 
     class Meta:
         ordering = ("position", )
