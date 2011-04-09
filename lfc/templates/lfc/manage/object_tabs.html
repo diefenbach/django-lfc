@@ -16,7 +16,7 @@
             <li><a href="#seo_data">{% trans 'SEO' %}</a></li>
         {% endif %}
         {% if LFC_MANAGE_PERMISSIONS %}
-            <li class="ui-tabs-nav-item"><a href="{% url lfc_load_update_object_permissions obj.id %}">{% trans 'Permissions' %}</a></li>
+            <li class="ui-tabs-nav-item"><a href="{% url lfc_load_object_permissions obj.id %}">{% trans 'Permissions' %}</a></li>
         {% endif %}
     </ul>
 

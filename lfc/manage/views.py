@@ -966,11 +966,6 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     if not lfc.utils.registration.get_info(obj):
         raise Http404()
 
-    if settings.LFC_MANAGE_PERMISSIONS:
-        permissions = object_permissions(request, obj)
-    else:
-        permissions = ""
-
     result = render_to_string(template_name, RequestContext(request, {
         "navigation" : navigation(request, obj),
         "menu" : object_menu(request, obj),
@@ -1041,11 +1036,6 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
 
         None (as this is not called from outside)
     """
-    if settings.LFC_MANAGE_PERMISSIONS:
-        permissions = object_permissions(request, obj)
-    else:
-        permissions = ""
-
     return render_to_string(template_name, RequestContext(request, {
         "obj" : obj,
         "core_data" : object_core_data(request, obj),
@@ -1056,7 +1046,6 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
         "comments" : comments(request, obj),
         "portlets" : portlets_inline(request, obj),
         "children" : object_children(request, obj),
-        "permissions" : permissions,
         "content_type_name" : get_info(obj).name,
     }))
 

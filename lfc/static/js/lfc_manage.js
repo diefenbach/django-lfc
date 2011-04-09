@@ -69,12 +69,7 @@ function load_content() {
         load_url("/manage/load-portal", true);
     }
     else {
-        if ($("#portal").length | !$("#core_data").length) {
-            load_url("/manage/load-object/" + id, true);
-        }
-        else {
-            load_url("/manage/load-object-parts/" + id, false);
-        }
+        load_url("/manage/load-object/" + id, true);
     }
 }
 
