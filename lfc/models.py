@@ -48,6 +48,7 @@ from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
 from lfc.settings import LANGUAGE_CHOICES
 from lfc.settings import ORDER_BY_CHOICES
+from lfc.settings import IMAGE_SIZES
 
 class Application(models.Model):
     """
@@ -485,7 +486,7 @@ class BaseContent(AbstractBaseContent):
     def __unicode__(self):
         return unicode(self.title)
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         """Djangos default save method. This is overwritten to do some LFC
         related stuff if a content object is saved.
         """
@@ -493,7 +494,7 @@ class BaseContent(AbstractBaseContent):
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
 
-        super(BaseContent, self).save()
+        super(BaseContent, self).save(*args, **kwargs)
 
         # Set the initial state if there is none yet
         co = self.get_content_object()
