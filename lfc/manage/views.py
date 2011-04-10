@@ -1062,6 +1062,7 @@ def add_object_images(request, id):
         image.position = (i+1) * 10
         image.save()
 
+    lfc.utils.clear_cache()
     return HttpResponse(object_images(request, id, as_string=True))
 
 def update_object_images(request, id):
@@ -1080,6 +1081,7 @@ def update_object_images(request, id):
         "message" : message,
     }, cls = LazyEncoder)
 
+    lfc.utils.clear_cache()
     return HttpResponse(result)
 
 def add_object_files(request, id):
@@ -2289,8 +2291,8 @@ def _paste(request, obj):
         except BaseContent.DoesNotExist:
             error_msg = _(u"Some cut/copied objects has been deleted in the meanwhile.")
             continue
-        
-            
+
+
         # Copy only allowed sub types to target
         allowed_subtypes = get_allowed_subtypes(target)
         ctr_source = get_info(source_obj)

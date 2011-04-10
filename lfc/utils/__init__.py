@@ -132,7 +132,7 @@ def get_portal(pk=1):
 
 def get_user_from_session_key(session_key):
     """Returns the user from the passes session_key.
-    
+
     This is a workaround for SWFUpload, which is used to mass upload images
     and files.
     """
@@ -147,22 +147,22 @@ def get_user_from_session_key(session_key):
             return AnonymousUser()
     except AttributeError:
         return AnonymousUser()
-            
+
 def login_form(next=None):
     """Returns the lfc login form.
     """
     if next:
         url = "%s?next=%s" % (reverse("lfc_login"), next)
     else:
-        url = reverse("lfc_login") 
-        
+        url = reverse("lfc_login")
+
     return HttpResponseRedirect(url)
 
 def traverse_object(request, path):
     """Returns the the object with the given path.
     """
     language = translation.get_language()
-    
+
     # CACHE
     cache_key = "%s-traverse-obj-%s-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
                                               path, request.user.id, language)
@@ -196,13 +196,12 @@ def clear_cache():
         cache._cache.flush_all()
     except AttributeError:
         pass
-    else:
-        return
 
     try:
         cache._cache.clear()
     except AttributeError:
         pass
+
     try:
         cache._expire_info.clear()
     except AttributeError:
