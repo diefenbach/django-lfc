@@ -263,7 +263,10 @@ def navigation(context, start_level=1, expand_level=0):
                 current_objs.append(standard.get_content_object())
     else:
         current_objs = [obj]
-        current_objs.extend(obj.get_ancestors())
+        try:
+            current_objs.extend(obj.get_ancestors())
+        except AttributeError:
+            pass
 
     objs = []
     for obj in temp:
