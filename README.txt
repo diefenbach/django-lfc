@@ -26,7 +26,7 @@ Changes
 
 Bugfix release
 
-* Bugfix: delete assinged portlets after an object has been deleted
+* Bugfix: delete assigned portlets after an object has been deleted
 * Bugfix: templatetag 'navigation': check whether there is a 'get_ancestors' method; issue #25
 * Bugfix: invalidate cache after images has been updated or added; issue #50
 * Bugfix: prevent to add same Users several times to a Role; issue #6 of django-workflows
