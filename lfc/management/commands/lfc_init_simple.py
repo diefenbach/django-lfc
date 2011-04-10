@@ -38,8 +38,8 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
 
-        initialize()
-    
+        initialize(create_resources=True)
+            
         # Register site
         site = Site.objects.all()[0]
         site.name = site.domain = "www.example.com"

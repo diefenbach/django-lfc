@@ -1,4 +1,5 @@
 # django imports
+from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
@@ -7,7 +8,9 @@ from django.test import TestCase
 from django.test.client import Client
 
 # permissions imports
+from permissions.models import PrincipalRoleRelation
 from permissions.models import Role
+import permissions.utils
 
 # workflows imports
 from workflows.models import Transition
@@ -23,9 +26,184 @@ from portlets.models import Slot
 import lfc.utils.registration
 from lfc.models import Page
 from lfc.models import Portal
+from lfc.tests.utils import create_request
 
-class DummyPortlet(Portlet):
-    pass
+class InheritancePermissionTestCase(TestCase):
+    """
+    """
+    fixtures = ["superuser.xml"]
+
+class LFCPermissionTestCase2(TestCase):
+    """
+    """
+    fixtures = ["superuser.xml"]
+    def setUp(self):
+        """
+        """
+        Portal.objects.create()
+        self.editor = Role.objects.create(name="editor")
+        self.user = User.objects.create(username="user", is_active=True)
+        self.user.set_password("secret")
+        self.user.save()
+
+        self.group = Group.objects.create(name="group")
+
+        self.page_1 = Page.objects.create(title="Page 1", slug="page-1")
+        self.page_2 = Page.objects.create(title="Page 2", slug="page-2", parent=self.page_1)
+        self.page_3 = Page.objects.create(title="Page 3", slug="page-3", parent=self.page_2)
+
+    def test_delete_user(self):
+        """
+        """
+        request = create_request()
+        
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+        permissions.utils.add_local_role(self.page_1, self.user, self.editor)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 1)
+
+        from lfc.manage.views import delete_user
+        delete_user(request, self.user.id)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+    def test_delete_group(self):
+        """
+        """
+        request = create_request()
+        
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+        permissions.utils.add_local_role(self.page_1, self.group, self.editor)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 1)
+
+        from lfc.manage.views import delete_group
+        delete_group(request, self.group.id)
+
+        roles = PrincipalRoleRelation.objects.all()
+        self.assertEqual(len(roles), 0)
+
+    def test_local_roles_from_parent_1(self):
+        """
+        """
+        permissions.utils.add_local_role(self.page_1, self.user, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
+
+    def test_local_roles_from_parent_2(self):
+        """
+        """
+        permissions.utils.add_local_role(self.page_2, self.user, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
+
+    def test_local_roles_from_parent_3(self):
+        """
+        """
+        permissions.utils.add_local_role(self.page_3, self.user, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
+
+    def test_local_roles_from_group_1(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 3
+        permissions.utils.add_local_role(self.page_1, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
+
+    def test_local_roles_from_group_2(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 2
+        permissions.utils.add_local_role(self.page_2, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
+
+    def test_local_roles_from_group_3(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 3
+        permissions.utils.add_local_role(self.page_3, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
+
+    def test_local_roles_from_group_4(self):
+        """
+        """
+        # Add user to group
+        self.user.groups.add(self.group)
+
+        # Assign "editor" to group on page 2 and 3
+        permissions.utils.add_local_role(self.page_3, self.group, self.editor)
+        permissions.utils.add_local_role(self.page_2, self.group, self.editor)
+
+        roles = permissions.utils.get_roles(self.user, self.page_1)
+        self.assertEqual(list(roles), [])
+
+        roles = permissions.utils.get_roles(self.user, self.page_2)
+        self.assertEqual(list(roles), [self.editor])
+
+        roles = permissions.utils.get_roles(self.user, self.page_3)
+        self.assertEqual(list(roles), [self.editor])
 
 class LFCPermissionTestCase(TestCase):
     """
@@ -35,7 +213,7 @@ class LFCPermissionTestCase(TestCase):
     def setUp(self):
         # Initialize LFC
         from lfc.management.commands.lfc_init import Command
-        Command().handle()
+        Command().handle(create_resources=False)
 
         # Create a slot
         self.left_slot = Slot.objects.create(name="Left")
@@ -118,17 +296,17 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_save_meta_data", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.post(reverse("lfc_save_seo", kwargs={"id" : self.page.id}))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        # result = self.client.post(reverse("lfc_save_seo", kwargs={"id" : self.page.id}))
+        # self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        # object images        
+        # object images
         result = self.client.post(reverse("lfc_add_images", kwargs={"id" : self.page.id}), {"sessionid" : self.client.session.session_key })
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.post(reverse("lfc_update_images", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_images", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_images", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("images") == -1)
 
         # portal images
@@ -138,8 +316,8 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_images"))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        result = self.client.get(reverse("lfc_load_portal_images"))
+        self.assertEqual(result.status_code, 200)
 
         # object files
         result = self.client.post(reverse("lfc_add_files", kwargs={"id" : self.page.id}), {"sessionid" : self.client.session.session_key })
@@ -148,7 +326,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_files", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_files", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_files", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("files") == -1)
 
         # portal files
@@ -158,8 +336,8 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_files"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_files"))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        # result = self.client.get(reverse("lfc_portal_files"))
+        # self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # comments
         result = self.client.get(reverse("lfc_update_comments", kwargs={"id" : self.page.id}))
@@ -182,7 +360,7 @@ class LFCPermissionTestCase(TestCase):
         # workflows
         transition = Transition.objects.get(name="Reject", workflow__name="Portal")
         result = self.client.get(reverse("lfc_manage_do_transition", kwargs={"id" : self.page.id}) + "?transition=" + str(transition.id))
-        self.assertEqual(result.status_code, 302)
+        self.assertEqual(result.status_code, 200)
 
         result = self.client.get(reverse("lfc_manage_workflow", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
@@ -224,7 +402,8 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object portlets
-        self.portlet = DummyPortlet()
+        from lfc.models import PagesPortlet
+        self.portlet = PagesPortlet()
         self.portlet.id = 1
 
         # Assign the portlet to th page
@@ -234,7 +413,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.get(reverse("lfc_add_portlet", kwargs={"object_type_id" : self.ctype.id, "object_id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_update_portlets", kwargs={"object_type_id" : self.ctype.id, "object_id" : self.page.id}))
+        result = self.client.get(reverse("lfc_update_portlets_blocking", kwargs={"object_type_id" : self.ctype.id, "object_id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : self.pa.id}))
@@ -251,7 +430,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.get(reverse("lfc_add_portlet", kwargs={"object_type_id" : self.portal_ctype.id, "object_id" : self.portal.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_update_portlets", kwargs={"object_type_id" : self.portal_ctype.id, "object_id" : self.portal.id}))
+        result = self.client.get(reverse("lfc_update_portlets_blocking", kwargs={"object_type_id" : self.portal_ctype.id, "object_id" : self.portal.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : self.pa.id}))
@@ -287,7 +466,7 @@ class LFCPermissionTestCase(TestCase):
         # language
         # Note: All logged in user are allowed to change the language
         result = self.client.get(reverse("lfc_set_navigation_tree_language", kwargs={"language" : "en"}))
-        self.failIf(result._headers["location"][1].startswith("http://testserver/login"))
+        self.assertEqual(result.status_code, 200)
 
         result = self.client.get(reverse("lfc_manage_set_language", kwargs={"language" : "en"}))
         self.failIf(result._headers["location"][1].startswith("http://testserver/login"))
@@ -376,7 +555,7 @@ class LFCPermissionTestCase(TestCase):
 
         # portal
         result = self.client.get(reverse("lfc_manage_portal"))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        self.assertEqual(result.status_code, 200)
 
     def test_anonymous(self):
         """Tests access rights of an anonymous user.
@@ -437,8 +616,8 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_save_meta_data", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.post(reverse("lfc_save_seo", kwargs={"id" : self.page.id}))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        # result = self.client.post(reverse("lfc_save_seo", kwargs={"id" : self.page.id}))
+        # self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object images
         result = self.client.post(reverse("lfc_add_images", kwargs={"id" : self.page.id}), {"sessionid" : "dummy"})
@@ -447,7 +626,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_images", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_images", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_images", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("images") == -1)
 
         # portal images
@@ -457,8 +636,8 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_images"))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        # result = self.client.get(reverse("lfc_load_portal_images"))
+        # self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object files
         result = self.client.post(reverse("lfc_add_files", kwargs={"id" : self.page.id}))
@@ -467,7 +646,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_files", kwargs={"id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_files", kwargs = {"id": self.page.id}))
+        result = self.client.get(reverse("lfc_load_object_files", kwargs = {"id": self.page.id}))
         self.failIf(result.content.find("files") == -1)
 
         # portal files
@@ -477,7 +656,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_files"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_portal_files"))
+        result = self.client.get(reverse("lfc_load_portal_files"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # comments
@@ -543,7 +722,8 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object portlets
-        self.portlet = DummyPortlet()
+        from lfc.models import PagesPortlet
+        self.portlet = PagesPortlet()
         self.portlet.id = 1
 
         # Assign the portlet to th page
@@ -553,7 +733,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.get(reverse("lfc_add_portlet", kwargs={"object_type_id" : self.ctype.id, "object_id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_update_portlets", kwargs={"object_type_id" : self.ctype.id, "object_id" : self.page.id}))
+        result = self.client.get(reverse("lfc_update_portlets_blocking", kwargs={"object_type_id" : self.ctype.id, "object_id" : self.page.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : self.pa.id}))
@@ -570,7 +750,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.get(reverse("lfc_add_portlet", kwargs={"object_type_id" : self.portal_ctype.id, "object_id" : self.portal.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        result = self.client.get(reverse("lfc_update_portlets", kwargs={"object_type_id" : self.portal_ctype.id, "object_id" : self.portal.id}))
+        result = self.client.get(reverse("lfc_update_portlets_blocking", kwargs={"object_type_id" : self.portal_ctype.id, "object_id" : self.portal.id}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : self.pa.id}))
@@ -694,4 +874,4 @@ class LFCPermissionTestCase(TestCase):
 
         # portal
         result = self.client.get(reverse("lfc_manage_portal"))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        self.assertEqual(result.status_code, 200)

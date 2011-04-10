@@ -4,7 +4,9 @@
     <ul class="level-{{ level }}">
         {% for obj in objs %}
             <li {% if obj.is_current %}class="current"{% endif %}>
-                <a href="{% url lfc_manage_object obj.id %}">
+                <a id="{{ obj.id }}" 
+                   class="manage-page"
+                   href="{% url lfc_manage_object obj.id %}">
                     {{ obj.title }}
                 </a>
             </li>

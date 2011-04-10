@@ -1,36 +1,46 @@
 {% load i18n %}
 {% load lfc_tags %}
 
+<h2 class="first-heading">
+    {% trans "Images" %}
+</h2>
 {% ifhasperm edit %}
     {% if obj.images.all %}
         <form id="object-images-update-form"
               action="{% url lfc_update_images obj.id %}"
               method="post">
 
-            <table class="lfs-manage-table full">
+            <table class="lfs-manage-table">
                 <tr>
                     <th class="tiny">
                         <input type="checkbox"
-                               class="select-all-1" />
+                               class="select-all"
+                               value="image" />
                     </th>
                     <th class="small">
                         {% trans 'Image' %}
                     </th>
-                    <th>
+                    <th class="small">
                         {% trans 'Title' %}
                     </th>
-                    <th class="small right-padding">
+                    <th class="small">
+                        {% trans 'Caption' %}
+                    </th>
+                    <th class="middle">
+                        {% trans 'Description' %}
+                    </th>
+                    <th class="tiny padding">
                         {% trans 'Position' %}
                     </th>
-                    <th class="middle right-padding">
-                        {% trans 'Creation date' %}
+                    <th class="small right-padding">
+                        {% trans 'Manage' %}
                     </th>
                 </tr>
                 {% for image in obj.images.all %}
                     <tr>
                         <td>
                             <input type="checkbox"
-                                   class="select-1"
+                                   class="select-image"
                                    name="delete-images"
                                    value="{{ image.id }}"
                                    style="float:left" />
@@ -45,22 +55,43 @@
                         <td>
                             <input type="text" name="title-{{ image.id }}" value="{{ image.title }}" />
                         </td>
+                        <td>
+                            <input type="text" name="caption-{{ image.id }}" value="{{ image.caption }}" />
+                        </td>
+                        <td>
+                            {{ image.description|truncatewords_html:15|safe }}
+                        </td>
                         <td class="right">
                             <input class="position" type="text" name="position-{{ image.id }}" value="{{ image.position }}" />
                         </td>
-                        <td class="right last">
-                            {{ image.creation_date|date:"Y-m-d H:i:s" }}
+                        <td class="right-padding">
+
+                            {% if not forloop.first %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_image image.id %}?direction=0">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
+                                </a>
+                            {% endif %}
+
+                            {% if not forloop.last %}
+                                <a class="ajax-link"
+                                   href="{% url lfc_move_image image.id %}?direction=1">
+                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
+                                </a>
+                            {% endif %}
+
+                            <a class="edit ajax-link"
+                               title='{% trans "Edit" %}'
+                               href="{% url lfc_edit_image image.id %}"></a>
                         </td>
-                        
                     </tr>
                 {% endfor %}
             </table>
             <div class="manage-form-buttons">
-                <input class="object-images-update-button"
+                <input class="ajax-submit"
                        type="submit" name="update" value="{% trans 'Update' %}" />
-                <input class="object-images-update-button"
+                <input class="ajax-submit"
                        type="submit" name="delete" value="{% trans 'Delete' %}" />
-                <span class="ajax-loading">{% trans "Processing ..." %}</span>
             </div>
         </form>
     {% else %}
@@ -72,7 +103,7 @@
     <div id="content">
         <form id="images-form"
               action="."
-              data="{% url lfc_images obj.id %}"
+              data="{% url lfc_load_object_images obj.id %}"
               method="post"
               enctype="multipart/form-data">
 
@@ -164,5 +195,5 @@
         </table>
     {% else %}
         <span>{% trans 'There are no images' %}</span>
-    {% endif %}    
+    {% endif %}
 {% endifhasperm %}
