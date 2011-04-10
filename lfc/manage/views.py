@@ -197,6 +197,12 @@ def delete_object(request, id):
         ObjectPermission.objects.filter(content_id=obj.id, content_type=ctype).delete()
         ObjectPermissionInheritanceBlock.objects.filter(content_id=obj.id, content_type=ctype).delete()
 
+        # Delete portlets stuff
+        for pa in PortletAssignment.objects.filter(content_id=obj.id, content_type=ctype):
+            pa.portlet.delete()
+            pa.delete()
+        PortletBlocking.objects.filter(content_id=obj.id, content_type=ctype).delete()
+
         obj.delete()
         msg = _(u"The object has been deleted.")
 
