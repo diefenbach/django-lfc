@@ -10,10 +10,9 @@ import lfc.utils
 from lfc.models import BaseContent
 
 class PageTagFeed(Feed):
-    """Provides a feed for a given object restricted by given tags
-    url, e.g.
+    """Provides a feed for a given object restricted by given tags url, e.g.
 
-    http://www.lfcproject.com/information/blog?tags=python
+    http://www.lfcproject.com/rss/<path/to/obj>[?tags=python]
     """
     def get_object(self, bits):
         if len(bits) < 1:
