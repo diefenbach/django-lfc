@@ -21,6 +21,13 @@ Code
 Changes
 =======
 
+1.0.4 (2011-04-30)
+------------------
+
+Bugfix release
+
+* Bugfix: Removed mutuable parameters; issue #11 of django-permissions
+
 1.0.3 (2011-04-10)
 ------------------
 
