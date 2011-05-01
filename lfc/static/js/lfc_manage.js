@@ -55,24 +55,6 @@ function create_tabs() {
     set_tab();
 }
 
-// Loads the portal or object based on the hash state (history)
-function load_content() {
-    type = $.bbq.getState('type');
-    id = $.bbq.getState('id');
-
-    $("#obj-id").attr("data", id);
-
-    if (type == undefined)
-        return false
-
-    if (type == "portal") {
-        load_url("/manage/load-portal", true);
-    }
-    else {
-        load_url("/manage/load-object/" + id, true);
-    }
-}
-
 // Loads passed url per ajax and replaces returned chunks of HTML
 function load_url(url, tabs) {
     show_ajax_loading();
@@ -134,7 +116,6 @@ $(function() {
 
     create_menu();
     create_tabs();
-    load_content();
 
     // Class which closes the overlay.
     $(".overlay-close").live("click", function() {
@@ -181,22 +162,6 @@ $(function() {
             }
         })
         return false;
-    });
-
-    // Browser history
-    $(".manage-portal").live("click", function() {
-        $.bbq.pushState({ "type" : "portal", "id" : 1 });
-        return false;
-    });
-
-    $(".manage-page").live("click", function() {
-        var id = $(this).attr("id");
-        $.bbq.pushState({ "type" : "object", "id" : id });
-        return false;
-    });
-
-    $(window).bind('hashchange', function( event ) {
-        load_content();
     });
 
     // Generic ajax link
