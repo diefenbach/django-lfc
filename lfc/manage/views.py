@@ -1783,7 +1783,7 @@ def update_object_images(request, id):
     obj.check_permission(request.user, "edit")
 
     message = _update_images(request, obj)
-    lfs.utils.clear_cache()
+    lfc.utils.clear_cache()
 
     json = render_to_json(
         html = [["#images", object_images(request, obj)]],
