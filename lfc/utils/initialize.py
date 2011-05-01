@@ -49,7 +49,6 @@ def initialize(create_resources=False):
     register_resource(type=CSS, group="manage", path="lfc/jquery/superfish/superfish.css")
     register_resource(type=CSS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.css")
     register_resource(type=CSS, group="manage", path="lfc/css/lfc_manage.css")
-    register_resource(type=CSS, group="manage", path="lfc/swfupload/default.css")
 
     register_resource(type=JS, group="manage", path="/admin/jsi18n", merge=0, minify=0, absolute=1)
     register_resource(type=JS, group="manage", path="admin/js/core.js")
@@ -64,11 +63,6 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", path="lfc/jquery/jquery.ba-bbq.min.js")
     register_resource(type=JS, group="manage", path="lfc/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.pack.js")
-    register_resource(type=JS, group="manage", minify=0, path="lfc/swfupload/swfupload.js")
-    register_resource(type=JS, group="manage", path="lfc/swfupload/swfupload.queue.js")
-    register_resource(type=JS, group="manage", path="lfc/swfupload/fileprogress.js")
-    register_resource(type=JS, group="manage", path="lfc/swfupload/handlers.js")
-    register_resource(type=JS, group="manage", path="lfc/swfupload/swfupload.cookies.js")
     register_resource(type=JS, group="manage", path="lfc/js/lfc_manage.js")
     
     register_resource(type=JS, group="manage", minify=0, path="lfc/tiny_mce/jquery.tinymce.js")

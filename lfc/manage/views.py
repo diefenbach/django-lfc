@@ -529,8 +529,7 @@ def update_portal_children(request):
     return HttpResponse(result)
 
 def load_portal_images(request):
-    """Loads the portal images tab after images have been uploaded via
-    SWFUpload (see handler.js -> uploadComplete for more information).
+    """Loads the portal images tab after images have been uploaded.
 
     **Permission:**
 
@@ -583,18 +582,16 @@ def update_portal_images(request):
 def add_portal_images(request):
     """Adds images to the portal.
 
-    This is called from SWFUpload.
-
     **Permission:**
 
         manage_portal
     """
+    user = lfc.utils.get_user_from_session_key(request.COOKIES.get("sessionid"))
+
     portal = lfc.utils.get_portal()
+    portal.check_permission(user, "manage_portal")
 
-    request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))
-    portal.check_permission(request.user, "manage_portal")
-
-    for file_content in request.FILES.values():
+    for file_content in request.FILES.getlist("file"):
         image = Image(content=portal, title=file_content.name)
         image.image.save(file_content.name, file_content, save=True)
 
@@ -713,18 +710,16 @@ def edit_image(request, id):
 def add_portal_files(request):
     """Addes files to the portal.
 
-    This is called from SWFUpload.
-
     **Permission:**
 
         manage_portal
     """
+    user = lfc.utils.get_user_from_session_key(request.COOKIES.get("sessionid"))
+    
     portal = lfc.utils.get_portal()
+    portal.check_permission(user, "manage_portal")
 
-    request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))
-    portal.check_permission(request.user, "manage_portal")
-
-    for file_content in request.FILES.values():
+    for file_content in request.FILES.getlist("file"):
         file = File(content=portal, title=file_content.name)
         file.file.save(file_content.name, file_content, save=True)
 
@@ -738,8 +733,7 @@ def add_portal_files(request):
 # TODO: Need permission view_management or similiar
 @login_required
 def load_portal_files(request):
-    """Loads the portal files tab after files have been uploaded via
-    SWFUpload (see handler.js -> uploadComplete for more information).
+    """Loads the portal files tab after files have been uploaded.
 
     **Permission:**
 
@@ -1701,8 +1695,7 @@ def update_object_children(request, id):
     return HttpResponse(result)
 
 def load_object_images(request, id):
-    """Loads the portal images tab after images have been uploaded via
-    SWFUpload (see handler.js -> uploadComplete for more information).
+    """Loads the portal images tab after images have been uploaded.
 
     **Permission:**
 
@@ -1731,13 +1724,12 @@ def add_object_images(request, id):
 
         edit
     """
+    user = lfc.utils.get_user_from_session_key(request.COOKIES.get("sessionid"))
     obj = lfc.utils.get_content_object(pk=id)
-
-    request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))
-    obj.check_permission(request.user, "edit")
+    obj.check_permission(user, "edit")
 
     if request.method == "POST":
-        for file_content in request.FILES.values():
+        for file_content in request.FILES.getlist("file"):
             image = Image(content=obj, title=file_content.name)
             image.image.save(file_content.name, file_content, save=True)
 
@@ -1747,7 +1739,8 @@ def add_object_images(request, id):
         image.save()
 
     lfc.utils.clear_cache()
-    return HttpResponse(object_images(request, id, as_string=True))
+
+    return HttpResponse("")
 
 def update_object_images(request, id):
     """Saves/deletes images for content object with passed id.
@@ -1793,8 +1786,7 @@ def update_object_images(request, id):
     return HttpResponse(json)
 
 def load_object_files(request, id):
-    """Loads the portal files tab after files have been uploaded via
-    SWFUpload (see handler.js -> uploadComplete for more information).
+    """Loads the portal files tab after files have been uploaded.
 
     **Permission:**
 
@@ -1823,13 +1815,12 @@ def add_object_files(request, id):
 
         edit
     """
+    user = lfc.utils.get_user_from_session_key(request.COOKIES.get("sessionid"))
     obj = lfc.utils.get_content_object(pk=id)
-
-    request.user = lfc.utils.get_user_from_session_key(request.POST.get("sessionid"))
-    obj.check_permission(request.user, "edit")
+    obj.check_permission(user, "edit")
 
     if request.method == "POST":
-        for file_content in request.FILES.values():
+        for file_content in request.FILES.getlist("file"):
             file = File(content=obj, title=file_content.name)
             file.file.save(file_content.name, file_content, save=True)
 

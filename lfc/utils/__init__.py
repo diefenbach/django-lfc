@@ -154,9 +154,9 @@ def get_portal(pk=1):
     return portal
 
 def get_user_from_session_key(session_key):
-    """Returns the user from the passes session_key.
+    """Returns the user from the passed session_key.
 
-    This is a workaround for SWFUpload, which is used to mass upload images
+    This is a workaround for jquery.upload, which is used to mass upload images
     and files.
     """
     try:
