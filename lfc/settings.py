@@ -24,3 +24,12 @@ LFC_LANGUAGE_IDS = [l[0] for l in settings.LANGUAGES]
 
 COPY = 1
 CUT = 2
+
+ORDER_BY_CHOICES = (
+    ("position", _(u"Position ascending")),
+    ("-position", _(u"Position descending")),
+    ("publication_date", _(u"Publication date ascending")),
+    ("-publication_date", _(u"Publication date descending")),
+)
+
+IMAGE_SIZES = ((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800))

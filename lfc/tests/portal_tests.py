@@ -17,7 +17,7 @@ class PortalTestCase(TestCase):
         """
         """
         from lfc.utils.initialize import initialize
-        initialize()
+        initialize(create_resources=False)
 
         self.p = Portal.objects.create()
         self.p.notification_emails = "john@doe.com, jane@doe.com"

@@ -1,49 +1,28 @@
 {% load i18n %}
 {% load adminmedia %}
 {% load lfc_tags %}
-
+{% load resources_tags %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
+        
+        <script type="text/javascript">
+            window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";
+        </script>        
+
         <title>{% block title %}{% endblock %}</title>
+        {% css "manage" %}
+        {% block css %}{% endblock %}
 
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/yui/reset-min.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/lightbox/css/jquery.lightbox-0.5.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/jquery-ui-themeroller/jquery-ui-themeroller.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/jquery.jgrowl.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/superfish/superfish.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/jquery/autocomplete/jquery.autocomplete.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/css/lfc_manage.css" />
-        <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}lfc/swfupload/default.css" />
-
-        <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/core.js"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/calendar.js"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/admin/DateTimeShortcuts.js"></script>
-        <script type="text/javascript" src="{% admin_media_prefix %}js/urlify.js"></script>
-
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/tiny_mce/jscripts/tiny_mce/tiny_mce.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.min.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.tools.min.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.livequery.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.form.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.jgrowl_minimized.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.cookie.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/superfish/superfish.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery-ui-personalized-1.5.3.packed.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/autocomplete/jquery.autocomplete.pack.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/json2.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/js/lfc_manage.js"></script>
-
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.queue.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/fileprogress.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/handlers.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/swfupload/swfupload.cookies.js"></script>
-
+        {% javascript "manage" %}
         {% block javascript %}{% endblock %}
+        <link rel="shortcut icon" href="{{ MEDIA_URL }}lfc/img/favicon.ico" type="image/ico" />
+
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.fileupload-4.2.1/jquery.fileupload-ui.js"></script>
+        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.fileupload-4.2.1/jquery.fileupload.js"></script>
 
     </head>
+
     <body class="{% block body_class %}{% endblock %}">
         <div class="lfc-header">
             <div class="logo">
@@ -101,7 +80,7 @@
                                 {% ifportalhasperm manage_portal %}
                                     <li>
                                         <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
-                                    </li>               
+                                    </li>
                                 {% endifportalhasperm %}
                             {% endif %}
                             {% if LFC_MANAGE_APPLICATIONS %}
@@ -113,7 +92,7 @@
                                                 <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
                                             </li>
                                             <li>
-                                                <a href="{% url lfc_applications %}">{% trans 'Installer' %}</a>
+                                                <a href="{% url lfc_applications %}">{% trans 'Installation' %}</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -155,8 +134,8 @@
             <div class="footer">
                 <p>{% trans 'Powered by' %} <a target="_blank" href="http://www.getlfs.com">LFC</a> &mdash; Lightning Fast CMS</p>
                 <p>
-                    LFC {% trans 'is a product of' %} <a target="_blank" href="http://www.iqpp.de">iqplusplus</a>
-                    &mdash; &copy; 2009 <a target="_blank" href="http://www.iqpp.de">iqplusplus</a> &mdash; {% trans 'All rights reserved' %}
+                    LFC {% trans 'is a product of' %} <a target="_blank" href="http://www.iqpp.de">IQ++</a>
+                    &mdash; &copy; 2009-2010 <a target="_blank" href="http://www.iqpp.de">IQ++</a> &mdash; {% trans 'All rights reserved' %}
                 </p>
                 <p>{% trans 'Distributed under the' %} <a target="_blank" href="http://www.opensource.org/licenses/bsd-license.php">{% trans 'BSD-License' %}</a></p>
             </div>
@@ -166,19 +145,20 @@
             <div class="content"></div>
         </div>
 
+        <div class="overlay" id="overlay-2">
+            <div class="content"></div>
+        </div>
+
         <div class="delete-dialog" id="yesno">
             <p>
                 {% trans "Do you really want to delete this object?" %}
             </p>
-
             <button> Yes </button>
             <button> No </button>
-
             <div style="display:none" id="delete-url">url</div>
         </div>
 
-        <span id="obj-id"
-              data="{{ obj.id }}" />
+        <span id="obj-id" data="{{ obj.id }}"></span>
 
     </body>
 </html>
