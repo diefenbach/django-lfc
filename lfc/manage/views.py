@@ -173,14 +173,13 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
             request.method = "GET"
 
             result = simplejson.dumps({
-                "message" : _(u"Object has been added."),
-                "id" : new_object.id,
-                "close_overlay" : True,
                 "tab" : 0,
                 "url" : reverse("lfc_manage_object", kwargs={"id" : new_object.id}),
                 }, cls = LazyEncoder)
 
-            return HttpResponse(result)
+            return lfc.utils.set_message_to_reponse(
+                HttpResponse(result), _(u"Object has been added."));
+
         else:
             form = render_to_string(template_name, RequestContext(request, {
                 "type" : type,
@@ -188,6 +187,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
                 "form" : form,
                 "language" : language,
                 "id" : id,
+                "url" : url,
             }))
 
             html = ((".overlay .content", form),)

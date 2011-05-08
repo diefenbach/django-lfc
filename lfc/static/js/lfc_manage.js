@@ -151,6 +151,9 @@ $(function() {
                 if (data["close_overlay"])
                     overlay.close()
 
+                if (data["url"])
+                    window.location = data["url"];
+
                 if (data["tab"] != undefined)
                     $('#manage-tabs').tabs('select', parseInt(data["tab"]));
 
