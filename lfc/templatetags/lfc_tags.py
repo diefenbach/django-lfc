@@ -56,7 +56,7 @@ def templates(context):
         }
 
     templates = registration.get_templates(lfc_context)
-    if templates and len(templates) > 1:
+    if templates:
         display = True
         template = lfc_context.template or registration.get_default_template(lfc_context)
         if template:
