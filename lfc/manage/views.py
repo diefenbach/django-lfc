@@ -4721,6 +4721,21 @@ def save_role(request, id, template_name="lfc/manage/role_add.html"):
             "current_role_id" : int(id),
         }))
 
+# Utils
+def manage_utils(request, template_name="lfc/manage/utils.html"):
+    """Displays the overview over all utils.
+    """
+    return render_to_response(template_name, RequestContext(request, {
+    }))
+
+def reindex_objects(request):
+    """Reindexes the searchable text of all content objects.
+    """
+    for obj in lfc.utils.get_content_objects():
+        obj.reindex()
+
+    return HttpResponseRedirect(reverse("lfc_manage_utils"))
+
 # Private Methods ############################################################
 ##############################################################################
 
