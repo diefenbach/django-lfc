@@ -524,8 +524,11 @@ class BaseContent(AbstractBaseContent):
         elif page.language == "0":
             if page.parent:
                 language = page.parent.language
+                if language == "0":
+                    return ("lfc_base_view", (), {"slug" : slug})
             else:
                 language = translation.get_language()
+
             if language == settings.LANGUAGE_CODE:
                 return ("lfc_base_view", (), {"slug" : slug})
             else:
