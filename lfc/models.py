@@ -834,6 +834,12 @@ class BaseContent(AbstractBaseContent):
         else:
             return True
 
+    def reindex(self):
+        """Reindexes the objects's searchable text.
+        """
+        self.searchable_text = self.get_searchable_text()
+        self.save()
+
     # django-workflows
     def get_allowed_transitions(self, user):
         """Returns all allowed permissions for the passed user.
@@ -862,8 +868,8 @@ class Page(BaseContent):
     text = models.TextField(_(u"Text"), blank=True)
 
     def get_searchable_text(self):
-        """Returns the searchable text of the page. This adds the text to
-        the default searchable text.
+        """Returns the searchable text of the page. This adds the text to the 
+        default searchable text.
         """
         result = self.title + " " + self.description + " " + self.text
         return result.strip()
