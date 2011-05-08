@@ -177,6 +177,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
                 "id" : new_object.id,
                 "close_overlay" : True,
                 "tab" : 0,
+                "url" : reverse("lfc_manage_object", kwargs={"id" : new_object.id}),
                 }, cls = LazyEncoder)
 
             return HttpResponse(result)
@@ -528,6 +529,49 @@ def update_portal_children(request):
 
     return HttpResponse(result)
 
+def move_portal_child(request, child_id):
+    """Moves the child with passed child
+
+    **Parameters:**
+
+        child_id
+            The id of the obj which should be moved.
+
+    **Query String:**
+
+        direction
+            The direction in which the child should be moved. One of 0 (up)
+            or 1 (down).
+
+    **Permission:**
+
+        manage_portal
+    """
+    portal = lfc.utils.get_portal()
+    portal.check_permission(request.user, "manage_portal")
+
+    obj = lfc.utils.get_content_object(pk=child_id)
+
+    direction = request.GET.get("direction", 0)
+
+    if direction == "1":
+        obj.position += 15
+    else:
+        obj.position -= 15
+    obj.save()
+    _update_positions(None)
+
+    html = (
+        ("#children", portal_children(request, portal)),
+        ("#navigation", navigation(request, None)),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
 def load_portal_images(request):
     """Loads the portal images tab after images have been uploaded.
 
@@ -715,7 +759,7 @@ def add_portal_files(request):
         manage_portal
     """
     user = lfc.utils.get_user_from_session_key(request.COOKIES.get("sessionid"))
-    
+
     portal = lfc.utils.get_portal()
     portal.check_permission(user, "manage_portal")
 
@@ -1690,6 +1734,49 @@ def update_object_children(request, id):
     result = simplejson.dumps({
         "html" : html,
         "message" : message,
+    }, cls = LazyEncoder)
+
+    return HttpResponse(result)
+
+def move_object_child(request, child_id):
+    """Moves the child with passed child
+
+    **Parameters:**
+
+        child_id
+            The id of the obj which should be moved.
+
+    **Query String:**
+
+        direction
+            The direction in which the child should be moved. One of 0 (up)
+            or 1 (down).
+
+    **Permission:**
+
+        edit
+    """
+    obj = lfc.utils.get_content_object(pk=child_id)
+
+    parent = obj.parent
+    parent.check_permission(request.user, "edit")
+
+    direction = request.GET.get("direction", 0)
+
+    if direction == "1":
+        obj.position += 15
+    else:
+        obj.position -= 15
+    obj.save()
+    _update_positions(parent)
+
+    html = (
+        ("#children", object_children(request, parent)),
+        ("#navigation", navigation(request, parent.get_content_object())),
+    )
+
+    result = simplejson.dumps({
+        "html" : html,
     }, cls = LazyEncoder)
 
     return HttpResponse(result)
