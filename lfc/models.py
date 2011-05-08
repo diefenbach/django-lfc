@@ -1037,6 +1037,8 @@ class PagesPortlet(Portlet):
 
         if self.tags:
             objs = tagging.managers.ModelTaggedItemManager().with_all(self.tags, objs)[:self.limit]
+        else:
+            objs = objs[:self.limit]
 
         return render_to_string("lfc/portlets/pages_portlet.html", {
             "title" : self.title,
