@@ -186,6 +186,7 @@ th.last, td.last {
 table.lfs-manage-table {
     border-collapse: collapse;
     margin-bottom: 30px;
+    width: 100%;
 }
 
 .lfs-manage-table td {
@@ -378,20 +379,50 @@ a.pointer {
 
 .delete {
     padding-left: 16px;
-    background: url(/media/lfc/icons/delete.png) no-repeat;
+    margin: 0 4px;
+    background: url(/media/lfc/icons/cross.png) no-repeat;
     text-decoration: none;
 }
 
 .edit {
     padding-left: 16px;
+    margin: 0 8px 0 4px;
     background: url(/media/lfc/icons/edit.png) no-repeat;
     text-decoration: none;
 }
 
 .view {
-    margin: 0 10px;
-    padding-left: 18px;
+    margin: 0 4px;
+    padding-left: 16px;
     background: url(/media/lfc/icons/zoom.png) no-repeat;
+    text-decoration: none;
+}
+
+.up {
+    margin: 0 4px;
+    padding-left: 16px;
+    background: url(/media/lfc/icons/arrow_up.png) no-repeat;
+    text-decoration: none;
+}
+
+.down {
+    margin: 0 4px;
+    padding-left: 16px;
+    background: url(/media/lfc/icons/arrow_down.png) no-repeat;
+    text-decoration: none;
+}
+
+.download {
+    margin: 0 4px;
+    padding-left: 16px;
+    padding-bottom: 1px;
+    background: url(/media/lfc/icons/disk.png) no-repeat;
+    text-decoration: none;
+}
+
+.blank {
+    margin: 0 4px;
+    padding-left: 16px;
     text-decoration: none;
 }
 
@@ -481,7 +512,12 @@ label {
 }
 
 .no-portlets {
-    padding: 10px 0;
+    padding-bottom: 10px;
+}
+
+.blocked-portlets,
+.inherited-portlets {
+    padding-bottom: 20px;
 }
 
 div.overlay2,
