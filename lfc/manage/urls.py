@@ -134,6 +134,10 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-role$', "add_role", name="lfc_manage_add_role"),
     url(r'^save-role/(?P<id>\d+)$', "save_role", name="lfc_manage_save_role"),
     url(r'^delete-role/(?P<id>\d+)$', "delete_role", name="lfc_manage_delete_role"),
+    
+    # Utils
+    url(r'^utils$', "manage_utils", name="lfc_manage_utils"),
+    url(r'^reindex-objects$', "reindex_objects", name="lfc_reindex_objects"),
 
     # content
     url(r'^$', "portal", name="lfc_manage_portal"),
