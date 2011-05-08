@@ -307,21 +307,6 @@ class MetaDataForm(forms.ModelForm):
         if not ctr.display_position:
             del self.fields["position"]
 
-    def clean(self):
-        """Workaround for AdminSplitDateTime, which displays an required message
-        even if the fields are not required by the model.
-        """
-        if (self.data.get("publication_date_0") == "") and (self.data.get("publication_date_1") == ""):
-            del self._errors["publication_date"]
-
-        if (self.data.get("start_date_0") == "") and (self.data.get("start_date_1") == ""):
-            del self._errors["start_date"]
-
-        if (self.data.get("end_date_0") == "") and (self.data.get("end_date_1") == ""):
-            del self._errors["end_date"]
-
-        return self.cleaned_data
-
     class Meta:
         model = Page
         fields = ("template", "standard", "order_by", "language", "canonical",
