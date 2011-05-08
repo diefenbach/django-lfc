@@ -119,6 +119,9 @@
                                     </li>
                                 {% endifportalhasperm %}
                             {% endif %}
+                            <li>
+                                <a href="{% url lfc_manage_utils %}">{% trans 'Utils' %}</a>
+                            </li>                            
                             {% if LFC_MULTILANGUAGE %}
                                 <li>
                                     <a>{% trans "Languages" %}</a>
