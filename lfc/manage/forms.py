@@ -279,12 +279,9 @@ class MetaDataForm(forms.ModelForm):
         if not getattr(settings, "LFC_MULTILANGUAGE"):
             del self.fields["canonical"]
             del self.fields["language"]
-
-        # Templates - display only registered templates for this instance
-        if len(ctr.templates.all()) < 2:
-            del self.fields["template"]
-        else:
-            self.fields["template"].choices = [(template.id, _(template.name)) for template in ctr.templates.all()]
+        
+        # Template
+        self.fields["template"].choices = [(template.id, _(template.name)) for template in ctr.templates.all()]
 
         # Canonical - display only pages with default language
         if settings.LFC_MULTILANGUAGE:
