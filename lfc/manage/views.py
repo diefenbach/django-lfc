@@ -1995,6 +1995,11 @@ def update_object_permissions(request, id):
 # Portlets ###################################################################
 ##############################################################################
 
+def load_object_portlets(request, id):
+    obj = lfc.utils.get_content_object(pk=id)
+    obj.check_permission(request.user, "view")
+    return HttpResponse(portlets_inline(request, obj))
+
 def portlets_inline(request, obj, template_name="lfc/manage/portlets_inline.html"):
     """Displays the assigned portlets for given object.
 

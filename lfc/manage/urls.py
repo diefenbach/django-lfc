@@ -97,7 +97,9 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^delete-portlet/(?P<portletassignment_id>\d+)$', "delete_portlet", name="lfc_delete_portlet"),
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
     url(r'^move-portlet/(?P<portletassignment_id>\d+)$', "move_portlet", name="lfc_move_portlet"),
-
+    url(r'^load-object-portlets/(?P<id>\d+)$', "load_object_portlets", name="lfc_load_object_portlets"),
+    
+    # reviews
     url(r'^review$', "review_objects", name="lfc_manage_review"),
 
     # local roles
