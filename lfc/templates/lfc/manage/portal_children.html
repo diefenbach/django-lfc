@@ -61,16 +61,21 @@
                             {{ child.get_content_type }}
                         </td>
                         <td class="right last">
-                            <a href="{% url lfc_manage_object child.id %}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
-                                     alt="{% trans 'Edit' %}"
-                                     title="{% trans 'Edit object' %}" />
-                            </a>
-                            <a href="{{ child.get_absolute_url }}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/zoom.png"
-                                     alt="{% trans 'View' %}"
-                                     title="{% trans 'View object' %}" />
-                            </a>
+                            {% if not forloop.first %}
+                                <a class="up ajax-link"
+                                   href="{% url lfc_move_portal_child child.id %}?direction=0"></a>
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <a class="down ajax-link"
+                                   title='{% trans "Move Down" %}'
+                                   href="{% url lfc_move_portal_child child.id %}?direction=1"></a>
+                            {% else %}
+                                <span class="blank"></span>                                
+                            {% endif %}
+                            <a class="edit"
+                               href="{% url lfc_manage_object child.id %}"></a>
+                            <a class="view"
+                               href="{{ child.get_absolute_url }}"></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -135,21 +140,15 @@
                         {{ child.get_content_type }}
                     </td>
                     <td class="right last">
-                        <a href="{% url lfc_manage_object child.id %}">
-                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
-                                 alt="{% trans 'Edit' %}"
-                                 title="{% trans 'Edit object' %}" />
-                        </a>
-                        <a href="{{ child.get_absolute_url }}">
-                            <img src="{{ MEDIA_URL }}lfc/icons/zoom.png"
-                                 alt="{% trans 'View' %}"
-                                 title="{% trans 'View object' %}" />
-                        </a>
+                        <a class="edit"
+                           href="{% url lfc_manage_object child.id %}"></a>
+                        <a class="view"
+                           href="{{ child.get_absolute_url }}"></a>
                     </td>
                 </tr>
             {% endfor %}
         </table>
     {% else %}
         <div>{% trans 'There are no children' %}</div>
-    {% endif %}    
+    {% endif %}
 {% endifportalhasperm %}

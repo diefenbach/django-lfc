@@ -67,17 +67,15 @@
                         <td class="right-padding">
 
                             {% if not forloop.first %}
-                                <a class="ajax-link"
-                                   href="{% url lfc_move_image image.id %}?direction=0">
-                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
-                                </a>
+                                <a class="up ajax-link"
+                                   href="{% url lfc_move_image image.id %}?direction=0"></a>
                             {% endif %}
 
                             {% if not forloop.last %}
-                                <a class="ajax-link"
-                                   href="{% url lfc_move_image image.id %}?direction=1">
-                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
-                                </a>
+                                <a class="down ajax-link"
+                                   href="{% url lfc_move_image image.id %}?direction=1"></a>
+                            {% else %}
+                                <span class="blank"></span>
                             {% endif %}
 
                             <a class="edit ajax-link"

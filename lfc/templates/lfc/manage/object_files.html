@@ -50,31 +50,24 @@
                         </td>
                         <td class="right">
                             {% if not forloop.first %}
-                                <a class="ajax-link"
-                                   href="{% url lfc_move_file file.id %}?direction=0">
-                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_up.png" alt='{% trans "Move Up" %}' title='{% trans "Move Up" %}' />
-                                </a>
+                                <a class="up ajax-link"
+                                   href="{% url lfc_move_file file.id %}?direction=0"
+                                   title='{% trans "Move Up" %}'></a>
                             {% endif %}
-
                             {% if not forloop.last %}
-                                <a class="ajax-link"
-                                   href="{% url lfc_move_file file.id %}?direction=1">
-                                   <img src="{{ MEDIA_URL }}lfc/icons/arrow_down.png" alt='{% trans "Move Down" %}' title='{% trans "Move Down" %}' />
-                                </a>
+                                <a class="down ajax-link"
+                                   href="{% url lfc_move_file file.id %}?direction=1"
+                                   title='{% trans "Move Down" %}'></a>
+                            {% else %}
+                                <span class="blank"></span>
                             {% endif %}
-
-                            <a href="{{ file.get_absolute_url }}">
-                                <image src="{{ MEDIA_URL }}lfc/icons/disk.png"
-                                       alt='{% trans "Download" %}'
-                                       title='{% trans "Download" %}' />
-                            </a>
-                            <a class="ajax-link"
+                            <a class="download" 
+                               href="{{ file.get_absolute_url }}"
+                               title='{% trans "Download" %}'></a>
+                            <a class="edit ajax-link"
                                title='{% trans "Edit" %}'
-                               href="{% url lfc_edit_file file.id %}">
-                                <image src="{{ MEDIA_URL }}lfc/icons/edit.png"
-                                       alt='{% trans "Edit" %}'
-                                       title='{% trans "Edit" %}' />
-                            </a>
+                               href="{% url lfc_edit_file file.id %}"
+                               title='{% trans "Edit" %}'></a>
                         </td>
                     </tr>
                 {% endfor %}

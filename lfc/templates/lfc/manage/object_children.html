@@ -63,16 +63,24 @@
                             {{ child.get_content_type }}
                         </td>
                         <td class="right last">
-                            <a href="{% url lfc_manage_object child.id %}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
-                                     alt="{% trans 'Edit' %}"
-                                     title="{% trans 'Edit object' %}" />
-                            </a>
-                            <a href="{{ child.get_absolute_url }}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/zoom.png"
-                                     alt="{% trans 'View' %}"
-                                     title="{% trans 'View object' %}" />
-                            </a>
+                            {% if not forloop.first %}
+                                <a class="up ajax-link"
+                                   href="{% url lfc_move_object_child child.id %}?direction=0"
+                                   title='{% trans "Move Up" %}'></a>
+                            {% endif %}
+                            {% if not forloop.last %}
+                                <a class="down ajax-link"
+                                   href="{% url lfc_move_object_child child.id %}?direction=1"
+                                   title='{% trans "Move Down" %}'></a>
+                            {% else %}
+                                <span class="blank"></span>
+                            {% endif %}                            
+                            <a class="edit"
+                                href="{% url lfc_manage_object child.id %}"
+                                title='{% trans "Edit" %}'></a>
+                            <a class="view"
+                               href="{{ child.get_absolute_url }}"
+                               title='{% trans "View" %}'></a>
                         </td>
                     </tr>
                 {% endfor %}
@@ -137,16 +145,24 @@
                         {{ child.get_content_type }}
                     </td>
                     <td class="right last">
-                        <a href="{% url lfc_manage_object child.id %}">
-                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
-                                 alt="{% trans 'Edit' %}"
-                                 title="{% trans 'Edit object' %}" />
-                        </a>
-                        <a href="{{ child.get_absolute_url }}">
-                            <img src="{{ MEDIA_URL }}lfc/icons/zoom.png"
-                                 alt="{% trans 'View' %}"
-                                 title="{% trans 'View object' %}" />
-                        </a>
+                        {% if not forloop.first %}
+                            <a class="up ajax-link"
+                               href="{% url lfc_move_object_child child.id %}?direction=0"
+                               title='{% trans "Move Up" %}'></a>
+                        {% endif %}
+                        {% if not forloop.last %}
+                            <a class="down ajax-link"
+                               href="{% url lfc_move_object_child child.id %}?direction=1"
+                               title='{% trans "Move Down" %}'></a>
+                        {% else %}
+                            <span class="blank"></span>
+                        {% endif %}
+                        <a class="edit"
+                           href="{% url lfc_manage_object child.id %}"
+                           title='{% trans "Edit" %}'></a>
+                        <a class="view"
+                           href="{{ child.get_absolute_url }}"
+                           title='{% trans "View" %}'></a>
                     </td>
                 </tr>
             {% endfor %}
