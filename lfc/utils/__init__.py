@@ -1,7 +1,9 @@
 # python imports
 import datetime
 import urllib
+import re
 import sys
+from HTMLParser import HTMLParser
 
 # django settings
 from django.conf import settings
@@ -288,3 +290,43 @@ def get_related_pages_by_tags(page, num=None):
     cache.set(cache_key, related_pages)
 
     return {"related_pages" : related_pages}
+    
+class HTML2TextParser(HTMLParser):
+    """HTMLParser to strip all HTML.
+    """
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.__text = ""
+
+    def handle_entityref(self, name):
+        name = name.replace(u"uuml", u"ü")
+        name = name.replace(u"auml", u"ä")
+        name = name.replace(u"ouml", u"o")
+        name = name.replace(u"Uuml", u"Ü")
+        name = name.replace(u"Auml", u"Ä")
+        name = name.replace(u"Ouml", u"Ö")
+        name = name.replace(u"szlig", u"ß")
+        name = name.replace(u"ndash", u"-")
+        self.__text += name
+
+    def handle_data(self, data):
+        if len(data) > 0:
+            data = re.sub('[ \t\r\n]+', ' ', data)
+            self.__text += data
+
+    def handle_starttag(self, tag, attrs):
+        self.__text += " "
+
+    def handle_endtag(self, tag):
+        self.__text += " "
+
+    def text(self):
+        return ''.join(self.__text).strip()
+
+def html2text(html):
+    """Removes HTML from given html
+    """
+    parser = HTML2TextParser()
+    parser.feed(html)
+    parser.close()
+    return parser.text()    
