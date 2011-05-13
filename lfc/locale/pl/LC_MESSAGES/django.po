@@ -1484,6 +1484,10 @@ msgstr "Dodaj przejście"
 
 #: templatetags/lfc_tags.py:124
 #: templatetags/lfc_tags.py:149
+#, python-format
+msgid "%s tag needs no argument"
+msgstr "Tag %s nie wymaga parametrów"
+
 #~ msgid "Page has been added."
 #~ msgstr "Strona została dodana."
 
@@ -1525,7 +1529,3 @@ msgstr "Dodaj przejście"
 
 #~ msgid "Save &amp; close"
 #~ msgstr "Zapisz &amp; zamknij"
-#, python-format
-msgid "%s tag needs no argument"
-msgstr "Tag %s nie wymaga parametrów"
-
