@@ -34,12 +34,14 @@ from workflows.models import Transition
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 
+
 def portal(request, template_name="lfc/portal.html"):
     """Displays the the portal.
     """
     return render_to_response(template_name, RequestContext(request, {
-        "portal" : lfc.utils.get_portal()
+        "portal": lfc.utils.get_portal()
     }))
+
 
 def base_view(request, language=None, slug=None, obj=None):
     """Displays the object for given language and slug.
@@ -128,8 +130,8 @@ def base_view(request, language=None, slug=None, obj=None):
                                            obj.content_type, obj.id)
     cached_images = cache.get(images_cache_key)
     if cached_images:
-        image     = cached_images["image"]
-        images    = cached_images["images"]
+        image = cached_images["image"]
+        images = cached_images["images"]
         subimages = cached_images["subimages"]
     else:
         temp_images = list(obj.images.all())
@@ -148,22 +150,22 @@ def base_view(request, language=None, slug=None, obj=None):
             subimages = []
 
         cache.set(images_cache_key, {
-            "image" : image,
-            "images" :  images,
-            "subimages" : subimages
+            "image": image,
+            "images": images,
+            "subimages": subimages
         })
 
     # Files
     files = obj.files.all()
 
     c = RequestContext(request, {
-        "lfc_context" : obj,
-        "images" : images,
-        "image" : image,
-        "subimages" : subimages,
-        "files" : files,
-        "sub_objects" : sub_objects,
-        "portal" : lfc.utils.get_portal(),
+        "lfc_context": obj,
+        "images": images,
+        "image": image,
+        "subimages": subimages,
+        "files": files,
+        "sub_objects": sub_objects,
+        "portal": lfc.utils.get_portal(),
     })
 
     # Render twice. This makes tags within text / short_text possible.
@@ -171,6 +173,7 @@ def base_view(request, language=None, slug=None, obj=None):
     result = template.Template("{% load lfc_tags %} " + result).render(c)
 
     return HttpResponse(result)
+
 
 def file(request, language=None, id=None):
     """Delivers files to the browser.
@@ -181,6 +184,7 @@ def file(request, language=None, id=None):
 
     return response
 
+
 def live_search_results(request, language=None, template_name="lfc/live_search_results.html"):
     """Displays the live search result for passed language and query.
     """
@@ -190,7 +194,7 @@ def live_search_results(request, language=None, template_name="lfc/live_search_r
         language = settings.LANGUAGE_CODE
 
     f = Q(exclude_from_search=False) & \
-        (Q(language = language) | Q(language="0")) & \
+        (Q(language=language) | Q(language="0")) & \
         (Q(searchable_text__icontains=query))
 
     try:
@@ -200,14 +204,15 @@ def live_search_results(request, language=None, template_name="lfc/live_search_r
 
     results = lfc.utils.get_content_objects(request, f)
     quantity = len(results)
-    
+
     return render_to_response(template_name, RequestContext(request, {
-        "lfc_context" : obj,
-        "query" : query,
-        "results" : results[:20],
-        "quantity" : quantity,
-        "see_all" : quantity > 20,
+        "lfc_context": obj,
+        "query": query,
+        "results": results[:20],
+        "quantity": quantity,
+        "see_all": quantity > 20,
     }))
+
 
 def search_results(request, language=None, template_name="lfc/search_results.html"):
     """Displays the search result for passed language and query.
@@ -218,7 +223,7 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
         language = settings.LANGUAGE_CODE
 
     f = Q(exclude_from_search=False) & \
-        (Q(language = language) | Q(language="0")) & \
+        (Q(language=language) | Q(language="0")) & \
         (Q(searchable_text__icontains=query))
 
     try:
@@ -229,10 +234,11 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
     results = lfc.utils.get_content_objects(request, f)
 
     return render_to_response(template_name, RequestContext(request, {
-        "lfc_context" : obj,
-        "query" : query,
-        "results" : results,
+        "lfc_context": obj,
+        "query": query,
+        "results": results,
     }))
+
 
 def set_language(request, language, id=None):
     """Sets the language to the given language
@@ -301,6 +307,7 @@ def set_language(request, language, id=None):
 
     return response
 
+
 def do_transition(request, id):
     """Processes passed transition for object with passed id.
     """
@@ -309,6 +316,7 @@ def do_transition(request, id):
 
     obj = BaseContent.objects.get(pk=id)
     return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"State has been changed."))
+
 
 def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):
     """
@@ -325,11 +333,12 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
     objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
 
     return render_to_response(template_name, RequestContext(request, {
-        "slug" : slug,
-        "lfc_context" : obj,
-        "objs" : objs,
-        "tag" : tag,
-    }));
+        "slug": slug,
+        "lfc_context": obj,
+        "objs": objs,
+        "tag": tag,
+    }))
+
 
 def fiveohoh(request, template_name="500.html"):
     """Handler for 500 server errors. Mails the error to ADMINS.

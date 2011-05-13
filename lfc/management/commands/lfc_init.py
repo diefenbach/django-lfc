@@ -28,6 +28,7 @@ import permissions.utils
 from lfc.utils.initialize import initialize
 from utils import WELCOME_DESCRIPTION
 
+
 class Command(BaseCommand):
     args = ''
     help = """Initializes LFC
@@ -128,8 +129,8 @@ class Command(BaseCommand):
         public = State.objects.create(name="Public", workflow=workflow)
 
         # Create transitions
-        make_public = Transition.objects.create(name="Make public", workflow=workflow, destination = public)
-        make_private = Transition.objects.create(name="Make private", workflow=workflow, destination = private)
+        make_public = Transition.objects.create(name="Make public", workflow=workflow, destination=public)
+        make_private = Transition.objects.create(name="Make private", workflow=workflow, destination=private)
 
         # Add transitions
         private.transitions.add(make_public)
@@ -203,11 +204,11 @@ class Command(BaseCommand):
         public = State.objects.create(name="Public", workflow=portal_workflow)
 
         # Create transitions
-        submit_t = Transition.objects.create(name="Submit", workflow=portal_workflow, destination = submitted, permission=submit)
-        make_public = Transition.objects.create(name="Make public", workflow=portal_workflow, destination = public, permission=publish)
-        make_private = Transition.objects.create(name="Make private", workflow=portal_workflow, destination = private, permission=review)
-        reject_t = Transition.objects.create(name="Reject", workflow=portal_workflow, destination = private, permission=reject)
-        retract = Transition.objects.create(name="Retract", workflow=portal_workflow, destination = private, permission=retract)
+        submit_t = Transition.objects.create(name="Submit", workflow=portal_workflow, destination=submitted, permission=submit)
+        make_public = Transition.objects.create(name="Make public", workflow=portal_workflow, destination=public, permission=publish)
+        make_private = Transition.objects.create(name="Make private", workflow=portal_workflow, destination=private, permission=review)
+        reject_t = Transition.objects.create(name="Reject", workflow=portal_workflow, destination=private, permission=reject)
+        retract = Transition.objects.create(name="Retract", workflow=portal_workflow, destination=private, permission=retract)
 
         # Add transitions
         private.transitions.add(submit_t)
@@ -263,7 +264,7 @@ class Command(BaseCommand):
 
         StatePermissionRelation.objects.create(state=submitted, permission=add, role=contributor)
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=contributor)
-        
+
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=reviewer)
 
         StateInheritanceBlock.objects.create(state=submitted, permission=add)
@@ -308,7 +309,7 @@ class Command(BaseCommand):
 
         # Welcome Page
         creator = User.objects.filter()[0]
-        page = Page.objects.create(title="Welcome to LFC", slug="welcome-to-lfc", text=WELCOME_DESCRIPTION, creator=creator)        
+        page = Page.objects.create(title="Welcome to LFC", slug="welcome-to-lfc", text=WELCOME_DESCRIPTION, creator=creator)
         workflows.utils.set_state(page, public)
 
         portal.standard = page

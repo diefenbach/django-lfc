@@ -12,8 +12,9 @@ from lfc.models import TextPortlet
 
 # resources imports
 import resources.utils
-from resources.utils import register_resource 
+from resources.utils import register_resource
 from resources.config import CSS, JS
+
 
 def initialize(create_resources=False):
     """Registers default portlets, templates and content types.
@@ -25,11 +26,11 @@ def initialize(create_resources=False):
     register_portlet(TextPortlet, "Text")
 
     # Register Templates
-    register_template(name = "Plain", path="lfc/templates/plain.html")
-    register_template(name = "Article", path="lfc/templates/article.html")
-    register_template(name = "Gallery", path="lfc/templates/gallery.html", images_columns=3)
-    register_template(name = "Overview", path="lfc/templates/overview.html")
-    
+    register_template(name="Plain", path="lfc/templates/plain.html")
+    register_template(name="Article", path="lfc/templates/article.html")
+    register_template(name="Gallery", path="lfc/templates/gallery.html", images_columns=3)
+    register_template(name="Overview", path="lfc/templates/overview.html")
+
     # Register Resources
     register_resource(type=CSS, group="lfc", path="lfc/yui/reset-fonts.css")
     register_resource(type=CSS, group="lfc", path="lfc/lightbox/css/jquery.lightbox-0.5.css")
@@ -64,16 +65,16 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", path="lfc/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.pack.js")
     register_resource(type=JS, group="manage", path="lfc/js/lfc_manage.js")
-    
+
     register_resource(type=JS, group="manage", minify=0, path="lfc/tiny_mce/jquery.tinymce.js")
     register_resource(type=JS, group="manage", minify=1, path="lfc/js/lfc_editor.js")
     register_resource(type=JS, group="manage", minify=1, path="lfc/js/lfc_tinymce.js")
-    
+
     register_resource(type=JS, group="manage", merge=0, path="admin/js/admin/DateTimeShortcuts.js")
 
-    if create_resources:    
+    if create_resources:
         resources.utils.create_resources()
-    
+
     # Content Types
     register_content_type(
         Page,

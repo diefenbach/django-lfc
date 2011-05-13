@@ -9,6 +9,7 @@ from tagging.managers import ModelTaggedItemManager
 import lfc.utils
 from lfc.models import BaseContent
 
+
 class PageTagFeed(Feed):
     """Provides a feed for a given object restricted by given tags url, e.g.
 

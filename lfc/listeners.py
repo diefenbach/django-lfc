@@ -10,6 +10,7 @@ import lfc.signals
 import lfc.utils
 from lfc.models import BaseContent
 
+
 def comment_was_posted_listener(sender, **kwargs):
     """Listen to order submitted signal
     """
@@ -28,10 +29,10 @@ def comment_was_posted_listener(sender, **kwargs):
     body += "Comment URL: %s" % "http://" + site.domain + "%s" % comment.content_object.get_absolute_url()
 
     mail = EmailMessage(
-        subject    = subject,
-        body       = body,
-        from_email = from_email,
-        to         = to_emails
+        subject=subject,
+        body=body,
+        from_email=from_email,
+        to=to_emails
     )
 
     mail.send(fail_silently=True)

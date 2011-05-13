@@ -24,13 +24,13 @@ urlpatterns += patterns("",
 
 # Login / Logout
 urlpatterns += patterns('django.contrib.auth.views',
-    url('^login/?$',  "login",  { "template_name" : "lfc/login.html" },  name='lfc_login'),
-    url('^logout/?$', "logout", { "template_name" : "lfc/logged_out.html" }, name='lfc_logout'),
+    url('^login/?$', "login", {"template_name": "lfc/login.html"}, name='lfc_login'),
+    url('^logout/?$', "logout", {"template_name": "lfc/logged_out.html"}, name='lfc_logout'),
 )
 
 # Feeds
 feeds = {
-    "rss" : PageTagFeed,
+    "rss": PageTagFeed,
 }
 
 urlpatterns += patterns('',
@@ -39,8 +39,8 @@ urlpatterns += patterns('',
 
 # Contact form
 urlpatterns += patterns('contact_form.views',
-    url(r'^contact$', "contact_form", { "form_class" : ContactForm }, name='contact_form'),
-    url(r'^sent$', direct_to_template, { 'template': 'contact_form/contact_form_sent.html' }, name='contact_form_sent'),
+    url(r'^contact$', "contact_form", {"form_class": ContactForm}, name='contact_form'),
+    url(r'^sent$', direct_to_template, {"template": 'contact_form/contact_form_sent.html'}, name='contact_form_sent'),
 )
 
 # Sitemaps

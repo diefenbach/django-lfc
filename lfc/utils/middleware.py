@@ -1,24 +1,21 @@
-import sys
-import tempfile
+# python imports
+from cStringIO import StringIO
 import hotshot
 import hotshot.stats
-from cStringIO import StringIO
+import sys
+import traceback
+import tempfile
 
 # django imports
 from django.conf import settings
-from django.http import Http404
 from django.http import HttpResponseServerError
-from django.utils import translation
 
 # permissions imports
 from permissions.exceptions import Unauthorized
 
 # lfc imports
 import lfc.utils
-from lfc.utils import traverse_object
-from lfc.utils import get_portal
-from lfc.utils import get_content_object
-from lfc.settings import LFC_LANGUAGE_IDS
+
 
 class ProfileMiddleware(object):
     """
@@ -32,16 +29,16 @@ class ProfileMiddleware(object):
     * Only tested on Linux
     """
     def process_request(self, request):
-        if request.GET.has_key('prof'):
+        if "prof" in request.GET.keys():
             self.tmpfile = tempfile.NamedTemporaryFile()
             self.prof = hotshot.Profile(self.tmpfile.name)
 
     def process_view(self, request, callback, callback_args, callback_kwargs):
-        if request.GET.has_key('prof'):
+        if "prof" in request.GET.keys():
             return self.prof.runcall(callback, request, *callback_args, **callback_kwargs)
 
     def process_response(self, request, response):
-        if request.GET.has_key('prof'):
+        if "prof" in request.GET.keys():
             self.prof.close()
 
             out = StringIO()
@@ -67,7 +64,6 @@ class AJAXSimpleExceptionResponse:
     def process_exception(self, request, exception):
         if settings.DEBUG:
             if request.is_ajax():
-                import sys, traceback
                 (exc_type, exc_info, tb) = sys.exc_info()
                 response = "%s\n" % exc_type.__name__
                 response += "%s\n\n" % exc_info
@@ -76,6 +72,7 @@ class AJAXSimpleExceptionResponse:
                     response += "%s\n" % tb
                 return HttpResponseServerError(response)
 
+
 class LFCMiddleware:
     """LFC specific middleware
     """
@@ -83,4 +80,4 @@ class LFCMiddleware:
         """Catches Unauthorized exceptions to display the login form.
         """
         if isinstance(exception, Unauthorized):
-            return lfc.utils.login_form(next=request.META.get("PATH_INFO")) 
+            return lfc.utils.login_form(next=request.META.get("PATH_INFO"))

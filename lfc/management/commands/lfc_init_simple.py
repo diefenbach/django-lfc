@@ -27,24 +27,25 @@ import permissions.utils
 from lfc.utils.initialize import initialize
 from utils import WELCOME_DESCRIPTION
 
+
 class Command(BaseCommand):
     args = ''
     help = """Initializes LFC
 
-    This will create default portlets, templates, content types and a simple 
+    This will create default portlets, templates, content types and a simple
     workflow.
 
     This should be used to initialize the database to used for simple pages."""
-    
+
     def handle(self, *args, **options):
 
         initialize(create_resources=True)
-            
+
         # Register site
         site = Site.objects.all()[0]
         site.name = site.domain = "www.example.com"
         site.save()
-    
+
         # Create portal
         portal = Portal.objects.create()
 
@@ -72,8 +73,8 @@ class Command(BaseCommand):
         public = State.objects.create(name="Public", workflow=workflow)
 
         # Create transitions
-        make_public = Transition.objects.create(name="Make public", workflow=workflow, destination = public)
-        make_private = Transition.objects.create(name="Make private", workflow=workflow, destination = private)
+        make_public = Transition.objects.create(name="Make public", workflow=workflow, destination=public)
+        make_private = Transition.objects.create(name="Make private", workflow=workflow, destination=private)
 
         # Add transitions
         private.transitions.add(make_public)
@@ -100,6 +101,6 @@ class Command(BaseCommand):
         # Welcome Page
         page = Page.objects.create(title="Welcome to LFC", slug="welcome-to-lfc", text=WELCOME_DESCRIPTION)
         workflows.utils.set_state(page, public)
-        
+
         portal.standard = page
         portal.save()

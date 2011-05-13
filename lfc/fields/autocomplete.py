@@ -1,8 +1,14 @@
+# django imports
 from django import forms
 from django.db.models import get_model
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
+from django.conf import settings
+from django.utils.text import truncate_words
+
+# tagging imports
 from tagging.models import Tag
+
 
 class AutoCompleteTagInput(forms.TextInput):
     class Media:
@@ -34,15 +40,11 @@ class AutoCompleteTagInput(forms.TextInput):
                 autoFill: true
             });
             </script>''' % (name, tag_list))
-            
-            
-from django import forms
-from django.conf import settings
-from django.utils.text import truncate_words
+
 
 class ForeignKeySearchInput(forms.HiddenInput):
     """
-    A Widget for displaying ForeignKeys in an autocomplete search input 
+    A Widget for displaying ForeignKeys in an autocomplete search input
     instead in a <select> box.
     """
     class Media:
@@ -55,13 +57,13 @@ class ForeignKeySearchInput(forms.HiddenInput):
             'lib/jquery.ajaxQueue.js',
             'jquery.autocomplete.js'
         )
-    
+
     def __init__(self, instance, attrs=None):
         """
         """
         self.instance = instance
         super(ForeignKeySearchInput, self).__init__(attrs)
-        
+
     def label_for_value(self, value):
         obj = BaseContent.objects.get(id=value)
         return truncate_words(obj, 14)
@@ -108,11 +110,11 @@ class ForeignKeySearchInput(forms.HiddenInput):
                         });
                         </script>
                     ''') % {
-                        'search_fields': "title",                        
+                        'search_fields': "title",
                         'admin_media_prefix': settings.ADMIN_MEDIA_PREFIX,
                         'model_name': "page",
                         'app_label': "lfc",
                         'label': label,
                         'name': name,
-                        "instance_id" : self.instance.id,
+                        "instance_id": self.instance.id,
                     }

@@ -50,10 +50,12 @@ from lfc.settings import LANGUAGE_CHOICES
 from lfc.settings import ORDER_BY_CHOICES
 from lfc.settings import IMAGE_SIZES
 
+
 class Application(models.Model):
     """
     """
     name = models.CharField(max_length=100, unique=True)
+
 
 class WorkflowStatesInformation(models.Model):
     """Stores some information about workflows
@@ -82,6 +84,7 @@ class WorkflowStatesInformation(models.Model):
             result += u" " + "Review"
 
         return result
+
 
 class Template(models.Model):
     """A template displays the content of an object.
@@ -116,6 +119,7 @@ class Template(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class ContentTypeRegistration(models.Model):
     """Stores all registration relevant information of a registered content
@@ -184,6 +188,7 @@ class ContentTypeRegistration(models.Model):
         """
         return self.templates.all()
 
+
 class Portal(models.Model, PermissionBase):
     """A portal is the root of all content objects. Stores global images and
     some general data about the site.
@@ -217,10 +222,10 @@ class Portal(models.Model, PermissionBase):
 
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    standard = models.ForeignKey("BaseContent", verbose_name = _(u"Page"), blank=True, null=True)
+    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Page"), blank=True, null=True)
 
     from_email = models.EmailField(_(u"From e-mail address"))
-    notification_emails  = models.TextField(_(u"Notification email addresses"))
+    notification_emails = models.TextField(_(u"Notification email addresses"))
     allow_comments = models.BooleanField(_(u"Allow comments"), default=False)
 
     images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
@@ -244,7 +249,7 @@ class Portal(models.Model, PermissionBase):
         if language == settings.LANGUAGE_CODE:
             return reverse("lfc_base_view")
         else:
-            return reverse("lfc_base_view", kwargs={"language" : language})
+            return reverse("lfc_base_view", kwargs={"language": language})
 
     def get_notification_emails(self):
         """Returns the notification e-mail addresses as list.
@@ -308,6 +313,7 @@ class Portal(models.Model, PermissionBase):
         if not self.has_permission(user, codename):
             raise Unauthorized("%s doesn't have permission %s for portal" % (user, codename))
 
+
 class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
     """The root of all content types. It provides the inheritable
     BaseContentManager.
@@ -322,6 +328,7 @@ class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
 
     class Meta:
         abstract = True
+
 
 class BaseContent(AbstractBaseContent):
     """Base content object. From this class all content types should inherit.
@@ -517,24 +524,24 @@ class BaseContent(AbstractBaseContent):
 
         slugs.reverse()
 
-        slug =  "/".join(slugs)
+        slug = "/".join(slugs)
 
         if page.language == settings.LANGUAGE_CODE:
-            return ("lfc_base_view", (), {"slug" : slug})
+            return ("lfc_base_view", (), {"slug": slug})
         elif page.language == "0":
             if page.parent:
                 language = page.parent.language
                 if language == "0":
-                    return ("lfc_base_view", (), {"slug" : slug})
+                    return ("lfc_base_view", (), {"slug": slug})
             else:
                 language = translation.get_language()
 
             if language == settings.LANGUAGE_CODE:
-                return ("lfc_base_view", (), {"slug" : slug})
+                return ("lfc_base_view", (), {"slug": slug})
             else:
-                return ("lfc_base_view", (), {"slug" : slug, "language" : language})
+                return ("lfc_base_view", (), {"slug": slug, "language": language})
         else:
-            return ("lfc_base_view", (), {"slug" : slug, "language" : page.language})
+            return ("lfc_base_view", (), {"slug": slug, "language": page.language})
 
     get_absolute_url = models.permalink(get_absolute_url)
 
@@ -566,7 +573,7 @@ class BaseContent(AbstractBaseContent):
     def edit_form(self, **kwargs):
         """Returns the edit form for the object.
         """
-        raise NotImplementedError, "form has to be implemented by sub classed"
+        raise(NotImplementedError, "form has to be implemented by sub classed")
 
     def add_form(self, **kwargs):
         """Returns the add/edit form for the object.
@@ -852,9 +859,10 @@ class BaseContent(AbstractBaseContent):
         for transition in state.transitions.all():
             permission = transition.permission
             if permission is None or self.has_permission(user, permission.codename):
-               transitions.append(transition)
+                transitions.append(transition)
 
         return transitions
+
 
 class Page(BaseContent):
     """A page is the foremost object within lfc which shows information to the
@@ -870,14 +878,15 @@ class Page(BaseContent):
     def get_searchable_text(self):
         """Returns the searchable text of the page.
         """
-        searchable_text = self.title + " " + self.description + " " + self.text                                                                                                                     
+        searchable_text = self.title + " " + self.description + " " + self.text
         return lfc.utils.html2text(searchable_text)
-        
+
     def edit_form(self, **kwargs):
         """Returns the edit form of the page.
         """
         from lfc.manage.forms import CoreDataForm
         return CoreDataForm(**kwargs)
+
 
 class Image(models.Model):
     """An image which can be displayes within HTML. Generates automatically
@@ -926,8 +935,9 @@ class Image(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return ("gallery.views.photo", (), {"slug" : self.slug})
+        return ("gallery.views.photo", (), {"slug": self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+
 
 class File(models.Model):
     """A downloadable file.
@@ -972,10 +982,11 @@ class File(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("lfc_file", kwargs={"id" : self.id})
+        return reverse("lfc_file", kwargs={"id": self.id})
 
 #### Portlets
 ###############################################################################
+
 
 class NavigationPortlet(Portlet):
     """A portlet to display the navigation tree.
@@ -999,9 +1010,9 @@ class NavigationPortlet(Portlet):
         """
         request = context.get("request")
         return render_to_string("lfc/portlets/navigation_portlet.html", RequestContext(request, {
-            "start_level" : self.start_level,
-            "expand_level" : self.expand_level,
-            "title" : self.title,
+            "start_level": self.start_level,
+            "expand_level": self.expand_level,
+            "title": self.title,
         }))
 
     def form(self, **kwargs):
@@ -1009,11 +1020,13 @@ class NavigationPortlet(Portlet):
         """
         return NavigationPortletForm(instance=self, **kwargs)
 
+
 class NavigationPortletForm(forms.ModelForm):
     """Add/edit form for the navigation portlet.
     """
     class Meta:
         model = NavigationPortlet
+
 
 # TODO: Rename as it is able to display all content types. ContentPortlet, DocumentPortlet, ...?
 class PagesPortlet(Portlet):
@@ -1046,14 +1059,15 @@ class PagesPortlet(Portlet):
             objs = objs[:self.limit]
 
         return render_to_string("lfc/portlets/pages_portlet.html", {
-            "title" : self.title,
-            "objs" : objs,
+            "title": self.title,
+            "objs": objs,
         })
 
     def form(self, **kwargs):
         """Returns the add/edit form of the portlet.
         """
         return PagesPortletForm(instance=self, **kwargs)
+
 
 class PagesPortletForm(forms.ModelForm):
     """Add/edit form of the pages portlet.
@@ -1062,6 +1076,7 @@ class PagesPortletForm(forms.ModelForm):
 
     class Meta:
         model = PagesPortlet
+
 
 class RandomPortlet(Portlet):
     """A portlet to display random objects. The objects can be selected by
@@ -1091,14 +1106,15 @@ class RandomPortlet(Portlet):
         random.shuffle(items)
 
         return render_to_string("lfc/portlets/random_portlet.html", {
-            "title" : self.title,
-            "items" : items[:self.limit],
+            "title": self.title,
+            "items": items[:self.limit],
         })
 
     def form(self, **kwargs):
         """Returns the form of the portlet.
         """
         return RandomPortletForm(instance=self, **kwargs)
+
 
 class RandomPortletForm(forms.ModelForm):
     """Add/Edit form for the random portlet.
@@ -1107,6 +1123,7 @@ class RandomPortletForm(forms.ModelForm):
 
     class Meta:
         model = RandomPortlet
+
 
 class TextPortlet(Portlet):
     """A portlet to display arbitrary HTML text.
@@ -1126,14 +1143,15 @@ class TextPortlet(Portlet):
         """Renders the portlet as HTML.
         """
         return render_to_string("lfc/portlets/text_portlet.html", {
-            "title" : self.title,
-            "text" : self.text
+            "title": self.title,
+            "text": self.text
         })
 
     def form(self, **kwargs):
         """
         """
         return TextPortletForm(instance=self, **kwargs)
+
 
 class TextPortletForm(forms.ModelForm):
     """Add/Edit form for the text portlet.

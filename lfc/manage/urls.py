@@ -86,7 +86,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-state/(?P<id>\d+)$', "add_workflow_state", name="lfc_manage_add_workflow_state"),
     url(r'^add-transition/(?P<id>\d+)$', "add_workflow_transition", name="lfc_manage_add_workflow_transition"),
     url(r'^delete-transition/(?P<id>\d+)$', "delete_workflow_transition", name="lfc_manage_delete_workflow_transition"),
-    
+
     url(r'^save-transition/(?P<id>\d+)$', "save_workflow_transition", name="lfc_manage_save_workflow_transition"),
 
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
@@ -98,7 +98,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^edit-portlet/(?P<portletassignment_id>\d+)$', "edit_portlet", name="lfc_edit_portlet"),
     url(r'^move-portlet/(?P<portletassignment_id>\d+)$', "move_portlet", name="lfc_move_portlet"),
     url(r'^load-object-portlets/(?P<id>\d+)$', "load_object_portlets", name="lfc_load_object_portlets"),
-    
+
     # reviews
     url(r'^review$', "review_objects", name="lfc_manage_review"),
 
@@ -146,7 +146,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-role$', "add_role", name="lfc_manage_add_role"),
     url(r'^save-role/(?P<id>\d+)$', "save_role", name="lfc_manage_save_role"),
     url(r'^delete-role/(?P<id>\d+)$', "delete_role", name="lfc_manage_delete_role"),
-    
+
     # Utils
     url(r'^utils$', "manage_utils", name="lfc_manage_utils"),
     url(r'^reindex-objects$', "reindex_objects", name="lfc_reindex_objects"),

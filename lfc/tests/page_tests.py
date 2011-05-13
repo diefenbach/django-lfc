@@ -13,6 +13,7 @@ from lfc.models import Page
 from lfc.models import Portal
 from lfc.tests.utils import create_request
 
+
 class PageTestCase(TestCase):
     """Tests for Page related stuff.
     """

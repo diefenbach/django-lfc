@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.sessions.backends.file import SessionStore
 from django.test.client import Client
 
+
 # Taken from "http://www.djangosnippets.org/snippets/963/"
 class RequestFactory(Client):
     """
@@ -41,6 +42,7 @@ class RequestFactory(Client):
         environ.update(request)
         return WSGIRequest(environ)
 
+
 def create_request():
     """
     """
@@ -54,4 +56,3 @@ def create_request():
     request.user = user
 
     return request
-

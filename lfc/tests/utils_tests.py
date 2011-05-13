@@ -8,7 +8,9 @@ from lfc.models import Page
 from lfc.models import Portal
 from lfc.tests.utils import create_request
 
+# django imports
 from django.test.client import Client
+
 
 class UtilsTestCase(TestCase):
     """
@@ -18,7 +20,7 @@ class UtilsTestCase(TestCase):
         """
         from lfc.utils.initialize import initialize
         initialize(create_resources=False)
-        
+
         Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
         self.p2 = Page.objects.create(title="Page 2", slug="page-2")

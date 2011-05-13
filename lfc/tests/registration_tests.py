@@ -11,6 +11,7 @@ from lfc.models import Page
 from lfc.models import Template
 from lfc.models import ContentTypeRegistration
 
+
 class RegistrationTestCase(TestCase):
     """Tests for registration related stuff.
     """

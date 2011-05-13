@@ -8,6 +8,7 @@ import lfc.utils.registration
 from lfc.models import Page
 from lfc.models import Portal
 
+
 class CopyTestCase(TestCase):
     """
     """
@@ -19,12 +20,12 @@ class CopyTestCase(TestCase):
 
         Portal.objects.create(id=1)
         self.p1 = Page.objects.create(id=1, title="Page 1", slug="page-1")
-        self.p11 = Page.objects.create(id=11, title="Page 1-1", slug="page-1-1", parent = self.p1)
+        self.p11 = Page.objects.create(id=11, title="Page 1-1", slug="page-1-1", parent=self.p1)
         self.p2 = Page.objects.create(id=2, title="Page 2", slug="page-2")
-        
+
         self.client = Client()
         self.client.login(username="admin", password="admin")
-        
+
     def test_cut(self):
         """Tests general cut and paste of objects.
         """
@@ -33,10 +34,10 @@ class CopyTestCase(TestCase):
         self.assertEqual(self.p1.parent, None)
 
         # Cut
-        self.client.get(reverse("lfc_cut", kwargs={"id" : 1}))
+        self.client.get(reverse("lfc_cut", kwargs={"id": 1}))
 
         # Paste
-        result = self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        result = self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # P1 has now p2 as parent
         p1 = lfc.utils.get_content_object(pk=1)
@@ -54,17 +55,17 @@ class CopyTestCase(TestCase):
         self.assertEqual(self.p1.parent, None)
 
         # Copy
-        self.client.get(reverse("lfc_copy", kwargs={"id" : 1}))
+        self.client.get(reverse("lfc_copy", kwargs={"id": 1}))
 
         # Paste
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # p2 has now a child
         self.assertEqual(len(self.p2.children.all()), 1)
         self.assertEqual(self.p2.children.all()[0].title, "Page 1")
 
         # Paste again
-        result = self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        result = self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # p2 has now a two children
         self.assertEqual(len(self.p2.children.all()), 2)
@@ -85,19 +86,19 @@ class CopyTestCase(TestCase):
         ctr.save()
 
         # Cut
-        self.client.get(reverse("lfc_cut", kwargs={"id" : 1}))
+        self.client.get(reverse("lfc_cut", kwargs={"id": 1}))
 
         # Paste
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # p2 has no children
         self.assertEqual(len(self.p2.children.all()), 0)
 
         # Cut
-        self.client.get(reverse("lfc_cut", kwargs={"id" : 1}))
+        self.client.get(reverse("lfc_cut", kwargs={"id": 1}))
 
         # Paste
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # p2 has no children
         self.assertEqual(len(self.p2.children.all()), 0)
@@ -106,10 +107,10 @@ class CopyTestCase(TestCase):
         """Cut and paste to itself is dissallowed.
         """
         # Cut
-        self.client.get(reverse("lfc_cut", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_cut", kwargs={"id": 2}))
 
         # Paste to itself
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # P2 has children
         self.assertEqual(len(self.p2.children.all()), 0)
@@ -118,10 +119,10 @@ class CopyTestCase(TestCase):
         """Cut and paste to descendant is dissallowed.
         """
         # Cut
-        self.client.get(reverse("lfc_cut", kwargs={"id" : 1}))
+        self.client.get(reverse("lfc_cut", kwargs={"id": 1}))
 
         # Paste to descendant
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 11}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 11}))
 
         # Portal has still 2 children
         portal = lfc.utils.get_portal()
@@ -134,10 +135,10 @@ class CopyTestCase(TestCase):
         """Copy and paste to itself is disallowed.
         """
         # Copy
-        self.client.get(reverse("lfc_copy", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_copy", kwargs={"id": 2}))
 
         # Paste to itself is allowed
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 2}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 2}))
 
         # P2 has children
         self.assertEqual(len(self.p2.children.all()), 1)
@@ -146,10 +147,10 @@ class CopyTestCase(TestCase):
         """Cut and paste to descendant is dissallowed.
         """
         # Cut
-        self.client.get(reverse("lfc_copy", kwargs={"id" : 1}))
+        self.client.get(reverse("lfc_copy", kwargs={"id": 1}))
 
         # Paste to descendant
-        self.client.get(reverse("lfc_paste", kwargs={"id" : 11}))
+        self.client.get(reverse("lfc_paste", kwargs={"id": 11}))
 
         # Portal has still 2 children
         portal = lfc.utils.get_portal()
@@ -157,11 +158,3 @@ class CopyTestCase(TestCase):
 
         # P1 has still one children
         self.assertEqual(len(self.p1.get_children()), 1)
-
-    # def test_copy_with_tags(self):
-    #     """
-    #     """
-    #     client = Client()
-    #
-    #     self.p1.tags.add("dog")
-    #

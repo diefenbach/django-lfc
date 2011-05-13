@@ -42,6 +42,7 @@ from lfc.models import Page
 
 register = template.Library()
 
+
 @register.inclusion_tag('lfc/manage/templates.html', takes_context=True)
 def templates(context):
     """Displays a selection box to select a available template for context
@@ -52,7 +53,7 @@ def templates(context):
 
     if lfc_context is None:
         return {
-            "display" : False,
+            "display": False,
         }
 
     templates = registration.get_templates(lfc_context)
@@ -68,11 +69,12 @@ def templates(context):
         display = False
 
     return {
-        "display" : display,
-        "templates" : templates,
-        "obj_id" : lfc_context.id,
-        "current_template" : template_id
+        "display": display,
+        "templates": templates,
+        "obj_id": lfc_context.id,
+        "current_template": template_id
     }
+
 
 class LanguagesNode(Node):
     """
@@ -104,9 +106,9 @@ class LanguagesNode(Node):
                     is_available = False
 
                 languages.append({
-                    "code" : language[0],
-                    "name" : language[1],
-                    "is_available" : is_available,
+                    "code": language[0],
+                    "name": language[1],
+                    "is_available": is_available,
                 })
 
         # Set cache
@@ -114,6 +116,7 @@ class LanguagesNode(Node):
 
         context["lfc_languages"] = languages
         return ''
+
 
 def do_languages(parser, token):
     """Tag to put the contact form into context.
@@ -126,6 +129,7 @@ def do_languages(parser, token):
     return LanguagesNode()
 
 register.tag('lfc_languages', do_languages)
+
 
 class ContactFormNode(Node):
     """Tag to put the contact form into context.
@@ -140,6 +144,7 @@ class ContactFormNode(Node):
         context["form"] = contact_form
         return ''
 
+
 def do_contact_form(parser, token):
     """Tag to put the contact form into context.
     """
@@ -149,8 +154,8 @@ def do_contact_form(parser, token):
         raise TemplateSyntaxError(_('%s tag needs no argument') % bits[0])
 
     return ContactFormNode()
-
 register.tag('contact_form', do_contact_form)
+
 
 @register.inclusion_tag('lfc/tags/tabs.html', takes_context=True)
 def tabs(context):
@@ -177,7 +182,7 @@ def tabs(context):
         tl_objs = lfc.utils.get_content_objects(
             request,
             language__in=(language, "0"),
-            parent = None,
+            parent=None,
             exclude_from_navigation=False,
         )
 
@@ -195,10 +200,11 @@ def tabs(context):
         cache.set(cache_key, tabs)
 
     return {
-        "language" : language,
-        "tabs" : tabs,
-        "portal" : lfc.utils.get_portal(),
+        "language": language,
+        "tabs": tabs,
+        "portal": lfc.utils.get_portal(),
     }
+
 
 @register.inclusion_tag('lfc/tags/scrollable.html', takes_context=True)
 def scrollable(context, tags=None, title=False, text=True, limit=5):
@@ -210,10 +216,11 @@ def scrollable(context, tags=None, title=False, text=True, limit=5):
         items = ModelTaggedItemManager().with_all(tags, items)
 
     return {
-        "items" : items,
-        "title" : title,
-        "text" : text,
+        "items": items,
+        "title": title,
+        "text": text,
     }
+
 
 @register.inclusion_tag('lfc/tags/rss.html', takes_context=True)
 def rss(context, url, limit=5):
@@ -225,9 +232,9 @@ def rss(context, url, limit=5):
         name = feed["feed"]["link"].split("/")[-1]
     except (KeyError, IndexError, AttributeError):
         return {
-            "entries" : [],
-            "link" : "",
-            "LANGUAGE_CODE" : "",
+            "entries": [],
+            "link": "",
+            "LANGUAGE_CODE": "",
         }
 
     entries = []
@@ -235,26 +242,28 @@ def rss(context, url, limit=5):
         summary = entry.summary.replace("%s: " % name, "")
 
         entries.append({
-            "title" : entry.title,
-            "summary" : summary,
-            "date" : datetime.datetime(*entry["updated_parsed"][0:6])
+            "title": entry.title,
+            "summary": summary,
+            "date": datetime.datetime(*entry["updated_parsed"][0:6])
         })
 
     return {
-        "entries" : entries,
-        "LANGUAGE_CODE" : context.get("LANGUAGE_CODE"),
-        "link" : feed["feed"]["link"],
+        "entries": entries,
+        "LANGUAGE_CODE": context.get("LANGUAGE_CODE"),
+        "link": feed["feed"]["link"],
     }
+
 
 @register.inclusion_tag('lfc/tags/rss_ajax.html', takes_context=True)
 def rss_ajax(context, url, limit=5):
     """An inclusion tag which displays an rss feed.
     """
     return {
-        "url" : url,
-        "limit" : limit,
-        "id" : uuid.uuid1(),
+        "url": url,
+        "limit": limit,
+        "id": uuid.uuid1(),
     }
+
 
 def get_rss_entries(request, limit=5, template_name="lfc/tags/rss_ajax_entries.html"):
     """Loads the entries for rss_ajax tag.
@@ -265,9 +274,9 @@ def get_rss_entries(request, limit=5, template_name="lfc/tags/rss_ajax_entries.h
         name = feed["feed"]["link"].split("/")[-1]
     except (KeyError, IndexError, AttributeError):
         return {
-            "entries" : [],
-            "link" : "",
-            "LANGUAGE_CODE" : "",
+            "entries": [],
+            "link": "",
+            "LANGUAGE_CODE": "",
         }
 
     entries = []
@@ -277,14 +286,15 @@ def get_rss_entries(request, limit=5, template_name="lfc/tags/rss_ajax_entries.h
         summary = re.subn("(http://\S+)", "<a href='\g<1>'>\g<1></a>", summary)[0]
 
         entries.append({
-            "summary" : summary,
-            "date" : datetime.datetime(*entry["updated_parsed"][0:6])
+            "summary": summary,
+            "date": datetime.datetime(*entry["updated_parsed"][0:6])
         })
 
     return render_to_response(template_name, RequestContext(request, {
-        "entries" : entries,
-        "link" : feed["feed"]["link"],
+        "entries": entries,
+        "link": feed["feed"]["link"],
     }))
+
 
 @register.inclusion_tag('lfc/tags/navigation.html', takes_context=True)
 def navigation(context, start_level=1, expand_level=0):
@@ -297,8 +307,8 @@ def navigation(context, start_level=1, expand_level=0):
     language = translation.get_language()
 
     temp = lfc.utils.get_content_objects(request,
-        parent = None,
-        language__in = (language, "0"),
+        parent=None,
+        language__in=(language, "0"),
         exclude_from_navigation=False)
 
     # Add portal's standard to current_objs
@@ -330,56 +340,58 @@ def navigation(context, start_level=1, expand_level=0):
             is_current = False
 
         objs.append({
-            "id" : obj.id,
-            "slug" : obj.slug,
-            "title" : obj.title,
-            "url" : obj.get_absolute_url(),
-            "is_current" : is_current,
-            "children" : children,
-            "level" : 1
+            "id": obj.id,
+            "slug": obj.slug,
+            "title": obj.title,
+            "url": obj.get_absolute_url(),
+            "is_current": is_current,
+            "children": children,
+            "level": 1
         })
 
     return {
-        "objs" : objs,
-        "show_level" : start_level==1
+        "objs": objs,
+        "show_level": start_level == 1
     }
+
 
 def _navigation_children(request, current_objs, obj, start_level, expand_level, level=2):
     """Renders the children of given object as sub navigation tree.
     """
     obj = obj
-    temp = obj.get_children(request, exclude_from_navigation = False,
-        language__in = (translation.get_language(), "0"),
+    temp = obj.get_children(request, exclude_from_navigation=False,
+        language__in=(translation.get_language(), "0"),
     )
 
     objs = []
     for obj in temp:
         if obj in current_objs:
-            children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level+1)
+            children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level + 1)
             is_current = True
         elif level <= expand_level and level >= start_level:
-            children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level+1)
+            children = _navigation_children(request, current_objs, obj, start_level, expand_level, level=level + 1)
             is_current = False
         else:
             children = ""
             is_current = False
 
         objs.append({
-            "id" : obj.id,
-            "slug" : obj.slug,
-            "title" : obj.title,
-            "url" : obj.get_absolute_url(),
-            "is_current" : is_current,
-            "children" : children,
-            "level" : level,
+            "id": obj.id,
+            "slug": obj.slug,
+            "title": obj.title,
+            "url": obj.get_absolute_url(),
+            "is_current": is_current,
+            "children": children,
+            "level": level,
         })
 
     result = render_to_string("lfc/tags/navigation_children.html", {
-        "objs" : objs,
-        "show_level" : level >= start_level,
+        "objs": objs,
+        "show_level": level >= start_level,
     })
 
     return result
+
 
 @register.inclusion_tag('lfc/tags/breadcrumbs.html', takes_context=True)
 def breadcrumbs(context):
@@ -388,8 +400,8 @@ def breadcrumbs(context):
     obj = context.get("lfc_context")
     if obj is None:
         return {
-            "obj" : None,
-            "objs" : []
+            "obj": None,
+            "objs": []
         }
 
     objs = []
@@ -400,9 +412,10 @@ def breadcrumbs(context):
         temp = temp.parent
 
     return {
-        "obj" : obj,
-        "objs" : objs,
+        "obj": obj,
+        "objs": objs,
     }
+
 
 @register.inclusion_tag('lfc/tags/page.html', takes_context=True)
 def page(context, slug, part):
@@ -414,7 +427,8 @@ def page(context, slug, part):
     if page:
         page = page.get_content_object()
 
-    return { "page" : page, "part": part }
+    return {"page": page, "part": part}
+
 
 @register.inclusion_tag('lfc/tags/objects.html', takes_context=True)
 def objects_by_slug(context, slug, limit=5, title=True, text=False):
@@ -424,7 +438,7 @@ def objects_by_slug(context, slug, limit=5, title=True, text=False):
     try:
         obj = lfc.utils.traverse_object(request, slug)
     except Http404:
-        return { "objs" : [] }
+        return {"objs": []}
 
     objs = obj.children.all().order_by("-publication_date")[:limit]
 
@@ -433,10 +447,11 @@ def objects_by_slug(context, slug, limit=5, title=True, text=False):
         result.append(obj.get_content_object())
 
     return {
-        "objs" : result,
-        "title" : title,
-        "text" : text,
+        "objs": result,
+        "title": title,
+        "text": text,
     }
+
 
 @register.inclusion_tag('lfc/tags/previous_next.html')
 def previous_next_by_date(obj):
@@ -453,9 +468,10 @@ def previous_next_by_date(obj):
         next = None
 
     return {
-        "previous" : previous,
-        "next" : next,
+        "previous": previous,
+        "next": next,
     }
+
 
 @register.inclusion_tag('lfc/tags/previous_next.html', takes_context=True)
 def previous_next_by_position(context, obj):
@@ -481,9 +497,10 @@ def previous_next_by_position(context, obj):
         next = None
 
     return {
-        "previous" : previous,
-        "next" : next,
+        "previous": previous,
+        "next": next,
     }
+
 
 @register.filter(name='field_value')
 def field_value(field):
@@ -501,6 +518,7 @@ def field_value(field):
     if val is None:
         val = ''
     return val
+
 
 @register.filter(name='display_value')
 def display_value(field):
@@ -524,6 +542,7 @@ def display_value(field):
 
     return value
 
+
 class PermissionComparisonNode(template.Node):
     """Implements a node to provide an if current user has passed permission
     for current object tag.
@@ -540,7 +559,7 @@ class PermissionComparisonNode(template.Node):
         end_tag = 'endifhasperm'
         nodelist_true = parser.parse(('else', end_tag))
         token = parser.next_token()
-        if token.contents == 'else': # there is an 'else' clause in the tag
+        if token.contents == 'else':  # there is an 'else' clause in the tag
             nodelist_false = parser.parse((end_tag,))
             parser.delete_first_token()
         else:
@@ -564,11 +583,13 @@ class PermissionComparisonNode(template.Node):
             except AttributeError:
                 return ""
 
+
 @register.tag
 def ifhasperm(parser, token):
     """This function provides functionality for the 'ifhasperm' template tag.
     """
     return PermissionComparisonNode.handle_token(parser, token)
+
 
 class PortalPermissionComparisonNode(template.Node):
     """Implements a node to provide an if current user has passed permission
@@ -586,7 +607,7 @@ class PortalPermissionComparisonNode(template.Node):
         end_tag = 'endifportalhasperm'
         nodelist_true = parser.parse(('else', end_tag))
         token = parser.next_token()
-        if token.contents == 'else': # there is an 'else' clause in the tag
+        if token.contents == 'else':  # there is an 'else' clause in the tag
             nodelist_false = parser.parse((end_tag,))
             parser.delete_first_token()
         else:
@@ -609,6 +630,7 @@ class PortalPermissionComparisonNode(template.Node):
                 return self.nodelist_false.render(context)
             except AttributeError:
                 return ""
+
 
 @register.tag
 def ifportalhasperm(parser, token):
