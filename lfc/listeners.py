@@ -3,12 +3,10 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.comments.signals import comment_was_posted
 from django.core.mail import EmailMessage
-from django.db.models.signals import post_save
 
 # lfc imports
 import lfc.signals
 import lfc.utils
-from lfc.models import BaseContent
 
 
 def comment_was_posted_listener(sender, **kwargs):
