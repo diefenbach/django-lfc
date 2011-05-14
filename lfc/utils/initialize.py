@@ -61,7 +61,6 @@ def initialize(create_resources=False):
     register_resource(type=JS, group="manage", path="lfc/jquery/jquery.jgrowl_minimized.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/jquery.cookie.pack.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/superfish/superfish.js")
-    register_resource(type=JS, group="manage", path="lfc/jquery/jquery.ba-bbq.min.js")
     register_resource(type=JS, group="manage", path="lfc/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js")
     register_resource(type=JS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.pack.js")
     register_resource(type=JS, group="manage", path="lfc/js/lfc_manage.js")
