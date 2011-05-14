@@ -786,8 +786,8 @@ class BaseContent(AbstractBaseContent):
         result = template.Template("{% load lfc_tags %} " + result).render(context)
         return result
 
-    def get_render_context(self, request):
-        """Calculates and returns the render context.
+    def get_request_context(self, request):
+        """Calculates and returns the request context.
         """
         # Template
         # CACHE
@@ -869,8 +869,8 @@ class BaseContent(AbstractBaseContent):
     def render(self, request):
         """Renders the object content.
         """
-        render_context = self.get_render_context(request)
-        return self.render_to_string(render_context)
+        request_context = self.get_request_context(request)
+        return self.render_to_string(request_context)
 
     # django-permissions
     def get_parent_for_permissions(self):
