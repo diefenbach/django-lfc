@@ -5,6 +5,7 @@ import random
 
 # django imports
 from django import forms
+from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
@@ -776,6 +777,100 @@ class BaseContent(AbstractBaseContent):
         The implementation of this method is a requirement from django-portlets.
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
+
+    def render_to_string(self, context):
+        """Renders the content to string.
+        """
+        # Render twice. This makes tags within text / short_text possible.
+        result = render_to_string(self.obj_template.path, context)
+        result = template.Template("{% load lfc_tags %} " + result).render(context)
+        return result
+
+    def get_render_context(self, request):
+        """Calculates and returns the render context.
+        """
+        # Template
+        # CACHE
+        template_cache_key = "%s-template-%s-%s" % \
+                    (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
+        self.obj_template = cache.get(template_cache_key)
+        if self.obj_template is None:
+            self.obj_template = self.get_template()
+            cache.set(template_cache_key, self.obj_template)
+
+        # Children
+        # CACHE
+        children_cache_key = "%s-children-%s-%s-%s" % \
+                                              (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                               self.content_type, self.id,
+                                               request.user.id)
+        self.sub_objects = cache.get(children_cache_key)
+        if self.sub_objects is None:
+            # Get sub objects (as LOL if requested)
+            if self.obj_template.children_columns == 0:
+                self.sub_objects = self.get_children(request)
+            else:
+                self.sub_objects = lfc.utils.getLOL(self.get_children(request), obj_template.children_columns)
+
+            cache.set(children_cache_key, self.sub_objects)
+
+        # Images
+        # CACHE
+        images_cache_key = "%s-images-%s-%s" % \
+                                              (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                               self.content_type, self.id)
+        cached_images = cache.get(images_cache_key)
+        if cached_images:
+            image = cached_images["image"]
+            images = cached_images["images"]
+            subimages = cached_images["subimages"]
+        else:
+            temp_images = list(self.images.all())
+            if temp_images:
+                if self.obj_template.images_columns == 0:
+                    images = temp_images
+                    image = images[0]
+                    subimages = temp_images[1:]
+                else:
+                    images = lfc.utils.getLOL(temp_images, self.obj_template.images_columns)
+                    subimages = lfc.utils.getLOL(temp_images[1:], self.obj_template.images_columns)
+                    image = images[0][0]
+            else:
+                image = None
+                images = []
+                subimages = []
+
+            cache.set(images_cache_key, {
+                "image": image,
+                "images": images,
+                "subimages": subimages
+            })
+
+        self.image = image
+        self.images = images
+        self.subimages = subimages
+
+        # Files
+        self.files = self.files.all()
+
+        self.context = RequestContext(request, {
+            "lfc_context": self,
+            "self" : self,
+            "images": images,
+            "image": image,
+            "subimages": subimages,
+            "files": self.files,
+            "sub_objects": self.sub_objects,
+            "portal": lfc.utils.get_portal(),
+        })
+        
+        return self.context
+        
+    def render(self, request):
+        """Renders the object content.
+        """
+        render_context = self.get_render_context(request)
+        return self.render_to_string(render_context)
 
     # django-permissions
     def get_parent_for_permissions(self):
