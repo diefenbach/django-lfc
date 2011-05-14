@@ -51,7 +51,7 @@ def initialize(create_resources=False):
     register_resource(type=CSS, group="manage", path="lfc/jquery/autocomplete/jquery.autocomplete.css")
     register_resource(type=CSS, group="manage", path="lfc/css/lfc_manage.css")
 
-    register_resource(type=JS, group="manage", path="/admin/jsi18n", merge=0, minify=0, absolute=1)
+    register_resource(type=JS, group="manage", path="/admin/jsi18n/", merge=0, minify=0, absolute=1)
     register_resource(type=JS, group="manage", path="admin/js/core.js")
     register_resource(type=JS, group="manage", path="admin/js/calendar.js")
     register_resource(type=JS, group="manage", path="admin/js/urlify.js")

@@ -7,7 +7,7 @@
         <li><a href="#children">{% trans 'Children' %}</a></li>
         <li><a href="#images">{% trans 'Images' %}</a></li>
         <li><a href="#files">{% trans 'Files' %}</a></li>
-        <li><a href="#portlets">{% trans 'Portlets' %}</a></li>
+        <li><a href="#portlets_tab">{% trans 'Portlets' %}</a></li>
         {% if LFC_MANAGE_PERMISSIONS %}
             <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
         {% endif %}
@@ -26,7 +26,7 @@
     <div id="files">
         {{ files|safe }}
     </div>
-    <div id="portlets">
+    <div id="portlets_tab">
         {{ portlets|safe }}
     </div>
     {% if LFC_MANAGE_PERMISSIONS %}
