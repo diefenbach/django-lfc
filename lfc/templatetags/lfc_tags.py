@@ -22,9 +22,6 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-# contact_form imports
-from lfc.forms import ContactForm
-
 # tagging imports
 from tagging.managers import ModelTaggedItemManager
 
@@ -129,32 +126,6 @@ def do_languages(parser, token):
     return LanguagesNode()
 
 register.tag('lfc_languages', do_languages)
-
-
-class ContactFormNode(Node):
-    """Tag to put the contact form into context.
-    """
-    def render(self, context):
-        request = context.get("request")
-        if request.method == "POST":
-            contact_form = ContactForm(data=request.POST, request=request)
-        else:
-            contact_form = ContactForm(request=request)
-
-        context["form"] = contact_form
-        return ''
-
-
-def do_contact_form(parser, token):
-    """Tag to put the contact form into context.
-    """
-    bits = token.contents.split()
-    len_bits = len(bits)
-    if len_bits != 1:
-        raise TemplateSyntaxError(_('%s tag needs no argument') % bits[0])
-
-    return ContactFormNode()
-register.tag('contact_form', do_contact_form)
 
 
 @register.inclusion_tag('lfc/tags/tabs.html', takes_context=True)
