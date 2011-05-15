@@ -165,7 +165,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
             # Send signal
             lfc.signals.post_content_added.send(new_object)
 
-            # _update_positions(new_object, True)
+            _update_positions(new_object, True)
 
             # Ugly, but works for now. The reason is that object_core
             # called via object_tabs tries to validate the form if the
@@ -5264,6 +5264,10 @@ def _paste(request, obj):
             error_msg = _(u"Some cut/copied objects has been deleted in the meanwhile.")
             continue
 
+        # Save one parent of source_objs (All source_objs have the same parent)
+        # for later update of the positions, see below.
+        to_updated_obj = source_obj.parent
+
         # Copy only allowed sub types to target
         allowed_subtypes = get_allowed_subtypes(target)
         ctr_source = get_info(source_obj)
@@ -5274,6 +5278,7 @@ def _paste(request, obj):
 
         descendants = source_obj.get_descendants()
         if action == CUT:
+
             # Don't cut and paste to own descendants
             if target in descendants or target == source_obj or target == source_obj.parent:
                 error_msg = _(u"The objects can't be pasted in own descendants.")
@@ -5289,6 +5294,7 @@ def _paste(request, obj):
 
             source_obj.position = (amount + 1) * 10
             source_obj.save()
+
             _reset_clipboard(request)
         else:
             # Paste
@@ -5315,6 +5321,7 @@ def _paste(request, obj):
     if error_msg:
         msg = error_msg
     else:
+        _update_positions(to_updated_obj)
         msg = _(u"The object has been pasted.")
 
     return msg
