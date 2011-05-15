@@ -778,25 +778,13 @@ class BaseContent(AbstractBaseContent):
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
-    def render_to_string(self, context):
-        """Renders the content to string.
-        """
-        # Render twice. This makes tags within text / short_text possible.
-        result = render_to_string(self.obj_template.path, context)
-        result = template.Template("{% load lfc_tags %} " + result).render(context)
-        return result
+    def set_context(self, request):
+        self.context = self.get_context(request)
 
-    def get_request_context(self, request):
+    def get_context(self, request):
         """Calculates and returns the request context.
         """
-        # Template
-        # CACHE
-        template_cache_key = "%s-template-%s-%s" % \
-                    (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
-        self.obj_template = cache.get(template_cache_key)
-        if self.obj_template is None:
-            self.obj_template = self.get_template()
-            cache.set(template_cache_key, self.obj_template)
+        obj_template = self.get_template()
 
         # Children
         # CACHE
@@ -804,15 +792,15 @@ class BaseContent(AbstractBaseContent):
                                               (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
                                                self.content_type, self.id,
                                                request.user.id)
-        self.sub_objects = cache.get(children_cache_key)
-        if self.sub_objects is None:
+        sub_objects = cache.get(children_cache_key)
+        if sub_objects is None:
             # Get sub objects (as LOL if requested)
-            if self.obj_template.children_columns == 0:
-                self.sub_objects = self.get_children(request)
+            if obj_template.children_columns == 0:
+                sub_objects = self.get_children(request)
             else:
-                self.sub_objects = lfc.utils.getLOL(self.get_children(request), obj_template.children_columns)
+                sub_objects = lfc.utils.getLOL(self.get_children(request), obj_template.children_columns)
 
-            cache.set(children_cache_key, self.sub_objects)
+            cache.set(children_cache_key, sub_objects)
 
         # Images
         # CACHE
@@ -827,13 +815,13 @@ class BaseContent(AbstractBaseContent):
         else:
             temp_images = list(self.images.all())
             if temp_images:
-                if self.obj_template.images_columns == 0:
+                if obj_template.images_columns == 0:
                     images = temp_images
                     image = images[0]
                     subimages = temp_images[1:]
                 else:
-                    images = lfc.utils.getLOL(temp_images, self.obj_template.images_columns)
-                    subimages = lfc.utils.getLOL(temp_images[1:], self.obj_template.images_columns)
+                    images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
+                    subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
                     image = images[0][0]
             else:
                 image = None
@@ -846,31 +834,37 @@ class BaseContent(AbstractBaseContent):
                 "subimages": subimages
             })
 
-        self.image = image
-        self.images = images
-        self.subimages = subimages
-
-        # Files
-        self.files = self.files.all()
-
         self.context = RequestContext(request, {
             "lfc_context": self,
             "self" : self,
             "images": images,
             "image": image,
             "subimages": subimages,
-            "files": self.files,
-            "sub_objects": self.sub_objects,
+            "files": self.files.all(),
+            "sub_objects": sub_objects,
             "portal": lfc.utils.get_portal(),
         })
-        
+
         return self.context
-        
+
     def render(self, request):
         """Renders the object content.
         """
-        request_context = self.get_request_context(request)
-        return self.render_to_string(request_context)
+        if self.context is None:
+            self.context = self.get_context()
+
+        # CACHE
+        template_cache_key = "%s-template-%s-%s" % \
+                    (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
+        obj_template = cache.get(template_cache_key)
+        if obj_template is None:
+            obj_template = self.get_template()
+            cache.set(template_cache_key, obj_template)
+
+        # Render twice. This makes tags within text / short_text possible.
+        result = render_to_string(obj_template.path, self.context)
+        result = template.Template("{% load lfc_tags %} " + result).render(self.context)
+        return result
 
     # django-permissions
     def get_parent_for_permissions(self):

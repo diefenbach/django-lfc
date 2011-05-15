@@ -97,7 +97,8 @@ def base_view(request, language=None, slug=None, obj=None):
     if obj.standard and request.user.is_superuser == False:
         url = obj.get_absolute_url()
         return HttpResponseRedirect(url)
-
+    
+    obj.set_context(request)
     result = obj.render(request)
     return HttpResponse(result)
 
