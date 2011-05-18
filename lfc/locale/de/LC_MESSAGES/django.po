@@ -1539,6 +1539,11 @@ msgstr "Ablehnen"
 msgid "Retract"
 msgstr "Zurückweisen"
 
+msgid "Manage portal"
+msgstr "Portal verwalten"
+
+msgid "Manage content"
+msgstr "Inhalt verwalten"
 
 msgid "German"
 msgstr "Deutsch"
@@ -1551,8 +1556,3 @@ msgstr "Rechte verwalten"
 
 msgid "Publish"
 msgstr "Publizieren"
-msgid "Manage portal"
-msgstr "Portal verwalten"
-
-msgid "Manage content"
-msgstr "Inhalt verwalten"
