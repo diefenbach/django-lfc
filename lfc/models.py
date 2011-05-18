@@ -53,7 +53,7 @@ from lfc.settings import IMAGE_SIZES
 
 
 class Application(models.Model):
-    """
+    """Represents a LFC application.
     """
     name = models.CharField(max_length=100, unique=True)
 
