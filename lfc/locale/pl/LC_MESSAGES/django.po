@@ -888,7 +888,7 @@ msgid "Prview"
 msgstr "Podgląd"
 
 #: templates/lfc/manage/filebrowser_images.html:98
-msgid "No image selcted"
+msgid "No image selected"
 msgstr "Nie wybrano obrazu"
 
 #: templates/lfc/manage/filebrowser_images.html:115
