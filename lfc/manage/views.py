@@ -267,9 +267,9 @@ def delete_object(request, id):
         message = _(u"The object has been deleted.")
 
     if obj.parent:
-        return HttpResponseRedirect(reverse("lfc_manage_object", kwargs={"id": obj.parent.id}))
+        return MessageHttpResponseRedirect(reverse("lfc_manage_object", kwargs={"id": obj.parent.id}), message)
     else:
-        return HttpResponseRedirect(reverse("lfc_manage_portal"))
+        return MessageHttpResponseRedirect(reverse("lfc_manage_portal"), message)
 
 # Portal #####################################################################
 ##############################################################################
