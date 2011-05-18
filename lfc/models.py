@@ -294,7 +294,7 @@ class Portal(models.Model, PermissionBase):
         """
         # Every user is also anonymous user
         try:
-            roles = [Role.objects.get(name="Anonymous").id]
+            roles = [lfc.utils.get_cached_object(Role, name="Anonymous").id]
         except Role.DoesNotExist:
             roles = []
 

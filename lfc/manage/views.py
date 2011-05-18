@@ -180,6 +180,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
                 "url": reverse("lfc_manage_object", kwargs={"id": new_object.id}),
                 }, cls=LazyEncoder)
 
+            logger.info("Created New Object: User: %s, ID: %s, Type: %s" % (request.user.username, new_object.id, new_object.get_content_type()))
             return lfc.utils.set_message_to_reponse(
                 HttpResponse(result), _(u"Object has been added."))
 

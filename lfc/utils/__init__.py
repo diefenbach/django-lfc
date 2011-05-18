@@ -18,6 +18,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from django.shortcuts import _get_queryset
 from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
@@ -26,6 +27,26 @@ from django.utils import translation
 # lfc imports
 import lfc.models
 
+def get_cached_object(klass, *args, **kwargs):
+    """
+    Uses get() to return an object.
+
+    klass may be a Model, Manager, or QuerySet object. All other passed
+    arguments and keyword arguments are used in the get() query.
+
+    Note: Like with get(), an MultipleObjectsReturned will be raised if more than one
+    object is found.
+    """
+    # CACHE
+    cache_key = "%s-%s" % (klass.__name__.lower(), kwargs.values()[0])
+    object = cache.get(cache_key)
+    if object is not None:
+        return object
+
+    queryset = _get_queryset(klass)
+    object = queryset.get(*args, **kwargs)
+    cache.set(cache_key, object)
+    return object
 
 class HttpJsonResponse(HttpResponse):
     def __init__(self, content, mimetype=None, status=None, content_type=None, **kwargs):
