@@ -240,6 +240,11 @@ class Portal(models.Model, PermissionBase):
 
     @property
     def content_type(self):
+        """To be consistent with BaseContent.
+        """
+        return self.get_content_type()
+
+    def get_content_type(self):
         return u"portal"
 
     def get_absolute_url(self):
@@ -558,11 +563,6 @@ class BaseContent(AbstractBaseContent):
         else:
             return self
 
-    def get_content_type(self):
-        """Returns the content type as string.
-        """
-        return self.__class__.__name__
-
     def get_searchable_text(self):
         """Returns the searchable text of this content type. By default it
         takes the title the description of the instance into account. Sub
@@ -602,12 +602,9 @@ class BaseContent(AbstractBaseContent):
         return ancestors
 
     def get_content_type(self):
+        """Returns the content type of the object.
         """
-        """
-        try:
-            return ContentTypeRegistration.objects.get(type=self.content_type).name
-        except ContentTypeRegistration.DoesNotExist:
-            return _(u"n/a")
+        return self.content_type
 
     def get_descendants(self, request=None, result=None):
         """Returns all descendants of the content object. If the request is
@@ -1004,16 +1001,16 @@ class Image(models.Model):
     image
         The image file.
     """
-    title = models.CharField(blank=True, max_length=100)
-    slug = models.SlugField()
+    title = models.CharField(_(u"Title"), blank=True, max_length=100)
+    slug = models.SlugField(_(u"Slug"),)
 
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="images", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
 
-    position = models.SmallIntegerField(default=999)
-    caption = models.CharField(blank=True, max_length=100)
-    description = models.TextField(blank=True)
+    position = models.SmallIntegerField(_(u"Position"), default=999)
+    caption = models.CharField(_(u"Caption"), blank=True, max_length=100)
+    description = models.TextField(_(u"Description"), blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     image = ImageWithThumbsField(_(u"Image"), upload_to="uploads", sizes=IMAGE_SIZES)
 
