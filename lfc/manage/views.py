@@ -94,10 +94,13 @@ from lfc.utils import render_to_json
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
+# Load logger
+import logging
+logger = logging.getLogger("default")
+
+
 # Global #####################################################################
 ##############################################################################
-
-
 def add_object(request, language=None, id=None, template_name="lfc/manage/object_add.html"):
     """Displays an add form (GET) and adds a new child content object to the
     object with the passed id (POST). If the passed id is None the content
@@ -263,37 +266,12 @@ def delete_object(request, id):
         message = _(u"The object has been deleted.")
 
     if obj.parent:
-        return load_object(request, obj.parent.id, message)
+        return HttpResponseRedirect(reverse("lfc_manage_object", kwargs={"id": obj.parent.id}))
     else:
-        return load_portal(request, message)
+        return HttpResponseRedirect(reverse("lfc_manage_portal"))
 
 # Portal #####################################################################
 ##############################################################################
-
-
-def load_portal(request, message=""):
-    """Loads the portal per ajax.
-
-    **Parameters:**
-
-        message
-            The message which should be displayed when the object has been
-            loaded.
-
-    **Permission:**
-
-        view
-    """
-    portal = get_portal()
-    portal.check_permission(request.user, "view")
-
-    html = (
-        ("#navigation", navigation(request, None)),
-        ("#menu", portal_menu(request, portal)),
-        ("#tabs-inline", portal_tabs(request, portal)),
-    )
-
-    return return_as_json(html, message)
 
 
 def portal(request, template_name="lfc/manage/portal.html"):
@@ -936,76 +914,6 @@ def edit_file(request, id):
 
 # Objects ####################################################################
 ##############################################################################
-def load_object(request, id, message=""):
-    """Loads an content object per ajax.
-
-    **Parameters:**
-
-        id
-            The id of the object which should be loaded.
-
-        message
-            The message which should be displayed when the object has been
-            loaded.
-
-    **Permission:**
-
-        view
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-    obj.check_permission(request.user, "view")
-
-    html = (
-        ("#navigation", navigation(request, obj)),
-        ("#menu", object_menu(request, obj)),
-        ("#tabs-inline", object_tabs(request, obj)),
-    )
-
-    return return_as_json(html, message)
-
-
-def load_object_parts(request, id, message=""):
-    """Loads specific parts of a content object per ajax.
-
-    **Parameters:**
-
-        id
-            The id of the object which should be loaded.
-
-        message
-            The message which should be displayed when the object has been
-            loaded.
-
-    **Permission:**
-
-        view
-    """
-    obj = lfc.utils.get_content_object(pk=id)
-    obj.check_permission(request.user, "view")
-
-    if settings.LFC_MANAGE_PERMISSIONS:
-        permissions = object_permissions(request, obj)
-    else:
-        permissions = ""
-
-    html = (
-        ("#navigation", navigation(request, obj)),
-        ("#menu", object_menu(request, obj)),
-        ("#core_data", object_core_data(request, obj)),
-        ("#meta_data", object_meta_data(request, obj)),
-        ("#seo_data", object_seo_data(request, obj)),
-        ("#images", object_images(request, obj)),
-        ("#files", object_files(request, obj)),
-        ("#comments", comments(request, obj)),
-        ("#portlets", portlets_inline(request, obj)),
-        ("#children", object_children(request, obj)),
-        ("#permissions", permissions),
-        ("#core_name", obj.__class__.__name__),
-    )
-
-    return return_as_json(html, "")
-
-
 # TODO: Need permission view_management or similiar
 @login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):

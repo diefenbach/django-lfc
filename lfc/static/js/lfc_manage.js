@@ -238,7 +238,7 @@ $(function() {
         var yes = buttons.index(this) === 0;
         var url = $("#delete-url").html();
         if (yes) {
-            load_url(url, true);
+            window.location.href = url;
         }
     });
 });

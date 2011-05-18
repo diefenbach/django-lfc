@@ -152,10 +152,6 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^reindex-objects$', "reindex_objects", name="lfc_reindex_objects"),
 
     # content
-    url(r'^portal', "portal", name="lfc_manage_portal"),
+    url(r'^$', "portal", name="lfc_manage_portal"),
     url(r'^(?P<id>\d+)$', "manage_object", name="lfc_manage_object"),
-    url(r'^load-object-parts/(?P<id>\d+)$', "load_object_parts", name="lfc_load_object_parts"),
-    url(r'^load-object/(?P<id>\d+)$', "load_object", name="lfc_load_object"),
-    url(r'^load-portal$', "load_portal", name="lfc_load_portal"),
-    url(r'^/#page=(?P<id>\d+)$', "load_object", name="lfc_load_object"),
 )
