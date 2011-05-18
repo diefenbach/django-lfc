@@ -1,4 +1,5 @@
 # python imports
+import logging
 import sys
 import traceback
 
@@ -33,6 +34,9 @@ from workflows.models import Transition
 # tagging imports
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
+
+# Load logger
+logger = logging.getLogger("default")
 
 
 def portal(request, template_name="lfc/portal.html"):
