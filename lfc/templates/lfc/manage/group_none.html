@@ -1,0 +1,28 @@
+{% extends "lfc/manage/base.html" %}
+{% load i18n %}
+
+{% block left-slot-wrapper %}{% endblock %}
+
+{% block content %}
+    <div style="margin:20px 0 0 20px">
+        <div id="menu"
+             class="site-actions">
+
+            <ul class="sf-menu">
+                <li>
+                    <a href="{% url lfc_manage_add_group %}">{% trans "Add Group" %}</a>
+                </li>
+            </ul>
+        </div>
+        <div id="manage-tabs">
+            <ul>
+                <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
+            </ul>
+            <div id="data">
+                <p>
+                    {% trans "There are no groups." %}
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

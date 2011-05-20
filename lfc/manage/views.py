@@ -1469,7 +1469,7 @@ def local_roles_search(request, id, template_name="lfc/manage/local_roles_search
         "users": User.objects.exclude(pk__in=user_ids).filter(q_users),
         "groups": Group.objects.exclude(pk__in=group_ids).filter(name__icontains=name),
         "obj_id": id,
-        "roles": Role.objects.all(),
+        "roles": Role.objects.exclude(name__in=("Anonymous", )),
     }))
 
     html = (
@@ -4609,7 +4609,7 @@ def manage_group(request, id=None, template_name="lfc/manage/group.html"):
             id = Group.objects.all()[0].id
             return HttpResponseRedirect(reverse("lfc_manage_group", kwargs={"id": id}))
         except IndexError:
-            return HttpResponseRedirect(reverse("lfc_manage_add_group"))
+            return render_to_response("lfc/manage/group_none.html", RequestContext(request, {}))
 
     group = Group.objects.get(pk=id)
 
@@ -4829,7 +4829,7 @@ def reindex_objects(request):
     for obj in lfc.utils.get_content_objects():
         obj.reindex()
 
-    return HttpResponseRedirect(reverse("lfc_manage_utils"))
+    return MessageHttpResponseRedirect(reverse("lfc_manage_utils"), _(u"Objects have been reindexed."))
 
 
 # Private Methods ############################################################
