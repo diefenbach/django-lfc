@@ -101,7 +101,7 @@ class GroupForm(forms.ModelForm):
         self.fields["roles"].choices = [(r.id, r.name) for r in roles]
 
         self.initial.update({
-            "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance)]})
+            "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance, content_id=None))]})
 
     def save(self, commit=True):
         """
@@ -112,12 +112,12 @@ class GroupForm(forms.ModelForm):
 
             if str(role.id) in role_ids:
                 try:
-                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role)
+                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role, content_id=None))
                 except PrincipalRoleRelation.DoesNotExist:
-                    PrincipalRoleRelation.objects.create(group=self.instance, role=role)
+                    PrincipalRoleRelation.objects.create(group=self.instance, role=role))
             else:
                 try:
-                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role)
+                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role, content_id=None))
                 except PrincipalRoleRelation.DoesNotExist:
                     pass
                 else:
