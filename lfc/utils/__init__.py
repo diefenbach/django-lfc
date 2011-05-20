@@ -27,6 +27,7 @@ from django.utils import translation
 # lfc imports
 import lfc.models
 
+
 def get_cached_object(klass, *args, **kwargs):
     """
     Uses get() to return an object.
