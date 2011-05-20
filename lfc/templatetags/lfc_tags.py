@@ -177,22 +177,6 @@ def tabs(context):
     }
 
 
-@register.inclusion_tag('lfc/tags/scrollable.html', takes_context=True)
-def scrollable(context, tags=None, title=False, text=True, limit=5):
-    """Displays objects with given tabs as scrollable
-    """
-    items = lfc.utils.get_content_object(request)
-
-    if tags:
-        items = ModelTaggedItemManager().with_all(tags, items)
-
-    return {
-        "items": items,
-        "title": title,
-        "text": text,
-    }
-
-
 @register.inclusion_tag('lfc/tags/rss.html', takes_context=True)
 def rss(context, url, limit=5):
     """An inclusion tag which displays an rss feed.
