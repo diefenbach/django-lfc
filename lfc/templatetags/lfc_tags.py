@@ -1,12 +1,6 @@
-# python imports
-import datetime
-import re
-import uuid
-
 # django import
 from django import template
 from django.conf import settings
-from django.contrib.auth.models import User, AnonymousUser
 from django.core.cache import cache
 from django.core.exceptions import ObjectDoesNotExist
 from django.forms import ChoiceField
@@ -15,27 +9,14 @@ from django.forms import CharField
 from django.forms import Textarea
 from django.forms import BooleanField
 from django.http import Http404
-from django.shortcuts import render_to_response
 from django.template import Node, TemplateSyntaxError
-from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-# tagging imports
-from tagging.managers import ModelTaggedItemManager
-
-# feedparser imports
-import feedparser
-
-# permissions imports
-import permissions.utils
-
 # lfc imports
 import lfc.utils
 from lfc.utils import registration
-from lfc.models import BaseContent
-from lfc.models import Page
 
 register = template.Library()
 
@@ -46,8 +27,6 @@ def templates(context):
     on the fly.
     """
     lfc_context = context.get("lfc_context")
-    request = context.get("request")
-
     if lfc_context is None:
         return {
             "display": False,
@@ -175,80 +154,6 @@ def tabs(context):
         "tabs": tabs,
         "portal": lfc.utils.get_portal(),
     }
-
-
-@register.inclusion_tag('lfc/tags/rss.html', takes_context=True)
-def rss(context, url, limit=5):
-    """An inclusion tag which displays an rss feed.
-    """
-    feed = feedparser.parse(url)
-
-    try:
-        name = feed["feed"]["link"].split("/")[-1]
-    except (KeyError, IndexError, AttributeError):
-        return {
-            "entries": [],
-            "link": "",
-            "LANGUAGE_CODE": "",
-        }
-
-    entries = []
-    for entry in feed.entries[0:limit]:
-        summary = entry.summary.replace("%s: " % name, "")
-
-        entries.append({
-            "title": entry.title,
-            "summary": summary,
-            "date": datetime.datetime(*entry["updated_parsed"][0:6])
-        })
-
-    return {
-        "entries": entries,
-        "LANGUAGE_CODE": context.get("LANGUAGE_CODE"),
-        "link": feed["feed"]["link"],
-    }
-
-
-@register.inclusion_tag('lfc/tags/rss_ajax.html', takes_context=True)
-def rss_ajax(context, url, limit=5):
-    """An inclusion tag which displays an rss feed.
-    """
-    return {
-        "url": url,
-        "limit": limit,
-        "id": uuid.uuid1(),
-    }
-
-
-def get_rss_entries(request, limit=5, template_name="lfc/tags/rss_ajax_entries.html"):
-    """Loads the entries for rss_ajax tag.
-    """
-    url = request.GET.get("url")
-    feed = feedparser.parse(url)
-    try:
-        name = feed["feed"]["link"].split("/")[-1]
-    except (KeyError, IndexError, AttributeError):
-        return {
-            "entries": [],
-            "link": "",
-            "LANGUAGE_CODE": "",
-        }
-
-    entries = []
-    for entry in feed.entries[0:limit]:
-        summary = entry.summary.replace("%s: " % name, "")
-        summary = re.subn("#\S+", "", summary)[0]
-        summary = re.subn("(http://\S+)", "<a href='\g<1>'>\g<1></a>", summary)[0]
-
-        entries.append({
-            "summary": summary,
-            "date": datetime.datetime(*entry["updated_parsed"][0:6])
-        })
-
-    return render_to_response(template_name, RequestContext(request, {
-        "entries": entries,
-        "link": feed["feed"]["link"],
-    }))
 
 
 @register.inclusion_tag('lfc/tags/navigation.html', takes_context=True)
@@ -432,7 +337,6 @@ def previous_next_by_date(obj):
 def previous_next_by_position(context, obj):
     """Displays previous/links by position for the given object.
     """
-    request = context.get("request")
     siblings = [o.get_content_object() for o in obj.parent.children.all()]
     current_position = siblings.index(obj)
     next_position = current_position + 1

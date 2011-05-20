@@ -858,9 +858,13 @@ class BaseContent(AbstractBaseContent):
             obj_template = self.get_template()
             cache.set(template_cache_key, obj_template)
 
+        tags = ""
+        for tag in getattr(settings, "LFC_TAGS", []):
+            tags += "{%% load %s %%}" % tag
+
         # Render twice. This makes tags within text / short_text possible.
         result = render_to_string(obj_template.path, self.context)
-        result = template.Template("{% load lfc_tags %} " + result).render(self.context)
+        result = template.Template(tags + " " + result).render(self.context)
         return result
 
     # django-permissions
