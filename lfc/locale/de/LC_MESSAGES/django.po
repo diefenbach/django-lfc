@@ -877,7 +877,7 @@ msgstr "Daten"
 
 #: templates/lfc/manage/group.html:41
 msgid "Save group"
-msgstr "Group speichern"
+msgstr "Gruppe speichern"
 
 #: templates/lfc/manage/group_add.html:28
 #: templates/lfc/manage/user_menu.html:10
@@ -1556,3 +1556,6 @@ msgstr "Rechte verwalten"
 
 msgid "Publish"
 msgstr "Publizieren"
+
+msgid "Initial state"
+msgstr "Initialstatus"
