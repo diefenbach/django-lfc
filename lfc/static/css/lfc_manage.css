@@ -178,6 +178,10 @@ td.left-slot {
   width: 200px;
 }
 
+th.label {
+    font-weight: bold;
+}
+
 th.last, td.last {
     text-align: right !important;
     padding-right: 10px;
