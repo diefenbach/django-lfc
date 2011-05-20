@@ -1,9 +1,9 @@
 {% load i18n %}
-<div style="height:500px; width:600px">
+<div style="height:600px; width:800px">
     <h1>{% trans "Local roles" %}</h1>
 
     <form action="{% url lfc_manage_local_roles_search obj_id %}">
-        <label>{% trans "Name" %} </label><input name="name" type="text" />
+        <label style="padding-right:10px">{% trans "User/Group Name" %}</label><input name="name" type="text" />
         <input type="submit" class="ajax-submit" value='{% trans "Search" %}' />
     </form>
 

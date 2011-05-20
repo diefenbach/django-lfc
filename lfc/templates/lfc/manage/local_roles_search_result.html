@@ -2,55 +2,69 @@
 <div style="padding-top:20px">
     <form action="{% url lfc_manage_add_local_roles obj_id %}"
           method="POST">
-        <table width="100%">
-            <tr>
-                <th></th>
-                {% for role in roles %}
-                    <th>
-                        {{ role.name }}
-                    </th>
-                {% endfor %}
-            </tr>
-            <tr>
-                <td>
-                    <h2 style="border: none" class="discreet">{% trans "Users" %}</h2>
-                </td>
-            </tr>
-            {% for user in users %}
+        <div style="height:480px; overflow: auto">
+            <table width="100%">
+                <tr>
+                    <th></th>
+                    {% for role in roles %}
+                        <th class="label">
+                            {{ role.name }}
+                        </th>
+                    {% endfor %}
+                </tr>                
                 <tr>
                     <td>
-                        {% if user.first_name and user.last_name %}
-                            {{ user.first_name }} {{ user.last_name }}
-                        {% else %}
-                            {{ user.username }}
-                        {% endif %}
+                        <h2 style="border: none" class="discreet">{% trans "Users" %}</h2>
                     </td>
-                    {% for role in roles %}
-                        <td>
-                            <input type="checkbox" name="user_role" value="{{ user.id }}|{{ role.id }}" />
-                        </td>
-                    {% endfor %}
                 </tr>
-            {% endfor %}    
-            <tr>
-                <td>
-                    <h2 style="padding-top: 20px; border: none" class="discreet">{% trans "Groups" %}</h2>
-                </td>
-            </tr>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            {% if user.first_name and user.last_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                        </td>
+                        {% for role in roles %}
+                            <td>
+                                <input type="checkbox" name="user_role" value="{{ user.id }}|{{ role.id }}" />
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">
+                            {% trans "There are no users" %}
+                        </td>
+                    </tr>
+                {% endfor %}    
+                <tr>
+                    <td>
+                        <h2 style="padding-top: 20px; border: none" class="discreet">{% trans "Groups" %}</h2>
+                    </td>
+                </tr>
 
-            {% for group in groups %}
-                <tr>
-                    <td>
-                        {{ group.name }}
-                    </td>
-                    {% for role in roles %}
+                {% for group in groups %}
+                    <tr>
                         <td>
-                            <input type="checkbox" name="group_role" value="{{ group.id }}|{{ role.id }}" />
+                            {{ group.name }}
                         </td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}    
-        </table>
+                        {% for role in roles %}
+                            <td>
+                                <input type="checkbox" name="group_role" value="{{ group.id }}|{{ role.id }}" />
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2">
+                            {% trans "There are no groups" %}
+                        </td>
+                    </tr>
+                {% endfor %}    
+            </table>
+        </div>
         <div class="manage-form-buttons">
             <input class="ajax-submit" type="submit" value='{% trans "Add" %}' />
         </div>
