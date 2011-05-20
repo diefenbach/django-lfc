@@ -9,7 +9,7 @@
         </a>
         
         <a class="ajax-link" href="{% url lfc_manage_transition transition.id %}">
-            {{ transition.name }}
+            {% trans transition.name %}
         </a>
     </h3>
     <div style="padding: 0 0 10px 20px">
@@ -21,7 +21,7 @@
                 <td>
                     {% if transition.destination %}
                         <a class="ajax-link" href="{% url lfc_manage_state transition.destination.id %}">
-                            {{ transition.destination.name }}
+                            {% trans transition.destination.name %}
                         </a>
                     {% else %}
                         {% trans "None" %}

@@ -8,13 +8,14 @@
             <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
         </a>
         <a class="ajax-link" href="{% url lfc_manage_state state.id %}">
-            {{ state.name }}
+            {% trans state.name %}
+            
         </a>
     </h3>
     {% for transition in state.transitions.all %}
         <div style="padding: 0 0 10px 20px">
             <a class="ajax-link" href="{% url lfc_manage_transition transition.id %}">
-                {{ transition.name }}
+                {% trans transition.name %}
             </a>
         </div>
     {% endfor %}
