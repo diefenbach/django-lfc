@@ -144,12 +144,12 @@ class GroupForm(forms.ModelForm):
 
             if str(role.id) in role_ids:
                 try:
-                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role, content_id=None))
+                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role, content_id=None)
                 except PrincipalRoleRelation.DoesNotExist:
-                    PrincipalRoleRelation.objects.create(group=self.instance, role=role))
+                    PrincipalRoleRelation.objects.create(group=self.instance, role=role)
             else:
                 try:
-                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role, content_id=None))
+                    prr = PrincipalRoleRelation.objects.get(group=self.instance, role=role, content_id=None)
                 except PrincipalRoleRelation.DoesNotExist:
                     pass
                 else:
