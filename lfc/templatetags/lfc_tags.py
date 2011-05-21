@@ -363,7 +363,7 @@ def previous_next_by_position(context, obj):
 
 @register.filter(name='field_value')
 def field_value(field):
-    """ Returns the value for this BoundField, as rendered in widgets.
+    """Returns the value for this BoundField, as rendered in widgets.
     """
     if field.form.is_bound:
         if isinstance(field.field, FileField) and field.data is None:
@@ -381,8 +381,7 @@ def field_value(field):
 
 @register.filter(name='display_value')
 def display_value(field):
-    """
-    Returns the displayed value for this BoundField, as rendered in widgets.
+    """Returns the displayed value for this BoundField, as rendered in widgets.
     """
     value = field_value(field)
     if isinstance(field.field, CharField) and isinstance(field.field.widget, Textarea):
