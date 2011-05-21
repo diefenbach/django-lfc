@@ -17,9 +17,11 @@
                                class="select-all"
                                value="child" />
                     </th>
-                    <th width="10%">
-                        {% trans 'Position' %}
-                    </th>
+                    {% if display_positions %}
+                        <th width="10%">
+                            {% trans 'Position' %}
+                        </th>
+                    {% endif %}
                     <th width="20%">
                         {% trans 'Title' %}
                     </th>
@@ -43,12 +45,14 @@
                                    name="delete-{{ child.id }}"
                                    style="float:left" />
                         </td>
-                        <td>
-                            <input type="text"
-                                   class="position"
-                                   name="position-{{ child.id }}"
-                                   value="{{ child.position }}" />
-                        </td>
+                        {% if display_positions %}
+                            <td>
+                                <input type="text"
+                                       class="position"
+                                       name="position-{{ child.id }}"
+                                       value="{{ child.position }}" />
+                            </td>
+                        {% endif %}
                         <td>
                             <a href="{% url lfc_manage_object child.id %}">
                                 {{ child.title }}
@@ -61,18 +65,20 @@
                             {% trans child.get_content_type %}
                         </td>
                         <td class="right last">
-                            {% if not forloop.first %}
-                                <a class="up ajax-link"
-                                   href="{% url lfc_move_object_child child.id %}?direction=0"
-                                   title='{% trans "Move Up" %}'></a>
+                            {% if display_positions %}
+                                {% if not forloop.first %}
+                                    <a class="up ajax-link"
+                                       href="{% url lfc_move_object_child child.id %}?direction=0"
+                                       title='{% trans "Move Up" %}'></a>
+                                {% endif %}
+                                {% if not forloop.last %}
+                                    <a class="down ajax-link"
+                                       href="{% url lfc_move_object_child child.id %}?direction=1"
+                                       title='{% trans "Move Down" %}'></a>
+                                {% else %}
+                                    <span class="blank"></span>
+                                {% endif %}
                             {% endif %}
-                            {% if not forloop.last %}
-                                <a class="down ajax-link"
-                                   href="{% url lfc_move_object_child child.id %}?direction=1"
-                                   title='{% trans "Move Down" %}'></a>
-                            {% else %}
-                                <span class="blank"></span>
-                            {% endif %}                            
                             <a class="edit"
                                 href="{% url lfc_manage_object child.id %}"
                                 title='{% trans "Edit" %}'></a>
@@ -143,18 +149,6 @@
                         {{ child.get_content_type }}
                     </td>
                     <td class="right last">
-                        {% if not forloop.first %}
-                            <a class="up ajax-link"
-                               href="{% url lfc_move_object_child child.id %}?direction=0"
-                               title='{% trans "Move Up" %}'></a>
-                        {% endif %}
-                        {% if not forloop.last %}
-                            <a class="down ajax-link"
-                               href="{% url lfc_move_object_child child.id %}?direction=1"
-                               title='{% trans "Move Down" %}'></a>
-                        {% else %}
-                            <span class="blank"></span>
-                        {% endif %}
                         <a class="edit"
                            href="{% url lfc_manage_object child.id %}"
                            title='{% trans "Edit" %}'></a>

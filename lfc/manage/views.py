@@ -1195,6 +1195,7 @@ def object_children(request, obj, template_name="lfc/manage/object_children.html
         "obj": obj,
         "children": obj.get_children(request),
         "display_paste": _display_paste(request, obj),
+        "display_positions" : obj.order_by.find("position") != -1,
     }))
 
 
