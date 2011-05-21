@@ -314,7 +314,34 @@ def objects_by_slug(context, slug, limit=5, title=True, text=False):
 
 
 @register.inclusion_tag('lfc/tags/previous_next.html')
-def previous_next_by_date(obj):
+def previous_next_by_publication_date(obj):
+    """Displays previous/links by creation date for the given object.
+    """
+    siblings = [o.get_content_object() for o in obj.parent.children.all().order_by("-publication_date")]
+    current_position = siblings.index(obj)
+    next_position = current_position + 1
+    previous_position = current_position - 1
+
+    if previous_position < 0:
+        previous = None
+    else:
+        try:
+            previous = siblings[previous_position]
+        except IndexError:
+            previous = None
+
+    try:
+        next = siblings[next_position]
+    except IndexError:
+        next = None
+
+    return {
+        "previous": previous,
+        "next": next,
+    }
+
+@register.inclusion_tag('lfc/tags/previous_next.html')
+def previous_next_by_creation_date(obj):
     """Displays previous/links by creation date for the given object.
     """
     try:
