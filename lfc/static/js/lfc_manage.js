@@ -229,6 +229,7 @@ $(function() {
     var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, top: '25%', expose: {color: '#222', loadSpeed:100 } });
     $(".delete-link").live("click", function() {
         $("#delete-url").html($(this).attr("href"));
+        $("#delete-is-ajax").html($(this).attr("is_ajax"));
         delete_dialog.load();
         return false;
     });
@@ -237,8 +238,19 @@ $(function() {
         delete_dialog.close();
         var yes = buttons.index(this) === 0;
         var url = $("#delete-url").html();
+        var is_ajax = $("#delete-is-ajax").html();
         if (yes) {
-            window.location.href = url;
+            if (is_ajax == "1") {
+                $.get(url, function(data) {
+                    data = $.parseJSON(data);
+                    for (var html in data["html"])
+                        $(data["html"][html][0]).html(data["html"][html][1]);
+                    if (data["message"])
+                        show_message(data["message"])
+               });
+            }
+            else
+                window.location.href = url;
         }
     });
 });

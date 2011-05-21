@@ -157,9 +157,10 @@
             <p>
                 {% trans "Do you really want to delete this object?" %}
             </p>
-            <button> Yes </button>
-            <button> No </button>
-            <div style="display:none" id="delete-url">url</div>
+            <button>Yes</button>
+            <button>No</button>
+            <div style="display:none" id="delete-url"></div>
+            <div style="display:none" id="delete-is-ajax"></div>
         </div>
 
         <span id="obj-id" data="{{ obj.id }}"></span>
