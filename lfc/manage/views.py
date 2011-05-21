@@ -88,6 +88,7 @@ from lfc.utils import import_module
 from lfc.utils.registration import get_allowed_subtypes
 from lfc.utils.registration import get_info
 
+
 # Global #####################################################################
 ##############################################################################
 
@@ -1167,6 +1168,7 @@ def update_object_permissions(request, id):
 
     return HttpResponse(result)
 
+
 # Portlets ###################################################################
 ##############################################################################
 
@@ -1998,6 +2000,14 @@ def delete_workflow(request, id):
 
     return MessageHttpResponseRedirect(
         reverse("lfc_manage_workflow"), _(u"Workflow has been deleted."))
+
+def update_all_permissions(request):
+    """Updates the permissions of all objects to their current workflow state
+    """
+    get_portal().check_permission(request.user, "manage_portal")
+    for obj in lfc.utils.get_content_objects():
+        workflows.utils.update_permissions(obj)
+    return MessageHttpResponseRedirect(reverse("lfc_manage_utils"), _(u"Permissions have been updated."))
 
 # Workflow state #############################################################
 ##############################################################################
