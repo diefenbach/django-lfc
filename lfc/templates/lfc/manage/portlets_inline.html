@@ -9,7 +9,7 @@
 
                 {% for slot in parent_slots.items %}
                     <h3 {% if forloop.first %}class="first-heading"{% endif %}>
-                        {{ slot.name }}
+                        {% trans slot.name %}
                     </h3>
 
                     {% if slot.portlets %}
@@ -76,7 +76,7 @@
                                        {% if slot.is_blocked %}checked="checked"{% endif %} />
                             </td>
                             <td>
-                                {{ slot.name }}
+                                {% trans slot.name %}
                             </td>
                         </tr>
                     {% endfor %}
@@ -94,7 +94,7 @@
 
         {% for slot in slots.items %}
             <h3 {% if forloop.first %}class="first-heading"{% endif %}>
-                {{ slot.name }}
+                {% trans slot.name %}
             </h3>
 
             {% if slot.portlets %}

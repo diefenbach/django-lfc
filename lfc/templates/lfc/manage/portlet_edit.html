@@ -13,7 +13,7 @@
             <select name="slot">
                 {% for slot in slots %}
                     <option {% if slot.selected %}selected="selected"{% endif %}value="{{ slot.id }}">
-                        {{ slot.name }}
+                        {% trans slot.name %}
                     </option>
                 {% endfor %}
             </select>

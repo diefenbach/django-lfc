@@ -6,17 +6,6 @@
         {% trans 'Add new portlet' %}
     </h1>
 
-    {# <div class="field"> #}
-    {#     <div class="label"> #}
-    {#         <label>{% trans 'Position' %}:</label> #}
-    {#     </div> #}
-    {#  #}
-    {#     <div> #}
-    {#         <input type="text" #}
-    {#                name="position" #}
-    {#                value="1"> #}
-    {#     </div> #}
-    {# </div> #}
     <div class="field">
         <div class="label">
             <label>{% trans 'Slot' %}:</label>
@@ -26,7 +15,7 @@
             <select name="slot">
                 {% for slot in slots %}
                     <option value="{{ slot.id }}">
-                        {{ slot.name }}
+                        {% trans slot.name %}
                     </option>
                 {% endfor %}
             </select>

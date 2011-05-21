@@ -55,10 +55,10 @@
                             </a>
                         </td>
                         <td>
-                            {{ child.get_state.name }}
+                            {% trans child.get_state.name %}
                         </td>
                         <td>
-                            {{ child.get_content_type }}
+                            {% trans child.get_content_type %}
                         </td>
                         <td class="right last">
                             {% if not forloop.first %}
