@@ -1,0 +1,1531 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: LFC\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-05-10 18:28+0200\n"
+"PO-Revision-Date: 2011-05-10 18:38+0100\n"
+"Last-Translator: Maciej Wiśniowski <pigletto@gmail.com>\n"
+"Language-Team: Natcam <pigletto@gmail.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Poedit-Language: Polish\n"
+"X-Poedit-Country: Poland\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: models.py:111
+msgid "Subpages columns"
+msgstr "Kolumny podstron"
+
+#: models.py:112
+msgid "Images columns"
+msgstr "Kolumny obrazów"
+
+#: models.py:159
+#: templates/lfc/manage/filebrowser_files.html:35
+#: templates/lfc/manage/object_children.html:30
+#: templates/lfc/manage/object_children.html:118
+#: templates/lfc/manage/portal_children.html:30
+#: templates/lfc/manage/portal_children.html:116
+#: templates/lfc/manage/portlets_inline.html:55
+#: templates/lfc/manage/portlets_inline.html:166
+#: templates/lfc/manage/workflow_state.html:13
+msgid "Type"
+msgstr "Typ"
+
+#: models.py:160
+#: templates/lfc/manage/local_roles_add.html:6
+#: templates/lfc/manage/object_comments.html:38
+#: templates/lfc/manage/object_comments.html:123
+#: templates/lfc/manage/users_inline.html:22
+msgid "Name"
+msgstr "Nazwa"
+
+#: models.py:161
+msgid "Display select standard"
+msgstr "Pokazuj wybór strony domyślnej"
+
+#: models.py:162
+msgid "Display position"
+msgstr "Pokazuj wybór pozycji"
+
+#: models.py:164
+msgid "Global addable"
+msgstr "Można dodawać globalnie"
+
+#: models.py:166
+msgid "Allowed sub types"
+msgstr "Dozwolone podtypy"
+
+#: models.py:167
+msgid "Templates"
+msgstr "Szablony"
+
+#: models.py:168
+msgid "Default template"
+msgstr "Szablon domyślny"
+
+#: models.py:169
+#: templates/lfc/manage/object_permissions.html:7
+msgid "Workflow"
+msgstr "Workflow"
+
+#: models.py:219
+#: models.py:438
+#: templates/lfc/manage/filebrowser_files.html:175
+#: templates/lfc/manage/object_children.html:24
+#: templates/lfc/manage/object_children.html:112
+#: templates/lfc/manage/object_files.html:21
+#: templates/lfc/manage/object_files.html:135
+#: templates/lfc/manage/object_images.html:24
+#: templates/lfc/manage/object_images.html:148
+#: templates/lfc/manage/portal_children.html:24
+#: templates/lfc/manage/portal_children.html:110
+#: templates/lfc/manage/portal_files.html:21
+#: templates/lfc/manage/portal_files.html:135
+#: templates/lfc/manage/portal_images.html:24
+#: templates/lfc/manage/portal_images.html:148
+#: templates/lfc/manage/portlets_inline.html:58
+#: templates/lfc/manage/portlets_inline.html:169
+#: templates/lfc/manage/review_objects.html:11
+msgid "Title"
+msgstr "Tytuł"
+
+#: models.py:220
+msgid "Page"
+msgstr "Strona"
+
+#: models.py:222
+msgid "From e-mail address"
+msgstr "Adres e-mail 'Od'"
+
+#: models.py:223
+msgid "Notification email addresses"
+msgstr "Adres e-mail dla powiadomień"
+
+#: models.py:224
+#: templates/lfc/manage/object_comments.html:109
+msgid "Allow comments"
+msgstr "Zezwól na komentarze"
+
+#: models.py:226
+#: models.py:471
+#: templates/lfc/manage/filebrowser_files.html:149
+#: templates/lfc/manage/filebrowser_images.html:62
+#: templates/lfc/manage/object_images.html:5
+#: templates/lfc/manage/object_tabs.html:9
+#: templates/lfc/manage/portal_images.html:5
+#: templates/lfc/manage/portal_tabs.html:8
+msgid "Images"
+msgstr "Obrazy"
+
+#: models.py:229
+#: models.py:474
+#: templates/lfc/manage/filebrowser_files.html:5
+#: templates/lfc/manage/filebrowser_files.html:132
+#: templates/lfc/manage/object_files.html:5
+#: templates/lfc/manage/object_tabs.html:10
+#: templates/lfc/manage/portal_files.html:5
+#: templates/lfc/manage/portal_tabs.html:9
+msgid "Files"
+msgstr "Pliki"
+
+#: models.py:436
+#: models.py:904
+#: models.py:951
+#: templates/lfc/manage/review_objects.html:14
+msgid "Content type"
+msgstr "Rodzaje treści"
+
+#: models.py:439
+msgid "Display title"
+msgstr "Wyświetlaj tytuł"
+
+#: models.py:441
+msgid "Slug"
+msgstr "Slug"
+
+#: models.py:443
+#: templates/lfc/manage/applications.html:19
+#: templates/lfc/manage/object_files.html:24
+#: templates/lfc/manage/object_images.html:30
+#: templates/lfc/manage/portal_files.html:24
+#: templates/lfc/manage/portal_images.html:30
+msgid "Description"
+msgstr "Opis"
+
+#: models.py:445
+#: templates/lfc/manage/object_children.html:21
+#: templates/lfc/manage/object_files.html:27
+#: templates/lfc/manage/object_images.html:33
+#: templates/lfc/manage/portal_children.html:21
+#: templates/lfc/manage/portal_files.html:27
+#: templates/lfc/manage/portal_images.html:33
+msgid "Position"
+msgstr "Pozycja"
+
+#: models.py:447
+msgid "Language"
+msgstr "Język"
+
+#: models.py:448
+msgid "Canonical"
+msgstr "Kanoniczny"
+
+#: models.py:450
+msgid "Tags"
+msgstr "Tagi"
+
+#: models.py:452
+msgid "Parent"
+msgstr "Rodzic"
+
+#: models.py:453
+msgid "Template"
+msgstr "Szablon"
+
+#: models.py:454
+msgid "Standard"
+msgstr "Standard"
+
+#: models.py:457
+msgid "Exclude from navigation"
+msgstr "Wyłącz z nawigacji"
+
+#: models.py:458
+msgid "Exclude from search results"
+msgstr "Wyłącz z wyników wyszukiwania"
+
+#: models.py:460
+#: templates/lfc/manage/review_objects.html:20
+msgid "Creator"
+msgstr "Twórca"
+
+#: models.py:461
+#: models.py:911
+#: models.py:957
+#: templates/lfc/manage/object_meta_data.html:16
+#: templates/lfc/manage/object_meta_data.html:44
+#: templates/lfc/manage/portal_files.html:138
+msgid "Creation date"
+msgstr "Data utworzenia"
+
+#: models.py:462
+#: templates/lfc/manage/object_meta_data.html:25
+#: templates/lfc/manage/object_meta_data.html:53
+msgid "Modification date"
+msgstr "Data modyfikacji"
+
+#: models.py:463
+msgid "Publication date"
+msgstr "Data opublikowania"
+
+#: models.py:464
+msgid "Start date"
+msgstr "Data początkowa"
+
+#: models.py:465
+msgid "End date"
+msgstr "Data końcowa"
+
+#: models.py:467
+msgid "Meta title"
+msgstr "Meta tytuł"
+
+#: models.py:468
+msgid "Meta keywords"
+msgstr "Słowa kluczowe - meta"
+
+#: models.py:469
+#: templates/lfc/manage/object_seo.html:38
+msgid "Meta description"
+msgstr "Opis - meta"
+
+#: models.py:477
+msgid "Commentable"
+msgstr "Można komentować"
+
+#: models.py:599
+msgid "n/a"
+msgstr "n/d"
+
+#: models.py:859
+#: models.py:1110
+msgid "Text"
+msgstr "Tekst"
+
+#: models.py:905
+#: models.py:952
+msgid "Content id"
+msgstr "Identyfikator treści"
+
+#: models.py:912
+#: templates/lfc/manage/object_images.html:21
+#: templates/lfc/manage/object_images.html:145
+#: templates/lfc/manage/portal_images.html:21
+#: templates/lfc/manage/portal_images.html:145
+msgid "Image"
+msgstr "Obraz"
+
+#: settings.py:8
+msgid "Default"
+msgstr "Domyślny"
+
+#: settings.py:9
+#: templates/lfc/manage/local_roles.html:121
+#: templates/lfc/manage/local_roles.html:156
+#: templates/lfc/manage/object_comments.html:136
+#: templates/lfc/manage/object_permissions.html:65
+#: templates/lfc/manage/object_permissions.html:74
+#: templates/lfc/manage/portal_permissions.html:46
+#: templates/lfc/manage/portlets_inline.html:144
+#: templates/lfc/manage/users_inline.html:72
+#: templatetags/lfc_tags.py:523
+msgid "Yes"
+msgstr "Tak"
+
+#: settings.py:10
+#: templates/lfc/manage/local_roles.html:123
+#: templates/lfc/manage/local_roles.html:158
+#: templates/lfc/manage/object_comments.html:138
+#: templates/lfc/manage/portlets_inline.html:146
+#: templates/lfc/manage/users_inline.html:73
+#: templatetags/lfc_tags.py:521
+msgid "No"
+msgstr "Nie"
+
+#: settings.py:13
+msgid "Neutral"
+msgstr "Neutralny"
+
+#: settings.py:29
+msgid "Position ascending"
+msgstr "Uporządkuj malejąco"
+
+#: settings.py:30
+msgid "Position descending"
+msgstr "Uporządkuj malejąco"
+
+#: settings.py:31
+msgid "Publication date ascending"
+msgstr "Data opublikowania rosnąco"
+
+#: settings.py:32
+msgid "Publication date descending"
+msgstr "Data opublikowania malejąco"
+
+#: views.py:311
+msgid "State has been changed."
+msgstr "Stan został zmieniony."
+
+#: views.py:317
+msgid "tagged_object_list must be called with a tag."
+msgstr "tagged_object_list musi być wywołane z tagiem."
+
+#: views.py:321
+#, python-format
+msgid "No Tag found matching \"%s\"."
+msgstr "Nie znaleziono taga pasującego do \"%s\"."
+
+#: manage/forms.py:115
+#: manage/forms.py:154
+#: manage/forms.py:192
+#: templates/lfc/manage/base.html:65
+msgid "Roles"
+msgstr "Role"
+
+#: manage/forms.py:193
+msgid "Password"
+msgstr "Hasło"
+
+#: manage/forms.py:194
+msgid "Password (again)"
+msgstr "Hasło (powtórz)"
+
+#: manage/views.py:176
+msgid "Object has been added."
+msgstr "Obiekt został dodany."
+
+#: manage/views.py:193
+#: manage/views.py:439
+#: manage/views.py:1075
+#: manage/views.py:1171
+#: manage/views.py:2072
+#: manage/views.py:2184
+msgid "An error has been occured."
+msgstr "Wystąpił błąd."
+
+#: manage/views.py:235
+msgid "The object couldn't been deleted."
+msgstr "Obiekt nie mógł być usuniety."
+
+#: manage/views.py:263
+msgid "The object has been deleted."
+msgstr "Obiekt został usunięty."
+
+#: manage/views.py:371
+#: manage/views.py:1903
+msgid "Permissions have been saved."
+msgstr "Uprawnienia zostały zapisane."
+
+#: manage/views.py:436
+msgid "Portal data has been saved."
+msgstr "Dane portalu zostały zapisane."
+
+#: manage/views.py:542
+#: manage/views.py:1709
+msgid "Images have been added."
+msgstr "Obrazy zostały dodane."
+
+#: manage/views.py:697
+msgid "Image has been saved."
+msgstr "Obraz został zapisany."
+
+#: manage/views.py:746
+#: manage/views.py:1800
+msgid "Files have been added."
+msgstr "Pliki zostały dodane."
+
+#: manage/views.py:858
+msgid "File has been saved."
+msgstr "Plik został zapisany."
+
+#: manage/views.py:1084
+msgid "Data has been saved."
+msgstr "Dane zostały zapisane."
+
+#: manage/views.py:1086
+msgid "An object with this slug already exists."
+msgstr "Obiekt o tym slugu już istnieje."
+
+#: manage/views.py:1167
+msgid "Meta data has been saved."
+msgstr "Metadane zostały zapisane."
+
+#: manage/views.py:1278
+msgid "SEO has been saved."
+msgstr "SEO zostało zapisane."
+
+#: manage/views.py:1543
+msgid "Local roles has been added"
+msgstr "Lokalne role zostały dodane"
+
+#: manage/views.py:1596
+msgid "Local roles has been deleted"
+msgstr "Lokalne role zostały usunięte"
+
+#: manage/views.py:1616
+msgid "Local roles has been saved"
+msgstr "Lokalne role zostały uaktualnione"
+
+#: manage/views.py:1989
+msgid "Portlets have been updated."
+msgstr "Portlety zostały uaktualnione."
+
+#: manage/views.py:2055
+msgid "Portlet has been added."
+msgstr "Portlet został dodany."
+
+#: manage/views.py:2108
+msgid "Portlet has been deleted."
+msgstr "Portlet został usunięty."
+
+#: manage/views.py:2169
+msgid "Portlet has been saved."
+msgstr "Portlet został zapisany."
+
+#: manage/views.py:2409
+msgid "Tree language has been changed."
+msgstr "Język drzewa został zmieniony."
+
+#: manage/views.py:2481
+msgid "Allow comments state has been saved."
+msgstr "Stan pozwolenia na komentowanie został zapisany."
+
+#: manage/views.py:2483
+msgid "Comments has been deleted."
+msgstr "Komentarze zostały usunięte."
+
+#: manage/views.py:2493
+msgid "Comments has been updated."
+msgstr "Komentarze zostały uaktualnione."
+
+#: manage/views.py:2555
+msgid "Comment has been saved."
+msgstr "Komentarz został zapisany."
+
+#: manage/views.py:3009
+msgid "Translation has been canceled."
+msgstr "Translacja została anulowana."
+
+#: manage/views.py:3017
+msgid "Translation has been updated."
+msgstr "Translacja została uaktualniona."
+
+#: manage/views.py:3021
+msgid "Translation has been added."
+msgstr "Translacja została dodana."
+
+#: manage/views.py:3174
+msgid "The state has been changed."
+msgstr "Stan został zmieniony."
+
+#: manage/views.py:3349
+msgid "Workflow data has been saved."
+msgstr "Workflow został zapisany."
+
+#: manage/views.py:3368
+msgid "Workflow has been added."
+msgstr "Workflow został dodany."
+
+#: manage/views.py:3403
+msgid "Workflow has been deleted."
+msgstr "Workflow został usunięty."
+
+#: manage/views.py:3554
+msgid "State has been saved."
+msgstr "Stan został zapisany."
+
+#: manage/views.py:3582
+msgid "State has been added."
+msgstr "Stan został dodany."
+
+#: manage/views.py:3614
+msgid "State has been deleted."
+msgstr "Stan został usunięty."
+
+#: manage/views.py:3672
+msgid "Transition has been saved."
+msgstr "Przejście zostało zapisane."
+
+#: manage/views.py:3701
+msgid "Transition has been added."
+msgstr "Przejście zostało dodane."
+
+#: manage/views.py:3729
+msgid "Transition has been deleted."
+msgstr "Przejście zostało usunięte."
+
+#: manage/views.py:3758
+#: manage/views.py:3785
+msgid "The object has been put to the clipboard."
+msgstr "Obiekt został umieszczony w schowku."
+
+#: manage/views.py:3864
+msgid "Content type has been saved."
+msgstr "Treść została zapisana"
+
+#: manage/views.py:4062
+msgid "Users have been deleted."
+msgstr "Użytkownicy zostali usunięci."
+
+#: manage/views.py:4064
+msgid "Users have been updated."
+msgstr "Użytkownicy zostali uaktualnieni."
+
+#: manage/views.py:4127
+msgid "Filter has been set."
+msgstr "Filtr został uaktualniony."
+
+#: manage/views.py:4148
+#: manage/views.py:4496
+msgid "Filter has been reset."
+msgstr "Filtr został zresetowany."
+
+#: manage/views.py:4305
+msgid "User has been saved"
+msgstr "Użytkownik został zapisany"
+
+#: manage/views.py:4307
+#: manage/views.py:4343
+msgid "An error occured."
+msgstr "Wystąpił błąd."
+
+#: manage/views.py:4341
+msgid "Password has been changed."
+msgstr "Hasło zostało zmienione."
+
+#: manage/views.py:4394
+msgid "User has been added."
+msgstr "Użytkownik został dodany."
+
+#: manage/views.py:4427
+msgid "User couldn't deleted."
+msgstr "Użytkownik nie mógł być usunięty."
+
+#: manage/views.py:4430
+msgid "User has been deleted."
+msgstr "Użytkownik został usunięty."
+
+#: manage/views.py:4805
+msgid "Objects have been deleted. (Note: Some objects are not deleted because you haven't the permission to do that)."
+msgstr "Obiekty zostały usunięte. (Uwaga: Niektóre obiekty nie zostały usunięte ponieważ nie masz do nich uprawnień)"
+
+#: manage/views.py:4807
+msgid "Objects have been deleted."
+msgstr "Obiekty zostały usunięte."
+
+#: manage/views.py:4827
+#: manage/views.py:4845
+msgid "Objects have been put to the clipboard. (Note: Some objects are not put into clipboard because you haven't the permission to do that)."
+msgstr "Obiekty zostały umieszczone w schowku. (Uwaga: Niektóre obiekty nie zostały umieszczone w schowku ponieważ nie masz do nich uprawnień)"
+
+#: manage/views.py:4829
+#: manage/views.py:4847
+msgid "Objects have been put to the clipboard."
+msgstr "Obiekty zostały umieszczone w schowku."
+
+#: manage/views.py:4851
+msgid "You are not allowed to paste to this object."
+msgstr "Nie masz uprawnień by wkleić do tego obiektu."
+
+#: manage/views.py:4855
+msgid "Objects has been updated."
+msgstr "Obiekty zostały uaktualnione."
+
+#: manage/views.py:4884
+msgid "Images has been deleted."
+msgstr "Obrazy zostały usunięte."
+
+#: manage/views.py:4892
+msgid "Images has been updated."
+msgstr "Obrazy zostały uaktualnione."
+
+#: manage/views.py:4913
+msgid "Files has been deleted."
+msgstr "Pliki zostały usunięte."
+
+#: manage/views.py:4920
+msgid "Files has been updated."
+msgstr "Pliki zostały uaktualnione."
+
+#: manage/views.py:5034
+msgid "An error has been occured. Please try again."
+msgstr "Wystąpił błąd. Spróbuj ponownie."
+
+#: manage/views.py:5052
+msgid "Some cut/copied objects has been deleted in the meanwhile."
+msgstr "Niektóre wycięte/skopiowane obiekty zostały w międzyczasie usunięte."
+
+#: manage/views.py:5061
+msgid "Some objects are not allowed here."
+msgstr "Niektóre obiekty nie mogą tu występować."
+
+#: manage/views.py:5068
+msgid "The objects can't be pasted in own descendants."
+msgstr "Obiektów nie można wkleić do ich własnych potomków."
+
+#: manage/views.py:5107
+msgid "The object has been pasted."
+msgstr "Obiekt został wklejony."
+
+#: templates/lfc/manage/applications.html:10
+msgid "Install Applications"
+msgstr "Instaluj Aplikacje"
+
+#: templates/lfc/manage/applications.html:16
+msgid "Application"
+msgstr "Aplikacja"
+
+#: templates/lfc/manage/applications.html:22
+msgid "Status"
+msgstr "Status"
+
+#: templates/lfc/manage/applications.html:25
+#: templates/lfc/manage/object_children.html:33
+#: templates/lfc/manage/object_children.html:121
+#: templates/lfc/manage/object_files.html:30
+#: templates/lfc/manage/object_images.html:36
+#: templates/lfc/manage/portal_children.html:33
+#: templates/lfc/manage/portal_children.html:119
+#: templates/lfc/manage/portal_files.html:30
+#: templates/lfc/manage/portal_images.html:36
+#: templates/lfc/manage/portlets_inline.html:61
+#: templates/lfc/manage/review_objects.html:23
+msgid "Manage"
+msgstr "Zarządzanie"
+
+#: templates/lfc/manage/applications.html:40
+msgid "Installed"
+msgstr "Zainstalowana"
+
+#: templates/lfc/manage/applications.html:42
+msgid "Not Installed"
+msgstr "Nie zainstalowana"
+
+#: templates/lfc/manage/applications.html:47
+msgid "Uninstall"
+msgstr "Odinstaluj"
+
+#: templates/lfc/manage/applications.html:48
+msgid "Reinstall"
+msgstr "Przeinstaluj"
+
+#: templates/lfc/manage/applications.html:50
+msgid "Install"
+msgstr "Zainstaluj"
+
+#: templates/lfc/manage/base.html:43
+msgid "Logout"
+msgstr "Wyloguj się"
+
+#: templates/lfc/manage/base.html:54
+#: templates/lfc/manage/filebrowser_files.html:42
+#: templates/lfc/manage/filebrowser_files.html:102
+msgid "Content"
+msgstr "Treść"
+
+#: templates/lfc/manage/base.html:59
+#: templates/lfc/manage/local_roles.html:23
+#: templates/lfc/manage/local_roles.html:103
+msgid "User"
+msgstr "Użytkownik"
+
+#: templates/lfc/manage/base.html:62
+#: templates/lfc/manage/local_roles.html:16
+#: templates/lfc/manage/local_roles.html:97
+#: templates/lfc/manage/local_roles.html:133
+#: templates/lfc/manage/local_roles_search_result.html:16
+msgid "Users"
+msgstr "Użytkownicy"
+
+#: templates/lfc/manage/base.html:68
+#: templates/lfc/manage/local_roles.html:52
+#: templates/lfc/manage/local_roles_search_result.html:37
+msgid "Groups"
+msgstr "Grupy"
+
+#: templates/lfc/manage/base.html:77
+#: templates/lfc/manage/workflow_state.html:21
+msgid "Review"
+msgstr "Przegląd"
+
+#: templates/lfc/manage/base.html:82
+msgid "Workflows"
+msgstr "Workflow'y"
+
+#: templates/lfc/manage/base.html:89
+msgid "Applications"
+msgstr "Aplikacje"
+
+#: templates/lfc/manage/base.html:92
+msgid "Content Types"
+msgstr "Rodzaje Treści"
+
+#: templates/lfc/manage/base.html:95
+msgid "Installation"
+msgstr "Instalacja"
+
+#: templates/lfc/manage/base.html:103
+msgid "Languages"
+msgstr "Języki"
+
+#: templates/lfc/manage/base.html:135
+msgid "Powered by"
+msgstr "Oparte na"
+
+#: templates/lfc/manage/base.html:137
+msgid "is a product of"
+msgstr "jest produktem"
+
+#: templates/lfc/manage/base.html:138
+msgid "All rights reserved"
+msgstr "Wszystkie prawa zastrzeżone"
+
+#: templates/lfc/manage/base.html:140
+msgid "Distributed under the"
+msgstr "Dystrybuowany na licencji"
+
+#: templates/lfc/manage/base.html:140
+msgid "BSD-License"
+msgstr "BSD"
+
+#: templates/lfc/manage/base.html:154
+msgid "Do you really want to delete this object?"
+msgstr "Czy na pewno chcesz usunąć ten obiekt?"
+
+#: templates/lfc/manage/comment.html:3
+msgid "Edit Comment"
+msgstr "Edytuj komentarz"
+
+#: templates/lfc/manage/comment.html:11
+#: templates/lfc/manage/file.html:11
+#: templates/lfc/manage/image.html:11
+#: templates/lfc/manage/object_add.html:13
+#: templates/lfc/manage/object_comments.html:17
+#: templates/lfc/manage/object_translate.html:78
+#: templates/lfc/manage/workflow_state.html:69
+#: templates/lfc/manage/workflow_transition.html:14
+msgid "Save"
+msgstr "Zapisz"
+
+#: templates/lfc/manage/comment.html:12
+#: templates/lfc/manage/file.html:12
+#: templates/lfc/manage/image.html:12
+#: templates/lfc/manage/object_add.html:14
+#: templates/lfc/manage/object_translate.html:79
+msgid "Cancel"
+msgstr "Anuluj"
+
+#: templates/lfc/manage/content_types.html:27
+msgid "Save content type"
+msgstr "Zapisz treść"
+
+#: templates/lfc/manage/file.html:3
+msgid "Edit File"
+msgstr "Edytuj plik"
+
+#: templates/lfc/manage/filebrowser_files.html:11
+#: templates/lfc/manage/filebrowser_images.html:11
+msgid "Your are here"
+msgstr "Jesteś tutaj"
+
+#: templates/lfc/manage/filebrowser_files.html:13
+#: templates/lfc/manage/filebrowser_images.html:13
+#: templates/lfc/manage/navigation.html:24
+#: templates/lfc/manage/portal_tabs.html:6
+msgid "Portal"
+msgstr "Portal"
+
+#: templates/lfc/manage/filebrowser_files.html:23
+#: templates/lfc/manage/filebrowser_images.html:23
+msgid "Current Object"
+msgstr "Bieżący obiekt"
+
+#: templates/lfc/manage/filebrowser_files.html:46
+msgid "Extern"
+msgstr ""
+
+#: templates/lfc/manage/filebrowser_files.html:50
+msgid "Mail"
+msgstr "Poczta"
+
+#: templates/lfc/manage/filebrowser_files.html:64
+#: templates/lfc/manage/users_inline.html:105
+msgid "E-Mail"
+msgstr "E-mail"
+
+#: templates/lfc/manage/filebrowser_files.html:70
+msgid "E-mail"
+msgstr ""
+
+#: templates/lfc/manage/filebrowser_files.html:81
+msgid "External Link"
+msgstr "Zewnętrzny link"
+
+#: templates/lfc/manage/filebrowser_files.html:108
+#: templates/lfc/manage/filebrowser_images.html:35
+#: templates/lfc/manage/object_children.html:5
+#: templates/lfc/manage/object_tabs.html:8
+#: templates/lfc/manage/portal_children.html:5
+#: templates/lfc/manage/portal_tabs.html:7
+msgid "Children"
+msgstr "Dzieci"
+
+#: templates/lfc/manage/filebrowser_files.html:169
+msgid "Attributes"
+msgstr "Atrybuty"
+
+#: templates/lfc/manage/filebrowser_files.html:183
+msgid "Target"
+msgstr "Cel"
+
+#: templates/lfc/manage/filebrowser_files.html:186
+msgid "Same window"
+msgstr "W tym samym oknie"
+
+#: templates/lfc/manage/filebrowser_files.html:187
+msgid "New window"
+msgstr "W nowym oknie"
+
+#: templates/lfc/manage/filebrowser_files.html:196
+#: templates/lfc/manage/filebrowser_images.html:124
+msgid "Insert"
+msgstr "Wstaw"
+
+#: templates/lfc/manage/filebrowser_files.html:199
+msgid "Upload file to"
+msgstr "Załaduj plik do"
+
+#: templates/lfc/manage/filebrowser_files.html:210
+#: templates/lfc/manage/filebrowser_images.html:143
+msgid "You have to save content object before you can upload images for it."
+msgstr "Musisz zapisać obiekt treści zanim będziesz mógł załadować dla niego obrazy."
+
+#: templates/lfc/manage/filebrowser_files_children.html:5
+msgid "Select File"
+msgstr "Wybierz plik"
+
+#: templates/lfc/manage/filebrowser_images.html:5
+msgid "Local images"
+msgstr "Obrazy lokalne"
+
+#: templates/lfc/manage/filebrowser_images.html:52
+#: templates/lfc/manage/object_children.html:96
+#: templates/lfc/manage/object_children.html:155
+#: templates/lfc/manage/portal_children.html:95
+#: templates/lfc/manage/portal_children.html:153
+msgid "There are no children"
+msgstr "Nie ma żadnych potomków"
+
+#: templates/lfc/manage/filebrowser_images.html:78
+msgid "There are no local images yet"
+msgstr "Nie ma jeszcze obrazów lokalnych"
+
+#: templates/lfc/manage/filebrowser_images.html:89
+msgid "Preview"
+msgstr "Podgląd"
+
+#: templates/lfc/manage/filebrowser_images.html:96
+msgid "Prview"
+msgstr "Podgląd"
+
+#: templates/lfc/manage/filebrowser_images.html:98
+msgid "No image selected"
+msgstr "Nie wybrano obrazu"
+
+#: templates/lfc/manage/filebrowser_images.html:115
+msgid "Original"
+msgstr "Oryginał"
+
+#: templates/lfc/manage/filebrowser_images.html:132
+msgid "Upload image to current object: "
+msgstr "Załaduj obraz do bieżącego obiektu:"
+
+#: templates/lfc/manage/group.html:24
+#: templates/lfc/manage/group_add.html:24
+msgid "Add Group"
+msgstr "Dodaj grupę"
+
+#: templates/lfc/manage/group.html:27
+msgid "Delete group"
+msgstr "Usuń grupę"
+
+#: templates/lfc/manage/group.html:34
+#: templates/lfc/manage/group_add.html:36
+#: templates/lfc/manage/links.html:20
+#: templates/lfc/manage/object_data.html:5
+#: templates/lfc/manage/portal_core.html:5
+#: templates/lfc/manage/role.html:34
+#: templates/lfc/manage/role_add.html:31
+#: templates/lfc/manage/user.html:27
+#: templates/lfc/manage/user_add.html:32
+#: templates/lfc/manage/workflow.html:18
+#: templates/lfc/manage/workflow_add.html:17
+#: templates/lfc/manage/workflow_data.html:5
+msgid "Data"
+msgstr "Dane"
+
+#: templates/lfc/manage/group.html:41
+msgid "Save group"
+msgstr "Zapisz grupę"
+
+#: templates/lfc/manage/group_add.html:28
+#: templates/lfc/manage/user_menu.html:10
+msgid "Delete User"
+msgstr "Usuń użytkownika"
+
+#: templates/lfc/manage/group_add.html:43
+msgid "Add group"
+msgstr "Dodaj grupę"
+
+#: templates/lfc/manage/image.html:3
+msgid "Edit Image"
+msgstr "Edytuj obraz"
+
+#: templates/lfc/manage/links.html:21
+#: templates/lfc/manage/workflow.html:19
+#: templates/lfc/manage/workflow_states.html:3
+msgid "States"
+msgstr "Stany"
+
+#: templates/lfc/manage/links.html:22
+#: templates/lfc/manage/workflow.html:20
+#: templates/lfc/manage/workflow_transitions.html:3
+msgid "Transitions"
+msgstr "Przejścia"
+
+#: templates/lfc/manage/local_roles.html:6
+#: templates/lfc/manage/local_roles.html:93
+#: templates/lfc/manage/local_roles_add.html:3
+msgid "Local roles"
+msgstr "Lokalne role"
+
+#: templates/lfc/manage/local_roles.html:58
+#: templates/lfc/manage/local_roles.html:138
+msgid "Group"
+msgstr "Grupa"
+
+#: templates/lfc/manage/local_roles.html:85
+msgid "Delete local roles"
+msgstr "Usuń lokalne role"
+
+#: templates/lfc/manage/local_roles.html:86
+msgid "Save local roles"
+msgstr "Zapisz lokalne role"
+
+#: templates/lfc/manage/local_roles.html:89
+#: templates/lfc/manage/local_roles.html:167
+msgid "This object has no local roles."
+msgstr "Ten obiekt nie ma lokalnych ról"
+
+#: templates/lfc/manage/local_roles_add.html:7
+msgid "Search"
+msgstr "Szukaj"
+
+#: templates/lfc/manage/local_roles_search_result.html:55
+#: templates/lfc/manage/object_add.html:3
+#: templates/lfc/manage/object_menu.html:8
+#: templates/lfc/manage/object_menu.html:20
+#: templates/lfc/manage/portal_menu.html:7
+#: templates/lfc/manage/portal_menu.html:19
+#: templates/lfc/manage/workflow_add.html:24
+msgid "Add"
+msgstr "Dodaj"
+
+#: templates/lfc/manage/object_children.html:27
+#: templates/lfc/manage/object_children.html:115
+#: templates/lfc/manage/portal_children.html:27
+#: templates/lfc/manage/portal_children.html:113
+msgid "State"
+msgstr "Stan"
+
+#: templates/lfc/manage/object_children.html:68
+#: templates/lfc/manage/object_children.html:142
+#: templates/lfc/manage/object_comments.html:50
+#: templates/lfc/manage/object_comments.html:90
+#: templates/lfc/manage/object_files.html:72
+#: templates/lfc/manage/object_files.html:75
+#: templates/lfc/manage/object_files.html:76
+#: templates/lfc/manage/object_images.html:84
+#: templates/lfc/manage/portal_children.html:66
+#: templates/lfc/manage/portal_children.html:140
+#: templates/lfc/manage/portal_files.html:72
+#: templates/lfc/manage/portal_files.html:75
+#: templates/lfc/manage/portal_files.html:76
+#: templates/lfc/manage/portal_images.html:84
+#: templates/lfc/manage/portlets_inline.html:80
+#: templates/lfc/manage/review_objects.html:48
+#: templates/lfc/manage/review_objects.html:51
+#: templates/lfc/manage/users_inline.html:112
+#: templates/lfc/manage/users_inline.html:144
+#: templates/lfc/manage/users_inline.html:145
+msgid "Edit"
+msgstr "Edycja"
+
+#: templates/lfc/manage/object_children.html:69
+#: templates/lfc/manage/object_children.html:143
+#: templates/lfc/manage/object_comments.html:91
+#: templates/lfc/manage/portal_children.html:67
+#: templates/lfc/manage/portal_children.html:141
+msgid "Edit object"
+msgstr "Edycja obiektu"
+
+#: templates/lfc/manage/object_children.html:73
+#: templates/lfc/manage/object_children.html:147
+#: templates/lfc/manage/object_view_link.html:3
+#: templates/lfc/manage/portal_children.html:71
+#: templates/lfc/manage/portal_children.html:145
+#: templates/lfc/manage/portal_menu.html:31
+msgid "View"
+msgstr "Podgląd"
+
+#: templates/lfc/manage/object_children.html:74
+#: templates/lfc/manage/object_children.html:148
+#: templates/lfc/manage/portal_children.html:72
+#: templates/lfc/manage/portal_children.html:146
+msgid "View object"
+msgstr "Podgląd obiektu"
+
+#: templates/lfc/manage/object_children.html:82
+#: templates/lfc/manage/object_files.html:84
+#: templates/lfc/manage/object_images.html:92
+#: templates/lfc/manage/portal_children.html:80
+#: templates/lfc/manage/portal_files.html:84
+#: templates/lfc/manage/portal_images.html:92
+#: templates/lfc/manage/users_inline.html:152
+msgid "Update"
+msgstr "Uaktualnij"
+
+#: templates/lfc/manage/object_children.html:84
+#: templates/lfc/manage/object_files.html:86
+#: templates/lfc/manage/object_images.html:94
+#: templates/lfc/manage/object_menu.html:51
+#: templates/lfc/manage/portal_children.html:82
+#: templates/lfc/manage/portal_files.html:86
+#: templates/lfc/manage/portal_images.html:94
+#: templates/lfc/manage/portlets_inline.html:84
+#: templates/lfc/manage/users_inline.html:151
+msgid "Delete"
+msgstr "Usuń"
+
+#: templates/lfc/manage/object_children.html:86
+#: templates/lfc/manage/object_menu.html:32
+#: templates/lfc/manage/portal_children.html:84
+msgid "Copy"
+msgstr "Kopiuj"
+
+#: templates/lfc/manage/object_children.html:88
+#: templates/lfc/manage/object_menu.html:38
+#: templates/lfc/manage/portal_children.html:86
+msgid "Cut"
+msgstr "Wytnij"
+
+#: templates/lfc/manage/object_children.html:92
+#: templates/lfc/manage/object_children.html:101
+#: templates/lfc/manage/object_menu.html:45
+#: templates/lfc/manage/portal_children.html:90
+#: templates/lfc/manage/portal_children.html:100
+#: templates/lfc/manage/portal_menu.html:27
+msgid "Paste"
+msgstr "Wklej"
+
+#: templates/lfc/manage/object_comments.html:23
+#: templates/lfc/manage/object_comments.html:116
+#: templates/lfc/manage/object_tabs.html:13
+msgid "Comments"
+msgstr "Komentarze"
+
+#: templates/lfc/manage/object_comments.html:41
+msgid "URL"
+msgstr ""
+
+#: templates/lfc/manage/object_comments.html:44
+msgid "Comment"
+msgstr "Komentarz"
+
+#: templates/lfc/manage/object_comments.html:47
+#: templates/lfc/manage/object_comments.html:126
+#: templates/lfc/manage/workflow_state.html:17
+msgid "Public"
+msgstr "Publiczne"
+
+#: templates/lfc/manage/object_comments.html:99
+msgid "Update comments"
+msgstr "Uaktualnij komentarze"
+
+#: templates/lfc/manage/object_comments.html:101
+msgid "Delete comments"
+msgstr "Usuń komentarze"
+
+#: templates/lfc/manage/object_comments.html:105
+#: templates/lfc/manage/object_comments.html:145
+msgid "There are no comments"
+msgstr "Nie ma żadnych komentarzy"
+
+#: templates/lfc/manage/object_data.html:22
+#: templates/lfc/manage/portal_core.html:15
+msgid "Save core data"
+msgstr "Zapisz podstawowe dane"
+
+#: templates/lfc/manage/object_files.html:55
+#: templates/lfc/manage/object_images.html:72
+#: templates/lfc/manage/portal_files.html:55
+#: templates/lfc/manage/portal_images.html:72
+#: templates/lfc/manage/portlets_inline.html:89
+msgid "Move Up"
+msgstr "Przesuń w górę"
+
+#: templates/lfc/manage/object_files.html:62
+#: templates/lfc/manage/object_images.html:79
+#: templates/lfc/manage/portal_files.html:62
+#: templates/lfc/manage/portal_images.html:79
+#: templates/lfc/manage/portlets_inline.html:94
+#: templates/lfc/manage/portlets_inline.html:96
+msgid "Move Down"
+msgstr "Przesuń w dół"
+
+#: templates/lfc/manage/object_files.html:68
+#: templates/lfc/manage/object_files.html:69
+#: templates/lfc/manage/portal_files.html:68
+#: templates/lfc/manage/portal_files.html:69
+msgid "Download"
+msgstr "Pobierz"
+
+#: templates/lfc/manage/object_files.html:90
+#: templates/lfc/manage/object_files.html:147
+#: templates/lfc/manage/portal_files.html:90
+#: templates/lfc/manage/portal_files.html:153
+msgid "There are no files"
+msgstr "Nie ma żadnych plików"
+
+#: templates/lfc/manage/object_files.html:93
+#: templates/lfc/manage/portal_files.html:93
+msgid "Add files"
+msgstr "Dodaj pliki"
+
+#: templates/lfc/manage/object_files.html:101
+#: templates/lfc/manage/portal_files.html:101
+msgid "Uploading files:"
+msgstr "Ładowanie plików:"
+
+#: templates/lfc/manage/object_images.html:27
+#: templates/lfc/manage/portal_images.html:27
+msgid "Caption"
+msgstr "Nagłówek"
+
+#: templates/lfc/manage/object_images.html:98
+#: templates/lfc/manage/object_images.html:167
+#: templates/lfc/manage/portal_images.html:98
+#: templates/lfc/manage/portal_images.html:167
+msgid "There are no images"
+msgstr "Nie ma żadnych obrazów"
+
+#: templates/lfc/manage/object_images.html:101
+#: templates/lfc/manage/portal_images.html:101
+msgid "Add images"
+msgstr "Dodaj obrazy"
+
+#: templates/lfc/manage/object_images.html:110
+#: templates/lfc/manage/portal_images.html:111
+msgid "Uploading images:"
+msgstr "Ładowanie obrazów:"
+
+#: templates/lfc/manage/object_menu.html:27
+msgid "Actions"
+msgstr "Akcje"
+
+#: templates/lfc/manage/object_menu.html:82
+#: templates/lfc/manage/object_menu.html:92
+msgid "Translate to"
+msgstr "Przetłumacz na"
+
+#: templates/lfc/manage/object_meta_data.html:5
+#: templates/lfc/manage/object_tabs.html:7
+msgid "Metadata"
+msgstr "Metadane"
+
+#: templates/lfc/manage/object_meta_data.html:35
+msgid "Save metadata"
+msgstr "Zapisz metadane"
+
+#: templates/lfc/manage/object_permissions.html:10
+#: templates/lfc/manage/object_permissions.html:47
+msgid "The current workflow is"
+msgstr "Bieżący workflow to"
+
+#: templates/lfc/manage/object_permissions.html:13
+#: templates/lfc/manage/object_permissions.html:50
+#: templates/lfc/manage/object_tabs.html:19
+#: templates/lfc/manage/portal_permissions.html:5
+#: templates/lfc/manage/portal_tabs.html:12
+#: templates/lfc/manage/workflow_data.html:9
+#: templates/lfc/manage/workflow_permissions.html:3
+#: templates/lfc/manage/workflow_state.html:28
+msgid "Permissions"
+msgstr "Uprawnienia"
+
+#: templates/lfc/manage/object_permissions.html:21
+#: templates/lfc/manage/workflow_state.html:34
+msgid "Inherit"
+msgstr "Odziedzicz"
+
+#: templates/lfc/manage/object_permissions.html:22
+#: templates/lfc/manage/object_permissions.html:56
+#: templates/lfc/manage/portal_permissions.html:14
+#: templates/lfc/manage/portal_permissions.html:35
+#: templates/lfc/manage/workflow_state.html:35
+#: templates/lfc/manage/workflow_transitions.html:33
+msgid "Permission"
+msgstr "Uprawnienie"
+
+#: templates/lfc/manage/object_permissions.html:39
+#: templates/lfc/manage/portal_permissions.html:30
+#: templates/lfc/manage/workflow_permissions.html:15
+msgid "Save permissions"
+msgstr "Zapisz uprawnienia"
+
+#: templates/lfc/manage/object_permissions.html:44
+msgid "Worflow"
+msgstr "Workflow"
+
+#: templates/lfc/manage/object_permissions.html:55
+msgid "Inherited"
+msgstr "Dziedziczone"
+
+#: templates/lfc/manage/object_quick_view_link.html:3
+msgid "Quick View"
+msgstr "Szybki podgląd"
+
+#: templates/lfc/manage/object_seo.html:5
+#: templates/lfc/manage/object_tabs.html:16
+msgid "SEO"
+msgstr "SEO"
+
+#: templates/lfc/manage/object_seo.html:15
+msgid "Save SEO"
+msgstr "Zapisz SEO"
+
+#: templates/lfc/manage/object_seo.html:20
+#: templates/lfc/manage/object_seo.html:29
+msgid "Meta Keywords"
+msgstr "Słowa kluczowe - meta"
+
+#: templates/lfc/manage/object_tabs.html:11
+#: templates/lfc/manage/portal_tabs.html:10
+msgid "Portlets"
+msgstr "Portelty"
+
+#: templates/lfc/manage/object_translate.html:21
+msgid "Translate object"
+msgstr "Przetłumacz obiekt"
+
+#: templates/lfc/manage/portlet_add.html:6
+#: templates/lfc/manage/portlets_inline.html:109
+msgid "Add new portlet"
+msgstr "Dodaj nowy portlet"
+
+#: templates/lfc/manage/portlet_add.html:22
+#: templates/lfc/manage/portlet_edit.html:9
+#: templates/lfc/manage/portlets_inline.html:17
+#: templates/lfc/manage/portlets_inline.html:132
+#: templates/lfc/manage/portlets_inline.html:158
+msgid "Slot"
+msgstr "Slot"
+
+#: templates/lfc/manage/portlet_add.html:45
+#: templates/lfc/manage/portlet_edit.html:32
+msgid "Save portlet"
+msgstr "Zapisz portlet"
+
+#: templates/lfc/manage/portlet_edit.html:5
+msgid "Edit portlet"
+msgstr "Edytuj portlet"
+
+#: templates/lfc/manage/portlets_inline.html:9
+#: templates/lfc/manage/portlets_inline.html:129
+msgid "Blocked parent slots"
+msgstr "Zablokowane sloty rodziców"
+
+#: templates/lfc/manage/portlets_inline.html:14
+#: templates/lfc/manage/portlets_inline.html:135
+msgid "Blocked"
+msgstr "Zablokowane"
+
+#: templates/lfc/manage/portlets_inline.html:37
+msgid "Save blocked parent slots"
+msgstr "Zapisz zablokowane sloty rodziców"
+
+#: templates/lfc/manage/portlets_inline.html:43
+#: templates/lfc/manage/portlets_inline.html:154
+msgid "Slots"
+msgstr "Sloty"
+
+#: templates/lfc/manage/portlets_inline.html:103
+#: templates/lfc/manage/portlets_inline.html:184
+msgid "There are no portlets assigend"
+msgstr "Nie ma przypisanych żadnych portletów"
+
+#: templates/lfc/manage/portlets_inline.html:125
+msgid "Add portlet"
+msgstr "Dodaj portlet"
+
+#: templates/lfc/manage/review_objects.html:6
+msgid "Review Content"
+msgstr "Przegląd treści"
+
+#: templates/lfc/manage/review_objects.html:17
+msgid "Creation Date"
+msgstr "Data utworzenia"
+
+#: templates/lfc/manage/review_objects.html:59
+msgid "There are no objects to review"
+msgstr "Nie ma obiektów do przeglądnięcia"
+
+#: templates/lfc/manage/role.html:24
+#: templates/lfc/manage/role_add.html:24
+msgid "Add Role"
+msgstr "Dodaj rolę"
+
+#: templates/lfc/manage/role.html:27
+msgid "Delete Role"
+msgstr "Usuń rolę"
+
+#: templates/lfc/manage/role.html:41
+msgid "Save role"
+msgstr "Zapisz rolę"
+
+#: templates/lfc/manage/role_add.html:38
+msgid "Add role"
+msgstr "Dodaj rolę"
+
+#: templates/lfc/manage/templates.html:14
+#: templates/lfc/manage/users_inline.html:77
+msgid "Go!"
+msgstr "Przejdź!"
+
+#: templates/lfc/manage/user.html:9
+#: templates/lfc/manage/user_add.html:9
+#: templates/lfc/manage/user_navigation.html:29
+#: templates/lfc/manage/user_navigation.html:33
+#: templates/lfc/manage/users_inline.html:59
+#: templates/lfc/manage/users_inline.html:63
+#: templates/lfc/manage/users_inline.html:82
+msgid "Last"
+msgstr "Ostatnia"
+
+#: templates/lfc/manage/user.html:28
+#: templates/lfc/manage/user_password.html:10
+msgid "Change password"
+msgstr "Zmień hasło"
+
+#: templates/lfc/manage/user_add.html:25
+#: templates/lfc/manage/user_menu.html:14
+msgid "Overview"
+msgstr "Przegląd"
+
+#: templates/lfc/manage/user_add.html:41
+#: templates/lfc/manage/user_data.html:10
+msgid "Save user"
+msgstr "Zapisz użytkownika"
+
+#: templates/lfc/manage/user_menu.html:6
+#: templates/lfc/manage/users_inline.html:7
+msgid "Add User"
+msgstr "Dodaj użytkownika"
+
+#: templates/lfc/manage/user_navigation.html:7
+#: templates/lfc/manage/user_navigation.html:15
+#: templates/lfc/manage/users_inline.html:37
+#: templates/lfc/manage/users_inline.html:45
+msgid "First"
+msgstr "Pierwsza"
+
+#: templates/lfc/manage/user_navigation.html:12
+#: templates/lfc/manage/user_navigation.html:16
+#: templates/lfc/manage/users_inline.html:42
+#: templates/lfc/manage/users_inline.html:46
+msgid "Previous"
+msgstr "Poprzednia"
+
+#: templates/lfc/manage/user_navigation.html:19
+#: templates/lfc/manage/users_inline.html:49
+msgid "of"
+msgstr "z"
+
+#: templates/lfc/manage/user_navigation.html:24
+#: templates/lfc/manage/user_navigation.html:32
+#: templates/lfc/manage/users_inline.html:54
+#: templates/lfc/manage/users_inline.html:62
+msgid "Next"
+msgstr "Następna"
+
+#: templates/lfc/manage/users_inline.html:19
+msgid "Pages"
+msgstr "Strony"
+
+#: templates/lfc/manage/users_inline.html:25
+#: templates/lfc/manage/users_inline.html:109
+msgid "Active"
+msgstr "Aktywny"
+
+#: templates/lfc/manage/users_inline.html:29
+msgid "Reset"
+msgstr "Zresetuj"
+
+#: templates/lfc/manage/users_inline.html:99
+msgid "Fullname"
+msgstr "Pełna nazwa"
+
+#: templates/lfc/manage/users_inline.html:102
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+#: templates/lfc/manage/workflow_data.html:21
+msgid "Save workflow"
+msgstr "Zapisz workflow"
+
+#: templates/lfc/manage/workflow_menu.html:6
+msgid "Add workflow"
+msgstr "Dodaj workflow"
+
+#: templates/lfc/manage/workflow_menu.html:10
+msgid "Delete workflow"
+msgstr "Usuń workflow"
+
+#: templates/lfc/manage/workflow_state.html:5
+msgid "Edit state:"
+msgstr "Edytuj stan"
+
+#: templates/lfc/manage/workflow_states.html:23
+#: templates/lfc/manage/workflow_states.html:29
+msgid "Add state"
+msgstr "Dodaj stan"
+
+#: templates/lfc/manage/workflow_transition.html:5
+msgid "Edit transition:"
+msgstr "Edytuj przejście"
+
+#: templates/lfc/manage/workflow_transitions.html:19
+msgid "Destination state"
+msgstr "Stan docelowy"
+
+#: templates/lfc/manage/workflow_transitions.html:27
+#: templates/lfc/manage/workflow_transitions.html:39
+#: templates/lfc/manage/workflow_transitions.html:51
+msgid "None"
+msgstr "Nic"
+
+#: templates/lfc/manage/workflow_transitions.html:45
+msgid "Condition"
+msgstr "Warunek"
+
+#: templates/lfc/manage/workflow_transitions.html:59
+#: templates/lfc/manage/workflow_transitions.html:65
+msgid "Add transition"
+msgstr "Dodaj przejście"
+
+#: templatetags/lfc_tags.py:124
+#: templatetags/lfc_tags.py:149
+#, python-format
+msgid "%s tag needs no argument"
+msgstr "Tag %s nie wymaga parametrów"
+
+#~ msgid "Page has been added."
+#~ msgstr "Strona została dodana."
+
+#~ msgid "Page has been deleted."
+#~ msgstr "Strona została usunięta."
+
+#~ msgid "An error has been occured"
+#~ msgstr "Wystąpił błąd"
+
+#~ msgid "Select content"
+#~ msgstr "Wybierz treść"
+
+#~ msgid "Local files"
+#~ msgstr "Pliki lokalne"
+
+#~ msgid "There are no local files yet."
+#~ msgstr "Nie ma jeszcze żadnych plików lokalnych."
+
+#~ msgid "Global files"
+#~ msgstr "Pliki globalne"
+
+#~ msgid "Global images"
+#~ msgstr "Globalne obrazy"
+
+#~ msgid "Sizes"
+#~ msgstr "Rozmiary"
+
+#~ msgid "There are no global images."
+#~ msgstr "Nie ma obrazów globalnych"
+
+#~ msgid "Processing ..."
+#~ msgstr "Przetwarzanie..."
+
+#~ msgid "Select Files"
+#~ msgstr "Wybierz pliki"
+
+#~ msgid "Select Images"
+#~ msgstr "Wybierz obrazy"
+
+#~ msgid "Save &amp; close"
+#~ msgstr "Zapisz &amp; zamknij"

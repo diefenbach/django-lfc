@@ -3,12 +3,11 @@ from django.conf import settings
 from django.contrib.sites.models import Site
 from django.contrib.comments.signals import comment_was_posted
 from django.core.mail import EmailMessage
-from django.db.models.signals import post_save
 
 # lfc imports
 import lfc.signals
 import lfc.utils
-from lfc.models import BaseContent
+
 
 def comment_was_posted_listener(sender, **kwargs):
     """Listen to order submitted signal
@@ -24,14 +23,14 @@ def comment_was_posted_listener(sender, **kwargs):
     body = "Name: %s\n" % comment.name
     body += "E-Mail: %s\n" % comment.email
     body += "URL: %s\n" % comment.url
-    body += "Comment %s\n" % comment.comment
-    body += "Comment URL: %s" % "http://" + site.domain + "admin/comments/comment/%s" % comment.id
+    body += "Comment: \n%s\n\n\n" % comment.comment
+    body += "Comment URL: %s" % "http://" + site.domain + "%s" % comment.content_object.get_absolute_url()
 
     mail = EmailMessage(
-        subject    = subject,
-        body       = body,
-        from_email = from_email,
-        to         = to_emails
+        subject=subject,
+        body=body,
+        from_email=from_email,
+        to=to_emails
     )
 
     mail.send(fail_silently=True)

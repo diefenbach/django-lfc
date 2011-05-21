@@ -15,6 +15,13 @@ from lfc.models import Template
 from workflows.models import Workflow
 from workflows.models import WorkflowModelRelation
 
+# Make it available for import from lfc.utils.registration
+from resources.utils import register_resource
+from resources.utils import unregister_resource
+from resources.config import CSS
+from resources.config import JS
+
+
 def get_info(obj_or_type):
     """Returns the ContentTypeRegistration for the passed object or type.
     Returns None if the content type registry is not found.
@@ -38,7 +45,7 @@ def get_info(obj_or_type):
         return result
 
     try:
-        result = ContentTypeRegistration.objects.get(type = type)
+        result = ContentTypeRegistration.objects.get(type=type)
     except ContentTypeRegistration.DoesNotExist:
         result = None
 
@@ -46,6 +53,7 @@ def get_info(obj_or_type):
     cache.set(cache_key, result)
 
     return result
+
 
 def get_allowed_subtypes(obj_or_type=None):
     """Returns all allowed sub types for given object or type. Returns a list
@@ -66,6 +74,7 @@ def get_allowed_subtypes(obj_or_type=None):
         return ctr.get_subtypes()
     else:
         return []
+
 
 def register_sub_type(klass, name):
     """Registers a content type as a allowed sub type to another content type.
@@ -88,6 +97,7 @@ def register_sub_type(klass, name):
 
     if sub_ctr:
         base_ctr.subtypes.add(sub_ctr)
+
 
 def register_content_type(klass, name, sub_types=[], templates=[], default_template=None, global_addable=True, workflow=None):
     """Registers a content type.
@@ -137,7 +147,7 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
             # Add subtypes
             for sub_type in sub_types:
                 try:
-                    sub_ctr = ContentTypeRegistration.objects.get(type = sub_type.lower())
+                    sub_ctr = ContentTypeRegistration.objects.get(type=sub_type.lower())
                 except ContentTypeRegistration.DoesNotExist:
                     pass
                 else:
@@ -146,7 +156,7 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
             # Add templates and default template
             for template_name in templates:
                 try:
-                    template = Template.objects.get(name = template_name)
+                    template = Template.objects.get(name=template_name)
                 except Template.DoesNotExist:
                     pass
                 else:
@@ -174,6 +184,7 @@ def register_content_type(klass, name, sub_types=[], templates=[], default_templ
                         wmr.content_type = ctype
                         wmr.save()
 
+
 def unregister_content_type(name):
     """Unregisteres content type with passed name.
     """
@@ -194,6 +205,7 @@ def unregister_content_type(name):
         pass
     else:
         ctr.delete()
+
 
 def register_template(name, path, children_columns=0, images_columns=0):
     """Registers a template.
@@ -219,10 +231,11 @@ def register_template(name, path, children_columns=0, images_columns=0):
     except AttributeError:
         pass
     try:
-        Template.objects.create(name = name, path=path,
+        Template.objects.create(name=name, path=path,
             children_columns=children_columns, images_columns=images_columns)
     except IntegrityError:
         pass
+
 
 def unregister_template(name):
     """Unregisters the template with the given name.
@@ -233,11 +246,12 @@ def unregister_template(name):
         The name of the template.
     """
     try:
-        template = Template.objects.get(name = name)
+        template = Template.objects.get(name=name)
     except Template.DoesNotExist:
         pass
     else:
         template.delete()
+
 
 def get_default_template(obj_or_type):
     """Returns the default template for given object or type. Returns an
@@ -254,6 +268,7 @@ def get_default_template(obj_or_type):
         return None
     else:
         return ctr.default_template
+
 
 def get_templates(obj_or_type):
     """Returns allowed templates for passed object or type.
