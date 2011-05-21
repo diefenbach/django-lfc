@@ -1,0 +1,37 @@
+{% load i18n %}
+<div id="portal"></div>
+
+<div id="manage-tabs">
+    <ul>
+        <li><a href="#data">{% trans 'Portal' %}</a></li>
+        <li><a href="#children">{% trans 'Children' %}</a></li>
+        <li><a href="#images">{% trans 'Images' %}</a></li>
+        <li><a href="#files">{% trans 'Files' %}</a></li>
+        <li><a href="#portlets_tab">{% trans 'Portlets' %}</a></li>
+        {% if LFC_MANAGE_PERMISSIONS %}
+            <li class="ui-tabs-nav-item"><a href="#permissions">{% trans 'Permissions' %}</a></li>
+        {% endif %}
+
+    </ul>
+
+    <div id="data">
+        {{ core_data|safe }}
+    </div>
+    <div id="children">
+        {{ children|safe }}
+    </div>
+    <div id="images">
+        {{ images|safe }}
+    </div>
+    <div id="files">
+        {{ files|safe }}
+    </div>
+    <div id="portlets_tab">
+        {{ portlets|safe }}
+    </div>
+    {% if LFC_MANAGE_PERMISSIONS %}
+        <div id="permissions">
+            {{ permissions|safe }}
+        </div>
+    {% endif %}
+</div>

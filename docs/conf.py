@@ -11,7 +11,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -24,6 +25,7 @@ sys.path.append(os.path.abspath("../../../parts/tagging"))
 sys.path.append(os.path.abspath("../../../parts/portlets"))
 sys.path.append(os.path.abspath("../../../parts/permissions"))
 sys.path.append(os.path.abspath("../../../parts/workflows"))
+sys.path.append(os.path.abspath("../../../parts/resources"))
 
 # -- General configuration -----------------------------------------------------
 

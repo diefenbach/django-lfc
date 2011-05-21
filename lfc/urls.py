@@ -7,7 +7,6 @@ from django.views.generic.simple import direct_to_template
 from tagging.views import tagged_object_list
 
 # lfc imports
-from lfc.forms import ContactForm
 from lfc.feeds import PageTagFeed
 from lfc.models import Page
 from lfc.sitemap import PageSitemap
@@ -24,23 +23,17 @@ urlpatterns += patterns("",
 
 # Login / Logout
 urlpatterns += patterns('django.contrib.auth.views',
-    url('^login/?$',  "login",  { "template_name" : "lfc/login.html" },  name='lfc_login'),
-    url('^logout/?$', "logout", { "template_name" : "lfc/logged_out.html" }, name='lfc_logout'),
+    url('^login/?$', "login", {"template_name": "lfc/login.html"}, name='lfc_login'),
+    url('^logout/?$', "logout", {"template_name": "lfc/logged_out.html"}, name='lfc_logout'),
 )
 
 # Feeds
 feeds = {
-    "rss" : PageTagFeed,
+    "rss": PageTagFeed,
 }
 
 urlpatterns += patterns('',
     url(r'(?P<url>rss.*)$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name="feed"),
-)
-
-# Contact form
-urlpatterns += patterns('contact_form.views',
-    url(r'^contact$', "contact_form", { "form_class" : ContactForm }, name='contact_form'),
-    url(r'^sent$', direct_to_template, { 'template': 'contact_form/contact_form_sent.html' }, name='contact_form_sent'),
 )
 
 # Sitemaps
@@ -57,6 +50,9 @@ urlpatterns += patterns('django.views.generic.simple',
 urlpatterns += patterns('lfc.views',
     url(r'^(?P<language>[-\w]{2})/search-results', "search_results", name="lfc_search"),
     url(r'^search-results', "search_results", name="lfc_search"),
+
+    url(r'^(?P<language>[-\w]{2})/live-search-results', "live_search_results", name="lfc_live_search"),
+    url(r'^live-search-results', "live_search_results", name="lfc_live_search"),
 
     url(r'^set-language/(?P<language>[-\w]{2})/$', 'set_language', name="lfc_set_language"),
     url(r'^set-language/(?P<language>[-\w]{2})/(?P<id>\d+)/$', 'set_language', name="lfc_set_language"),

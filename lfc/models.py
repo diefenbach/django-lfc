@@ -5,6 +5,7 @@ import random
 
 # django imports
 from django import forms
+from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
@@ -47,11 +48,15 @@ from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
 from lfc.settings import ALLOW_COMMENTS_TRUE
 from lfc.settings import LANGUAGE_CHOICES
+from lfc.settings import ORDER_BY_CHOICES
+from lfc.settings import IMAGE_SIZES
+
 
 class Application(models.Model):
-    """
+    """Represents a LFC application.
     """
     name = models.CharField(max_length=100, unique=True)
+
 
 class WorkflowStatesInformation(models.Model):
     """Stores some information about workflows
@@ -80,6 +85,7 @@ class WorkflowStatesInformation(models.Model):
             result += u" " + "Review"
 
         return result
+
 
 class Template(models.Model):
     """A template displays the content of an object.
@@ -114,6 +120,7 @@ class Template(models.Model):
 
     def __unicode__(self):
         return self.name
+
 
 class ContentTypeRegistration(models.Model):
     """Stores all registration relevant information of a registered content
@@ -182,6 +189,7 @@ class ContentTypeRegistration(models.Model):
         """
         return self.templates.all()
 
+
 class Portal(models.Model, PermissionBase):
     """A portal is the root of all content objects. Stores global images and
     some general data about the site.
@@ -215,10 +223,10 @@ class Portal(models.Model, PermissionBase):
 
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    standard = models.ForeignKey("BaseContent", verbose_name = _(u"Page"), blank=True, null=True)
+    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Page"), blank=True, null=True)
 
     from_email = models.EmailField(_(u"From e-mail address"))
-    notification_emails  = models.TextField(_(u"Notification email addresses"))
+    notification_emails = models.TextField(_(u"Notification email addresses"))
     allow_comments = models.BooleanField(_(u"Allow comments"), default=False)
 
     images = generic.GenericRelation("Image", verbose_name=_(u"Images"),
@@ -230,6 +238,15 @@ class Portal(models.Model, PermissionBase):
     def __unicode__(self):
         return self.title
 
+    @property
+    def content_type(self):
+        """To be consistent with BaseContent.
+        """
+        return self.get_content_type()
+
+    def get_content_type(self):
+        return u"portal"
+
     def get_absolute_url(self):
         """Returns the absolute url of the portal. It takes the current
         language into account.
@@ -238,7 +255,7 @@ class Portal(models.Model, PermissionBase):
         if language == settings.LANGUAGE_CODE:
             return reverse("lfc_base_view")
         else:
-            return reverse("lfc_base_view", kwargs={"language" : language})
+            return reverse("lfc_base_view", kwargs={"language": language})
 
     def get_notification_emails(self):
         """Returns the notification e-mail addresses as list.
@@ -282,14 +299,14 @@ class Portal(models.Model, PermissionBase):
         """
         # Every user is also anonymous user
         try:
-            roles = [Role.objects.get(name="Anonymous")]
+            roles = [lfc.utils.get_cached_object(Role, name="Anonymous").id]
         except Role.DoesNotExist:
             roles = []
 
         # Check whether the current user is the creator of the current object.
         try:
             if user == self.creator:
-                roles.append(Role.objects.get(name="Owner"))
+                roles.append(Role.objects.get(name="Owner").id)
         except (AttributeError, Role.DoesNotExist):
             pass
 
@@ -301,6 +318,7 @@ class Portal(models.Model, PermissionBase):
         """
         if not self.has_permission(user, codename):
             raise Unauthorized("%s doesn't have permission %s for portal" % (user, codename))
+
 
 class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
     """The root of all content types. It provides the inheritable
@@ -317,6 +335,7 @@ class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
     class Meta:
         abstract = True
 
+
 class BaseContent(AbstractBaseContent):
     """Base content object. From this class all content types should inherit.
     It should never be instantiated.
@@ -327,14 +346,14 @@ class BaseContent(AbstractBaseContent):
         The content type of the specific content object.
 
     title
-        The title of the object. By default this displayed on top of very
-        object within the title tag of the HTML page (together with the portal's
-        title).
+        The title of the object. By default this is displayed on top of every
+        object.
 
     display_title
         Set to false to hide the title within the HTML of the object. This can
         be helpful to provide a custom title within the text field of an
         object.
+
     slug
         The part of URL within the parent object. By default the absolute URL
         of an object is created by all involved content objects.
@@ -370,6 +389,10 @@ class BaseContent(AbstractBaseContent):
         selected out of the children of the object. If there is one, this is
         displayed instead of the object itself.
 
+    order_by
+        Defines how the children of the object are ordered (default is the
+        position).
+
     exclude_from_navigation
         If set to True, the object is not displayed within the navigation (top
         tabs and navigation tree).
@@ -395,6 +418,10 @@ class BaseContent(AbstractBaseContent):
     end_date
         if given the object is only public when the end date is not reached
         yet.
+
+    meta_title
+        The meta title of the page. This is displayed within the title tag of
+        the rendered HTML.
 
     meta_keywords
         The meta keywords of the object. This is displayed within the meta
@@ -438,6 +465,7 @@ class BaseContent(AbstractBaseContent):
     parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="children")
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
     standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
+    order_by = models.CharField("Order by", max_length=20, default="position", choices=ORDER_BY_CHOICES)
 
     exclude_from_navigation = models.BooleanField(_(u"Exclude from navigation"), default=False)
     exclude_from_search = models.BooleanField(_(u"Exclude from search results"), default=False)
@@ -449,6 +477,7 @@ class BaseContent(AbstractBaseContent):
     start_date = models.DateTimeField(_(u"Start date"), null=True, blank=True)
     end_date = models.DateTimeField(_(u"End date"), null=True, blank=True)
 
+    meta_title = models.CharField(_(u"Meta title"), max_length=100, default="<portal_title> - <title>")
     meta_keywords = models.TextField(_(u"Meta keywords"), blank=True, default="<tags>")
     meta_description = models.TextField(_(u"Meta description"), blank=True, default="<description>")
 
@@ -470,7 +499,7 @@ class BaseContent(AbstractBaseContent):
     def __unicode__(self):
         return unicode(self.title)
 
-    def save(self, force_insert=False, force_update=False):
+    def save(self, *args, **kwargs):
         """Djangos default save method. This is overwritten to do some LFC
         related stuff if a content object is saved.
         """
@@ -478,7 +507,7 @@ class BaseContent(AbstractBaseContent):
         if self.content_type == "":
             self.content_type = self.__class__.__name__.lower()
 
-        super(BaseContent, self).save()
+        super(BaseContent, self).save(*args, **kwargs)
 
         # Set the initial state if there is none yet
         co = self.get_content_object()
@@ -501,18 +530,24 @@ class BaseContent(AbstractBaseContent):
 
         slugs.reverse()
 
-        slug =  "/".join(slugs)
+        slug = "/".join(slugs)
 
         if page.language == settings.LANGUAGE_CODE:
-            return ("lfc_base_view", (), {"slug" : slug})
+            return ("lfc_base_view", (), {"slug": slug})
         elif page.language == "0":
-            language = translation.get_language()
-            if language == settings.LANGUAGE_CODE:
-                return ("lfc_base_view", (), {"slug" : slug})
+            if page.parent:
+                language = page.parent.language
+                if language == "0":
+                    return ("lfc_base_view", (), {"slug": slug})
             else:
-                return ("lfc_base_view", (), {"slug" : slug, "language" : language})
+                language = translation.get_language()
+
+            if language == settings.LANGUAGE_CODE:
+                return ("lfc_base_view", (), {"slug": slug})
+            else:
+                return ("lfc_base_view", (), {"slug": slug, "language": language})
         else:
-            return ("lfc_base_view", (), {"slug" : slug, "language" : page.language})
+            return ("lfc_base_view", (), {"slug": slug, "language": page.language})
 
     get_absolute_url = models.permalink(get_absolute_url)
 
@@ -528,11 +563,6 @@ class BaseContent(AbstractBaseContent):
         else:
             return self
 
-    def get_content_type(self):
-        """Returns the content type as string.
-        """
-        return self.__class__.__name__
-
     def get_searchable_text(self):
         """Returns the searchable text of this content type. By default it
         takes the title the description of the instance into account. Sub
@@ -541,11 +571,16 @@ class BaseContent(AbstractBaseContent):
         result = self.title + " " + self.description
         return result.strip()
 
-    def form(self, **kwargs):
-        """Returns the add/edit form for the object. This method has to be
-        overwritten and implemented by sub classes.
+    def edit_form(self, **kwargs):
+        """Returns the edit form for the object.
         """
-        raise NotImplementedError, "form has to be implemented by sub classed"
+        raise(NotImplementedError, "form has to be implemented by sub classed")
+
+    def add_form(self, **kwargs):
+        """Returns the add/edit form for the object.
+        """
+        from lfc.manage.forms import AddForm
+        return AddForm(**kwargs)
 
     def get_ancestors(self):
         """Returns all ancestors of a content object.
@@ -567,12 +602,9 @@ class BaseContent(AbstractBaseContent):
         return ancestors
 
     def get_content_type(self):
+        """Returns the content type of the object.
         """
-        """
-        try:
-            return ContentTypeRegistration.objects.get(type=self.content_type).name
-        except ContentTypeRegistration.DoesNotExist:
-            return _(u"n/a")
+        return self.content_type
 
     def get_descendants(self, request=None, result=None):
         """Returns all descendants of the content object. If the request is
@@ -585,6 +617,13 @@ class BaseContent(AbstractBaseContent):
             child.get_descendants(request, result)
 
         return result
+
+    def has_children(self, request=None, *args, **kwargs):
+        """Returns True if the object has children. If the request is
+        passed the permissions of the current user is taken into account.
+        Other valid filters can be passed also, e.g. slug = "page-1".
+        """
+        return len(lfc.utils.get_content_objects(request, parent=self, **kwargs)) > 0
 
     def get_children(self, request=None, *args, **kwargs):
         """Returns the children of the content object. If the request is
@@ -602,6 +641,14 @@ class BaseContent(AbstractBaseContent):
             return images[0]
         except IndexError:
             return None
+
+    def get_meta_title(self):
+        """Returns the meta title of the instance. Replaces some placeholders
+        with the according content.
+        """
+        title = self.meta_title.replace("<title>", self.title)
+        title = title.replace("<portal_title>", lfc.utils.get_portal().title)
+        return title
 
     def get_meta_keywords(self):
         """Returns the meta keywords of the instance. Replaces some
@@ -728,6 +775,98 @@ class BaseContent(AbstractBaseContent):
         """
         return self.parent and self.parent.get_content_object() or lfc.utils.get_portal()
 
+    def set_context(self, request):
+        self.context = self.get_context(request)
+
+    def get_context(self, request):
+        """Calculates and returns the request context.
+        """
+        obj_template = self.get_template()
+
+        # Children
+        # CACHE
+        children_cache_key = "%s-children-%s-%s-%s" % \
+                                              (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                               self.content_type, self.id,
+                                               request.user.id)
+        sub_objects = cache.get(children_cache_key)
+        if sub_objects is None:
+            # Get sub objects (as LOL if requested)
+            if obj_template.children_columns == 0:
+                sub_objects = self.get_children(request)
+            else:
+                sub_objects = lfc.utils.getLOL(self.get_children(request), obj_template.children_columns)
+
+            cache.set(children_cache_key, sub_objects)
+
+        # Images
+        # CACHE
+        images_cache_key = "%s-images-%s-%s" % \
+                                              (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
+                                               self.content_type, self.id)
+        cached_images = cache.get(images_cache_key)
+        if cached_images:
+            image = cached_images["image"]
+            images = cached_images["images"]
+            subimages = cached_images["subimages"]
+        else:
+            temp_images = list(self.images.all())
+            if temp_images:
+                if obj_template.images_columns == 0:
+                    images = temp_images
+                    image = images[0]
+                    subimages = temp_images[1:]
+                else:
+                    images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
+                    subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
+                    image = images[0][0]
+            else:
+                image = None
+                images = []
+                subimages = []
+
+            cache.set(images_cache_key, {
+                "image": image,
+                "images": images,
+                "subimages": subimages
+            })
+
+        self.context = RequestContext(request, {
+            "lfc_context": self,
+            "self" : self,
+            "images": images,
+            "image": image,
+            "subimages": subimages,
+            "files": self.files.all(),
+            "sub_objects": sub_objects,
+            "portal": lfc.utils.get_portal(),
+        })
+
+        return self.context
+
+    def render(self, request):
+        """Renders the object content.
+        """
+        if self.context is None:
+            self.context = self.get_context()
+
+        # CACHE
+        template_cache_key = "%s-template-%s-%s" % \
+                    (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
+        obj_template = cache.get(template_cache_key)
+        if obj_template is None:
+            obj_template = self.get_template()
+            cache.set(template_cache_key, obj_template)
+
+        tags = ""
+        for tag in getattr(settings, "LFC_TAGS", []):
+            tags += "{%% load %s %%}" % tag
+
+        # Render twice. This makes tags within text / short_text possible.
+        result = render_to_string(obj_template.path, self.context)
+        result = template.Template(tags + " " + result).render(self.context)
+        return result
+
     # django-permissions
     def get_parent_for_permissions(self):
         """Returns the parent from which permissions are inherited. The
@@ -792,6 +931,12 @@ class BaseContent(AbstractBaseContent):
         else:
             return True
 
+    def reindex(self):
+        """Reindexes the objects's searchable text.
+        """
+        self.searchable_text = self.get_searchable_text()
+        self.save()
+
     # django-workflows
     def get_allowed_transitions(self, user):
         """Returns all allowed permissions for the passed user.
@@ -804,9 +949,10 @@ class BaseContent(AbstractBaseContent):
         for transition in state.transitions.all():
             permission = transition.permission
             if permission is None or self.has_permission(user, permission.codename):
-               transitions.append(transition)
+                transitions.append(transition)
 
         return transitions
+
 
 class Page(BaseContent):
     """A page is the foremost object within lfc which shows information to the
@@ -820,25 +966,26 @@ class Page(BaseContent):
     text = models.TextField(_(u"Text"), blank=True)
 
     def get_searchable_text(self):
-        """Returns the searchable text of the page. This adds the text to
-        the default searchable text.
+        """Returns the searchable text of the page.
         """
-        result = self.title + " " + self.description + " " + self.text
-        return result.strip()
+        searchable_text = self.title + " " + self.description + " " + self.text
+        return lfc.utils.html2text(searchable_text)
 
-    def form(self, **kwargs):
-        """Returns the add/edit form of the page.
+    def edit_form(self, **kwargs):
+        """Returns the edit form of the page.
         """
         from lfc.manage.forms import CoreDataForm
         return CoreDataForm(**kwargs)
+
 
 class Image(models.Model):
     """An image which can be displayes within HTML. Generates automatically
     various sizes.
 
     title
-        The title of the image. Used within the title and alt tag
-        of the image
+        The title of the image. Used within the title and alt tag of the
+        image.
+
     slug
         The URL of the image
 
@@ -851,31 +998,25 @@ class Image(models.Model):
     caption
         The caption of the image. Can be used within the content (optional)
 
-    short_description
-        A short description of the image. Can be used within the content
-        (optional)
-
     description
-        A long description of the image. Can be used within the content
+        A description of the image. Can be used within the content
         (optional)
 
     image
         The image file.
     """
-    title = models.CharField(blank=True, max_length=100)
-    slug = models.SlugField()
+    title = models.CharField(_(u"Title"), blank=True, max_length=100)
+    slug = models.SlugField(_(u"Slug"),)
 
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="images", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
 
-    position = models.SmallIntegerField(default=999)
-    caption = models.CharField(blank=True, max_length=100)
-    short_description = models.TextField(blank=True)
-    description = models.TextField(blank=True)
+    position = models.SmallIntegerField(_(u"Position"), default=999)
+    caption = models.CharField(_(u"Caption"), blank=True, max_length=100)
+    description = models.TextField(_(u"Description"), blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
-    image = ImageWithThumbsField(_(u"Image"), upload_to="uploads",
-        sizes=((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800)))
+    image = ImageWithThumbsField(_(u"Image"), upload_to="uploads", sizes=IMAGE_SIZES)
 
     class Meta:
         ordering = ("position", )
@@ -884,8 +1025,9 @@ class Image(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return ("gallery.views.photo", (), {"slug" : self.slug})
+        return ("gallery.views.photo", (), {"slug": self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+
 
 class File(models.Model):
     """A downloadable file.
@@ -893,20 +1035,19 @@ class File(models.Model):
     **Attributes:**
 
     title
-        The title of the image. Used within the title and alt tag
-        of the image.
+        The title of the file.
 
     slug
-        The URL of the image.
+        The URL of the file.
 
     content
         The content object the file belongs to (optional).
 
     position
-        The ordinal number within the content object. Used to order the images.
+        The ordinal number within the content object. Used to order the files.
 
     description
-        A long description of the image. Can be used within the content
+        A long description of the file. Can be used within the content
         (optional).
 
     file
@@ -920,7 +1061,7 @@ class File(models.Model):
     content = generic.GenericForeignKey(ct_field="content_type", fk_field="content_id")
 
     position = models.SmallIntegerField(default=999)
-    description = models.CharField(blank=True, max_length=100)
+    description = models.TextField(blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
     file = models.FileField(upload_to="files")
 
@@ -931,10 +1072,11 @@ class File(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("lfc_file", kwargs={"id" : self.id})
+        return reverse("lfc_file", kwargs={"id": self.id})
 
 #### Portlets
 ###############################################################################
+
 
 class NavigationPortlet(Portlet):
     """A portlet to display the navigation tree.
@@ -958,9 +1100,9 @@ class NavigationPortlet(Portlet):
         """
         request = context.get("request")
         return render_to_string("lfc/portlets/navigation_portlet.html", RequestContext(request, {
-            "start_level" : self.start_level,
-            "expand_level" : self.expand_level,
-            "title" : self.title,
+            "start_level": self.start_level,
+            "expand_level": self.expand_level,
+            "title": self.title,
         }))
 
     def form(self, **kwargs):
@@ -968,11 +1110,13 @@ class NavigationPortlet(Portlet):
         """
         return NavigationPortletForm(instance=self, **kwargs)
 
+
 class NavigationPortletForm(forms.ModelForm):
     """Add/edit form for the navigation portlet.
     """
     class Meta:
         model = NavigationPortlet
+
 
 # TODO: Rename as it is able to display all content types. ContentPortlet, DocumentPortlet, ...?
 class PagesPortlet(Portlet):
@@ -1001,16 +1145,19 @@ class PagesPortlet(Portlet):
 
         if self.tags:
             objs = tagging.managers.ModelTaggedItemManager().with_all(self.tags, objs)[:self.limit]
+        else:
+            objs = objs[:self.limit]
 
         return render_to_string("lfc/portlets/pages_portlet.html", {
-            "title" : self.title,
-            "objs" : objs,
+            "title": self.title,
+            "objs": objs,
         })
 
     def form(self, **kwargs):
         """Returns the add/edit form of the portlet.
         """
         return PagesPortletForm(instance=self, **kwargs)
+
 
 class PagesPortletForm(forms.ModelForm):
     """Add/edit form of the pages portlet.
@@ -1019,6 +1166,7 @@ class PagesPortletForm(forms.ModelForm):
 
     class Meta:
         model = PagesPortlet
+
 
 class RandomPortlet(Portlet):
     """A portlet to display random objects. The objects can be selected by
@@ -1048,14 +1196,15 @@ class RandomPortlet(Portlet):
         random.shuffle(items)
 
         return render_to_string("lfc/portlets/random_portlet.html", {
-            "title" : self.title,
-            "items" : items[:self.limit],
+            "title": self.title,
+            "items": items[:self.limit],
         })
 
     def form(self, **kwargs):
         """Returns the form of the portlet.
         """
         return RandomPortletForm(instance=self, **kwargs)
+
 
 class RandomPortletForm(forms.ModelForm):
     """Add/Edit form for the random portlet.
@@ -1064,6 +1213,7 @@ class RandomPortletForm(forms.ModelForm):
 
     class Meta:
         model = RandomPortlet
+
 
 class TextPortlet(Portlet):
     """A portlet to display arbitrary HTML text.
@@ -1083,14 +1233,15 @@ class TextPortlet(Portlet):
         """Renders the portlet as HTML.
         """
         return render_to_string("lfc/portlets/text_portlet.html", {
-            "title" : self.title,
-            "text" : self.text
+            "title": self.title,
+            "text": self.text
         })
 
     def form(self, **kwargs):
         """
         """
         return TextPortletForm(instance=self, **kwargs)
+
 
 class TextPortletForm(forms.ModelForm):
     """Add/Edit form for the text portlet.

@@ -10,6 +10,7 @@ from lfc.models import Page
 from lfc.models import Portal
 from lfc.tests.utils import create_request
 
+
 class PortalTestCase(TestCase):
     """Some tests for the Portal class.
     """
@@ -17,7 +18,7 @@ class PortalTestCase(TestCase):
         """
         """
         from lfc.utils.initialize import initialize
-        initialize()
+        initialize(create_resources=False)
 
         self.p = Portal.objects.create()
         self.p.notification_emails = "john@doe.com, jane@doe.com"

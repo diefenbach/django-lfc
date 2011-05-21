@@ -1,206 +1,223 @@
-function CustomFileBrowser(field_name, url, type, win) {
-
-    url = "/manage/filebrowser?obj_id=" + $("#obj-id").attr("data"),
-    url = url + "&type=" + type;
-
-    tinyMCE.activeEditor.windowManager.open({
-        file: url,
-        width: 820,  // Your dimensions may differ - toy around with them!
-        height: 500,
-        resizable: "yes",
-        scrollbars: "yes",
-        inline: "no",
-        close_previous: "no"
-    }, {
-        window: win,
-        input: field_name,
-        editor_id: tinyMCE.selectedInstance.editorId
-    });
-    return false;
+function popup(url, w, h) {
+    w = window.open(url, "Preview", "height=" + h +", width=" + w +", screenX=500, screenY=150, scrollbars=yes, resizable=yes");
+    w.focus();
 }
 
-tinyMCE.init({
-    mode: "none",
-    theme : "advanced",
-    height : "400",
-    tab_focus : ":prev,:next",
-    button_tile_map : true,
-    plugins : "advimage, safari, fullscreen",
-    convert_urls : false,
-    theme_advanced_buttons1 : "bold, italic, underline, |, justifyleft," +
-                              "justifycenter, justifyright, justifyfull, |," +
-                              "bullist,numlist, |, outdent, indent, |, image, |, undo," +
-                              "redo, |, code, link, unlink, styleselect, formatselect, |," +
-                              "removeformat, fullscreen",
-    theme_advanced_buttons2: "",
-    theme_advanced_buttons3: "",
-    theme_advanced_buttons4: "",
-    theme_advanced_toolbar_location : "top",
-    theme_advanced_toolbar_align : "left",
-    content_css : "/media/tiny.css",
-    file_browser_callback: "CustomFileBrowser"
-})
+function set_focus() {
+    $("#core_data input:first").focus();
+    $("#data input:first").focus();
+    $("#seo_data input:first").focus();
+}
 
-$(function() {
-
-    // Message
-    var message = $.cookie("message");
-
-    if (message) {
-        $.jGrowl(message);
-        $.cookie("message", null, { path: '/' });
-    };
-
-    //  Menu
+function create_menu() {
     $('ul.sf-menu').superfish({
         speed: "fast",
         delay: "200"
     });
+};
 
-    // //  Dialog
-    // $("#dialog").dialog({
-    //     autoOpen: false,
-    //     closeOnEscape: true,
-    //     modal: true,
-    //     width: 800,
-    //     height: 600,
-    //     overlay: {
-    //         opacity: 0.7,
-    //         background: "black"
-    //     }
-    // });
+function set_tab() {
+    var cookiestr = $.cookie("tab");
 
-    // Tabs
-    $('#manage-tabs > ul').tabs({ cookie: { expires: 30 } });
+    if (!cookiestr) {
+        cookiestr = "0|0";
+    }
+
+    var array = cookiestr.split("|");
+
+    var portal2object = [0, 2, 3, 4, 5, 8]
+    var object2portal = [0, 0, 1, 2, 3, 4, 0, 0, 5]
+
+    var is_portal = $("#portal").length
+    var index = parseInt(array[1]);
+
+    if (parseInt(array[0]) != is_portal) {
+        if (is_portal) {
+            index = object2portal[index];
+        }
+        else {
+            index = portal2object[index];
+        }
+    }
+
+    $('#manage-tabs').tabs('select', index)
+}
+
+function create_tabs() {
+    $('#manage-tabs').tabs();
+
+    $('#manage-tabs').bind('tabsshow', function(event, ui) {
+        set_focus();
+        var cookiestr = $("#portal").length + "|" + ui.index
+        $.cookie("tab", cookiestr);
+    });
+
+    set_tab();
+}
+
+// Loads passed url per ajax and replaces returned chunks of HTML
+function load_url(url, tabs) {
+    show_ajax_loading();
+    $.get(url, function(data) {
+        data = $.parseJSON(data);
+        for (var html in data["html"])
+            $(data["html"][html][0]).html(data["html"][html][1]);
+
+        create_menu();
+
+        if (tabs) {
+            create_tabs();
+        }
+
+        if (data["message"])
+            show_message(data["message"])
+
+        hide_ajax_loading();
+        set_focus();
+    })
+};
+
+function hide_ajax_loading() {
+    $(".ajax-loading").hide();
+};
+
+function show_ajax_loading() {
+    $(".ajax-loading").show();
+};
+
+function show_message(message) {
+    $.jGrowl(message);
+    $.cookie("message", null, { path: '/' });
+}
+
+$(function() {
+
+    overlay = $("#overlay").overlay({
+        closeOnClick: false,
+        oneInstance: false,
+        api:true,
+        speed:1,
+        expose: {color: '#222', loadSpeed:1 },
+        onClose: function() { set_focus(); },
+    });
+
+    overlay_2 = $("#overlay-2").overlay({
+        closeOnClick: false,
+        oneInstance: false,
+        api:true,
+        speed:1,
+        expose: {color: '#222', loadSpeed:1 }
+    });
+
+    // Message
+    var message = $.cookie("message");
+    if (message)
+        show_message(message);
+
+    create_menu();
+    create_tabs();
+
+    // Class which closes the overlay.
+    $(".overlay-close").live("click", function() {
+        overlay.close()
+        set_focus();
+        return false;
+    });
 
     // Generic ajax save button
-    $(".ajax-save-button").livequery("click", function() {
-        $(".ajax-loading").show()
-        var action = $(this).attr("name")
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_text');
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_short_text');
+    $(".ajax-submit").live("click", function() {
+        var clicked = $(this);
+        if (clicked.hasClass("display-loading"))
+            show_ajax_loading();
+
+        var action = $(this).attr("name");
+        var obj_id = $("#obj-id").attr("data");
+
         $(this).parents("form:first").ajaxSubmit({
-            data : {"action" : action},
+            data : {"action" : action, "obj-id" : obj_id  },
+            dataType: "json",
             success : function(data) {
-                data = JSON.parse(data);
                 for (var html in data["html"])
                     $(data["html"][html][0]).html(data["html"][html][1]);
-                tinyMCE.execCommand('mceAddControl', true, 'id_text');
-                tinyMCE.execCommand('mceAddControl', true, 'id_short_text');
-                $('ul.sf-menu').superfish({
-                    speed: "fast",
-                    delay: "200"
-                });
+
+                create_menu()
+
                 if (data["message"])
-                    $.jGrowl(data["message"]);
-                $(".ajax-loading").hide();
+                    show_message(data["message"]);
+
+                if (data["open_overlay"])
+                    overlay.load()
+
+                if (data["close_overlay"])
+                    overlay.close()
+
+                if (data["url"])
+                    window.location = data["url"];
+
+                if (data["tab"] != undefined)
+                    $('#manage-tabs').tabs('select', parseInt(data["tab"]));
+
+                if (clicked.hasClass("display-loading"))
+                    hide_ajax_loading();
             }
         })
         return false;
     });
 
     // Generic ajax link
-    $(".ajax-link").livequery("click", function() {
+    $(".ajax-link").live("click", function() {
+        show_ajax_loading();
         var url = $(this).attr("href");
 
         $.get(url, function(data) {
-            data = JSON.parse(data);
+            data = $.parseJSON(data);
             for (var html in data["html"])
                 $(data["html"][html][0]).html(data["html"][html][1]);
 
-            if (data["message"]) {
-                $.jGrowl(data["message"]);
+            create_menu()
+
+            if (data["message"])
+                show_message(data["message"]);
+
+            if (data["open_overlay"]) {
+                overlay.load();
+                $("#overlay input:first").focus();
             }
+
+            if (data["close_overlay"]) {
+                overlay.close()
+                set_focus();
+            }
+
+            if (data["tabs"])
+                create_tabs()
+
+            hide_ajax_loading();
         });
 
         return false;
     });
 
-    $(".reset-link").livequery("click", function() {
+    // User filter
+    $(".reset-link").live("click", function() {
         $("input[name=name_filter]").val("");
         $("select[name=active_filter]").val("");
         return false;
     });
 
-    $(".user-name-filter").livequery("keyup", function() {
+    $(".user-name-filter").live("keyup", function() {
         var url = $(this).attr("data");
         var value = $(this).attr("value");
         $.get(url, { "user_name_filter" : value }, function(data) {
-            data = JSON.parse(data);
+            data = $.parseJSON(data);
             for (var html in data["html"])
                 $(data["html"][html][0]).html(data["html"][html][1]);
         });
     });
 
-    // Confirmation link
-    var confirmation;
-    $(".confirmation-link-no").livequery("click", function() {
-        $(this).parent().replaceWith(confirmation);
-        return false;
-    });
-
-    $(".confirmation-link").livequery("click", function() {
-        confirmation = $(this);
-        var url = $(this).attr("href");
-        var data = $(this).attr("data");
-        var cls = $(this).attr("class");
-        $(this).replaceWith("<span><span class='" + cls + "'>" + data + "</span> <a href='" + url + "'>Yes</a> <a class='confirmation-link-no' href=''>No</a></span>");
-        return false;
-    });
-
-    // Page / Images
-    $(".upload-file").livequery("change", function() {
-        var name = $(this).attr("name");
-        var number = parseInt(name.split("_")[1])
-        number += 1;
-        $(this).parent().after("<div><input type='file' class='upload-file' name='file_" + number + "' /></div>");
-    });
-
-    $("#page-images-save-button").livequery("click", function() {
-        $("#page-images-form").ajaxSubmit({
-            target : "#images"
-        });
-        return false;
-    });
-
-    $(".object-images-update-button").livequery("click", function() {
-        var action = $(this).attr("name")
-        $("#object-images-update-form").ajaxSubmit({
-            data : {"action" : action},
-            success : function(data) {
-                var data = JSON.parse(data)
-                $("#images").html(data["images"]);
-                $.jGrowl(data["message"]);
-            }
-        });
-        return false;
-    });
-
-    // Page / Files
-    // Todo: merge this with Pages / Images
-
-    $("#object-files-save-button").livequery("click", function() {
-        $("#object-files-form").ajaxSubmit({
-            target : "#files"
-        });
-        return false;
-    });
-
-    $(".object-files-update-button").livequery("click", function() {
-        var action = $(this).attr("name")
-        $("#object-files-update-form").ajaxSubmit({
-            data : {"action" : action},
-            success : function(data) {
-                var data = JSON.parse(data)
-                $("#files").html(data["files"]);
-                $.jGrowl(data["message"]);
-            }
-        });
-        return false;
-    });
-
-    // Select all
-    $(".select-all").livequery("click", function() {
+    // Generic select all checkboxes class: selects all checkboxes with class
+    // "select-xxx" where xxx is the value of the select-all checkbox.
+    $(".select-all").live("click", function() {
         var checked = this.checked;
         var selector = ".select-" + $(this).attr("value")
         $(selector).each(function() {
@@ -208,92 +225,20 @@ $(function() {
         });
     });
 
-    $(".select-all-1").livequery("click", function() {
-        var checked = this.checked;
-        $(".select-1").each(function() {
-            this.checked = checked;
-        });
-    });
-
-    $(".select-all-2").livequery("click", function() {
-        var checked = this.checked;
-        $(".select-2").each(function() {
-            this.checked = checked;
-        });
-    });
-
-    // Portlets
-    var overlay = $("#overlay").overlay({ closeOnClick: false, api:true, speed:100, expose: {color: '#222', loadSpeed:100 } });
-    $(".portlet-edit-button").livequery("click", function() {
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
-        var url = $(this).attr("href");
-        $.get(url, function(data) {
-            $("#overlay .content").html(data);
-            overlay.load();
-            tinyMCE.execCommand('mceAddControl', true, 'id_portlet-text');
-        });
-        return false;
-    });
-
-    $(".portlet-add-button").livequery("click", function() {
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
-        $(this).parents("form:first").ajaxSubmit({
-            success : function(data) {
-                $("#overlay .content").html(data);
-                overlay.load();
-                tinyMCE.execCommand('mceAddControl', true, 'id_portlet-text');
-        }});
-        return false;
-    });
-
-    $(".ajax-portlet-save-button").livequery("click", function() {
-        tinyMCE.execCommand('mceRemoveControl', false, 'id_portlet-text');
-        $(this).parents("form:first").ajaxSubmit({
-            success : function(data) {
-                data = JSON.parse(data);
-                if (data["success"]) {
-                    overlay.close();
-                    $("#portlets").html(data["html"])
-                }
-                else {
-                    $("#overlay .content").html(data["html"]);
-                }
-                $.jGrowl(data["message"]);
-            }
-        })
-        return false;
-    });
-
-    $(".overlay-link").livequery("click", function() {
-        var url = $(this).attr("href");
-        $.get(url, function(data) {
-            $("#overlay .content").html(data);
-            overlay.load();
-        });
-        return false;
-    });
-
-    $(".overlay-close").livequery("click", function() {
-        overlay.close()
-    });
-
     // Delete dialog
     var delete_dialog = $("#yesno").overlay({ closeOnClick: false, api:true, loadSpeed: 200, top: '25%', expose: {color: '#222', loadSpeed:100 } });
-    $(".delete-link").livequery("click", function() {
+    $(".delete-link").live("click", function() {
         $("#delete-url").html($(this).attr("href"));
         delete_dialog.load();
         return false;
     });
 
-    var buttons = $("#yesno button").click(function(e) {
+    var buttons = $("#yesno button").live("click", function(e) {
         delete_dialog.close();
         var yes = buttons.index(this) === 0;
         var url = $("#delete-url").html();
         if (yes) {
             window.location.href = url;
         }
-
-
     });
-
 });

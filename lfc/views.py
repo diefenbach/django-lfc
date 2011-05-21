@@ -1,4 +1,5 @@
 # python imports
+import logging
 import sys
 import traceback
 
@@ -25,6 +26,7 @@ from lfc.utils import MessageHttpResponseRedirect
 from lfc.models import File
 from lfc.models import BaseContent
 from lfc.models import Portal
+from lfc.settings import LFC_LANGUAGE_IDS
 
 # workflows imports
 from workflows.models import Transition
@@ -33,28 +35,58 @@ from workflows.models import Transition
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
 
-def portal(request, obj, template_name="lfc/portal.html"):
+# Load logger
+logger = logging.getLogger("default")
+
+
+def portal(request, template_name="lfc/portal.html"):
     """Displays the the portal.
     """
     return render_to_response(template_name, RequestContext(request, {
-        "portal" : lfc.utils.get_portal()
+        "portal": lfc.utils.get_portal()
     }))
+
 
 def base_view(request, language=None, slug=None, obj=None):
     """Displays the object for given language and slug.
     """
+    if language:
+        if language not in LFC_LANGUAGE_IDS:
+            raise Http404
+
+        translation.activate(language)
+    else:
+        translation.activate(settings.LANGUAGE_CODE)
+
+    if slug:
+        obj = lfc.utils.traverse_object(request, slug)
+    else:
+        the_portal = lfc.utils.get_portal()
+        if the_portal.standard:
+            obj = lfc.utils.get_content_object(portal=the_portal)
+            if obj.language != language:
+                if obj.is_canonical():
+                    t = obj.get_translation(request, language)
+                    if t:
+                        obj = t
+                else:
+                    canonical = obj.get_canonical(request)
+                    if canonical:
+                        obj = canonical
+        else:
+            obj = the_portal
+
+    request.META["lfc_context"] = obj
+
     language = translation.get_language()
     # If the given language is the default language redirect to the url without
     # the language code http:/domain.de/de/hurz = http:/domain.de/hurz
-
-    # Get the obj (passed my LFC Middleware)
-    obj = request.META.get("lfc_context")
 
     if obj is None:
         raise Http404()
 
     if isinstance(obj, Portal):
-        return portal(request, obj)
+        return portal(request)
 
     if lfc.utils.registration.get_info(obj) is None:
         raise Http404()
@@ -69,82 +101,11 @@ def base_view(request, language=None, slug=None, obj=None):
     if obj.standard and request.user.is_superuser == False:
         url = obj.get_absolute_url()
         return HttpResponseRedirect(url)
-
-    # Template
-    # CACHE 
-    template_cache_key = "%s-template-%s-%s" % \
-                (settings.CACHE_MIDDLEWARE_KEY_PREFIX, obj.content_type, obj.id)
-    obj_template = cache.get(template_cache_key)
-    if obj_template is None:
-        obj_template = obj.get_template()
-        cache.set(template_cache_key, obj_template)
-
-    # Children
-    # CACHE
-    children_cache_key = "%s-children-%s-%s-%s" % \
-                                          (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
-                                           obj.content_type, obj.id,
-                                           request.user.id)
-    sub_objects = cache.get(children_cache_key)
-    if sub_objects is None:
-        # Get sub objects (as LOL if requested)
-        if obj_template.children_columns == 0:
-            sub_objects = obj.get_children(request)
-        else:
-            sub_objects = lfc.utils.getLOL(obj.get_children(request), obj_template.children_columns)
-
-        cache.set(children_cache_key, sub_objects)
-
-    # Images
-    # CACHE
-    images_cache_key = "%s-images-%s-%s" % \
-                                          (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
-                                           obj.content_type, obj.id)
-    cached_images = cache.get(images_cache_key)
-    if cached_images:
-        image     = cached_images["image"]
-        images    = cached_images["images"]
-        subimages = cached_images["subimages"]
-    else:
-        temp_images = list(obj.images.all())
-        if temp_images:
-            if obj_template.images_columns == 0:
-                images = temp_images
-                image = images[0]
-                subimages = temp_images[1:]
-            else:
-                images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
-                subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
-                image = images[0][0]
-        else:
-            image = None
-            images = []
-            subimages = []
-
-        cache.set(images_cache_key, {
-            "image" : image,
-            "images" :  images,
-            "subimages" : subimages
-        })
-
-    # Files
-    files = obj.files.all()
-
-    c = RequestContext(request, {
-        "lfc_context" : obj,
-        "images" : images,
-        "image" : image,
-        "subimages" : subimages,
-        "files" : files,
-        "sub_objects" : sub_objects,
-        "portal" : lfc.utils.get_portal(),
-    })
-
-    # Render twice. This makes tags within text / short_text possible.
-    result = render_to_string(obj_template.path, c)
-    result = template.Template("{% load lfc_tags %} " + result).render(c)
-
+    
+    obj.set_context(request)
+    result = obj.render(request)
     return HttpResponse(result)
+
 
 def file(request, language=None, id=None):
     """Delivers files to the browser.
@@ -155,6 +116,36 @@ def file(request, language=None, id=None):
 
     return response
 
+
+def live_search_results(request, language=None, template_name="lfc/live_search_results.html"):
+    """Displays the live search result for passed language and query.
+    """
+    query = request.GET.get("q")
+
+    if language is None:
+        language = settings.LANGUAGE_CODE
+
+    f = Q(exclude_from_search=False) & \
+        (Q(language=language) | Q(language="0")) & \
+        (Q(searchable_text__icontains=query))
+
+    try:
+        obj = BaseContent.objects.get(slug="search-results")
+    except BaseContent.DoesNotExist:
+        obj = None
+
+    results = lfc.utils.get_content_objects(request, f)
+    quantity = len(results)
+
+    return render_to_response(template_name, RequestContext(request, {
+        "lfc_context": obj,
+        "query": query,
+        "results": results[:20],
+        "quantity": quantity,
+        "see_all": quantity > 20,
+    }))
+
+
 def search_results(request, language=None, template_name="lfc/search_results.html"):
     """Displays the search result for passed language and query.
     """
@@ -164,7 +155,7 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
         language = settings.LANGUAGE_CODE
 
     f = Q(exclude_from_search=False) & \
-        (Q(language = language) | Q(language="0")) & \
+        (Q(language=language) | Q(language="0")) & \
         (Q(searchable_text__icontains=query))
 
     try:
@@ -175,10 +166,11 @@ def search_results(request, language=None, template_name="lfc/search_results.htm
     results = lfc.utils.get_content_objects(request, f)
 
     return render_to_response(template_name, RequestContext(request, {
-        "lfc_context" : obj,
-        "query" : query,
-        "results" : results,
+        "lfc_context": obj,
+        "query": query,
+        "results": results,
     }))
+
 
 def set_language(request, language, id=None):
     """Sets the language to the given language
@@ -203,6 +195,7 @@ def set_language(request, language, id=None):
             url = obj.get_absolute_url()
 
         # Coming from a object with neutral language, we stay on this object
+        # but switch to the request language.
         elif obj.language == "0":
             url = obj.get_absolute_url()
 
@@ -246,6 +239,7 @@ def set_language(request, language, id=None):
 
     return response
 
+
 def do_transition(request, id):
     """Processes passed transition for object with passed id.
     """
@@ -254,6 +248,7 @@ def do_transition(request, id):
 
     obj = BaseContent.objects.get(pk=id)
     return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"State has been changed."))
+
 
 def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):
     """
@@ -270,11 +265,12 @@ def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html
     objs = TaggedItem.objects.get_by_model(queryset, tag_instance)
 
     return render_to_response(template_name, RequestContext(request, {
-        "slug" : slug,
-        "lfc_context" : obj,
-        "objs" : objs,
-        "tag" : tag,
-    }));
+        "slug": slug,
+        "lfc_context": obj,
+        "objs": objs,
+        "tag": tag,
+    }))
+
 
 def fiveohoh(request, template_name="500.html"):
     """Handler for 500 server errors. Mails the error to ADMINS.

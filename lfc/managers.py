@@ -6,6 +6,7 @@ from django.db.models.query import QuerySet
 # permissions imports
 import lfc.utils
 
+
 class BaseContentQuerySet(QuerySet):
     """Custom QuerySet for BaseContent.
     """
@@ -20,6 +21,7 @@ class BaseContentQuerySet(QuerySet):
             result.append(obj.get_content_object())
 
         return result
+
 
 class BaseContentManager(models.Manager):
     """Custom manager for BaseContent.

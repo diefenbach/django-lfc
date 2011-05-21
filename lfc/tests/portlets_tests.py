@@ -18,18 +18,19 @@ from lfc.tests.utils import create_request
 from portlets.models import PortletAssignment
 from portlets.models import Slot
 
+
 class PortletsTestCase(TestCase):
     """
     """
     fixtures = ["superuser.xml"]
-    
+
     def setUp(self):
         """
         """
         # Initialize LFC
         from lfc.management.commands.lfc_init import Command
-        Command().handle()
-        
+        Command().handle(create_resources=False)
+
         self.page = Page.objects.create(title="Page 1", slug="page-1")
         self.request = create_request()
         self.client = Client()
@@ -44,26 +45,26 @@ class PortletsTestCase(TestCase):
         ps = NavigationPortlet.objects.all()
         self.assertEqual(len(ps), 0)
 
-        ctype = ContentType.objects.get_for_model(self.page)        
-        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id" : ctype.id, "object_id" : self.page.id}), {"portlet_type" : "navigationportlet", "portlet-start_level" : 1, "portlet-expand_level" : 1, "slot" : 1, "position" : 1})
+        ctype = ContentType.objects.get_for_model(self.page)
+        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id": ctype.id, "object_id": self.page.id}), {"portlet_type": "navigationportlet", "portlet-start_level": 1, "portlet-expand_level": 1, "slot": 1, "position": 1})
 
         pas = PortletAssignment.objects.all()
         self.assertEqual(len(pas), 1)
 
         ps = NavigationPortlet.objects.all()
         self.assertEqual(len(ps), 1)
-        
-        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : pas[0].id}))
+
+        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id": pas[0].id}))
 
         pas = PortletAssignment.objects.all()
         self.assertEqual(len(pas), 0)
 
         ps = NavigationPortlet.objects.all()
         self.assertEqual(len(ps), 0)
-        
+
         ss = Slot.objects.all()
-        self.assertEqual(len(ss), 2)        
-        
+        self.assertEqual(len(ss), 2)
+
     def test_delete_portlet_2(self):
         """Two portlets of a kind.
         """
@@ -73,19 +74,19 @@ class PortletsTestCase(TestCase):
         ps = NavigationPortlet.objects.all()
         self.assertEqual(len(ps), 0)
 
-        ctype = ContentType.objects.get_for_model(self.page)        
-        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id" : ctype.id, "object_id" : self.page.id}), {"portlet_type" : "navigationportlet", "portlet-start_level" : 1, "portlet-expand_level" : 1, "slot" : 1, "position" : 1})
+        ctype = ContentType.objects.get_for_model(self.page)
+        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id": ctype.id, "object_id": self.page.id}), {"portlet_type": "navigationportlet", "portlet-start_level": 1, "portlet-expand_level": 1, "slot": 1, "position": 1})
 
-        ctype = ContentType.objects.get_for_model(self.page)        
-        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id" : ctype.id, "object_id" : self.page.id}), {"portlet_type" : "navigationportlet", "portlet-start_level" : 1, "portlet-expand_level" : 1, "slot" : 1, "position" : 2})
+        ctype = ContentType.objects.get_for_model(self.page)
+        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id": ctype.id, "object_id": self.page.id}), {"portlet_type": "navigationportlet", "portlet-start_level": 1, "portlet-expand_level": 1, "slot": 1, "position": 2})
 
         pas = PortletAssignment.objects.all()
         self.assertEqual(len(pas), 2)
 
         ps = NavigationPortlet.objects.all()
         self.assertEqual(len(ps), 2)
-        
-        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : pas[0].id}))
+
+        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id": pas[0].id}))
 
         pas = PortletAssignment.objects.all()
         self.assertEqual(len(pas), 1)
@@ -94,8 +95,8 @@ class PortletsTestCase(TestCase):
         self.assertEqual(len(ps), 1)
 
         ss = Slot.objects.all()
-        self.assertEqual(len(ss), 2)        
-        
+        self.assertEqual(len(ss), 2)
+
     def test_delete_portlet_3(self):
         """Two portlets of different kind.
         """
@@ -106,10 +107,10 @@ class PortletsTestCase(TestCase):
         self.assertEqual(len(ps), 0)
 
         ctype = ContentType.objects.get_for_model(self.page)
-        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id" : ctype.id, "object_id" : self.page.id}), {"portlet_type" : "navigationportlet", "portlet-start_level" : 1, "portlet-expand_level" : 1, "slot" : 1, "position" : 1})
+        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id": ctype.id, "object_id": self.page.id}), {"portlet_type": "navigationportlet", "portlet-start_level": 1, "portlet-expand_level": 1, "slot": 1, "position": 1})
 
-        ctype = ContentType.objects.get_for_model(self.page)        
-        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id" : ctype.id, "object_id" : self.page.id}), {"portlet_type" : "textportlet", "slot" : 1, "position" : 2})
+        ctype = ContentType.objects.get_for_model(self.page)
+        self.client.post(reverse("lfc_add_portlet", kwargs={"object_type_id": ctype.id, "object_id": self.page.id}), {"portlet_type": "textportlet", "slot": 1, "position": 2})
 
         pas = PortletAssignment.objects.all()
         self.assertEqual(len(pas), 2)
@@ -119,18 +120,28 @@ class PortletsTestCase(TestCase):
 
         ps = TextPortlet.objects.all()
         self.assertEqual(len(ps), 1)
-        
-        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id" : pas[0].id}))
+
+        # Delete NavigationPortlet
+        np = ContentType.objects.get_for_model(NavigationPortlet)
+        nps = PortletAssignment.objects.filter(portlet_type=np.id)[0]
+        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id": nps.id}))
 
         pas = PortletAssignment.objects.all()
         self.assertEqual(len(pas), 1)
 
         ps = NavigationPortlet.objects.all()
-        self.assertEqual(len(ps), 0)        
+        self.assertEqual(len(ps), 0)
 
         ps = TextPortlet.objects.all()
         self.assertEqual(len(ps), 1)
 
+        # Delete TextPortlet
+        np = ContentType.objects.get_for_model(TextPortlet)
+        nps = PortletAssignment.objects.filter(portlet_type=np.id)[0]
+        self.client.post(reverse("lfc_delete_portlet", kwargs={"portletassignment_id": nps.id}))
+
+        ps = TextPortlet.objects.all()
+        self.assertEqual(len(ps), 0)
+
         ss = Slot.objects.all()
-        self.assertEqual(len(ss), 2)        
-        
+        self.assertEqual(len(ss), 2)

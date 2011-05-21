@@ -13,6 +13,7 @@ from lfc.models import Page
 from lfc.models import Portal
 from lfc.tests.utils import create_request
 
+
 class PageTestCase(TestCase):
     """Tests for Page related stuff.
     """
@@ -20,7 +21,7 @@ class PageTestCase(TestCase):
         """
         """
         from lfc.utils.initialize import initialize
-        initialize()
+        initialize(create_resources=False)
 
         self.p = Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
@@ -87,7 +88,7 @@ class PageTestCase(TestCase):
     def test_get_form(self):
         """
         """
-        form = self.p1.form()
+        form = self.p1.edit_form()
         self.assertEqual(form.__class__, CoreDataForm)
 
     def test_get_ancestors(self):
