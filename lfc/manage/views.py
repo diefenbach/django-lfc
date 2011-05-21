@@ -770,8 +770,6 @@ def add_portal_files(request):
     return HttpResponse("")
 
 
-# TODO: Need permission view_management or similiar
-@login_required
 def load_portal_files(request):
     """Loads the portal files tab after files have been uploaded.
 
@@ -1021,7 +1019,6 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
         "files": object_files(request, obj),
         "comments": comments(request, obj),
         "portlets": portlets_inline(request, obj),
-        "children": object_children(request, obj),
         "content_type_name": get_info(obj).name,
     }))
 
@@ -1182,7 +1179,13 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
             "obj": obj,
         }))
 
-
+def load_object_children(request, child_id):
+    """Loads the object children tab per ajax.
+    """
+    obj = lfc.utils.get_content_object(pk=child_id)
+    obj.check_permission(request.user, "view")
+    return HttpResponse(object_children(request, obj))
+    
 def object_children(request, obj, template_name="lfc/manage/object_children.html"):
     """Displays the children tab of the passed content object.
 
