@@ -3584,31 +3584,20 @@ def save_workflow_state(request, id):
     role_permssion_ids = request.POST.getlist("role_permission_id")
     inherited_ids = request.POST.getlist("inherited_id")
 
-    for role in Role.objects.all():
-        for permission in Permission.objects.all():
+    workflow_permissions = [wpr.permission for wpr in WorkflowPermissionRelation.objects.filter(workflow = state.workflow)]
+    StateInheritanceBlock.objects.filter(state=state).delete()
+    StatePermissionRelation.objects.filter(state=state).delete()
 
+    for role in Role.objects.all():
+        for permission in workflow_permissions:
             # Inheritance
-            if str(permission.id) in inherited_ids:
-                try:
-                    sib = StateInheritanceBlock.objects.get(state=state, permission=permission)
-                except StateInheritanceBlock.DoesNotExist:
-                    pass
-                else:
-                    sib.delete()
-            else:
+            if str(permission.id) not in inherited_ids:
                 StateInheritanceBlock.objects.get_or_create(state=state, permission=permission)
 
             # Roles
             role_permission_id = "%s|%s" % (role.id, permission.id)
             if role_permission_id in role_permssion_ids:
                 StatePermissionRelation.objects.get_or_create(state=state, role=role, permission=permission)
-            else:
-                try:
-                    spr = StatePermissionRelation.objects.get(state=state, role=role, permission=permission)
-                except StatePermissionRelation.DoesNotExist:
-                    pass
-                else:
-                    spr.delete()
 
     content = (
         ("#data", workflow_data(request, state.workflow)),
