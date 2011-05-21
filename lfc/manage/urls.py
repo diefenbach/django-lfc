@@ -86,9 +86,10 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-state/(?P<id>\d+)$', "add_workflow_state", name="lfc_manage_add_workflow_state"),
     url(r'^add-transition/(?P<id>\d+)$', "add_workflow_transition", name="lfc_manage_add_workflow_transition"),
     url(r'^delete-transition/(?P<id>\d+)$', "delete_workflow_transition", name="lfc_manage_delete_workflow_transition"),
-
     url(r'^save-transition/(?P<id>\d+)$', "save_workflow_transition", name="lfc_manage_save_workflow_transition"),
+    url(r'^update-all-permissions$', "update_all_permissions", name="lfc_manage_update_all_permissions"),
 
+    # Portal
     url(r'^save-portal-core$', "portal_core", name="lfc_save_portal_core"),
 
     # portlets
