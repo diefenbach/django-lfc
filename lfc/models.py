@@ -242,10 +242,10 @@ class Portal(models.Model, PermissionBase):
     def content_type(self):
         """To be consistent with BaseContent.
         """
-        return self.get_content_type()
+        return u"portal"
 
     def get_content_type(self):
-        return u"portal"
+        return u"Portal"
 
     def get_absolute_url(self):
         """Returns the absolute url of the portal. It takes the current
@@ -465,7 +465,7 @@ class BaseContent(AbstractBaseContent):
     parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="children")
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
     standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
-    order_by = models.CharField("Order by", max_length=20, default="position", choices=ORDER_BY_CHOICES)
+    order_by = models.CharField(_(u"Order by"), max_length=20, default="position", choices=ORDER_BY_CHOICES)
 
     exclude_from_navigation = models.BooleanField(_(u"Exclude from navigation"), default=False)
     exclude_from_search = models.BooleanField(_(u"Exclude from search results"), default=False)
@@ -604,7 +604,8 @@ class BaseContent(AbstractBaseContent):
     def get_content_type(self):
         """Returns the content type of the object.
         """
-        return self.content_type
+        info = lfc.utils.registration.get_info(self.content_type)
+        return info.name
 
     def get_descendants(self, request=None, result=None):
         """Returns all descendants of the content object. If the request is
