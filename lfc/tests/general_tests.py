@@ -28,8 +28,8 @@ class GeneralTestCase(TestCase):
         """
         """
         self.assertEqual(self.p.content_type, "portal")
-        self.assertEqual(self.p.get_content_type(), "portal")
+        self.assertEqual(self.p.get_content_type(), "Portal")
 
         self.assertEqual(self.p1.content_type, "page")
-        self.assertEqual(self.p1.get_content_type(), "page")
+        self.assertEqual(self.p1.get_content_type(), "Page")
 
