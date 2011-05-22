@@ -640,8 +640,8 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.post(reverse("lfc_update_portal_images"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
-        # result = self.client.get(reverse("lfc_load_portal_images"))
-        # self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        result = self.client.get(reverse("lfc_load_portal_images"))
+        self.failUnless(result.status_code, 200)
 
         # object files
         result = self.client.post(reverse("lfc_add_files", kwargs={"id": self.page.id}))
@@ -661,7 +661,7 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_load_portal_files"))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        self.failUnless(result.status_code, 200)
 
         # comments
         result = self.client.get(reverse("lfc_update_comments", kwargs={"id": self.page.id}))
