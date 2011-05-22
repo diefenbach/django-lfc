@@ -5,10 +5,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        
+
         <script type="text/javascript">
             window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";
-        </script>        
+        </script>
 
         <title>{% block title %}{% endblock %}</title>
         {% css "manage" %}
@@ -99,9 +99,11 @@
                                     </li>
                                 {% endifportalhasperm %}
                             {% endif %}
-                            <li>
-                                <a href="{% url lfc_manage_utils %}">{% trans 'Utils' %}</a>
-                            </li>                            
+                            {% if LFC_MANAGE_UTILS %}
+                                <li>
+                                    <a href="{% url lfc_manage_utils %}">{% trans 'Utils' %}</a>
+                                </li>
+                            {% endif %}
                             {% if LFC_MULTILANGUAGE %}
                                 <li>
                                     <a>{% trans "Languages" %}</a>
