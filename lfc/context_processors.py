@@ -21,13 +21,14 @@ def main(request):
 
     return {
         "PORTAL": lfc.utils.get_portal(),
-        "LFC_MULTILANGUAGE": getattr("settings", "LFC_MULTILANGUAGE", True),
+        "LFC_MULTILANGUAGE": getattr(settings, "LFC_MULTILANGUAGE", True),
         "LFC_MANAGE_WORKFLOWS": getattr(settings, "LFC_MANAGE_WORKFLOWS", True),
         "LFC_MANAGE_APPLICATIONS": getattr(settings, "LFC_MANAGE_APPLICATIONS", True),
         "LFC_MANAGE_COMMENTS": getattr(settings, "LFC_MANAGE_COMMENTS", True),
         "LFC_MANAGE_USERS": getattr(settings, "LFC_MANAGE_USERS", True),
         "LFC_MANAGE_PERMISSIONS": getattr(settings, "LFC_MANAGE_PERMISSIONS", True),
         "LFC_MANAGE_SEO": getattr(settings, "LFC_MANAGE_SEO", True),
+        "LFC_MANAGE_UTILS": getattr(settings, "LFC_MANAGE_UTILS", True),
         "LANGUAGES_DICT": LANGUAGES_DICT,
         "DEFAULT_LANGUAGE": default_language,
         "CURRENT_LANGUAGE": current_language,
