@@ -8,8 +8,8 @@
     {% if obj.files.all %}
         <form id="object-files-update-form"
               action="{% url lfc_update_files obj.id %}"
-              method="post">
-
+              method="POST">
+            {% csrf_token %}
             <table class="lfs-manage-table">
                 <tr>
                     <th class="tiny">
@@ -61,7 +61,7 @@
                             {% else %}
                                 <span class="blank"></span>
                             {% endif %}
-                            <a class="download" 
+                            <a class="download"
                                href="{{ file.get_absolute_url }}"
                                title='{% trans "Download" %}'></a>
                             <a class="edit ajax-link"
@@ -89,7 +89,8 @@
           action="{% url lfc_add_files obj.id %}"
           method="post"
           enctype="multipart/form-data">
-          <input class="button" type="file" name="file" multiple />
+        {% csrf_token %}
+        <input class="button" type="file" name="file" multiple />
     </form>
     <table id="files-table" data="{% url lfc_load_object_files obj.id %}" msg='{% trans "Uploading files:" %}'></table>
     <script>
@@ -119,7 +120,7 @@
                 }
             });
         });
-    </script>    
+    </script>
 {% else %}
     {% if obj.files.all %}
         <table class="lfs-manage-table half">

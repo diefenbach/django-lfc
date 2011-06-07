@@ -2,16 +2,17 @@
 {% if display %}
     <form action="{% url lfc_set_template %}"
           method="post">
+        {% csrf_token %}
         <select name="template_id">
             {% for template in templates %}
                 <option {% ifequal template.id current_template  %}selected="selected"{% endifequal %}value="{{ template.id }}">
                     {% trans template.name %}
                 </option>
-            {% endfor %}    
-        </select>   
-    
+            {% endfor %}
+        </select>
+
         <input type="hidden" name="obj_id" value="{{ obj_id }}" />
-        <input type="submit" value="{% trans 'Go!' %}" /> 
+        <input type="submit" value="{% trans 'Go!' %}" />
     </form>
 {% else %}
     &nbsp;

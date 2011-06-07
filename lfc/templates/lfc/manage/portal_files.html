@@ -9,7 +9,7 @@
         <form id="object-files-update-form"
               action="{% url lfc_update_portal_files %}"
               method="post">
-
+            {% csrf_token %}
             <table class="lfs-manage-table">
                 <tr>
                     <th class="tiny">
@@ -61,7 +61,7 @@
                             {% else %}
                                 <span class="blank"></span>
                             {% endif %}
-                            <a class="download" 
+                            <a class="download"
                                href="{{ file.get_absolute_url }}"
                                title='{% trans "Download" %}'></a>
                             <a class="edit ajax-link"
@@ -89,6 +89,7 @@
           action="{% url lfc_add_portal_files %}"
           method="post"
           enctype="multipart/form-data">
+          {% csrf_token %}
           <input class="button" type="file" name="file" multiple />
     </form>
     <table id="files-table" data="{% url lfc_load_portal_files %}" msg='{% trans "Uploading files:" %}'></table>
@@ -119,7 +120,7 @@
                 }
             });
         });
-    </script>    
+    </script>
 {% else %}
     {% if obj.files.all %}
         <table class="lfs-manage-table half">
@@ -129,7 +130,7 @@
                 </th>
                 <th class="middle right-padding">
                     {% trans 'Creation date' %}
-                </th>                
+                </th>
             </tr>
             {% for file in obj.files.all %}
                 <tr>
@@ -138,7 +139,7 @@
                     </td>
                     <td class="right">
                         {{ file.creation_date|date:"Y-m-d H:i:s" }}
-                    </td>                    
+                    </td>
                 </tr>
             {% endfor %}
         </table>

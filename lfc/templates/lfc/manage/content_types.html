@@ -16,13 +16,11 @@
         <ul>
             <li><a href="#data">{{ ctr.name }}</a></li>
         </ul>
-
         <div id="data">
             <form action="{% url lfc_content_type ctr.id %}"
                   method="POST">
-
+                {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}
-
                 <input type="submit"
                        value="{% trans 'Save content type' %}" />
             </form>

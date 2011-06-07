@@ -9,7 +9,7 @@
         <form id="object-images-update-form"
               action="{% url lfc_update_portal_images %}"
               method="post">
-
+            {% csrf_token %}
             <table class="lfs-manage-table">
                 <tr>
                     <th class="tiny">
@@ -103,6 +103,7 @@
               action="{% url lfc_add_portal_images %}"
               method="post"
               enctype="multipart/form-data">
+              {% csrf_token %}
               <input class="button" type="file" name="file" multiple />
         </form>
     </div>
