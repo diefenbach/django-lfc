@@ -6,7 +6,7 @@
     </h1>
     <form action="{% url lfc_manage_save_workflow_state state.id %}"
           method="POST">
-        {% crsf_token %}
+        {% csrf_token %}
         {% include "lfc/manage/lfc_form.html" %}
         <div class="field">
             <div class="label">

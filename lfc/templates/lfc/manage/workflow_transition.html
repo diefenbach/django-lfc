@@ -6,7 +6,7 @@
     </h1>
     <form action="{% url lfc_manage_save_workflow_transition transition.id %}"
           method="POST">
-        {% crsf_token %}
+        {% csrf_token %}
         {% include "lfc/manage/lfc_form.html" %}
         <div class="manage-form-buttons">
             <input class="ajax-submit"
