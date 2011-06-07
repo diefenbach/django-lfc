@@ -9,7 +9,7 @@
         </a>
         <a class="ajax-link" href="{% url lfc_manage_state state.id %}">
             {% trans state.name %}
-            
+
         </a>
     </h3>
     {% for transition in state.transitions.all %}
@@ -25,6 +25,7 @@
 
 <form action="{% url lfc_manage_add_workflow_state workflow.id %}"
       method="POST">
+    {% crsf_token %}
     <input name="name" type="text" />
     <input class="ajax-submit"
            type="submit" value='{% trans "Add state" %}'/>

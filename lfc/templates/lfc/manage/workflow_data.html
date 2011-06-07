@@ -1,7 +1,7 @@
 {% load i18n %}
 <form action="{% url lfc_manage_save_workflow_data workflow.id %}"
       method="POST">
-
+    {% csrf_token %}
     <h2 class="first-heading">{% trans "Data" %}</h2>
 
     {% include "lfc/manage/lfc_form.html" %}

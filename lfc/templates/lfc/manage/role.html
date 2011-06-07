@@ -37,6 +37,7 @@
         <div id="data">
             <form action="{% url lfc_manage_save_role role.id %}"
                   method="POST">
+                {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}
                 <input type="submit" value='{% trans "Save role" %}' />
             </form>

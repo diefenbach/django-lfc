@@ -90,6 +90,7 @@
 <div id="data" style="margin-top: 10px; margin-left: 30px; ">
     <form action="{% url lfc_manage_change_users %}"e
           method="POST">
+        {% csrf_token %}
         <table class="users lfs-manage-table full">
             <tr class="header">
                 <th class="tiny padr">

@@ -7,7 +7,7 @@
         <a class="delete-link" href="{% url lfc_manage_delete_workflow_transition transition.id %}">
             <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" />
         </a>
-        
+
         <a class="ajax-link" href="{% url lfc_manage_transition transition.id %}">
             {% trans transition.name %}
         </a>
@@ -60,6 +60,7 @@
 
 <form action="{% url lfc_manage_add_workflow_transition workflow.id %}"
       method="POST">
+    {% crsf_token %}
     <input name="name" type="text" />
     <input class="ajax-submit"
            type="submit" value='{% trans "Add transition" %}' />

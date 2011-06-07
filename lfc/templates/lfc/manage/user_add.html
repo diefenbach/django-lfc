@@ -23,7 +23,7 @@
         <ul class="sf-menu">
             <li>
                 <a href="{% url lfc_manage_users %}">{% trans "Overview" %}</a>
-            </li>            
+            </li>
         </ul>
     </div>
 
@@ -35,8 +35,8 @@
         <div id="data">
             <form action="{% url lfc_add_user %}"
                   method="POST">
+                {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}
-
                 <input type="submit"
                        value="{% trans 'Save user' %}" />
 
