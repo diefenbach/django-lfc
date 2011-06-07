@@ -2,6 +2,7 @@
 <form class="portlet-form"
       action="{% url lfc_add_portlet object_type_id object_id %}"
       method="post">
+    {% csrf_token %}
     <h1 class="first-heading">
         {% trans 'Add new portlet' %}
     </h1>
