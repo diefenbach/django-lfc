@@ -702,7 +702,7 @@ class BaseContent(AbstractBaseContent):
             if self.canonical:
                 obj = BaseContent.objects.get(pk=self.canonical.id)
                 if self.has_permission(request.user, "view"):
-                    return obj
+                    return obj.get_content_object()
                 else:
                     return None
 
