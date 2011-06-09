@@ -29,6 +29,14 @@ class PageTestCase(TestCase):
         self.p111 = Page.objects.create(title="Page 1-1-1", slug="page-1-1-1", parent=self.p11)
         self.p12 = Page.objects.create(title="Page 1-2", slug="page-1-2", parent=self.p1)
 
+        # for i18n tests
+        self.p2en = Page.objects.create(title="Page 2 (en)", slug="page-2",
+                                        language='en')
+        self.p2de = Page.objects.create(title="Page 2 (de)", slug="page-2",
+                                      language='de', canonical=self.p2en)
+        self.p2fr = Page.objects.create(title="Page 2 (fr)", slug="page-2",
+                                        language='fr', canonical=self.p2en)
+
         self.anonymous = permissions.utils.register_role("Anonymous")
         self.permission = permissions.utils.register_permission("View", "view")
 
@@ -245,3 +253,66 @@ class PageTestCase(TestCase):
 
         children = self.p1.get_children(request, slug="page-1-2")
         self.assertEqual(len(children), 0)
+
+    # i18n tests
+    def test_i18n_has_language(self):
+        request = create_request()
+
+        self.assertEqual(self.p2de.has_language(request, "de"), True)
+        self.assertEqual(self.p2fr.has_language(request, "fr"), True)
+
+        self.assertEqual(self.p2en.has_language(request, "en"), True)
+        self.assertEqual(self.p2en.has_language(request, "de"), True)
+        self.assertEqual(self.p2en.has_language(request, "fr"), True)
+        self.assertEqual(self.p2en.has_language(request, "es"), False)
+        
+    def test_i18n_get_canonical(self):
+        request = create_request()
+        self.assertEqual(self.p2de.get_canonical(request), self.p2en)
+        self.assertEqual(self.p2en.get_canonical(request), self.p2en)
+        self.assertEqual(self.p2fr.get_canonical(request), self.p2en)
+
+    def test_i18n_get_translation(self):
+        request = create_request()
+        self.assertEqual(self.p2en.is_translation(), False)
+        self.assertEqual(self.p2de.is_translation(), True)
+        self.assertEqual(self.p2fr.is_translation(), True)
+        
+    def test_i18n_get_translation2(self):
+        request = create_request()
+        translation = self.p2en.get_translation(request, 'en')
+        if translation:
+            self.assertEqual(translation, self.p2en)
+        translation = self.p2en.get_translation(request, 'fr')
+        if translation:
+            self.assertEqual(translation, self.p2fr)
+        translation = self.p2en.get_translation(request, 'de')
+        if translation:
+            self.assertEqual(translation, self.p2de)
+
+    def test_i18n_get_translation3(self):
+        request = create_request()
+        translation = self.p2de.canonical.get_translation(request, 'en')
+        if translation:
+            self.assertEqual(translation, self.p2en)
+        translation = self.p2fr.canonical.get_translation(request, 'en')
+        if translation:
+            self.assertEqual(translation, self.p2en)
+        translation = self.p2fr.canonical.get_translation(request, 'de')
+        if translation:
+            self.assertEqual(translation, self.p2de)
+
+
+    def test_i18n_view_set_language(self):
+        request = create_request()
+        from lfc.views import set_language
+
+        self.assertEqual(set_language(request, 'en', self.p2en.id)['Location'],
+                         '/page-2')
+        self.assertEqual(set_language(request, 'de', self.p2en.id)['Location'],
+                         '/de/page-2')
+        self.assertEqual(set_language(request, 'fr', self.p2en.id)['Location'],
+                         '/fr/page-2')
+
+        self.assertEqual(set_language(request, 'fr', self.p2de.id)['Location'],
+                         '/fr/page-2')
