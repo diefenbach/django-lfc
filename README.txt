@@ -21,6 +21,19 @@ Code
 Changes
 =======
 
+1.0.5 (2011-06-25)
+------------------
+
+Bugfix release
+
+* Added utils menu entry.
+* Added update all permissions utility.
+* Added reindex method.
+* Bugfix save_workflow_state: only take care of the workflow's objects
+* Bugfix GroupForm: Take only global roles into account.
+* Fixed syntax error in forms.py
+* Bugfix: pinned version of djangorecipe to 0.23.1
+
 1.0.4 (2011-04-30)
 ------------------
 
