@@ -38,6 +38,7 @@ function addEditor(selector, hide_save) {
         save_onsavecallback : "save",
         relative_urls : false,
         height : "480",
+        content_css : "/media/tiny.css",
         // theme_advanced_statusbar_location : "bottom",
         // theme_advanced_resizing : true,
 
