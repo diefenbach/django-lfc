@@ -211,7 +211,8 @@ def navigation(context, start_level=1, expand_level=0):
 
     return {
         "objs": objs,
-        "show_level": start_level == 1
+        "level": 1,
+        "show_level": start_level == 1,
     }
 
 
@@ -248,6 +249,7 @@ def _navigation_children(request, current_objs, obj, start_level, expand_level, 
     result = render_to_string("lfc/tags/navigation_children.html", {
         "objs": objs,
         "show_level": level >= start_level,
+        "level": level,
     })
 
     return result
