@@ -8,9 +8,6 @@ from django.contrib.comments.models import Comment
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
-# tagging imports
-from tagging.forms import TagField
-
 # permissions imports
 from permissions.models import Role
 from permissions.models import PrincipalRoleRelation
@@ -21,15 +18,16 @@ from workflows.models import State
 from workflows.models import Transition
 
 # lfc imports
-from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.fields.readonly import ReadOnlyInput
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import File
 from lfc.models import Image
-from lfc.models import Page
 from lfc.models import Portal
 from lfc.utils.registration import get_info
+
+# lfc_page imports
+from lfc_page.models import Page
 
 
 class AddForm(forms.Form):
@@ -256,16 +254,6 @@ class CommentsForm(forms.ModelForm):
     class Meta:
         model = Page
         fields = ("allow_comments", )
-
-
-class CoreDataForm(forms.ModelForm):
-    """Core data form for pages.
-    """
-    tags = TagField(widget=AutoCompleteTagInput(), required=False)
-
-    class Meta:
-        model = Page
-        fields = ("title", "display_title", "slug", "description", "text", "tags")
 
 
 class SEOForm(forms.ModelForm):

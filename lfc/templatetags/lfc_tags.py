@@ -152,7 +152,7 @@ def tabs(context):
     return {
         "language": language,
         "tabs": tabs,
-        "portal": lfc.utils.get_portal(),
+        "portal": lfc.utils.get_portal(request),
     }
 
 

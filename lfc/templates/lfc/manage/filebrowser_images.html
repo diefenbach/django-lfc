@@ -134,6 +134,7 @@
         <form action="{% url lfc_fb_upload_image %}"
               method="post"
               enctype="multipart/form-data">
+            {% csrf_token %}  
             <input type="hidden" name="obj_id" value="{{ obj_id }}">
             <input type="file" name="image" />
             <input class="ajax-submit"

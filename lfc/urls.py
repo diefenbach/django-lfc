@@ -1,14 +1,9 @@
 # django imports
-from django.conf import settings
 from django.conf.urls.defaults import *
-from django.views.generic.simple import direct_to_template
 
-# tagging imports
-from tagging.views import tagged_object_list
 
 # lfc imports
 from lfc.feeds import PageTagFeed
-from lfc.models import Page
 from lfc.sitemap import PageSitemap
 
 # Tags
@@ -35,6 +30,10 @@ feeds = {
 urlpatterns += patterns('',
     url(r'(?P<url>rss.*)$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name="feed"),
 )
+
+# urlpatterns += patterns('',
+#     url(r'(?P<url>rss2.*)$', PageTagFeed(slug="/")),
+# )
 
 # Sitemaps
 urlpatterns += patterns("django.contrib.sitemaps.views",

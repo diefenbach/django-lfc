@@ -4,9 +4,7 @@ import sys
 import traceback
 
 # django imports
-from django import template
 from django.conf import settings
-from django.core.cache import cache
 from django.core.mail import EmailMessage
 from django.core.urlresolvers import reverse
 from django.db.models import Q
@@ -16,7 +14,6 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -28,9 +25,6 @@ from lfc.models import BaseContent
 from lfc.models import Portal
 from lfc.settings import LFC_LANGUAGE_IDS
 
-# workflows imports
-from workflows.models import Transition
-
 # tagging imports
 from tagging.models import TaggedItem
 from tagging.utils import get_tag
@@ -40,7 +34,8 @@ logger = logging.getLogger("default")
 
 
 def portal(request, template_name="lfc/portal.html"):
-    """Displays the the portal.
+    """
+    Displays the portal.
     """
     return render_to_response(template_name, RequestContext(request, {
         "portal": lfc.utils.get_portal()
@@ -101,7 +96,7 @@ def base_view(request, language=None, slug=None, obj=None):
     if obj.standard and request.user.is_superuser == False:
         url = obj.get_absolute_url()
         return HttpResponseRedirect(url)
-    
+
     obj.set_context(request)
     result = obj.render(request)
     return HttpResponse(result)

@@ -13,11 +13,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db import models
-from django.db.models.signals import post_syncdb
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
+
 
 # tagging imports
 import tagging.utils
@@ -26,7 +26,6 @@ from tagging.forms import TagField
 
 # portlets imports
 from portlets.models import Portlet
-from portlets.utils import register_portlet
 
 # workflows imports
 import workflows.utils
@@ -43,6 +42,7 @@ from permissions.models import Role
 import lfc.utils
 from lfc.fields.thumbs import ImageWithThumbsField
 from lfc.fields.autocomplete import AutoCompleteTagInput
+from lfc.fields.rich_text import RichTextField
 from lfc.managers import BaseContentManager
 from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
@@ -222,6 +222,7 @@ class Portal(models.Model, PermissionBase):
         considered global and can be used within any text editor field.
 
     """
+    site = models.ForeignKey(Site, verbose_name=_(u"Site"))
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
     standard = models.ForeignKey("BaseContent", verbose_name=_(u"Page"), blank=True, null=True)
 
@@ -240,16 +241,15 @@ class Portal(models.Model, PermissionBase):
 
     @property
     def content_type(self):
-        """To be consistent with BaseContent.
+        """
+        Returns the content type of th eTo be consistent with BaseContent.
         """
         return u"portal"
 
-    def get_content_type(self):
-        return u"Portal"
-
     def get_absolute_url(self):
-        """Returns the absolute url of the portal. It takes the current
-        language into account.
+        """
+        Returns the absolute url of the portal. It takes the current language
+        into account.
         """
         language = translation.get_language()
         if language == settings.LANGUAGE_CODE:
@@ -258,43 +258,50 @@ class Portal(models.Model, PermissionBase):
             return reverse("lfc_base_view", kwargs={"language": language})
 
     def get_notification_emails(self):
-        """Returns the notification e-mail addresses as list.
+        """
+        Returns the notification e-mail addresses as list.
         """
         adresses = re.split("[\s,]+", self.notification_emails)
         return adresses
 
     def are_comments_allowed(self):
-        """Returns whether comments are allowed globally or not.
+        """
+        Returns whether comments are allowed globally or not.
         """
         return self.allow_comments
 
     def get_parent_for_permissions(self):
-        """Fullfills the contract of django-permissions. Returns just None as
-        there is no parent for portlets.
+        """
+        Fullfills the contract of django-permissions. Returns just None as there
+        is no parent for portlets.
         """
         return None
 
     def get_parent_for_portlets(self):
-        """Fullfills the contract of django-portlets. Returns just None as
-        there is no parent for portlets.
+        """
+        Fullfills the contract of django-portlets. Returns just None as there
+        is no parent for portlets.
         """
         return None
 
     def get_template(self):
-        """Returns the current template of the portal.
+        """
+        Returns the current template of the portal.
         """
         # TODO: Define default template in portal
         return Template.objects.get(name="Article")
 
     def get_children(self, request=None, *args, **kwargs):
-        """Returns the children of the portal. If the request is passed the
+        """
+        Returns the children of the portal. If the request is passed the
         permissions of the current user is taken into account. Additionally
         other valid filters can be passed, e.g. slug = "page-1".
         """
         return lfc.utils.get_content_objects(request, parent=None, **kwargs)
 
     def has_permission(self, user, codename):
-        """Overwrites django-permissions' has_permission in order to add LFC
+        """
+        Overwrites django-permissions' has_permission in order to add LFC
         specific groups.
         """
         # Every user is also anonymous user
@@ -313,7 +320,8 @@ class Portal(models.Model, PermissionBase):
         return super(Portal, self).has_permission(user, codename, roles)
 
     def check_permission(self, user, codename):
-        """Overwrites django-permissions' check_permission in order to add LFC
+        """
+        Overwrites django-permissions' check_permission in order to add LFC
         specific groups.
         """
         if not self.has_permission(user, codename):
@@ -498,6 +506,33 @@ class BaseContent(AbstractBaseContent):
 
     def __unicode__(self):
         return unicode(self.title)
+
+    def has_metadata_tab(self):
+        return True
+
+    def has_children_tab(self):
+        return True
+
+    def has_images_tab(self):
+        return True
+
+    def has_files_tab(self):
+        return True
+
+    def has_portlets_tab(self):
+        return True
+
+    def has_comments_tab(self):
+        return True
+
+    def has_seo_tab(self):
+        return True
+
+    def has_permissions_tab(self):
+        return True
+
+    def get_tabs(self, request):
+        return []
 
     def save(self, *args, **kwargs):
         """Djangos default save method. This is overwritten to do some LFC
@@ -953,31 +988,6 @@ class BaseContent(AbstractBaseContent):
                 transitions.append(transition)
 
         return transitions
-
-
-class Page(BaseContent):
-    """A page is the foremost object within lfc which shows information to the
-    user.
-
-    **Attributes**:
-
-    text:
-        The main text of the page.
-    """
-    text = models.TextField(_(u"Text"), blank=True)
-
-    def get_searchable_text(self):
-        """Returns the searchable text of the page. This adds the text to the 
-        default searchable text.
-        """
-        searchable_text = self.title + " " + self.description + " " + self.text
-        return lfc.utils.html2text(searchable_text)
-
-    def edit_form(self, **kwargs):
-        """Returns the edit form of the page.
-        """
-        from lfc.manage.forms import CoreDataForm
-        return CoreDataForm(**kwargs)
 
 
 class Image(models.Model):

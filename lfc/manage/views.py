@@ -1020,6 +1020,7 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
         "comments": comments(request, obj),
         "portlets": portlets_inline(request, obj),
         "content_type_name": get_info(obj).name,
+        "tabs" : obj.get_tabs(request),
     }))
 
 
@@ -1056,7 +1057,10 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
                 message = _(u"Data has been saved.")
             else:
                 form.errors["slug"] = _("An object with this slug already exists.")
-
+        
+        # We take the form from the db again in order to render the RichText
+        # fielt correctly.
+        form = Form(instance=obj)
         data = render_to_string(template_name, RequestContext(request, {
             "form": form,
             "obj": obj,
@@ -1185,7 +1189,7 @@ def load_object_children(request, child_id):
     obj = lfc.utils.get_content_object(pk=child_id)
     obj.check_permission(request.user, "view")
     return HttpResponse(object_children(request, obj))
-    
+
 def object_children(request, obj, template_name="lfc/manage/object_children.html"):
     """Displays the children tab of the passed content object.
 
@@ -2745,6 +2749,9 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
         "classes": classes,
         "selected_image": selected_image,
     }))
+
+    if as_string:
+        return html
 
     return HttpJsonResponse(
         content=html,

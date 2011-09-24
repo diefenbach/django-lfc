@@ -4,6 +4,13 @@
 <div id="manage-tabs">
     <ul>
         <li><a id="core_name" href="#core_data">{% trans content_type_name %}</a></li>
+        
+        {% for tab in tabs %}
+            <li>
+                <a href="#{{ tab.id }}">{{ tab.name }}</a>
+            </li>
+        {% endfor %}
+        
         <li><a href="#meta_data">{% trans 'Metadata' %}</a></li>
         <li><a href="{% url lfc_load_object_children obj.id %}">{% trans 'Children' %}</a></li>
         <li><a href="#images">{% trans 'Images' %}</a></li>
@@ -42,4 +49,9 @@
             {{ comments }}
         </div>
     {% endif %}
+    
+    {% for tab in tabs %}
+        <div id="{{ tab.id }}">{{ tab.content }}</div>
+    {% endfor %}
+    
 </div>

@@ -1,10 +1,6 @@
 # django imports
 from django.db import models
-from django.db import models
 from django.db.models.query import QuerySet
-
-# permissions imports
-import lfc.utils
 
 
 class BaseContentQuerySet(QuerySet):

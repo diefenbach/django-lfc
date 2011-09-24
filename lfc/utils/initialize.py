@@ -3,9 +3,7 @@ from portlets.utils import register_portlet
 
 # lfc imports
 from lfc.utils.registration import register_template
-from lfc.utils.registration import register_content_type
 from lfc.models import NavigationPortlet
-from lfc.models import Page
 from lfc.models import PagesPortlet
 from lfc.models import RandomPortlet
 from lfc.models import TextPortlet
@@ -73,11 +71,3 @@ def initialize(create_resources=False):
 
     if create_resources:
         resources.utils.create_resources()
-
-    # Content Types
-    register_content_type(
-        Page,
-        name="Page",
-        sub_types=["Page"],
-        templates=["Article", "Plain", "Gallery", "Overview"],
-        default_template="Article")
