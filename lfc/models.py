@@ -222,7 +222,6 @@ class Portal(models.Model, PermissionBase):
         considered global and can be used within any text editor field.
 
     """
-    site = models.ForeignKey(Site, verbose_name=_(u"Site"))
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
     standard = models.ForeignKey("BaseContent", verbose_name=_(u"Page"), blank=True, null=True)
 
