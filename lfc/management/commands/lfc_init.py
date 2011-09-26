@@ -5,9 +5,12 @@ from django.contrib.sites.models import Site
 from django.contrib.contenttypes.models import ContentType
 
 # lfc imports
+from lfc.models import Application
 from lfc.models import Portal
-from lfc.models import Page
 from lfc.models import WorkflowStatesInformation
+
+# lfc_page imports
+from lfc_page.models import Page
 
 # portlets import
 from portlets.models import Slot
@@ -25,6 +28,7 @@ from workflows.models import WorkflowPermissionRelation
 import permissions.utils
 
 # scripts imports
+from lfc.utils import import_module
 from lfc.utils.initialize import initialize
 from utils import WELCOME_DESCRIPTION
 
@@ -299,3 +303,9 @@ class Command(BaseCommand):
 
         portal.standard = page
         portal.save()
+
+        import_module("lfc_page").install()
+        try:
+            Application.objects.create(name="lfc_page")
+        except Application.DoesNotExist:
+            pass

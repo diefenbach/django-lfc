@@ -26,8 +26,8 @@ from workflows.models import WorkflowPermissionRelation
 import permissions.utils
 
 # utils imports
-from lfc.utils.initialize import initialize
 from lfc.utils import import_module
+from lfc.utils.initialize import initialize
 from utils import WELCOME_DESCRIPTION
 
 
