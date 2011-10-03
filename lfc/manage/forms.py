@@ -177,12 +177,12 @@ class UserForm(forms.ModelForm):
 
             if str(role.id) in role_ids:
                 try:
-                    prr = PrincipalRoleRelation.objects.get(user=self.instance, role=role)
+                    prr = PrincipalRoleRelation.objects.get(user=self.instance, role=role, content_id=None)
                 except PrincipalRoleRelation.DoesNotExist:
-                    PrincipalRoleRelation.objects.create(user=self.instance, role=role)
+                    PrincipalRoleRelation.objects.create(user=self.instance, role=role, content_id=None)
             else:
                 try:
-                    prr = PrincipalRoleRelation.objects.get(user=self.instance, role=role)
+                    prr = PrincipalRoleRelation.objects.get(user=self.instance, role=role, content_id=None)
                 except PrincipalRoleRelation.DoesNotExist:
                     pass
                 else:

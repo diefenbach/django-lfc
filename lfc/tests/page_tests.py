@@ -7,12 +7,13 @@ import permissions.utils
 
 # lfc imports
 import lfc.utils
-from lfc.manage.forms import CoreDataForm
 from lfc.models import BaseContent
-from lfc.models import Page
 from lfc.models import Portal
 from lfc.tests.utils import create_request
 
+# lfc_page imports
+from lfc_page.forms import PageDataForm
+from lfc_page.models import Page
 
 class PageTestCase(TestCase):
     """Tests for Page related stuff.
@@ -265,7 +266,7 @@ class PageTestCase(TestCase):
         self.assertEqual(self.p2en.has_language(request, "de"), True)
         self.assertEqual(self.p2en.has_language(request, "fr"), True)
         self.assertEqual(self.p2en.has_language(request, "es"), False)
-        
+
     def test_i18n_get_canonical(self):
         request = create_request()
         self.assertEqual(self.p2de.get_canonical(request), self.p2en)
@@ -277,7 +278,7 @@ class PageTestCase(TestCase):
         self.assertEqual(self.p2en.is_translation(), False)
         self.assertEqual(self.p2de.is_translation(), True)
         self.assertEqual(self.p2fr.is_translation(), True)
-        
+
     def test_i18n_get_translation2(self):
         request = create_request()
         translation = self.p2en.get_translation(request, 'en')

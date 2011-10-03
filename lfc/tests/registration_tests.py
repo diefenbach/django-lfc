@@ -7,10 +7,11 @@ from portlets.models import PortletRegistration
 # lfc imports
 import lfc.utils.registration
 from lfc.models import BaseContent
-from lfc.models import Page
 from lfc.models import Template
 from lfc.models import ContentTypeRegistration
 
+# lfc_page imports
+from lfc_page.models import Page
 
 class RegistrationTestCase(TestCase):
     """Tests for registration related stuff.

@@ -226,12 +226,12 @@ def traverse_object(request, path):
     language = translation.get_language()
 
     # CACHE
-    cache_key = "%s-traverse-obj-%s-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
-                                              path, request.user.id, language)
-    obj = cache.get(cache_key)
+    cache_key_1 = "%s-obj-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, path)
+    cache_key_2 = "%s-%s" % (request.user.id, language)
+
+    obj = get_cache([cache_key_1, cache_key_2])
     if obj:
         return obj
-
     paths = path.split("/")
     language = translation.get_language()
 
@@ -247,9 +247,61 @@ def traverse_object(request, path):
         except lfc.models.BaseContent.DoesNotExist:
             raise Http404
 
-    cache.set(cache_key, obj)
+    set_cache([cache_key_1, cache_key_2], obj)
     return obj
 
+
+def delete_cache(keys):
+    """Deletes cache based on keys
+    """
+    if len(keys) == 1:
+        cache.delete(keys[0])
+    else:
+        start = cache.get(keys[0])
+        d = start
+        for key in keys[1:-1]:
+            d = d[key]
+
+        del d[keys[-1]]
+        cache.set(keys[0], start)
+
+
+def set_cache(keys, value):
+    """Caches value in a dict which is based on keys.
+    """
+    assert(isinstance(keys, (tuple, list)))
+    assert(len(keys) > 1)
+
+    start = cache.get(keys[0])
+    if start is None:
+        start = {}
+    d = start
+    for key in keys[1:-1]:
+        if not d.has_key(key):
+            d[key] = {}
+        d = d[key]
+
+    d[keys[-1]] = value
+
+    cache.set(keys[0], start)
+
+
+def get_cache(keys):
+    """Returns cached value based on keys.
+    """
+    assert(isinstance(keys, (tuple, list)))
+    assert(len(keys) > 1)
+
+    d = cache.get(keys[0])
+    if d is None:
+        return None
+    else:
+        for key in keys[1:]:
+            try:
+                d = d[key]
+            except KeyError:
+                return None
+        return d
 
 def clear_cache():
     """Clears the complete cache.

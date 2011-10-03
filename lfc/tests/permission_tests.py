@@ -24,9 +24,11 @@ from portlets.models import Slot
 
 # lfc imports
 import lfc.utils.registration
-from lfc.models import Page
 from lfc.models import Portal
 from lfc.tests.utils import create_request
+
+# lfc_page imports
+from lfc_page.models import Page
 
 
 class InheritancePermissionTestCase(TestCase):

@@ -262,6 +262,8 @@ def delete_object(request, id):
             pa.delete()
         PortletBlocking.objects.filter(content_id=obj.id, content_type=ctype).delete()
 
+        logger.info("Deleted Object: User: %s, ID: %s, Type: %s" % (request.user.username, obj.id, obj.get_content_type()))
+
         obj.delete()
         message = _(u"The object has been deleted.")
 
@@ -300,24 +302,41 @@ def portal_permissions(request, portal, template_name="lfc/manage/portal_permiss
 
         None (as this is not called from outside)
     """
+    permissions_dict = {}
+    ct = ContentType.objects.get_for_model(portal)
+    for op in ObjectPermission.objects.filter(content_type=ct, content_id=portal.id).values("role_id", "permission_id"):
+        role_id = op["role_id"]
+        permission_id = op["permission_id"]
+        if not permissions_dict.has_key(role_id):
+            permissions_dict[role_id] = {}
+        permissions_dict[role_id][permission_id] = 1
+    all_roles = Role.objects.all().values("id", "name")
+
     my_permissions = []
-    for permission in Permission.objects.order_by("name"):
+    for permission in Permission.objects.order_by("name").values("id", "name", "codename"):
         roles = []
-        for role in Role.objects.all():
+        for role in all_roles:
+            try:
+                permissions_dict[role["id"]][permission["id"]]
+            except KeyError:
+                has_permission = False
+            else:
+                has_permission = True
+
             roles.append({
-                "id": role.id,
-                "name": role.name,
-                "has_permission": _has_permission(portal, role, permission.codename),
+                "id": role["id"],
+                "name": role["name"],
+                "has_permission": has_permission,
             })
 
         my_permissions.append({
-            "name": permission.name,
-            "codename": permission.codename,
+            "name": permission["name"],
+            "codename": permission["codename"],
             "roles": roles,
         })
 
     return render_to_string(template_name, RequestContext(request, {
-        "roles": Role.objects.all(),
+        "roles": all_roles,
         "permissions": my_permissions,
     }))
 
@@ -913,7 +932,6 @@ def edit_file(request, id):
 # Objects ####################################################################
 ##############################################################################
 # TODO: Need permission view_management or similiar
-@login_required
 def manage_object(request, id, template_name="lfc/manage/object.html"):
     """Displays the main management screen with all tabs of the content object
     with passed id.
@@ -932,8 +950,8 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
     except BaseContent.DoesNotExist:
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
-    else:
-        obj.check_permission(request.user, "view")
+
+    obj.check_permission(request.user, "view")
 
     if not lfc.utils.registration.get_info(obj):
         raise Http404()
@@ -1010,15 +1028,39 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
 
         None (as this is not called from outside)
     """
+    if obj.has_meta_data_tab():
+        meta_data = object_meta_data(request, obj)
+    else:
+        meta_data = None
+
+    if obj.has_seo_tab():
+        seo_data = object_seo_data(request, obj)
+    else:
+        seo_data = None
+
+    if obj.has_images_tab():
+        images = object_images(request, obj)
+    else:
+        images = None
+
+    if obj.has_files_tab():
+        files = object_files(request, obj)
+    else:
+        files = None
+
+    if obj.has_comments_tab():
+        object_comments = comments(request, obj)
+    else:
+        object_comments = None
+
     return render_to_string(template_name, RequestContext(request, {
         "obj": obj,
         "core_data": object_core_data(request, obj),
-        "meta_data": object_meta_data(request, obj),
-        "seo_data": object_seo_data(request, obj),
-        "images": object_images(request, obj),
-        "files": object_files(request, obj),
-        "comments": comments(request, obj),
-        "portlets": portlets_inline(request, obj),
+        "meta_data": meta_data,
+        "seo_data": seo_data,
+        "images": images,
+        "files": files,
+        "comments": object_comments,
         "content_type_name": get_info(obj).name,
         "tabs" : obj.get_tabs(request),
     }))
@@ -1057,7 +1099,7 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
                 message = _(u"Data has been saved.")
             else:
                 form.errors["slug"] = _("An object with this slug already exists.")
-        
+
         # We take the form from the db again in order to render the RichText
         # fielt correctly.
         form = Form(instance=obj)
@@ -1309,34 +1351,60 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
     base_ctype = ContentType.objects.get_for_model(BaseContent)
     ctype = ContentType.objects.get_for_model(obj)
 
+    permissions_dict = {}
+    for op in ObjectPermission.objects.filter(content_type=ctype, content_id=obj.id).values("role_id", "permission_id"):
+        role_id = op["role_id"]
+        permission_id = op["permission_id"]
+        if not permissions_dict.has_key(role_id):
+            permissions_dict[role_id] = {}
+        permissions_dict[role_id][permission_id] = 1
+    all_roles = Role.objects.all().values("id", "name")
+
+    # Get permissions which are managed by current workflow
     workflow = obj.get_workflow()
     if workflow:
-        wf_permissions = workflow.permissions.all()
+        wf_permissions = [p["id"] for p in workflow.permissions.values("id")]
     else:
         wf_permissions = []
 
     q = Q(content_types__in=(ctype, base_ctype)) | Q(content_types=None)
     my_permissions = []
-    for permission in Permission.objects.filter(q).order_by("name"):
+    for permission in Permission.objects.filter(q).order_by("name").values("id", "name", "codename"):
         roles = []
-        for role in Role.objects.all():
+        for role in all_roles:
+            try:
+                permissions_dict[role["id"]][permission["id"]]
+            except KeyError:
+                has_permission = False
+            else:
+                has_permission = True
+
             roles.append({
-                "id": role.id,
-                "name": role.name,
-                "has_permission": _has_permission(obj, role, permission.codename),
+                "id": role["id"],
+                "name": role["name"],
+                "has_permission": has_permission,
             })
 
+        # Find out whether the permission is inherited or not
+        try:
+            ObjectPermissionInheritanceBlock.objects.get(
+                content_type=ctype, content_id=obj.id, permission__codename = permission["codename"])
+        except ObjectDoesNotExist:
+            is_inherited = True
+        else:
+            is_inherited = False
+
         my_permissions.append({
-            "name": permission.name,
-            "codename": permission.codename,
+            "name": permission["name"],
+            "codename": permission["codename"],
             "roles": roles,
-            "is_inherited": obj.is_inherited(permission.codename),
-            "is_wf_permission": permission in wf_permissions,
+            "is_inherited": is_inherited,
+            "is_wf_permission": permission["id"] in wf_permissions,
         })
 
     return render_to_string(template_name, RequestContext(request, {
         "obj": obj,
-        "roles": Role.objects.all(),
+        "roles": all_roles,
         "permissions": my_permissions,
         "workflow": workflow,
         "local_roles": local_roles(request, obj),
@@ -1355,6 +1423,7 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
 
         None (as this is not called from outside)
     """
+    all_roles = Role.objects.all()
     ctype = ContentType.objects.get_for_model(obj)
 
     temp = []
@@ -1367,10 +1436,8 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
         temp.append(user.id)
 
         local_roles = obj.get_roles(user)
-
         roles = []
-        for role in Role.objects.all():
-
+        for role in all_roles:
             roles.append({
                 "id": role.id,
                 "name": role.name,
@@ -1398,10 +1465,8 @@ def local_roles(request, obj, template_name="lfc/manage/local_roles.html"):
         temp.append(group.id)
 
         local_roles = obj.get_roles(group)
-
         roles = []
-        for role in Role.objects.all():
-
+        for role in all_roles:
             roles.append({
                 "id": role.id,
                 "name": role.name,
@@ -3223,6 +3288,10 @@ def do_transition(request, id):
 
         workflows.utils.do_transition(obj, transition, request.user)
 
+        # CACHE
+        cache_key_1 = "%s-obj-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, obj.get_absolute_url()[1:])
+        lfc.utils.delete_cache([cache_key_1])
+
         # Set publication date
         if obj.publication_date is None:
             public_states = [wst.state for wst in WorkflowStatesInformation.objects.filter(public=True)]
@@ -4627,6 +4696,7 @@ def manage_group(request, id=None, template_name="lfc/manage/group.html"):
         "group": group,
         "groups": Group.objects.all(),
         "current_group_id": group.id,
+        "users" : group.user_set.all(),
     }))
 
 

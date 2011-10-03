@@ -40,6 +40,8 @@ from permissions.models import Role
 
 # lfc imports
 import lfc.utils
+from lfc.interfaces import IBaseContent
+from lfc.interfaces import ITabs
 from lfc.fields.thumbs import ImageWithThumbsField
 from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.fields.rich_text import RichTextField
@@ -51,6 +53,8 @@ from lfc.settings import LANGUAGE_CHOICES
 from lfc.settings import ORDER_BY_CHOICES
 from lfc.settings import IMAGE_SIZES
 
+# zope imports
+from zope.interface import implements
 
 class Application(models.Model):
     """Represents a LFC application.
@@ -241,9 +245,15 @@ class Portal(models.Model, PermissionBase):
     @property
     def content_type(self):
         """
-        Returns the content type of th eTo be consistent with BaseContent.
+        Returns the content type of the portal in order to be consistent with
+        BaseContent.
         """
         return u"portal"
+
+    def get_content_type(self):
+        """Readable / Displayable content type
+        """
+        return u"Portal"
 
     def get_absolute_url(self):
         """
@@ -324,7 +334,7 @@ class Portal(models.Model, PermissionBase):
         specific groups.
         """
         if not self.has_permission(user, codename):
-            raise Unauthorized("%s doesn't have permission %s for portal" % (user, codename))
+            raise Unauthorized("'%s' doesn't have permission '%s' for portal." % (user, codename))
 
 
 class AbstractBaseContent(models.Model, WorkflowBase, PermissionBase):
@@ -452,7 +462,7 @@ class BaseContent(AbstractBaseContent):
         The content which is searched for this object. This attribute should
         not get directly. Rather the get_searchable_text method should be used.
     """
-
+    implements(IBaseContent)
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
 
     title = models.CharField(_(u"Title"), max_length=100)
@@ -506,29 +516,69 @@ class BaseContent(AbstractBaseContent):
     def __unicode__(self):
         return unicode(self.title)
 
-    def has_metadata_tab(self):
-        return True
+    def has_meta_data_tab(self):
+        if not getattr(settings, "LFC_MANAGE_META_DATA", True):
+            return False
+        try:
+            return ITabs(self).has_meta_data_tab()
+        except TypeError:
+            return True
 
     def has_children_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_CHILDREN", True):
+            return False
+        try:
+            return ITabs(self).has_children_tab()
+        except TypeError:
+            return True
 
     def has_images_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_IMAGES", True):
+            return False
+        try:
+            return ITabs(self).has_images_tab()
+        except TypeError:
+            return True
 
     def has_files_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_FILES", True):
+            return False
+        try:
+            return ITabs(self).has_files_tab()
+        except TypeError:
+            return True
 
     def has_portlets_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_PORTLETS", True):
+            return False
+        try:
+            return ITabs(self).has_portlets_tab()
+        except TypeError:
+            return True
 
     def has_comments_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_COMMENTS", True):
+            return False
+        try:
+            return ITabs(self).has_comments_tab()
+        except TypeError:
+            return True
 
     def has_seo_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_SEO", True):
+            return False
+        try:
+            return ITabs(self).has_seo_tab()
+        except TypeError:
+            return True
 
     def has_permissions_tab(self):
-        return True
+        if not getattr(settings, "LFC_MANAGE_PERMISSIONS", True):
+            return False
+        try:
+            return ITabs(self).has_permissions_tab()
+        except TypeError:
+            return True
 
     def get_tabs(self, request):
         return []
@@ -913,13 +963,6 @@ class BaseContent(AbstractBaseContent):
         """Overwrites django-permissions' has_permission in order to add LFC
         specific groups.
         """
-        # CACHE
-        cache_key = "%s-object-%s-%s-%s" % \
-              (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.id, user.id, codename)
-        result = cache.get(cache_key)
-        if result:
-            return result
-
         # Every user is also anonymous user
         try:
             roles = [Role.objects.get(name="Anonymous")]
@@ -935,8 +978,6 @@ class BaseContent(AbstractBaseContent):
 
         result = super(BaseContent, self).has_permission(user, codename, roles)
 
-        # set cache
-        cache.set(cache_key, result)
         return result
 
     def check_permission(self, user, codename):
@@ -944,7 +985,7 @@ class BaseContent(AbstractBaseContent):
         specific groups.
         """
         if not self.has_permission(user, codename):
-            raise Unauthorized("%s doesn't have permission %s for object %s" % (user, codename, self.slug))
+            raise Unauthorized("'%s' doesn't have permission '%s' for object '/%s' (%s)." % (user, codename, self.slug, self.__class__.__name__))
 
     def is_active(self, user):
         """Returns True if now is between start and end date of the object.

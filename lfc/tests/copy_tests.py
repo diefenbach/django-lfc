@@ -5,8 +5,10 @@ from django.test.client import Client
 
 # lfc imports
 import lfc.utils.registration
-from lfc.models import Page
 from lfc.models import Portal
+
+# lfc_page imports
+from lfc_page.models import Page
 
 
 class CopyTestCase(TestCase):

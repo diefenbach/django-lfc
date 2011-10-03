@@ -48,7 +48,6 @@ def base_view(request, language=None, slug=None, obj=None):
     if language:
         if language not in LFC_LANGUAGE_IDS:
             raise Http404
-
         translation.activate(language)
     else:
         translation.activate(settings.LANGUAGE_CODE)
@@ -237,16 +236,6 @@ def set_language(request, language, id=None):
             response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
 
     return response
-
-
-def do_transition(request, id):
-    """Processes passed transition for object with passed id.
-    """
-    from lfc.manage.views import do_transition
-    do_transition(request, id)
-
-    obj = BaseContent.objects.get(pk=id)
-    return MessageHttpResponseRedirect(obj.get_absolute_url(), _(u"State has been changed."))
 
 
 def lfc_tagged_object_list(request, slug, tag, template_name="lfc/page_list.html"):

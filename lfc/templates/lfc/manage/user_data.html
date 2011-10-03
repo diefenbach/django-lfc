@@ -2,7 +2,7 @@
 
 <form action="{% url lfc_save_user_data myuser.id %}"
       method="POST">
-
+    {% csrf_token %}
     {% include "lfc/manage/lfc_form.html" %}
 
     <input class="ajax-submit"

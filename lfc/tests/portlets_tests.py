@@ -9,10 +9,12 @@ import lfc.manage.views
 import lfc.utils.registration
 from lfc.models import BaseContent
 from lfc.models import NavigationPortlet
-from lfc.models import Page
 from lfc.models import Portal
 from lfc.models import TextPortlet
 from lfc.tests.utils import create_request
+
+# lfc_page imports
+from lfc_page.models import Page
 
 # portlets imports
 from portlets.models import PortletAssignment
