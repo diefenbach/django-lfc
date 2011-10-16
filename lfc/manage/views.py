@@ -2138,6 +2138,7 @@ def add_portlet(request, object_type_id, object_id, template_name="lfc/manage/po
 
     if request.method == "GET":
         try:
+            import pdb; pdb.set_trace()
             portlet_ct = ContentType.objects.filter(model=portlet_type.lower())[0]
             mc = portlet_ct.model_class()
             form = mc().form(prefix="portlet")
@@ -4813,6 +4814,7 @@ def manage_role(request, id=None, template_name="lfc/manage/role.html"):
         "form": form,
         "role": role,
         "roles": Role.objects.exclude(name__in=("Anonymous", "Owner")),
+        "users" : role.get_users(),
         "current_role_id": int(id),
     }))
 

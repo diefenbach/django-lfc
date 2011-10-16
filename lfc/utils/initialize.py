@@ -3,10 +3,10 @@ from portlets.utils import register_portlet
 
 # lfc imports
 from lfc.utils.registration import register_template
-from lfc.models import NavigationPortlet
-from lfc.models import PagesPortlet
-from lfc.models import RandomPortlet
-from lfc.models import TextPortlet
+from lfc_portlets.models import NavigationPortlet
+from lfc_portlets.models import ContentPortlet
+from lfc_portlets.models import RandomPortlet
+from lfc_portlets.models import TextPortlet
 
 # resources imports
 import resources.utils
@@ -19,7 +19,7 @@ def initialize(create_resources=False):
     """
     # Portlets
     register_portlet(NavigationPortlet, "Navigation")
-    register_portlet(PagesPortlet, "Pages")
+    register_portlet(ContentPortlet, "Pages")
     register_portlet(RandomPortlet, "Random")
     register_portlet(TextPortlet, "Text")
 

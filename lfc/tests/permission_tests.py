@@ -408,8 +408,8 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object portlets
-        from lfc.models import PagesPortlet
-        self.portlet = PagesPortlet()
+        from lfc.models import ContentPortlet
+        self.portlet = ContentPortlet()
         self.portlet.id = 1
 
         # Assign the portlet to th page
@@ -728,8 +728,8 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object portlets
-        from lfc.models import PagesPortlet
-        self.portlet = PagesPortlet()
+        from lfc.models import ContentPortlet
+        self.portlet = ContentPortlet()
         self.portlet.id = 1
 
         # Assign the portlet to th page

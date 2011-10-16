@@ -8,9 +8,7 @@ from django.test.client import Client
 import lfc.manage.views
 import lfc.utils.registration
 from lfc.models import BaseContent
-from lfc.models import NavigationPortlet
 from lfc.models import Portal
-from lfc.models import TextPortlet
 from lfc.tests.utils import create_request
 
 # lfc_page imports
@@ -20,6 +18,9 @@ from lfc_page.models import Page
 from portlets.models import PortletAssignment
 from portlets.models import Slot
 
+# lfc_portlets imports
+from lfc_portlets.models import NavigationPortlet
+from lfc_portlets.models import TextPortlet
 
 class PortletsTestCase(TestCase):
     """

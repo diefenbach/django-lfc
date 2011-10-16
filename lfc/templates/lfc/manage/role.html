@@ -33,10 +33,10 @@
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
             <li class="ui-tabs-nav-item"><a href="#users">{% trans "Users" %}</a></li>
-            <li class="ui-tabs-nav-item"><a href="#groups">{% trans "Groups" %}</a></li>
         </ul>
 
         <div id="data">
+            <h2 class="first-heading">{% trans "Data" %}</h2>
             <form action="{% url lfc_manage_save_role role.id %}"
                   method="POST">
                 {% csrf_token %}
@@ -44,8 +44,35 @@
                 <input type="submit" value='{% trans "Save role" %}' />
             </form>
         </div>
-        <div id="users"></div>
-        <div id="groups"></div>
+        <div id="users">
+            <h2 class="first-heading">{% trans "Users" %}</h2>
+
+            <table class="lfs-manage-table">
+                <th>
+                    {% trans "Username" %}
+                </th>
+                <th>
+                    {% trans "Name" %}
+                </th>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            <a href="{% url lfc_manage_user user.id %}">
+                                {{ user.username }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if user.first_name %}
+                                {{ user.first_name }}
+                            {% endif %}
+                            {% if user.last_name %}
+                                {{ user.last_name }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
     </div>
 
 

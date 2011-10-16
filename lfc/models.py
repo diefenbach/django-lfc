@@ -516,69 +516,69 @@ class BaseContent(AbstractBaseContent):
     def __unicode__(self):
         return unicode(self.title)
 
-    def has_meta_data_tab(self):
+    def has_meta_data_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_META_DATA", True):
             return False
         try:
             return ITabs(self).has_meta_data_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_children_tab(self):
+    def has_children_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_CHILDREN", True):
             return False
         try:
             return ITabs(self).has_children_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_images_tab(self):
+    def has_images_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_IMAGES", True):
             return False
         try:
             return ITabs(self).has_images_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_files_tab(self):
+    def has_files_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_FILES", True):
             return False
         try:
             return ITabs(self).has_files_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_portlets_tab(self):
+    def has_portlets_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_PORTLETS", True):
             return False
         try:
             return ITabs(self).has_portlets_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_comments_tab(self):
+    def has_comments_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_COMMENTS", True):
             return False
         try:
             return ITabs(self).has_comments_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_seo_tab(self):
+    def has_seo_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_SEO", True):
             return False
         try:
             return ITabs(self).has_seo_tab()
         except TypeError:
-            return True
+            return default
 
-    def has_permissions_tab(self):
+    def has_permissions_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_PERMISSIONS", True):
             return False
         try:
             return ITabs(self).has_permissions_tab()
         except TypeError:
-            return True
+            return default
 
     def get_tabs(self, request):
         return []
@@ -1125,178 +1125,3 @@ class File(models.Model):
 
     def get_absolute_url(self):
         return reverse("lfc_file", kwargs={"id": self.id})
-
-#### Portlets
-###############################################################################
-
-
-class NavigationPortlet(Portlet):
-    """A portlet to display the navigation tree.
-
-    Note: this reuses mainly the navigation inclusion tag.
-
-    Parameters:
-
-        - start_level:
-            The tree is displayed from this level 1. The tree starts with 1
-
-        - expand_level:
-            The tree is expanded up this level. Default is 0, which means the
-            tree is not expanded at all but the current node.
-    """
-    start_level = models.PositiveSmallIntegerField(default=1)
-    expand_level = models.PositiveSmallIntegerField(default=0)
-
-    def render(self, context):
-        """Renders the portlet as HTML.
-        """
-        request = context.get("request")
-        return render_to_string("lfc/portlets/navigation_portlet.html", RequestContext(request, {
-            "start_level": self.start_level,
-            "expand_level": self.expand_level,
-            "title": self.title,
-        }))
-
-    def form(self, **kwargs):
-        """
-        """
-        return NavigationPortletForm(instance=self, **kwargs)
-
-
-class NavigationPortletForm(forms.ModelForm):
-    """Add/edit form for the navigation portlet.
-    """
-    class Meta:
-        model = NavigationPortlet
-
-
-# TODO: Rename as it is able to display all content types. ContentPortlet, DocumentPortlet, ...?
-class PagesPortlet(Portlet):
-    """A portlet to display arbitrary objects. The objects can be selected by
-    tags.
-
-    **Attributes:**
-
-    limit:
-        The amount of objects which are displayed at maximum.
-
-    tags:
-        The tags an object must have to be displayed.
-    """
-    limit = models.PositiveSmallIntegerField(default=5)
-    tags = models.CharField(blank=True, max_length=100)
-
-    def __unicode__(self):
-        return "%s" % self.id
-
-    def render(self, context):
-        """Renders the portlet as HTML.
-        """
-        objs = BaseContent.objects.filter(
-            language__in=("0", translation.get_language()))
-
-        if self.tags:
-            objs = tagging.managers.ModelTaggedItemManager().with_all(self.tags, objs)[:self.limit]
-        else:
-            objs = objs[:self.limit]
-
-        return render_to_string("lfc/portlets/pages_portlet.html", {
-            "title": self.title,
-            "objs": objs,
-        })
-
-    def form(self, **kwargs):
-        """Returns the add/edit form of the portlet.
-        """
-        return PagesPortletForm(instance=self, **kwargs)
-
-
-class PagesPortletForm(forms.ModelForm):
-    """Add/edit form of the pages portlet.
-    """
-    tags = TagField(widget=AutoCompleteTagInput(), required=False)
-
-    class Meta:
-        model = PagesPortlet
-
-
-class RandomPortlet(Portlet):
-    """A portlet to display random objects. The objects can be selected by
-    tags.
-
-    **Attributes:**
-
-    limit:
-        The amount of objects which are displayed at maximum.
-
-    tags:
-        The tags an object must have to be displayed.
-    """
-    limit = models.PositiveSmallIntegerField(default=1)
-    tags = models.CharField(blank=True, max_length=100)
-
-    def render(self, context):
-        """Renders the portlet as HTML.
-        """
-        items = BaseContent.objects.filter(
-            language__in=("0", translation.get_language()))
-
-        if self.tags:
-            items = tagging.managers.ModelTaggedItemManager().with_all(self.tags, items)[:self.limit]
-
-        items = list(items)
-        random.shuffle(items)
-
-        return render_to_string("lfc/portlets/random_portlet.html", {
-            "title": self.title,
-            "items": items[:self.limit],
-        })
-
-    def form(self, **kwargs):
-        """Returns the form of the portlet.
-        """
-        return RandomPortletForm(instance=self, **kwargs)
-
-
-class RandomPortletForm(forms.ModelForm):
-    """Add/Edit form for the random portlet.
-    """
-    tags = TagField(widget=AutoCompleteTagInput(), required=False)
-
-    class Meta:
-        model = RandomPortlet
-
-
-class TextPortlet(Portlet):
-    """A portlet to display arbitrary HTML text.
-
-    **Attributes:**
-
-    text:
-        The HTML text which is displayed. Can contain any HTML text.
-    """
-
-    text = models.TextField(_(u"Text"), blank=True)
-
-    def __unicode__(self):
-        return "%s" % self.id
-
-    def render(self, context):
-        """Renders the portlet as HTML.
-        """
-        return render_to_string("lfc/portlets/text_portlet.html", {
-            "title": self.title,
-            "text": self.text
-        })
-
-    def form(self, **kwargs):
-        """
-        """
-        return TextPortletForm(instance=self, **kwargs)
-
-
-class TextPortletForm(forms.ModelForm):
-    """Add/Edit form for the text portlet.
-    """
-    class Meta:
-        model = TextPortlet
