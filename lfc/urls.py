@@ -22,18 +22,9 @@ urlpatterns += patterns('django.contrib.auth.views',
     url('^logout/?$', "logout", {"template_name": "lfc/logged_out.html"}, name='lfc_logout'),
 )
 
-# Feeds
-feeds = {
-    "rss": PageTagFeed,
-}
-
 urlpatterns += patterns('',
-    url(r'(?P<url>rss.*)$', 'django.contrib.syndication.views.feed', {'feed_dict': feeds}, name="feed"),
+    url(r'(?P<url>.*)/rss$', PageTagFeed(), name="feed"),
 )
-
-# urlpatterns += patterns('',
-#     url(r'(?P<url>rss2.*)$', PageTagFeed(slug="/")),
-# )
 
 # Sitemaps
 urlpatterns += patterns("django.contrib.sitemaps.views",

@@ -1,5 +1,5 @@
 # django imports
-from django.contrib.syndication.feeds import Feed
+from django.contrib.syndication.views import Feed
 from django.core.exceptions import ObjectDoesNotExist
 
 # tagging imports
@@ -15,11 +15,9 @@ class PageTagFeed(Feed):
 
     http://www.lfcproject.com/rss/<path/to/obj>[?tags=python]
     """
-    def get_object(self, bits):
-        if len(bits) < 1:
-            raise ObjectDoesNotExist
-
-        return lfc.utils.traverse_object(self.request, "/".join(bits))
+    def get_object(self, request, url):
+        self.request = request
+        return lfc.utils.traverse_object(request, url)
 
     def title(self, obj):
         portal = lfc.utils.get_portal()
