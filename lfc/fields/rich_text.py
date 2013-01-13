@@ -106,10 +106,10 @@ class RichTextField(models.TextField):
     def __init__(self, *args, **kwargs):
         super(RichTextField, self).__init__(*args, **kwargs)
 
-    def get_db_prep_save(self, value):
+    def get_db_prep_save(self, value, connection):
         if isinstance(value, RichText):
             value = value.text
-        return super(RichTextField, self).get_db_prep_save(value)
+        return super(RichTextField, self).get_db_prep_save(value, connection)
 
     def contribute_to_class(self, cls, name):
         text_rendered = models.TextField(blank=True)
