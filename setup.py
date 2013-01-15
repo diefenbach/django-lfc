@@ -36,5 +36,6 @@ setup(name='django-lfc',
         'tagging == 0.5',
         'feedparser == 4.1',
         'lfc_theme == 1.0',
+        "zope.interface",
       ],
       )
