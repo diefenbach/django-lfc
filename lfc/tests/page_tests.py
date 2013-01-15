@@ -7,6 +7,8 @@ import permissions.utils
 
 # lfc imports
 import lfc.utils
+from lfc.utils import import_module
+from lfc.models import Application
 from lfc.models import BaseContent
 from lfc.models import Portal
 from lfc.tests.utils import create_request
@@ -23,6 +25,12 @@ class PageTestCase(TestCase):
         """
         from lfc.utils.initialize import initialize
         initialize(create_resources=False)
+
+        import_module("lfc_page").install()
+        try:
+            Application.objects.create(name="lfc_page")
+        except Application.DoesNotExist:
+            pass
 
         self.p = Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
@@ -98,7 +106,7 @@ class PageTestCase(TestCase):
         """
         """
         form = self.p1.edit_form()
-        self.assertEqual(form.__class__, CoreDataForm)
+        self.assertEqual(form.__class__, PageDataForm)
 
     def test_get_ancestors(self):
         """

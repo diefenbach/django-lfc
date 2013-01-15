@@ -6,6 +6,8 @@ from portlets.models import PortletRegistration
 
 # lfc imports
 import lfc.utils.registration
+from lfc.utils import import_module
+from lfc.models import Application
 from lfc.models import BaseContent
 from lfc.models import Template
 from lfc.models import ContentTypeRegistration
@@ -21,6 +23,12 @@ class RegistrationTestCase(TestCase):
         """
         from lfc.utils.initialize import initialize
         initialize(create_resources=False)
+
+        import_module("lfc_page").install()
+        try:
+            Application.objects.create(name="lfc_page")
+        except Application.DoesNotExist:
+            pass
 
     def test_default_portlets(self):
         """Portlets which have to be registered at least.

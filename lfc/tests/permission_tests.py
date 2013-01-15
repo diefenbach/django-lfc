@@ -408,7 +408,7 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object portlets
-        from lfc.models import ContentPortlet
+        from lfc_portlets.models import ContentPortlet
         self.portlet = ContentPortlet()
         self.portlet.id = 1
 
@@ -474,7 +474,7 @@ class LFCPermissionTestCase(TestCase):
         result = self.client.get(reverse("lfc_set_navigation_tree_language", kwargs={"language": "en"}))
         self.assertEqual(result.status_code, 200)
 
-        result = self.client.get(reverse("lfc_manage_set_language", kwargs={"language": "en"}))
+        result = self.client.get(reverse("lfc_manage_set_language", kwargs={"language": "en"}), HTTP_REFERER =  "/")
         self.failIf(result._headers["location"][1].startswith("http://testserver/login"))
 
         # template
@@ -601,8 +601,9 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # manage content
-        result = self.client.get(reverse("lfc_manage_object", kwargs={"id": self.page.id}))
-        self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
+        # NOTE: Seeing is allowed now
+        # result = self.client.get(reverse("lfc_manage_object", kwargs={"id": self.page.id}))
+        # self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         result = self.client.get(reverse("lfc_add_object", kwargs={"id": 0}))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
@@ -728,7 +729,7 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # object portlets
-        from lfc.models import ContentPortlet
+        from lfc_portlets.models import ContentPortlet
         self.portlet = ContentPortlet()
         self.portlet.id = 1
 

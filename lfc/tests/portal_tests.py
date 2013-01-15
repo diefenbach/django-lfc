@@ -6,6 +6,8 @@ from django.utils import translation
 import permissions.utils
 
 # lfc imports
+from lfc.utils import import_module
+from lfc.models import Application
 from lfc.models import Portal
 from lfc.tests.utils import create_request
 
@@ -21,6 +23,12 @@ class PortalTestCase(TestCase):
         """
         from lfc.utils.initialize import initialize
         initialize(create_resources=False)
+
+        import_module("lfc_page").install()
+        try:
+            Application.objects.create(name="lfc_page")
+        except Application.DoesNotExist:
+            pass
 
         self.p = Portal.objects.create()
         self.p.notification_emails = "john@doe.com, jane@doe.com"

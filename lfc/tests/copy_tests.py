@@ -5,6 +5,8 @@ from django.test.client import Client
 
 # lfc imports
 import lfc.utils.registration
+from lfc.utils import import_module
+from lfc.models import Application
 from lfc.models import Portal
 
 # lfc_page imports
@@ -19,6 +21,12 @@ class CopyTestCase(TestCase):
     def setUp(self):
         from lfc.utils.initialize import initialize
         initialize(create_resources=False)
+
+        import_module("lfc_page").install()
+        try:
+            Application.objects.create(name="lfc_page")
+        except Application.DoesNotExist:
+            pass
 
         Portal.objects.create(id=1)
         self.p1 = Page.objects.create(id=1, title="Page 1", slug="page-1")

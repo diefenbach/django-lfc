@@ -3,6 +3,8 @@ from django.test import TestCase
 
 # lfc imports
 import lfc.utils.registration
+from lfc.utils import import_module
+from lfc.models import Application
 from lfc.models import BaseContent
 from lfc.models import Portal
 from lfc.tests.utils import create_request
@@ -22,6 +24,12 @@ class UtilsTestCase(TestCase):
         """
         from lfc.utils.initialize import initialize
         initialize(create_resources=False)
+
+        import_module("lfc_page").install()
+        try:
+            Application.objects.create(name="lfc_page")
+        except Application.DoesNotExist:
+            pass
 
         Portal.objects.create()
         self.p1 = Page.objects.create(title="Page 1", slug="page-1")
