@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        initialize(create_resources=True)
+        initialize()
 
         # Register site
         site = Site.objects.all()[0]

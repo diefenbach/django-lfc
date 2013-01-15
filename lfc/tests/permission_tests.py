@@ -219,7 +219,7 @@ class LFCPermissionTestCase(TestCase):
     def setUp(self):
         # Initialize LFC
         from lfc.management.commands.lfc_init import Command
-        Command().handle(create_resources=False)
+        Command().handle()
 
         # Create a slot
         self.left_slot = Slot.objects.create(name="Left")

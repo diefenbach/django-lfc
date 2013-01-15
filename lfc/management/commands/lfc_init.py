@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Register default portlets, templates and content types.
-        initialize(create_resources=options.get("create_resources", True))
+        initialize()
 
         # Register site
         site = Site.objects.all()[0]

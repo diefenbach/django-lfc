@@ -32,7 +32,7 @@ class PortletsTestCase(TestCase):
         """
         # Initialize LFC
         from lfc.management.commands.lfc_init import Command
-        Command().handle(create_resources=False)
+        Command().handle()
 
         self.page = Page.objects.create(title="Page 1", slug="page-1")
         self.request = create_request()

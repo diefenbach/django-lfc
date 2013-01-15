@@ -24,7 +24,7 @@ class PageTestCase(TestCase):
         """
         """
         from lfc.utils.initialize import initialize
-        initialize(create_resources=False)
+        initialize()
 
         import_module("lfc_page").install()
         try:
