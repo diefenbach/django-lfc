@@ -23,7 +23,7 @@ function addEditor(selector, hide_save) {
     // Theme options
     $(selector).tinymce({
         // Location of TinyMCE script
-        script_url : '/media/lfc/tiny_mce/tiny_mce.js',
+        script_url : '/static/tiny_mce/tiny_mce.js',
 
         // General options
         theme : "advanced",
