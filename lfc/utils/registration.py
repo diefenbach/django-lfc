@@ -15,12 +15,6 @@ from lfc.models import Template
 from workflows.models import Workflow
 from workflows.models import WorkflowModelRelation
 
-# Make it available for import from lfc.utils.registration
-from resources.utils import register_resource
-from resources.utils import unregister_resource
-from resources.config import CSS
-from resources.config import JS
-
 
 def get_info(obj_or_type):
     """Returns the ContentTypeRegistration for the passed object or type.
@@ -205,6 +199,7 @@ def unregister_content_type(name):
         pass
     else:
         ctr.delete()
+        cache.delete("%s-info-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, ctr.type))
 
 
 def register_template(name, path, children_columns=0, images_columns=0):
