@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load adminmedia %}
 {% load lfc_tags %}
-{% load resources_tags %}
+{% load compress %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
@@ -11,24 +11,51 @@
         </script>
 
         <title>{% block title %}{% endblock %}</title>
-        {% css "manage" %}
+        <link rel="shortcut icon" href="{{ STATIC_URL }}lfc/img/favicon.ico" type="image/ico" />
+
+        {% compress css %}
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}yui/reset-min.css" />
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}lightbox/css/jquery.lightbox-0.5.css" />
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery-ui-1.8.4.custom/css/smoothness/jquery-ui-1.8.4.custom.css" />
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery/jquery.jgrowl.css" />
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery/superfish/superfish.css" />
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}jquery/autocomplete/jquery.autocomplete.css" />
+            <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/lfc_manage.css" />
+        {% endcompress %}
+
         {% block css %}{% endblock %}
 
-        {% javascript "manage" %}
-        {% block javascript %}{% endblock %}
-        <link rel="shortcut icon" href="{{ MEDIA_URL }}lfc/img/favicon.ico" type="image/ico" />
+        {% compress js %}
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.js"></script>
+            <script type="text/javascript" src="/admin/jsi18n/"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/core.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/calendar.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.init.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/admin/DateTimeShortcuts.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/urlify.js"></script>
 
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.fileupload-4.2.1/jquery.fileupload-ui.js"></script>
-        <script type="text/javascript" src="{{ MEDIA_URL }}lfc/jquery/jquery.fileupload-4.2.1/jquery.fileupload.js"></script>
-
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.tools.min.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.form.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.jgrowl_minimized.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.cookie.pack.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/superfish/superfish.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/autocomplete/jquery.autocomplete.pack.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/lfc_manage.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}tiny_mce/jquery.tinymce.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/lfc_editor.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/lfc_tinymce.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.fileupload-4.2.1/jquery.fileupload-ui.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.fileupload-4.2.1/jquery.fileupload.js"></script>
+        {% endcompress %}
     </head>
 
     <body class="{% block body_class %}{% endblock %}">
-        {{ sql_queries|length }}
         <div class="lfc-header">
             <div class="logo">
                 <a href="">
-                    <img src="{{ MEDIA_URL }}lfc/img/logo.jpg"
+                    <img src="{{ STATIC_URL }}img/logo.jpg"
                          alt="LFC"
                          title="LFC - Lightning Fast CMS"/>
                 </a>
