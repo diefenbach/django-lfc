@@ -49,6 +49,7 @@ def get_cached_object(klass, *args, **kwargs):
     cache.set(cache_key, object)
     return object
 
+
 class HttpJsonResponse(HttpResponse):
     def __init__(self, content, mimetype=None, status=None, content_type=None, **kwargs):
 
@@ -277,7 +278,7 @@ def set_cache(keys, value):
         start = {}
     d = start
     for key in keys[1:-1]:
-        if not d.has_key(key):
+        if key not in d.keys():
             d[key] = {}
         d = d[key]
 
@@ -302,6 +303,7 @@ def get_cache(keys):
             except KeyError:
                 return None
         return d
+
 
 def clear_cache():
     """Clears the complete cache.
