@@ -1102,7 +1102,9 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
 
         # We take the form from the db again in order to render the RichText
         # fielt correctly.
-        form = Form(instance=obj)
+        # errors = form.errors
+        # form = Form(instance=obj)
+        # form._errors = errors
         data = render_to_string(template_name, RequestContext(request, {
             "form": form,
             "obj": obj,
