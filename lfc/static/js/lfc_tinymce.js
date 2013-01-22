@@ -39,7 +39,7 @@ function addEditor(selector, hide_save) {
         relative_urls : false,
         height : "480",
         cleanup : false,
-        content_css : "/media/tiny.css",
+        content_css : "/static/lfc/css/tiny.css",
         // theme_advanced_statusbar_location : "bottom",
         // theme_advanced_resizing : true,
 
