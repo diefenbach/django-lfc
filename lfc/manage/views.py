@@ -2140,7 +2140,6 @@ def add_portlet(request, object_type_id, object_id, template_name="lfc/manage/po
 
     if request.method == "GET":
         try:
-            import pdb; pdb.set_trace()
             portlet_ct = ContentType.objects.filter(model=portlet_type.lower())[0]
             mc = portlet_ct.model_class()
             form = mc().form(prefix="portlet")
