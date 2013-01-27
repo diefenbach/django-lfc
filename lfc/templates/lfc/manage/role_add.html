@@ -15,7 +15,6 @@
 {% endblock %}
 
 {% block content %}
-
     <div id="menu"
          class="site-actions">
 
@@ -25,19 +24,17 @@
             </li>
         </ul>
     </div>
-
     <div id="manage-tabs">
         <ul>
             <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
         </ul>
-
         <div id="data">
             <form action="{% url lfc_manage_add_role %}"
                   method="POST">
+                {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}
                 <input type="submit" value='{% trans "Add role" %}' />
             </form>
         </div>
     </div>
-
 {% endblock %}
