@@ -102,7 +102,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^load-object-portlets/(?P<id>\d+)$', "load_object_portlets", name="lfc_load_object_portlets"),
 
     # reviews
-    url(r'^review$', "review_objects", name="lfc_manage_review"),
+    url(r'^review$', "review_objects", name="lfc_manage_reviews"),
 
     # local roles
     url(r'^save-local-roles/(?P<id>\d+)', "save_local_roles", name="lfc_manage_save_local_roles"),
@@ -148,7 +148,7 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^add-role$', "add_role", name="lfc_manage_add_role"),
     url(r'^save-role/(?P<id>\d+)$', "save_role", name="lfc_manage_save_role"),
     url(r'^delete-role/(?P<id>\d+)$', "delete_role", name="lfc_manage_delete_role"),
-    
+
     # Utils
     url(r'^utils$', "manage_utils", name="lfc_manage_utils"),
     url(r'^reindex-objects$', "reindex_objects", name="lfc_reindex_objects"),

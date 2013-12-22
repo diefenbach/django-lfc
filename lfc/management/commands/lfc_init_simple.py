@@ -1,3 +1,6 @@
+# python imports
+from optparse import make_option
+
 # django imports
 from django.core.management.base import BaseCommand
 from django.contrib.sites.models import Site
@@ -32,6 +35,15 @@ from utils import WELCOME_DESCRIPTION
 
 
 class Command(BaseCommand):
+    option_list = BaseCommand.option_list + (
+        make_option("--with-extended-permissions",
+            action="store_true",
+            dest="with_extended_permissions",
+            default=False,
+            help="Create extended permissions like manage_users, etc."
+        ),
+    )
+
     args = ''
     help = """Initializes LFC
 
@@ -41,6 +53,15 @@ class Command(BaseCommand):
     This should be used to initialize the database to used for simple pages."""
 
     def handle(self, *args, **options):
+
+        # Check whether the initialization has already be done
+        try:
+            Portal.objects.all()[0]
+        except IndexError:
+            pass
+        else:
+            print "Initialization has already be done."
+            return
 
         initialize()
 
@@ -57,6 +78,9 @@ class Command(BaseCommand):
 
         # Registers permissions
         view = permissions.utils.register_permission("View", "view")
+
+        if options["with_extended_permissions"]:
+            manage_applications, manage_content_types, manage_groups,  manage_installations, manage_reviews, manage_roles, manage_users, manage_utils, manage_workflows = create_extended_permissions()
 
         # Create slots
         left_slot, created = Slot.objects.get_or_create(name="Left")

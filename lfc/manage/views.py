@@ -4160,9 +4160,9 @@ def manage_users(request, template_name="lfc/manage/users.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     return render_to_response(template_name, RequestContext(request, {
         "users": users_inline(request),
@@ -4211,9 +4211,9 @@ def change_users(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     if request.POST.get("action") == "delete":
         ids = request.POST.getlist("delete_ids")
@@ -4249,9 +4249,9 @@ def set_users_page(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
     request.session["users_page"] = request.GET.get("page", 1)
 
     user = request.GET.get("user")
@@ -4277,9 +4277,9 @@ def set_users_filter(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     _update_filter(request, "users_active_filter")
     _update_filter(request, "users_name_filter")
@@ -4299,9 +4299,9 @@ def reset_users_filter(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     _delete_filter(request, "users_name_filter")
     _delete_filter(request, "users_active_filter")
@@ -4333,9 +4333,9 @@ def manage_user(request, id=None, template_name="lfc/manage/user.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     if id is None:
         user = User.objects.all()[0]
@@ -4460,9 +4460,9 @@ def save_user_data(request, id):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     user = User.objects.get(pk=id)
     form = UserForm(instance=user, data=request.POST)
@@ -4497,9 +4497,9 @@ def change_password(request, id):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     user = User.objects.get(pk=id)
     form = AdminPasswordChangeForm(user, request.POST)
@@ -4531,9 +4531,9 @@ def add_user(request, template_name="lfc/manage/user_add.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     if request.method == "POST":
         form = UserAddForm(data=request.POST)
@@ -4586,9 +4586,9 @@ def delete_user(request, id):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     try:
         user = User.objects.get(pk=id)
@@ -4614,9 +4614,9 @@ def set_user_page(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     request.session["user_page"] = request.GET.get("page", 1)
     user = request.GET.get("user")
@@ -4636,9 +4636,9 @@ def set_user_filter(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     user = request.GET.get("user")
 
@@ -4655,9 +4655,9 @@ def reset_user_filter(request):
 
     **Permission:**
 
-        manage_portal
+        manage_users
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_users")
 
     _delete_filter(request, "user_name_filter")
     _delete_filter(request, "user_page")
@@ -4680,8 +4680,13 @@ def manage_group(request, id=None, template_name="lfc/manage/group.html"):
 
         id
             The id of the group which should be displayed.
+
+    **Permission:**
+
+        manage_groups
+
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_groups")
 
     if id is None:
         try:
@@ -4707,9 +4712,9 @@ def add_group(request, template_name="lfc/manage/group_add.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_groups
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_groups")
 
     if request.method == "POST":
         form = GroupForm(data=request.POST)
@@ -4739,9 +4744,9 @@ def delete_group(request, id):
 
     **Permission:**
 
-        manage_portal
+        manage_groups
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_groups")
 
     try:
         Group.objects.get(pk=id).delete()
@@ -4761,9 +4766,9 @@ def save_group(request, id, template_name="lfc/manage/group_add.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_groups
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_groups")
 
     group = Group.objects.get(pk=id)
     form = GroupForm(instance=group, data=request.POST)
@@ -4793,9 +4798,9 @@ def manage_role(request, id=None, template_name="lfc/manage/role.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_roles
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_roles")
 
     if id is None:
         try:
@@ -4825,9 +4830,9 @@ def add_role(request, template_name="lfc/manage/role_add.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_roles
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_roles")
 
     if request.method == "POST":
         form = RoleForm(data=request.POST)
@@ -4856,9 +4861,9 @@ def delete_role(request, id, template_name="lfc/manage/role_add.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_roles
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_roles")
 
     try:
         Role.objects.get(pk=id).delete()
@@ -4878,9 +4883,9 @@ def save_role(request, id, template_name="lfc/manage/role_add.html"):
 
     **Permission:**
 
-        manage_portal
+        manage_roles
     """
-    get_portal().check_permission(request.user, "manage_portal")
+    get_portal().check_permission(request.user, "manage_roles")
 
     role = Role.objects.get(pk=id)
     form = RoleForm(instance=role, data=request.POST)

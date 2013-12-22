@@ -81,68 +81,7 @@
                             <li>
                                 <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
                             </li>
-                            {% if LFC_MANAGE_USERS %}
-                                {% ifportalhasperm manage_portal  %}
-                                    <li>
-                                        <a>{% trans "User" %}</a>
-                                        <ul>
-                                            <li>
-                                                <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
-                                            </li>
-                                            <li>
-                                                <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
-                                            </li>
-                                            <li>
-                                                <a href="{% url lfc_manage_group %}">{% trans 'Groups' %}</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                {% endifportalhasperm %}
-                            {% endif %}
-                            {% if LFC_MANAGE_WORKFLOWS %}
-                                {% ifportalhasperm review %}
-                                    <li>
-                                        <a href="{% url lfc_manage_review %}">{% trans 'Review' %}</a>
-                                    </li>
-                                {% endifportalhasperm %}
-                                {% ifportalhasperm manage_portal %}
-                                    <li>
-                                        <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
-                                    </li>
-                                {% endifportalhasperm %}
-                            {% endif %}
-                            {% if LFC_MANAGE_APPLICATIONS %}
-                                {% ifportalhasperm manage_portal  %}
-                                    <li>
-                                        <a>{% trans "Applications" %}</a>
-                                        <ul>
-                                            <li>
-                                                <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
-                                            </li>
-                                            <li>
-                                                <a href="{% url lfc_applications %}">{% trans 'Installation' %}</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                {% endifportalhasperm %}
-                            {% endif %}
-                            {% if LFC_MANAGE_UTILS %}
-                                <li>
-                                    <a href="{% url lfc_manage_utils %}">{% trans 'Utils' %}</a>
-                                </li>
-                            {% endif %}
-                            {% if LFC_MULTILANGUAGE %}
-                                <li>
-                                    <a>{% trans "Languages" %}</a>
-                                    <ul>
-                                        {% for language in LANGUAGES_DICT %}
-                                            <li>
-                                                <a href="{% url lfc_manage_set_language language.code %}">{% trans language.name %}</a>
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </li>
-                            {% endif %}
+                            {% manage_menu %}
                         </ul>
                     </td>
                 </tr>

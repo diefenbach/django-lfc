@@ -446,7 +446,7 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # review
-        result = self.client.get(reverse("lfc_manage_review"))
+        result = self.client.get(reverse("lfc_manage_reviews"))
         self.failIf(result.content.find("There are no objects to review") == -1)
 
         # local roles
@@ -767,7 +767,7 @@ class LFCPermissionTestCase(TestCase):
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # reviewe
-        result = self.client.get(reverse("lfc_manage_review"))
+        result = self.client.get(reverse("lfc_manage_reviews"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
 
         # local roles

@@ -1,0 +1,68 @@
+{% load i18n %}
+{% load lfc_tags %}
+{% if display_users_menu %}
+    <li>
+        <a>{% trans "User" %}</a>
+        <ul>
+            {% if display_users_sub_menu  %}
+                <li>
+                    <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
+                </li>
+            {% endif %}
+            {% if display_roles_sub_menu %}
+                <li>
+                    <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
+                </li>
+            {% endif %}
+            {% if display_groups_sub_menu %}
+                <li>
+                    <a href="{% url lfc_manage_group %}">{% trans 'Groups' %}</a>
+                </li>
+            {% endif %}
+        </ul>
+    </li>
+{% endif %}
+{% if display_reviews_menu %}
+    <li>
+        <a href="{% url lfc_manage_reviews %}">{% trans 'Reviews' %}</a>
+    </li>
+{% endif %}
+{% if display_workflows_menu %}
+    <li>
+        <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
+    </li>
+{% endif %}
+{% if display_applications_menu %}
+    <li>
+        <a>{% trans "Applications" %}</a>
+        <ul>
+            {% if display_content_types_sub_menu %}
+                <li>
+                    <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
+                </li>
+            {% endif %}
+            {% if display_installations_sub_menu %}
+                <li>
+                    <a href="{% url lfc_applications %}">{% trans 'Installations' %}</a>
+                </li>
+            {% endif %}
+        </ul>
+    </li>
+{% endif %}
+{% if display_utils_menu %}
+    <li>
+        <a href="{% url lfc_manage_utils %}">{% trans 'Utils' %}</a>
+    </li>
+{% endif %}
+{% if display_languages_menu %}
+    <li>
+        <a>{% trans "Languages" %}</a>
+        <ul>
+            {% for language in LANGUAGES_DICT %}
+                <li>
+                    <a href="{% url lfc_manage_set_language language.code %}">{% trans language.name %}</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </li>
+{% endif %}

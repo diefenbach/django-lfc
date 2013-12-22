@@ -16,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # lfc imports
 import lfc.utils
+from lfc.settings import LANGUAGES_DICT
 from lfc.utils import registration
 
 register = template.Library()
@@ -524,3 +525,38 @@ def ifportalhasperm(parser, token):
     """This function provides functionality for the 'ifportalhasperm' template tag.
     """
     return PortalPermissionComparisonNode.handle_token(parser, token)
+
+
+@register.inclusion_tag('lfc/manage/manage_menu.html', takes_context=True)
+def manage_menu(context):
+    request = context.get("request")
+    portal = lfc.utils.get_portal()
+
+    manage_users = portal.has_permission(request.user, "manage_users")
+    manage_roles = portal.has_permission(request.user, "manage_roles")
+    manage_groups = portal.has_permission(request.user, "manage_groups")
+
+    manage_workflows = portal.has_permission(request.user, "manage_users")
+    manage_reviews = portal.has_permission(request.user, "manage_reviews")
+
+    manage_content_types = portal.has_permission(request.user, "manage_content_types")
+    manage_installations = portal.has_permission(request.user, "manage_installations")
+
+    display_utils_menu = portal.has_permission(request.user, "manage_utils")
+
+    LFC_MANAGE_WORKFLOWS = getattr(settings, "LFC_MANAGE_WORKFLOWS", True)
+
+    return {
+        "display_users_menu": manage_users or manage_groups or manage_roles,
+        "display_users_sub_menu": manage_users,
+        "display_roles_sub_menu": manage_roles,
+        "display_groups_sub_menu": manage_groups,
+        "display_reviews_menu": manage_reviews,
+        "display_workflows_menu": LFC_MANAGE_WORKFLOWS and manage_workflows,
+        "display_applications_menu": manage_content_types or manage_installations,
+        "display_content_types_sub_menu": manage_content_types,
+        "display_installations_sub_menu": manage_installations,
+        "display_utils_menu": display_utils_menu,
+        "display_languages_menu": getattr(settings, "LFC_MULTILANGUAGE", False),
+        "LANGUAGES_DICT": LANGUAGES_DICT,
+    }
