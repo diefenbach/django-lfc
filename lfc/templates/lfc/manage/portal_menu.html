@@ -25,12 +25,12 @@
         {% if display_paste %}
             <a class="ajax-link"
                href="{% url lfc_paste %}">{% trans 'Paste' %}</a>
-        {% endif %}                
+        {% endif %}
     </li>
     <li>
         <a href="/">{% trans 'View' %}</a>
     </li>
     <li>
-        <img class="ajax-loading" src="{{ MEDIA_URL }}lfc/img/ajax-loader.gif" alt="" />
+        <img class="ajax-loading" src="{{ STATIC_URL }}img/ajax-loader.gif" alt="" />
     </li>
 </ul>
