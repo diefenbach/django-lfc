@@ -40,16 +40,16 @@
                             {% if obj.creator.first_name and obj.creator.last_name %}
                                 {{ obj.creator.first_name }} {{ obj.creator.last_name }}
                             {% else %}
-                                {{ obj.creator.username }}                                
-                            {% endif %}                            
+                                {{ obj.creator.username }}
+                            {% endif %}
                         </td>
                         <td class="right-padding">
                             <a href="{% url lfc_manage_object obj.id %}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png" alt='{% trans "Edit" %}' />
-                            </a>                            
+                                <img src="{{ STATIC_URL }}icons/edit.png" alt='{% trans "Edit" %}' />
+                            </a>
                             <a href="{{ obj.get_absolute_url }}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/zoom.png" alt='{% trans "Edit" %}' />
-                            </a>                            
+                                <img src="{{ STATIC_URL }}icons/zoom.png" alt='{% trans "Edit" %}' />
+                            </a>
                         </td>
                     </tr>
                 {% endfor %}

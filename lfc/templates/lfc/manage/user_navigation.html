@@ -4,16 +4,16 @@
     {% if page.has_previous %}
         <a class="ajax-link"
            href="{% url lfc_manage_set_user_page %}?page=1&amp;user={{ current_user_id }}">
-           <img src="{{ MEDIA_URL }}lfc/icons/resultset_first.png" alt="{% trans 'First' %}" />
+           <img src="{{ STATIC_URL }}icons/resultset_first.png" alt="{% trans 'First' %}" />
         </a>
 
         <a class="ajax-link"
            href="{% url lfc_manage_set_user_page %}?page={{ page.previous_page_number }}&amp;user={{ current_user_id }}">
-           <img src="{{ MEDIA_URL }}lfc/icons/resultset_previous.png" alt="{% trans 'Previous' %}" />
+           <img src="{{ STATIC_URL }}icons/resultset_previous.png" alt="{% trans 'Previous' %}" />
         </a>
     {% else %}
-        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_first.png" title="{% trans 'First' %}"/></a>
-        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_previous.png" title="{% trans 'Previous' %}"/></a>
+        <a><img src="{{ STATIC_URL }}icons/resultset_first.png" title="{% trans 'First' %}"/></a>
+        <a><img src="{{ STATIC_URL }}icons/resultset_previous.png" title="{% trans 'Previous' %}"/></a>
     {% endif %}
 
     {{ page.number }} {% trans "of" %} {{ paginator.num_pages }}
@@ -21,18 +21,18 @@
     {% if page.has_next %}
         <a class="ajax-link"
            href="{% url lfc_manage_set_user_page %}?page={{ page.next_page_number }}&amp;user={{ current_user_id }}">
-           <img src="{{ MEDIA_URL }}lfc/icons/resultset_next.png" title="{% trans 'Next' %}"/>
+           <img src="{{ STATIC_URL }}icons/resultset_next.png" title="{% trans 'Next' %}"/>
         </a>
 
         <a class="ajax-link"
            href="{% url lfc_manage_set_user_page %}?page={{ paginator.num_pages }}&amp;user={{ current_user_id }}">
-           <img src="{{ MEDIA_URL }}lfc/icons/resultset_last.png" title="{% trans 'Last' %}"/>
+           <img src="{{ STATIC_URL }}icons/resultset_last.png" title="{% trans 'Last' %}"/>
         </a>
     {% else %}
-        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_next.png" title="{% trans 'Next' %}"/></a>
-        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_last.png" title="{% trans 'Last' %}"/></a>
+        <a><img src="{{ STATIC_URL }}icons/resultset_next.png" title="{% trans 'Next' %}"/></a>
+        <a><img src="{{ STATIC_URL }}icons/resultset_last.png" title="{% trans 'Last' %}"/></a>
     {% endif %}
-    
+
 </div>
 
 <div class="navigation-user">

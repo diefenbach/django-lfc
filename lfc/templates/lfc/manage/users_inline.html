@@ -26,7 +26,7 @@
                 </td>
                 <td></td>
                 <td class="discreet">
-                    {% trans "Reset" %}                        
+                    {% trans "Reset" %}
                 </td>
             </tr>
             <tr>
@@ -34,16 +34,16 @@
                     {% if page.has_previous %}
                         <a class="ajax-link"
                            href="{% url lfc_manage_set_users_page %}?page=1">
-                           <img src="{{ MEDIA_URL }}lfc/icons/resultset_first.png" alt="{% trans 'First' %}" />
+                           <img src="{{ STATIC_URL }}icons/resultset_first.png" alt="{% trans 'First' %}" />
                         </a>
 
                         <a class="ajax-link"
                            href="{% url lfc_manage_set_users_page %}?page={{ page.previous_page_number }}">
-                           <img src="{{ MEDIA_URL }}lfc/icons/resultset_previous.png" alt="{% trans 'Previous' %}" />
+                           <img src="{{ STATIC_URL }}icons/resultset_previous.png" alt="{% trans 'Previous' %}" />
                         </a>
                     {% else %}
-                        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_first.png" alt="{% trans 'First' %}" /></a>
-                        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_previous.png" alt="{% trans 'Previous' %}" /></a>
+                        <a><img src="{{ STATIC_URL }}icons/resultset_first.png" alt="{% trans 'First' %}" /></a>
+                        <a><img src="{{ STATIC_URL }}icons/resultset_previous.png" alt="{% trans 'Previous' %}" /></a>
                     {% endif %}
 
                     {{ page.number }} {% trans "of" %} {{ paginator.num_pages }}
@@ -51,16 +51,16 @@
                     {% if page.has_next %}
                         <a class="ajax-link"
                            href="{% url lfc_manage_set_users_page %}?page={{ page.next_page_number }}">
-                           <img src="{{ MEDIA_URL }}lfc/icons/resultset_next.png" title="{% trans 'Next' %}"/>
+                           <img src="{{ STATIC_URL }}icons/resultset_next.png" title="{% trans 'Next' %}"/>
                         </a>
 
                         <a class="ajax-link"
                            href="{% url lfc_manage_set_users_page %}?page={{ paginator.num_pages }}">
-                           <img src="{{ MEDIA_URL }}lfc/icons/resultset_last.png" title="{% trans 'Last' %}"/>
+                           <img src="{{ STATIC_URL }}icons/resultset_last.png" title="{% trans 'Last' %}"/>
                         </a>
                     {% else %}
-                        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_next.png" title="{% trans 'Next' %}"/></a>
-                        <a><img src="{{ MEDIA_URL }}lfc/icons/resultset_last.png" title="{% trans 'Last' %}"/></a>
+                        <a><img src="{{ STATIC_URL }}icons/resultset_next.png" title="{% trans 'Next' %}"/></a>
+                        <a><img src="{{ STATIC_URL }}icons/resultset_last.png" title="{% trans 'Last' %}"/></a>
                     {% endif %}
                 </td>
                 <td>
@@ -79,7 +79,7 @@
                 <td>
                     <a class="ajax-link reset-link"
                        href="{% url lfc_manage_reset_users_filter %}">
-                       <img class="icon" src="{{ MEDIA_URL }}lfc/icons/cancel.png" title="{% trans 'Last' %}"/>
+                       <img class="icon" src="{{ STATIC_URL }}icons/cancel.png" title="{% trans 'Last' %}"/>
                     </a>
                 </td>
             </tr>
@@ -141,8 +141,8 @@
                     </td>
                     <td>
                         <a href="{% url lfc_manage_user user.id %}">
-                            <img src="{{ MEDIA_URL }}lfc/icons/edit.png" 
-                                 title="{% trans "Edit" %}" 
+                            <img src="{{ STATIC_URL }}icons/edit.png"
+                                 title="{% trans "Edit" %}"
                                  alt="{% trans "Edit" %}" />
                         </a>
                     </td>

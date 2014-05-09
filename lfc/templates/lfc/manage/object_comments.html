@@ -67,7 +67,7 @@
                                 </a>
                             {% else %}
                                 {{ comment.name }}
-                            {% endif %}                            
+                            {% endif %}
                         </td>
                         <td>
                             {% if comment.user_url %}
@@ -84,9 +84,9 @@
                                    {% if comment.is_public %}checked="checked"{% endif %} />
                         </td>
                         <td class="right-padding">
-                            <a class="ajax-link" 
+                            <a class="ajax-link"
                                href="{% url lfc_edit_comment comment.id %}">
-                                <img src="{{ MEDIA_URL }}lfc/icons/edit.png"
+                                <img src="{{ STATIC_URL }}icons/edit.png"
                                      alt="{% trans 'Edit' %}"
                                      title="{% trans 'Edit object' %}" />
                             </a>

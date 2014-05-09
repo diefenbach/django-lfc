@@ -5,7 +5,7 @@
     <h2 class="middle-heading">
         {% trans 'Local roles' %}
         <a class="ajax-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
-            <img style="position:relative; top:2px" src="{{ MEDIA_URL }}lfc/icons/add.png" />
+            <img style="position:relative; top:2px" src="{{ STATIC_URL }}icons/add.png" />
         </a>
     </h2>
 
@@ -118,9 +118,9 @@
                         {% for role in user.roles %}
                             <td>
                                 {% if role.has_local_role %}
-                                    <img src="{{ MEDIA_URL }}lfc/icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}' />
+                                    <img src="{{ STATIC_URL }}icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}' />
                                 {% else %}
-                                    <img src="{{ MEDIA_URL }}lfc/icons/cross.png" alt='{% trans "No" %}' title='{% trans "No" %}' />
+                                    <img src="{{ STATIC_URL }}icons/cross.png" alt='{% trans "No" %}' title='{% trans "No" %}' />
                                 {% endif %}
                             </td>
                         {% endfor %}
@@ -153,9 +153,9 @@
                         {% for role in group.roles %}
                             <td>
                                 {% if role.has_local_role %}
-                                    <img src="{{ MEDIA_URL }}lfc/icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}' />
+                                    <img src="{{ STATIC_URL }}icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}' />
                                 {% else %}
-                                    <img src="{{ MEDIA_URL }}lfc/icons/cross.png" alt='{% trans "No" %}' title='{% trans "No" %}' />
+                                    <img src="{{ STATIC_URL }}icons/cross.png" alt='{% trans "No" %}' title='{% trans "No" %}' />
                                 {% endif %}
                             </td>
                         {% endfor %}
