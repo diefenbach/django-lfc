@@ -283,10 +283,10 @@ def portal(request, template_name="lfc/manage/portal.html"):
 
     **Permission:**
 
-        view
+        view_management
     """
     portal = get_portal()
-    portal.check_permission(request.user, "view")
+    portal.check_permission(request.user, "view_management")
 
     return render_to_response(template_name, RequestContext(request, {
         "navigation": navigation(request, None),
@@ -796,6 +796,7 @@ def load_portal_files(request):
 
         view
     """
+    get_portal().check_permission(request.user, "view_management")
     get_portal().check_permission(request.user, "view")
 
     return HttpJsonResponse(
@@ -931,7 +932,6 @@ def edit_file(request, id):
 
 # Objects ####################################################################
 ##############################################################################
-# TODO: Need permission view_management or similiar
 def manage_object(request, id, template_name="lfc/manage/object.html"):
     """Displays the main management screen with all tabs of the content object
     with passed id.
@@ -943,7 +943,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
 
     **Permission:**
 
-        view
+        view_management
     """
     try:
         obj = lfc.utils.get_content_object(pk=id)
@@ -951,7 +951,7 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         url = reverse("lfc_manage_portal")
         return HttpResponseRedirect(url)
 
-    obj.check_permission(request.user, "view")
+    obj.check_permission(request.user, "view_management")
 
     if not lfc.utils.registration.get_info(obj):
         raise Http404()
@@ -1276,7 +1276,7 @@ def object_files(request, obj, template_name="lfc/manage/object_files.html"):
     }))
 
 
-def object_seo_data(request, obj, template_name="lfc/manage/object_seo.html"):
+def object_seo_data(request, obj=None, id=None, template_name="lfc/manage/object_seo.html"):
     """Displays/Updates the SEO tab of the passed content object.
 
     **Parameters:**
@@ -1290,6 +1290,9 @@ def object_seo_data(request, obj, template_name="lfc/manage/object_seo.html"):
         * edit (POST)
         * view (GET)
     """
+    if obj is None:
+        obj = lfc.utils.get_content_object(pk=id)
+
     if request.method == "POST":
         obj.check_permission(request.user, "edit")
 

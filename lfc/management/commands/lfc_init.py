@@ -69,6 +69,7 @@ class Command(BaseCommand):
         view = permissions.utils.register_permission("View", "view")
         manage_local_roles = permissions.utils.register_permission("Manage local roles", "manage_local_roles")
         manage_permissions = permissions.utils.register_permission("Manage permissions", "manage_permissions")
+        view_management = permissions.utils.register_permission("View management", "view_management")
 
         ctype = ContentType.objects.get_for_model(Portal)
 
@@ -87,12 +88,14 @@ class Command(BaseCommand):
         # Set permissions for portal
         permissions.utils.grant_permission(portal, anonymous, "view")
 
+        permissions.utils.grant_permission(portal, editor, "view_management")
         permissions.utils.grant_permission(portal, editor, "delete")
         permissions.utils.grant_permission(portal, editor, "view")
         permissions.utils.grant_permission(portal, editor, "edit")
         permissions.utils.grant_permission(portal, editor, "retract")
         permissions.utils.grant_permission(portal, editor, "submit")
 
+        permissions.utils.grant_permission(portal, manager, "view_management")
         permissions.utils.grant_permission(portal, manager, "add", )
         permissions.utils.grant_permission(portal, manager, "delete")
         permissions.utils.grant_permission(portal, manager, "edit")
@@ -113,6 +116,7 @@ class Command(BaseCommand):
         permissions.utils.grant_permission(portal, owner, "submit")
         permissions.utils.grant_permission(portal, owner, "view")
 
+        permissions.utils.grant_permission(portal, reviewer, "view_management")
         permissions.utils.grant_permission(portal, reviewer, "view")
         permissions.utils.grant_permission(portal, reviewer, "publish")
         permissions.utils.grant_permission(portal, reviewer, "reject")
