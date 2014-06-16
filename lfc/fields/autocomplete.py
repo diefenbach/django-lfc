@@ -1,10 +1,9 @@
 # django imports
 from django import forms
-from django.db.models import get_model
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.conf import settings
-from django.utils.text import truncate_words
+from django.template.defaultfilters import truncatewords
 
 # tagging imports
 from tagging.models import Tag
@@ -66,7 +65,7 @@ class ForeignKeySearchInput(forms.HiddenInput):
 
     def label_for_value(self, value):
         obj = BaseContent.objects.get(id=value)
-        return truncate_words(obj, 14)
+        return truncatewords(obj, 14)
 
     def render(self, name, value, attrs=None):
         if attrs is None:

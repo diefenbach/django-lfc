@@ -10,14 +10,14 @@
             {% for content_type in content_types %}
                 <li>
                     <a class="ajax-link"
-                       href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans content_type.name %}</a>
+                       href="{% url 'lfc_add_object' obj.id %}?type={{ content_type.type }}">{% trans content_type.name %}</a>
                </li>
             {% endfor %}
             </ul>
         {% else %}
             {% for content_type in content_types %}
                 <a class="ajax-link"
-                   href="{% url lfc_add_object obj.id %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
+                   href="{% url 'lfc_add_object' obj.id %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
             {% endfor %}
         {% endif %}
         </li>
@@ -29,26 +29,26 @@
                 {% ifhasperm add %}
                 <li>
                     <a class="ajax-link"
-                       href="{% url lfc_copy obj.id %}">{% trans 'Copy' %}</a>
+                       href="{% url 'lfc_copy' obj.id %}">{% trans 'Copy' %}</a>
                 </li>
                 {% endifhasperm %}
                 {% ifhasperm delete %}
                     <li>
                         <a class="ajax-link"
-                           href="{% url lfc_cut obj.id %}">{% trans 'Cut' %}</a>
+                           href="{% url 'lfc_cut' obj.id %}">{% trans 'Cut' %}</a>
                     </li>
                 {% endifhasperm %}
                 {% if display_paste %}
                     {% ifhasperm add %}
                         <li>
                             <a class="ajax-link"
-                               href="{% url lfc_paste obj.id %}">{% trans 'Paste' %}</a>
+                               href="{% url 'lfc_paste' obj.id %}">{% trans 'Paste' %}</a>
                         </li>
                     {% endifhasperm %}
                 {% endif %}
                 {% ifhasperm delete %}
                     <li>
-                        <a class="delete-link" href="{% url lfc_delete_object obj.id %}">{% trans 'Delete' %}</a>
+                        <a class="delete-link" href="{% url 'lfc_delete_object' obj.id %}">{% trans 'Delete' %}</a>
                     </li>
                 {% endifhasperm %}
             </ul>
@@ -61,14 +61,14 @@
                 <ul>
                     <li>
                         <a {% ifequal canonical.language obj.language %}class="selected"{% endifequal %}
-                           href="{% url lfc_manage_object canonical.id %}">
+                           href="{% url 'lfc_manage_object' canonical.id %}">
                             {{ canonical.get_language_display }}
                         </a>
                     </li>
                     {% for translation in translations %}
                         <li>
                             <a {% ifequal translation.language obj.language %}class="selected"{% endifequal %}
-                                href="{% url lfc_manage_object translation.id %}">
+                                href="{% url 'lfc_manage_object' translation.id %}">
                                 {{ translation.get_language_display }}
                             </a>
                         </li>
@@ -83,7 +83,7 @@
                     <ul>
                         {% for language in languages %}
                             <li>
-                                <a href="{% url lfc_translate_object obj.id language.code %}">{{ language.name }}</a>
+                                <a href="{% url 'lfc_translate_object' obj.id language.code %}">{{ language.name }}</a>
                             </li>
                         {% endfor %}
                     </ul>
@@ -93,7 +93,7 @@
                         <ul>
                             {% for language in languages %}
                             <li>
-                                <a href="{% url lfc_translate_object obj.canonical.id language.code %}">{{ language.name }}</a>
+                                <a href="{% url 'lfc_translate_object' obj.canonical.id language.code %}">{{ language.name }}</a>
                             </li>
                             {% endfor %}
                         </ul>
@@ -113,7 +113,7 @@
                     {% for transition in transitions %}
                         <li>
                             <a class="ajax-link"
-                                href="{% url lfc_manage_do_transition obj.id %}?transition={{ transition.id }}">
+                                href="{% url 'lfc_manage_do_transition' obj.id %}?transition={{ transition.id }}">
                                 {% trans transition.name %}
                             </a>
                         </li>

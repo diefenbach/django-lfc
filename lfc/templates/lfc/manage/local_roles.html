@@ -4,13 +4,13 @@
 {% ifhasperm manage_local_roles %}
     <h2 class="middle-heading">
         {% trans 'Local roles' %}
-        <a class="ajax-link" href="{% url lfc_manage_local_roles_add_form obj.id %}">
+        <a class="ajax-link" href="{% url 'lfc_manage_local_roles_add_form' obj.id %}">
             <img style="position:relative; top:2px" src="{{ STATIC_URL }}icons/add.png" />
         </a>
     </h2>
 
     {% if users or groups %}
-        <form action="{% url lfc_manage_save_local_roles obj.id %}"
+        <form action="{% url 'lfc_manage_save_local_roles' obj.id %}"
               method="POST">
 
             <h3 class="discreet">{% trans "Users" %}</h3>
@@ -34,7 +34,7 @@
                                     <input type="checkbox" name="to_delete_user" value="{{ user.id }}" class="select-1" />
                                 </td>
                                 <td>
-                                    <a href="{% url lfc_manage_user user.id %}">
+                                    <a href="{% url 'lfc_manage_user' user.id %}">
                                         {{ user.name }}
                                     </a>
                                 </td>
@@ -69,7 +69,7 @@
                                     <input type="checkbox" name="to_delete_group" value="{{ group.id }}" class="select-2" />
                                 </td>
                                 <td>
-                                    <a href="{% url lfc_manage_user group.id %}">
+                                    <a href="{% url 'lfc_manage_user' group.id %}">
                                         {{ group.name }}
                                     </a>
                                 </td>
@@ -111,7 +111,7 @@
                 {% for user in users %}
                     <tr>
                         <td>
-                            <a href="{% url lfc_manage_user user.id %}">
+                            <a href="{% url 'lfc_manage_user' user.id %}">
                                 {{ user.name }}
                             </a>
                         </td>
@@ -146,7 +146,7 @@
                 {% for group in groups %}
                     <tr>
                         <td>
-                            <a href="{% url lfc_manage_user group.id %}">
+                            <a href="{% url 'lfc_manage_user' group.id %}">
                                 {{ group.name }}
                             </a>
                         </td>

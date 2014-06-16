@@ -5,7 +5,7 @@
     {% for type in types %}
         <div>
             <a {% ifequal type.id ctr.id %}class="selected"{% endifequal %}
-               href="{% url lfc_content_type type.id %}">
+               href="{% url 'lfc_content_type' type.id %}">
             {% trans type.name %}
         </div>
     {% endfor %}
@@ -17,7 +17,7 @@
             <li><a href="#data">{{ ctr.name }}</a></li>
         </ul>
         <div id="data">
-            <form action="{% url lfc_content_type ctr.id %}"
+            <form action="{% url 'lfc_content_type' ctr.id %}"
                   method="POST">
                 {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}

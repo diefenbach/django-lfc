@@ -10,17 +10,17 @@
                 <td>
                     <span>{% trans "Your are here" %}:</span>
                     <a class="fb-obj"
-                       href="{% url lfc_imagebrowser %}?obj_id=">{% trans "Portal" %}</a>
+                       href="{% url 'lfc_imagebrowser' %}?obj_id=">{% trans "Portal" %}</a>
 
                     {% for obj in objs %}
                         &gt;
                         <a class="fb-obj"
-                           href="{% url lfc_imagebrowser %}?obj_id={{ obj.id }}">{{ obj.title }}</a>
+                           href="{% url 'lfc_imagebrowser' %}?obj_id={{ obj.id }}">{{ obj.title }}</a>
                     {% endfor %}
                 </td>
                 <td align="right">
                     <a class="fb-obj"
-                       href="{% url lfc_imagebrowser %}?obj_id={{ current_id }}">{% trans "Current Object" %}</a>
+                       href="{% url 'lfc_imagebrowser' %}?obj_id={{ current_id }}">{% trans "Current Object" %}</a>
                 </td>
             </tr>
         </table>
@@ -41,11 +41,11 @@
                                 <div>
                                     {% if child.display %}
                                         <a class="fb-obj"
-                                           href="{% url lfc_imagebrowser %}?obj_id={{ child.id }}">{{ child.title }} {{ child.display }}
+                                           href="{% url 'lfc_imagebrowser' %}?obj_id={{ child.id }}">{{ child.title }} {{ child.display }}
                                         </a>
                                     {% else %}
                                         <span class="fb-obj">{{ child.title }}
-                                        </span>                                        
+                                        </span>
                                     {% endif %}
                                 </div>
                             {% empty %}
@@ -114,7 +114,7 @@
                             <select id="image-size">
                                 <option value="">{% trans "Original" %}</option>
                                 {% for size in sizes %}
-                                    <option value="{{ size.value }}" {% if size.selected %}selected="selected"{% endif %}>{{ size.title }}</option>                                    
+                                    <option value="{{ size.value }}" {% if size.selected %}selected="selected"{% endif %}>{{ size.title }}</option>
                                 {% endfor %}
                             </select>
                         </td>
@@ -131,10 +131,10 @@
 
     <h1>{% trans "Upload image to current object: " %} {{ current_obj.title }}</h1>
     {% if display_upload %}
-        <form action="{% url lfc_fb_upload_image %}"
+        <form action="{% url 'lfc_fb_upload_image' %}"
               method="post"
               enctype="multipart/form-data">
-            {% csrf_token %}  
+            {% csrf_token %}
             <input type="hidden" name="obj_id" value="{{ obj_id }}">
             <input type="file" name="image" />
             <input class="ajax-submit"

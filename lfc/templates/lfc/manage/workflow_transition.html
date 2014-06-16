@@ -4,7 +4,7 @@
     <h1 class="first-heading">
         {% trans "Edit transition:" %} "{{ transition.name }}"
     </h1>
-    <form action="{% url lfc_manage_save_workflow_transition transition.id %}"
+    <form action="{% url 'lfc_manage_save_workflow_transition' transition.id %}"
           method="POST">
         {% csrf_token %}
         {% include "lfc/manage/lfc_form.html" %}

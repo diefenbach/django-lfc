@@ -7,7 +7,7 @@
 {% ifportalhasperm manage_portal %}
     {% if obj.files.all %}
         <form id="object-files-update-form"
-              action="{% url lfc_update_portal_files %}"
+              action="{% url 'lfc_update_portal_files' %}"
               method="post">
             {% csrf_token %}
             <table class="lfs-manage-table">
@@ -51,12 +51,12 @@
                         <td class="right">
                             {% if not forloop.first %}
                                 <a class="up ajax-link"
-                                   href="{% url lfc_move_file file.id %}?direction=0"
+                                   href="{% url 'lfc_move_file' file.id %}?direction=0"
                                    title='{% trans "Move Up" %}'></a>
                             {% endif %}
                             {% if not forloop.last %}
                                 <a class="down ajax-link"
-                                   href="{% url lfc_move_file file.id %}?direction=1"
+                                   href="{% url 'lfc_move_file' file.id %}?direction=1"
                                    title='{% trans "Move Down" %}'></a>
                             {% else %}
                                 <span class="blank"></span>
@@ -66,7 +66,7 @@
                                title='{% trans "Download" %}'></a>
                             <a class="edit ajax-link"
                                title='{% trans "Edit" %}'
-                               href="{% url lfc_edit_file file.id %}"
+                               href="{% url 'lfc_edit_file' file.id %}"
                                title='{% trans "Edit" %}' /></a>
                         </td>
                     </tr>
@@ -86,13 +86,13 @@
     <h2 class="middle-heading">{% trans 'Add files' %}</h2>
 
     <form id="files-form"
-          action="{% url lfc_add_portal_files %}"
+          action="{% url 'lfc_add_portal_files' %}"
           method="post"
           enctype="multipart/form-data">
           {% csrf_token %}
           <input class="button" type="file" name="file" multiple />
     </form>
-    <table id="files-table" data="{% url lfc_load_portal_files %}" msg='{% trans "Uploading files:" %}'></table>
+    <table id="files-table" data="{% url 'lfc_load_portal_files' %}" msg='{% trans "Uploading files:" %}'></table>
     <script>
         $(function () {
             $('#files-form').fileUploadUI({

@@ -9,14 +9,14 @@
                 {% for content_type in content_types %}
                     <li>
                         <a class="ajax-link"
-                           href="{% url lfc_add_top_object %}?type={{content_type.type}}">{% trans content_type.name %}</a>
+                           href="{% url 'lfc_add_top_object' %}?type={{content_type.type}}">{% trans content_type.name %}</a>
                    </li>
                 {% endfor %}
                 </ul>
             {% else %}
                 {% for content_type in content_types %}
                     <a class="ajax-link"
-                       href="{% url lfc_add_top_object  %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
+                       href="{% url 'lfc_add_top_object'  %}?type={{ content_type.type }}">{% trans "Add" %}: {% trans content_type.name %}</a>
                 {% endfor %}
             {% endif %}
         </li>
@@ -24,7 +24,7 @@
     <li>
         {% if display_paste %}
             <a class="ajax-link"
-               href="{% url lfc_paste %}">{% trans 'Paste' %}</a>
+               href="{% url 'lfc_paste' %}">{% trans 'Paste' %}</a>
         {% endif %}
     </li>
     <li>

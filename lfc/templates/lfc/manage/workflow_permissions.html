@@ -2,7 +2,7 @@
 
 <h2 class="first-heading">{% trans "Permissions" %}</h2>
 
-<form action="{% url lfc_manage_save_workflow_permissions workflow.id %}"
+<form action="{% url 'lfc_manage_save_workflow_permissions' workflow.id %}"
       method="POST">
     {% csrf_token %}
     {% for permission in permissions %}

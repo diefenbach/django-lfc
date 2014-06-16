@@ -1,6 +1,6 @@
 {% load i18n %}
 <div style="padding-top:20px">
-    <form action="{% url lfc_manage_add_local_roles obj_id %}"
+    <form action="{% url 'lfc_manage_add_local_roles' obj_id %}"
           method="POST">
         <div style="height:480px; overflow: auto">
             <table width="100%">
@@ -11,7 +11,7 @@
                             {{ role.name }}
                         </th>
                     {% endfor %}
-                </tr>                
+                </tr>
                 <tr>
                     <td>
                         <h2 style="border: none" class="discreet">{% trans "Users" %}</h2>
@@ -38,7 +38,7 @@
                             {% trans "There are no users" %}
                         </td>
                     </tr>
-                {% endfor %}    
+                {% endfor %}
                 <tr>
                     <td>
                         <h2 style="padding-top: 20px; border: none" class="discreet">{% trans "Groups" %}</h2>
@@ -62,7 +62,7 @@
                             {% trans "There are no groups." %}
                         </td>
                     </tr>
-                {% endfor %}    
+                {% endfor %}
             </table>
         </div>
         <div class="manage-form-buttons">

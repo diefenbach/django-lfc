@@ -6,7 +6,7 @@
         {% for role in roles %}
             <div>
                 <a {% ifequal role.id current_role_id %}class="selected"{% endifequal %}
-                   href="{% url lfc_manage_role role.id %}">
+                   href="{% url 'lfc_manage_role' role.id %}">
                     {{ role.name }}
                 </a>
             </div>
@@ -29,7 +29,7 @@
             <li class="ui-tabs-nav-item"><a href="#data">{% trans "Data" %}</a></li>
         </ul>
         <div id="data">
-            <form action="{% url lfc_manage_add_role %}"
+            <form action="{% url 'lfc_manage_add_role' %}"
                   method="POST">
                 {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}

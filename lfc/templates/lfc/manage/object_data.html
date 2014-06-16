@@ -9,19 +9,18 @@
     {% if above_form %}
         <div id="core-data-above-form">
             {{ above_form }}
-        </div>        
+        </div>
     {% endif %}
 
-    <form action="{% url lfc_save_object_core_data obj.id %}"
+    <form action="{% url 'lfc_save_object_core_data' obj.id %}"
           method="POST">
-
+        {% csrf_token %}
         {% include "lfc/manage/lfc_form.html" %}
-
         <input class="ajax-submit"
                type="submit"
                value="{% trans 'Save core data' %}" />
     </form>
-    
+
     {% if below_form %}
         <div id="core-data-below-form">
             {{ below_form }}

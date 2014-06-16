@@ -18,7 +18,7 @@
         </ul>
 
         <div id="data">
-            <form action="{% url lfc_manage_add_workflow %}"
+            <form action="{% url 'lfc_manage_add_workflow' %}"
                   method="POST">
                 {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}

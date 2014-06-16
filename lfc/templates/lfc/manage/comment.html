@@ -4,7 +4,7 @@
 
 <form class="lfc-form"
       method="post"
-      action="{% url lfc_edit_comment comment.id %}">
+      action="{% url 'lfc_edit_comment' comment.id %}">
 
     {% include "lfc/manage/lfc_form.html" %}
 

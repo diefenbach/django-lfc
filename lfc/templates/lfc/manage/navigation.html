@@ -9,28 +9,28 @@
                 {% for language in languages %}
                     <li>
                         <a class="ajax-link"
-                           href="{% url lfc_set_navigation_tree_language language.code %}?id={{ obj.id }}">{% trans language.name %}</a>
+                           href="{% url 'lfc_set_navigation_tree_language' language.code %}?id={{ obj.id }}">{% trans language.name %}</a>
                     </li>
                 {% endfor %}
             </ul>
         </li>
-    </ul>    
+    </ul>
 {% endif %}
 
 <div class="navigation-manage" style="clear:both">
     <ul class="level-1">
         <li {% if is_portal %}class="current"{% endif %}>
             <a class="manage-portal"
-               href="{% url lfc_manage_portal %}">{% trans 'Portal' %}</a>
+               href="{% url 'lfc_manage_portal' %}">{% trans 'Portal' %}</a>
         </li>
         <li>
             <ul class="level-{{ level }}">
                 {% for obj in objs %}
                     <li {% if obj.is_current %}class="current"{% endif %}>
                         <span>
-                            <a class="manage-page" 
+                            <a class="manage-page"
                                id="{{ obj.id }}"
-                               href="{% url lfc_manage_object obj.id %}">
+                               href="{% url 'lfc_manage_object' obj.id %}">
                                 {{ obj.title }}
                             </a>
                         </span>

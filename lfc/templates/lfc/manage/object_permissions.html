@@ -13,7 +13,7 @@
             {% trans 'Permissions' %}
         </h2>
 
-        <form action="{% url lfc_update_object_permissions obj.id %}"
+        <form action="{% url 'lfc_update_object_permissions' obj.id %}"
               method="post">
 
             <table class="lfs-manage-table full">

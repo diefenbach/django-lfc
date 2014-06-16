@@ -4,11 +4,11 @@
 
 {% for transition in workflow.transitions.all %}
     <h3>
-        <a class="delete-link" href="{% url lfc_manage_delete_workflow_transition transition.id %}">
+        <a class="delete-link" href="{% url 'lfc_manage_delete_workflow_transition' transition.id %}">
             <img class="icon" src="{{ STATIC_URL }}icons/cancel.png" />
         </a>
 
-        <a class="ajax-link" href="{% url lfc_manage_transition transition.id %}">
+        <a class="ajax-link" href="{% url 'lfc_manage_transition' transition.id %}">
             {% trans transition.name %}
         </a>
     </h3>
@@ -20,7 +20,7 @@
                 </td>
                 <td>
                     {% if transition.destination %}
-                        <a class="ajax-link" href="{% url lfc_manage_state transition.destination.id %}">
+                        <a class="ajax-link" href="{% url 'lfc_manage_state' transition.destination.id %}">
                             {% trans transition.destination.name %}
                         </a>
                     {% else %}
@@ -58,7 +58,7 @@
 
 <h2 class="middle-heading">{% trans "Add transition" %}</h2>
 
-<form action="{% url lfc_manage_add_workflow_transition workflow.id %}"
+<form action="{% url 'lfc_manage_add_workflow_transition' workflow.id %}"
       method="POST">
     {% csrf_token %}
     <input name="name" type="text" />

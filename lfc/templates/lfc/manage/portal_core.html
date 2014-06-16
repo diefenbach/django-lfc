@@ -6,8 +6,9 @@
 </h2>
 
 {% ifportalhasperm manage_portal %}
-    <form action="{% url lfc_save_portal_core %}"
+    <form action="{% url 'lfc_save_portal_core' %}"
           method="POST">
+        {% csrf_token %}
         {% include "lfc/manage/lfc_form.html" %}
 
         <input class="ajax-submit"

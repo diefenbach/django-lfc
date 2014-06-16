@@ -1,5 +1,5 @@
 {% load i18n %}
-<form action="{% url lfc_edit_portlet portletassigment_id %}"
+<form action="{% url 'lfc_edit_portlet' portletassigment_id %}"
       method="post">
     <h1 class="first-heading">
         {% trans 'Edit portlet' %}
@@ -35,5 +35,5 @@
 <script>
     $(function() {
         addEditor("#id_portlet-text");
-    });    
+    });
 </script>

@@ -10,17 +10,17 @@
                 <td>
                     <span>{% trans "Your are here" %}:</span>
                     <a class="fb-obj"
-                       href="{% url lfc_filebrowser %}?obj_id=">{% trans "Portal" %}</a>
+                       href="{% url 'lfc_filebrowser' %}?obj_id=">{% trans "Portal" %}</a>
 
                     {% for obj in objs %}
                         &gt;
                         <a class="fb-obj"
-                           href="{% url lfc_filebrowser %}?obj_id={{ obj.id }}">{{ obj.title }}</a>
+                           href="{% url 'lfc_filebrowser' %}?obj_id={{ obj.id }}">{{ obj.title }}</a>
                     {% endfor %}
                 </td>
                 <td align="right">
                     <a class="fb-obj"
-                       href="{% url lfc_filebrowser %}?obj_id={{ current_id }}">{% trans "Current Object" %}</a>
+                       href="{% url 'lfc_filebrowser' %}?obj_id={{ current_id }}">{% trans "Current Object" %}</a>
                 </td>
             </tr>
         </table>
@@ -53,7 +53,7 @@
                     </tr>
                 </table>
             </td>
-            
+
             <td width="350px">
 
                 {#  Mail #}
@@ -73,7 +73,7 @@
                        </td>
                     </tr>
                 </table>
-                
+
                 <table width="100%"
                        class="extern-form">
                     <tr>
@@ -118,7 +118,7 @@
                                 <div>
                                     {% if child.display %}
                                         <a class="fb-obj"
-                                           href="{% url lfc_filebrowser %}?obj_id={{ child.id }}">{{ child.title }} {{ child.display }}</a>
+                                           href="{% url 'lfc_filebrowser' %}?obj_id={{ child.id }}">{{ child.title }} {{ child.display }}</a>
                                     {% else %}
                                         <span class="fb-obj">{{ child.title }}</a>
                                     {% endif %}
@@ -198,7 +198,7 @@
 
     <h1>{% trans "Upload file to" %} {{ current_obj.title }}</h1>
     {% if display_upload %}
-        <form action="{% url lfc_fb_upload_file %}"
+        <form action="{% url 'lfc_fb_upload_file' %}"
               method="post"
               enctype="multipart/form-data">
             <input type="hidden" name="obj_id" value="{{ obj_id }}">

@@ -4,13 +4,13 @@
      class="site-actions" style="padding-left:20px">
     <ul class="sf-menu">
         <li>
-            <a href="{% url lfc_add_user %}">{% trans "Add User" %}</a>
+            <a href="{% url 'lfc_add_user' %}">{% trans "Add User" %}</a>
         </li>
     </ul>
 </div>
 
 <div style="padding-left:30px">
-    <form action="{% url lfc_manage_set_users_filter %}"
+    <form action="{% url 'lfc_manage_set_users_filter' %}"
           method="GET">
 
         <table class="users-navigation">
@@ -33,12 +33,12 @@
                 <td class="">
                     {% if page.has_previous %}
                         <a class="ajax-link"
-                           href="{% url lfc_manage_set_users_page %}?page=1">
+                           href="{% url 'lfc_manage_set_users_page' %}?page=1">
                            <img src="{{ STATIC_URL }}icons/resultset_first.png" alt="{% trans 'First' %}" />
                         </a>
 
                         <a class="ajax-link"
-                           href="{% url lfc_manage_set_users_page %}?page={{ page.previous_page_number }}">
+                           href="{% url 'lfc_manage_set_users_page' %}?page={{ page.previous_page_number }}">
                            <img src="{{ STATIC_URL }}icons/resultset_previous.png" alt="{% trans 'Previous' %}" />
                         </a>
                     {% else %}
@@ -50,12 +50,12 @@
 
                     {% if page.has_next %}
                         <a class="ajax-link"
-                           href="{% url lfc_manage_set_users_page %}?page={{ page.next_page_number }}">
+                           href="{% url 'lfc_manage_set_users_page' %}?page={{ page.next_page_number }}">
                            <img src="{{ STATIC_URL }}icons/resultset_next.png" title="{% trans 'Next' %}"/>
                         </a>
 
                         <a class="ajax-link"
-                           href="{% url lfc_manage_set_users_page %}?page={{ paginator.num_pages }}">
+                           href="{% url 'lfc_manage_set_users_page' %}?page={{ paginator.num_pages }}">
                            <img src="{{ STATIC_URL }}icons/resultset_last.png" title="{% trans 'Last' %}"/>
                         </a>
                     {% else %}
@@ -78,7 +78,7 @@
                 </td>
                 <td>
                     <a class="ajax-link reset-link"
-                       href="{% url lfc_manage_reset_users_filter %}">
+                       href="{% url 'lfc_manage_reset_users_filter' %}">
                        <img class="icon" src="{{ STATIC_URL }}icons/cancel.png" title="{% trans 'Last' %}"/>
                     </a>
                 </td>
@@ -88,7 +88,7 @@
 </div>
 
 <div id="data" style="margin-top: 10px; margin-left: 30px; ">
-    <form action="{% url lfc_manage_change_users %}"e
+    <form action="{% url 'lfc_manage_change_users' %}"e
           method="POST">
         {% csrf_token %}
         <table class="users lfs-manage-table full">
@@ -120,12 +120,12 @@
                         <input type="checkbox" name="delete_ids" value="{{ user.id }}" class="select-1" />
                     </td>
                     <td>
-                        <a href="{% url lfc_manage_user user.id %}">
+                        <a href="{% url 'lfc_manage_user' user.id %}">
                             {{ user.first_name }} {{ user.last_name }}
                         </a>
                     </td>
                     <td>
-                        <a href="{% url lfc_manage_user user.id %}">
+                        <a href="{% url 'lfc_manage_user' user.id %}">
                             {{ user.username }}
                         </a>
                     </td>
@@ -140,7 +140,7 @@
                         <input type="checkbox" name="active_ids" value="{{ user.id }}" class="select-2" {% if user.is_active %}checked="checked"{% endif %} />
                     </td>
                     <td>
-                        <a href="{% url lfc_manage_user user.id %}">
+                        <a href="{% url 'lfc_manage_user' user.id %}">
                             <img src="{{ STATIC_URL }}icons/edit.png"
                                  title="{% trans "Edit" %}"
                                  alt="{% trans "Edit" %}" />

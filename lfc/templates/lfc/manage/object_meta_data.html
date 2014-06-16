@@ -6,7 +6,7 @@
 </h2>
 
 {% ifhasperm edit %}
-    <form action="{% url lfc_save_meta_data obj.id %}"
+    <form action="{% url 'lfc_save_meta_data' obj.id %}"
           method="POST">
 
             {% include "lfc/manage/lfc_form.html" %}
@@ -63,6 +63,6 @@
     <script type="text/javascript">
         $(function() {
             DateTimeShortcuts.init();
-        });    
-    </script>    
+        });
+    </script>
 {% endif %}

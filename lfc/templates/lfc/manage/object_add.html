@@ -4,7 +4,7 @@
 
 <form class="lfc-form"
       method="post"
-      action="{% url lfc_add_object language id %}">
+      action="{% url 'lfc_add_object' language id %}">
     {% csrf_token %}
     <table>
         {% include "lfc/manage/lfc_form.html" %}

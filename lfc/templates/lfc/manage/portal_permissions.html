@@ -6,7 +6,7 @@
 </h2>
 
 {% ifportalhasperm manage_portal %}
-    <form action="{% url lfc_update_portal_permissions %}"
+    <form action="{% url 'lfc_update_portal_permissions' %}"
           method="post">
 
         <table class="lfs-manage-table full">

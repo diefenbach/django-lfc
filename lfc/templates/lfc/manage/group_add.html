@@ -6,7 +6,7 @@
         {% for group in groups %}
             <div>
                 <a {% ifequal group.id current_group_id %}class="selected"{% endifequal %}
-                   href="{% url lfc_manage_group group.id %}">
+                   href="{% url 'lfc_manage_group' group.id %}">
                     {{ group.name }}
                 </a>
             </div>
@@ -21,11 +21,11 @@
 
         <ul class="sf-menu">
             <li>
-                <a href="{% url lfc_manage_add_group %}">{% trans "Add Group" %}</a>
+                <a href="{% url 'lfc_manage_add_group' %}">{% trans "Add Group" %}</a>
             </li>
             {% if display_delete %}
                 <li>
-                    <a class="delete-link" href="{% url lfc_delete_user current_user_id %}">{% trans "Delete User" %}</a>
+                    <a class="delete-link" href="{% url 'lfc_delete_user' current_user_id %}">{% trans "Delete User" %}</a>
                 </li>
             {% endif %}
         </ul>
@@ -37,7 +37,7 @@
         </ul>
 
         <div id="data">
-            <form action="{% url lfc_manage_add_group %}"
+            <form action="{% url 'lfc_manage_add_group' %}"
                   method="POST">
                 {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}

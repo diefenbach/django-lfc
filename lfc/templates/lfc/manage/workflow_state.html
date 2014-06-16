@@ -4,7 +4,7 @@
     <h1 class="first-heading">
         {% trans "Edit state:" %} "{{ state.name }}"
     </h1>
-    <form action="{% url lfc_manage_save_workflow_state state.id %}"
+    <form action="{% url 'lfc_manage_save_workflow_state' state.id %}"
           method="POST">
         {% csrf_token %}
         {% include "lfc/manage/lfc_form.html" %}

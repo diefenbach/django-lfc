@@ -6,7 +6,7 @@
         {% for role in roles %}
             <div>
                 <a {% ifequal role.id current_role_id %}class="selected"{% endifequal %}
-                   href="{% url lfc_manage_role role.id %}">
+                   href="{% url 'lfc_manage_role' role.id %}">
                     {{ role.name }}
                 </a>
             </div>
@@ -21,10 +21,10 @@
 
         <ul class="sf-menu">
             <li>
-                <a href="{% url lfc_manage_add_role %}">{% trans "Add Role" %}</a>
+                <a href="{% url 'lfc_manage_add_role' %}">{% trans "Add Role" %}</a>
             </li>
             <li>
-                <a class="delete-link" href="{% url lfc_manage_delete_role current_role_id %}">{% trans "Delete Role" %}</a>
+                <a class="delete-link" href="{% url 'lfc_manage_delete_role' current_role_id %}">{% trans "Delete Role" %}</a>
             </li>
         </ul>
     </div>
@@ -37,7 +37,7 @@
 
         <div id="data">
             <h2 class="first-heading">{% trans "Data" %}</h2>
-            <form action="{% url lfc_manage_save_role role.id %}"
+            <form action="{% url 'lfc_manage_save_role' role.id %}"
                   method="POST">
                 {% csrf_token %}
                 {% include "lfc/manage/lfc_form.html" %}
@@ -57,7 +57,7 @@
                 {% for user in users %}
                     <tr>
                         <td>
-                            <a href="{% url lfc_manage_user user.id %}">
+                            <a href="{% url 'lfc_manage_user' user.id %}">
                                 {{ user.username }}
                             </a>
                         </td>

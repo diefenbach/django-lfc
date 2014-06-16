@@ -6,7 +6,7 @@
 </h2>
 
 {% ifportalhasperm manage_portal %}
-    <form action="{% url lfc_update_portal_children %}"
+    <form action="{% url 'lfc_update_portal_children' %}"
           method="post">
 
         {% if children %}
@@ -50,7 +50,7 @@
                                    value="{{ child.position }}" />
                         </td>
                         <td>
-                            <a href="{% url lfc_manage_object child.id %}">
+                            <a href="{% url 'lfc_manage_object' child.id %}">
                                 {{ child.title }}
                             </a>
                         </td>
@@ -63,17 +63,17 @@
                         <td class="right last">
                             {% if not forloop.first %}
                                 <a class="up ajax-link"
-                                   href="{% url lfc_move_portal_child child.id %}?direction=0"></a>
+                                   href="{% url 'lfc_move_portal_child' child.id %}?direction=0"></a>
                             {% endif %}
                             {% if not forloop.last %}
                                 <a class="down ajax-link"
                                    title='{% trans "Move Down" %}'
-                                   href="{% url lfc_move_portal_child child.id %}?direction=1"></a>
+                                   href="{% url 'lfc_move_portal_child' child.id %}?direction=1"></a>
                             {% else %}
-                                <span class="blank"></span>                                
+                                <span class="blank"></span>
                             {% endif %}
                             <a class="edit"
-                               href="{% url lfc_manage_object child.id %}"></a>
+                               href="{% url 'lfc_manage_object' child.id %}"></a>
                             <a class="view"
                                href="{{ child.get_absolute_url }}"></a>
                         </td>
@@ -127,8 +127,8 @@
             {% for child in children %}
                 <tr>
                     <td>
-                        <a href="{% url lfc_manage_object child.id %}">
-                            <a href="{% url lfc_manage_object child.id %}">
+                        <a href="{% url 'lfc_manage_object' child.id %}">
+                            <a href="{% url 'lfc_manage_object' child.id %}">
                                 {{ child.title }}
                             </a>
                         </a>
@@ -141,7 +141,7 @@
                     </td>
                     <td class="right last">
                         <a class="edit"
-                           href="{% url lfc_manage_object child.id %}"></a>
+                           href="{% url 'lfc_manage_object' child.id %}"></a>
                         <a class="view"
                            href="{{ child.get_absolute_url }}"></a>
                     </td>

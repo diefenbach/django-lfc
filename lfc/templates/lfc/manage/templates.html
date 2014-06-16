@@ -1,6 +1,6 @@
 {% load i18n %}
 {% if display %}
-    <form action="{% url lfc_set_template %}"
+    <form action="{% url 'lfc_set_template' %}"
           method="post">
         {% csrf_token %}
         <select name="template_id">

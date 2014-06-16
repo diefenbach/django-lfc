@@ -29,20 +29,20 @@
                                 <tr>
                                     <td>
                                         <a class="ajax-link"
-                                           href="{% url lfc_edit_portlet portlet.pa_id %}">
+                                           href="{% url 'lfc_edit_portlet' portlet.pa_id %}">
                                             {{ portlet.type }}
                                         </a>
                                     </td>
                                     <td>
                                         <a class="ajax-link"
-                                           href="{% url lfc_edit_portlet portlet.pa_id %}">
+                                           href="{% url 'lfc_edit_portlet' portlet.pa_id %}">
                                             {{ portlet.title }}
                                         </a>
                                     </td>
                                     <td class="right">
                                         <a class="edit ajax-link"
                                            title='{% trans "Edit" %}'
-                                           href="{% url lfc_edit_portlet portlet.pa_id %}"></a>
+                                           href="{% url 'lfc_edit_portlet' portlet.pa_id %}"></a>
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -54,7 +54,7 @@
             </div>
 
             <form class="blocked-portlets portlets-form"
-                  action="{% url lfc_update_portlets_blocking object_type_id, obj.id %}"
+                  action="{% url 'lfc_update_portlets_blocking' object_type_id obj.id %}"
                   method="post">
                 <h2>{% trans 'Blocked parent slots' %}</h2>
 
@@ -115,33 +115,33 @@
                         <tr>
                             <td>
                                 <a class="ajax-link"
-                                   href="{% url lfc_edit_portlet portlet.pa_id %}">
+                                   href="{% url 'lfc_edit_portlet' portlet.pa_id %}">
                                     {{ portlet.type }}
                                 </a>
                             </td>
                             <td>
                                 <a class="ajax-link"
-                                   href="{% url lfc_edit_portlet portlet.pa_id %}">
+                                   href="{% url 'lfc_edit_portlet' portlet.pa_id %}">
                                     {{ portlet.title }}
                                 </a>
                             </td>
                             <td class="right">
                                 {% if not forloop.first %}
                                     <a class="up ajax-link"
-                                       href="{% url lfc_move_portlet portlet.pa_id %}?direction=0"></a>
+                                       href="{% url 'lfc_move_portlet' portlet.pa_id %}?direction=0"></a>
                                 {% endif %}
                                 {% if not forloop.last %}
                                     <a class="down ajax-link"
                                        title='{% trans "Move Down" %}'
-                                       href="{% url lfc_move_portlet portlet.pa_id %}?direction=1"></a>
+                                       href="{% url 'lfc_move_portlet' portlet.pa_id %}?direction=1"></a>
                                 {% endif %}
                                 <a class="edit ajax-link"
                                    title='{% trans "Edit" %}'
-                                   href="{% url lfc_edit_portlet portlet.pa_id %}"></a>
+                                   href="{% url 'lfc_edit_portlet' portlet.pa_id %}"></a>
                                 <a class="delete delete-link"
                                    is_ajax="1"
                                    title='{% trans "Delete" %}'
-                                   href="{% url lfc_delete_portlet portlet.pa_id %}"></a>
+                                   href="{% url 'lfc_delete_portlet' portlet.pa_id %}"></a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -157,7 +157,7 @@
         </h2>
 
         <form class="portlet-add-form"
-              action="{% url lfc_add_portlet object_type_id, obj.id %}"
+              action="{% url 'lfc_add_portlet' object_type_id obj.id %}"
               method="get">
             <select name="portlet_type">
                 {% for portlet_type in portlet_types %}

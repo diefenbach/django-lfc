@@ -6,7 +6,7 @@
         {{ form.allow_comments.label_tag }}
     </h2>
 
-    <form action="{% url lfc_update_comments obj.id %}"
+    <form action="{% url 'lfc_update_comments' obj.id %}"
           method="POST">
         <div class="field">
             <div>
@@ -24,7 +24,7 @@
     </h2>
 
     {% if comments %}
-        <form action="{% url lfc_update_comments obj.id %}"
+        <form action="{% url 'lfc_update_comments' obj.id %}"
               method="post">
 
             <table class="lfs-manage-table large">
@@ -85,7 +85,7 @@
                         </td>
                         <td class="right-padding">
                             <a class="ajax-link"
-                               href="{% url lfc_edit_comment comment.id %}">
+                               href="{% url 'lfc_edit_comment' comment.id %}">
                                 <img src="{{ STATIC_URL }}icons/edit.png"
                                      alt="{% trans 'Edit' %}"
                                      title="{% trans 'Edit object' %}" />

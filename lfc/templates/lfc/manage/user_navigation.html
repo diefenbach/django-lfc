@@ -3,12 +3,12 @@
 <div class="page-navigation">
     {% if page.has_previous %}
         <a class="ajax-link"
-           href="{% url lfc_manage_set_user_page %}?page=1&amp;user={{ current_user_id }}">
+           href="{% url 'lfc_manage_set_user_page' %}?page=1&amp;user={{ current_user_id }}">
            <img src="{{ STATIC_URL }}icons/resultset_first.png" alt="{% trans 'First' %}" />
         </a>
 
         <a class="ajax-link"
-           href="{% url lfc_manage_set_user_page %}?page={{ page.previous_page_number }}&amp;user={{ current_user_id }}">
+           href="{% url 'lfc_manage_set_user_page' %}?page={{ page.previous_page_number }}&amp;user={{ current_user_id }}">
            <img src="{{ STATIC_URL }}icons/resultset_previous.png" alt="{% trans 'Previous' %}" />
         </a>
     {% else %}
@@ -20,12 +20,12 @@
 
     {% if page.has_next %}
         <a class="ajax-link"
-           href="{% url lfc_manage_set_user_page %}?page={{ page.next_page_number }}&amp;user={{ current_user_id }}">
+           href="{% url 'lfc_manage_set_user_page' %}?page={{ page.next_page_number }}&amp;user={{ current_user_id }}">
            <img src="{{ STATIC_URL }}icons/resultset_next.png" title="{% trans 'Next' %}"/>
         </a>
 
         <a class="ajax-link"
-           href="{% url lfc_manage_set_user_page %}?page={{ paginator.num_pages }}&amp;user={{ current_user_id }}">
+           href="{% url 'lfc_manage_set_user_page' %}?page={{ paginator.num_pages }}&amp;user={{ current_user_id }}">
            <img src="{{ STATIC_URL }}icons/resultset_last.png" title="{% trans 'Last' %}"/>
         </a>
     {% else %}
@@ -39,7 +39,7 @@
     {% for user in page.object_list %}
         <div>
             <a {% ifequal user.id current_user_id %}class="selected"{% endifequal %}
-               href="{% url lfc_manage_user user.id %}">
+               href="{% url 'lfc_manage_user' user.id %}">
                 {% if user.first_name and user.last_name %}
                     {{ user.first_name }} {{ user.last_name }}
                 {% else %}

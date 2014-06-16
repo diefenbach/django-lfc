@@ -1,15 +1,9 @@
 {% load i18n %}
-{% load adminmedia %}
 {% load lfc_tags %}
 {% load compress %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-
-        <script type="text/javascript">
-            window.__admin_media_prefix__ = "{% filter escapejs %}{% admin_media_prefix %}{% endfilter %}";
-        </script>
-
         <title>{% block title %}{% endblock %}</title>
         <link rel="shortcut icon" href="{{ STATIC_URL }}lfc/img/favicon.ico" type="image/ico" />
 
@@ -26,15 +20,7 @@
         {% block css %}{% endblock %}
 
         {% compress js %}
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.js"></script>
-            <script type="text/javascript" src="/admin/jsi18n/"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/core.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/calendar.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.init.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/admin/DateTimeShortcuts.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}admin/js/urlify.js"></script>
-
+            <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery-1.4.2.min.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.tools.min.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.form.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}jquery/jquery.jgrowl_minimized.js"></script>
@@ -68,7 +54,7 @@
                         <span id="username">{{ user.username }}</span>
                     {% endif %}
                     | <a class="logout"
-                         href="{% url lfc_logout %}">{% trans 'Logout' %}</a>
+                         href="{% url 'lfc_logout' %}">{% trans 'Logout' %}</a>
                 {% endif %}
             </div>
 
@@ -79,7 +65,7 @@
                         <ul class="sf-menu"
                             width="100%">
                             <li>
-                                <a href="{% url lfc_manage_portal %}">{% trans 'Content' %}</a>
+                                <a href="{% url 'lfc_manage_portal' %}">{% trans 'Content' %}</a>
                             </li>
                             {% if LFC_MANAGE_USERS %}
                                 {% ifportalhasperm manage_portal  %}
@@ -87,13 +73,13 @@
                                         <a>{% trans "User" %}</a>
                                         <ul>
                                             <li>
-                                                <a href="{% url lfc_manage_user %}">{% trans 'Users' %}</a>
+                                                <a href="{% url 'lfc_manage_user' %}">{% trans 'Users' %}</a>
                                             </li>
                                             <li>
-                                                <a href="{% url lfc_manage_role %}">{% trans 'Roles' %}</a>
+                                                <a href="{% url 'lfc_manage_role' %}">{% trans 'Roles' %}</a>
                                             </li>
                                             <li>
-                                                <a href="{% url lfc_manage_group %}">{% trans 'Groups' %}</a>
+                                                <a href="{% url 'lfc_manage_group' %}">{% trans 'Groups' %}</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -102,12 +88,12 @@
                             {% if LFC_MANAGE_WORKFLOWS %}
                                 {% ifportalhasperm review %}
                                     <li>
-                                        <a href="{% url lfc_manage_review %}">{% trans 'Review' %}</a>
+                                        <a href="{% url 'lfc_manage_review' %}">{% trans 'Review' %}</a>
                                     </li>
                                 {% endifportalhasperm %}
                                 {% ifportalhasperm manage_portal %}
                                     <li>
-                                        <a href="{% url lfc_manage_workflow %}">{% trans 'Workflows' %}</a>
+                                        <a href="{% url 'lfc_manage_workflow' %}">{% trans 'Workflows' %}</a>
                                     </li>
                                 {% endifportalhasperm %}
                             {% endif %}
@@ -117,10 +103,10 @@
                                         <a>{% trans "Applications" %}</a>
                                         <ul>
                                             <li>
-                                                <a href="{% url lfc_content_types %}">{% trans 'Content Types' %}</a>
+                                                <a href="{% url 'lfc_content_types' %}">{% trans 'Content Types' %}</a>
                                             </li>
                                             <li>
-                                                <a href="{% url lfc_applications %}">{% trans 'Installation' %}</a>
+                                                <a href="{% url 'lfc_applications' %}">{% trans 'Installation' %}</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -128,7 +114,7 @@
                             {% endif %}
                             {% if LFC_MANAGE_UTILS %}
                                 <li>
-                                    <a href="{% url lfc_manage_utils %}">{% trans 'Utils' %}</a>
+                                    <a href="{% url 'lfc_manage_utils' %}">{% trans 'Utils' %}</a>
                                 </li>
                             {% endif %}
                             {% if LFC_MULTILANGUAGE %}
@@ -137,7 +123,7 @@
                                     <ul>
                                         {% for language in LANGUAGES_DICT %}
                                             <li>
-                                                <a href="{% url lfc_manage_set_language language.code %}">{% trans language.name %}</a>
+                                                <a href="{% url 'lfc_manage_set_language' language.code %}">{% trans language.name %}</a>
                                             </li>
                                         {% endfor %}
                                     </ul>

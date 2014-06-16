@@ -4,7 +4,7 @@
 
 <form class="lfc-form"
       method="post"
-      action="{% url lfc_edit_file file.id %}">
+      action="{% url 'lfc_edit_file' file.id %}">
 
     {% include "lfc/manage/lfc_form.html" %}
 
@@ -15,5 +15,5 @@
 <script type="text/javascript">
     $(function() {
         addEditor("#id_file-description");
-    })    
+    })
 </script>

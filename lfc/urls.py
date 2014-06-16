@@ -1,5 +1,6 @@
 # django imports
-from django.conf.urls.defaults import *
+from django.conf.urls import include, patterns, url
+from django.views.generic import TemplateView
 
 
 # lfc imports
@@ -32,8 +33,8 @@ urlpatterns += patterns("django.contrib.sitemaps.views",
 )
 
 # Robots
-urlpatterns += patterns('django.views.generic.simple',
-    (r'^robots.txt', 'direct_to_template', {'template': 'lfc/robots.txt'}),
+urlpatterns += patterns('',
+    (r'^robots.txt', TemplateView.as_view(template_name='lfc/robots.txt')),
 )
 
 # LFC
