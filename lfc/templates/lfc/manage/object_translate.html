@@ -37,12 +37,12 @@
 
                                     {% if field.errors %}
                                         <div class="error">
-                                            {{ field }}
+                                            {{ field|safe }}
                                             {{ field.errors }}
                                         </div>
                                     {% else %}
                                         <div>
-                                            {{ field }}
+                                            {{ field|safe }}
                                         </div>
                                     {% endif %}
                                 </div>
@@ -60,12 +60,12 @@
 
                                     {% if field.errors %}
                                         <div class="error">
-                                            {{ field }}
+                                            {{ field|safe }}
                                             {{ field.errors }}
                                         </div>
                                     {% else %}
                                         <div>
-                                            {{ field }}
+                                            {{ field|safe }}
                                         </div>
                                     {% endif %}
                                 </div>
