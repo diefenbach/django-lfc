@@ -249,8 +249,8 @@ class LFCPermissionTestCase(TestCase):
         self.assertEqual(result, True)
 
         # Page is public, so anonymous should be able to view that page
-        result = self.client.get(reverse("lfc_base_view", kwargs={"slug": "page-1"}))
-        self.failIf(result.content.find("Page 1") == -1)
+        result = self.client.get(reverse("lfc_base_view", kwargs={"slug": "welcome-to-lfc"}))
+        self.failIf(result.content.find("Welcome to LFC") == -1)
 
         result = self.client.get(reverse("lfc_manage_users"))
         self.failUnless(result._headers["location"][1].startswith("http://testserver/login"))
