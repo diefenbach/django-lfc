@@ -6,7 +6,7 @@
         <input class="user-name-filter" name="user_name_filter" data="{% url 'lfc_manage_set_user_filter' %}?user={{ current_user_id }}" type="text" value="{{ user_name_filter }}"/>
         <a class="ajax-link reset-link"
            href="{% url 'lfc_manage_reset_user_filter' %}?user={{ current_user_id }}">
-           <img class="icon" src="{{ STATIC_URL }}icons/cancel.png" title="{% trans 'RESET' %}"/>
+           <img class="icon" src="{{ STATIC_URL }}icons/cancel.png" title="{% trans 'Reset' %}"/>
         </a>
     </div>
 
