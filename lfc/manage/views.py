@@ -1,6 +1,7 @@
 # python imports
 import copy
 import datetime
+import json
 import urlparse
 import re
 
@@ -25,7 +26,6 @@ from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import render_to_string
-from django.utils import simplejson
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
@@ -174,7 +174,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
             # request method is POST.
             request.method = "GET"
 
-            result = simplejson.dumps({
+            result = json.dumps({
                 "tab": 0,
                 "url": reverse("lfc_manage_object", kwargs={"id": new_object.id}),
                 }, cls=LazyEncoder)
@@ -367,7 +367,7 @@ def update_portal_permissions(request):
         ("#permissions", portal_permissions(request, portal)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": _(u"Permissions have been saved."),
     }, cls=LazyEncoder)
@@ -451,7 +451,7 @@ def portal_core(request, portal=None, template_name="lfc/manage/portal_core.html
             ("#data", html),
         )
 
-        result = simplejson.dumps({
+        result = json.dumps({
             "html": html,
             "message": message},
             cls=LazyEncoder
@@ -529,7 +529,7 @@ def update_portal_children(request):
         ("#menu", portal_menu(request, portal)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": message,
     }, cls=LazyEncoder)
@@ -574,7 +574,7 @@ def move_portal_child(request, child_id):
         ("#navigation", navigation(request, None)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
     }, cls=LazyEncoder)
 
@@ -1308,7 +1308,7 @@ def object_seo_data(request, obj=None, id=None, template_name="lfc/manage/object
         html = (
             ("#seo", html),
         )
-        result = simplejson.dumps({
+        result = json.dumps({
             "html": html,
             "message": _(u"SEO has been saved."),
         }, cls=LazyEncoder)
@@ -1553,7 +1553,7 @@ def local_roles_search(request, id, template_name="lfc/manage/local_roles_search
         ("#local-roles-search-result", html),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
     }, cls=LazyEncoder)
 
@@ -1608,7 +1608,7 @@ def add_local_roles(request, id):
         ("#local-roles", local_roles(request, obj)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": message,
     }, cls=LazyEncoder)
@@ -1712,7 +1712,7 @@ def save_local_roles(request, id):
         ("#local-roles", local_roles(request, obj)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": message,
     }, cls=LazyEncoder)
@@ -1751,7 +1751,7 @@ def update_object_children(request, id):
         ("#menu", object_menu(request, obj)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": message,
     }, cls=LazyEncoder)
@@ -1796,7 +1796,7 @@ def move_object_child(request, child_id):
         ("#navigation", navigation(request, parent.get_content_object())),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
     }, cls=LazyEncoder)
 
@@ -2013,7 +2013,7 @@ def update_object_permissions(request, id):
         ("#permissions", object_permissions(request, obj)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": _(u"Permissions have been saved."),
     }, cls=LazyEncoder)
@@ -2107,7 +2107,7 @@ def update_portlets_blocking(request, object_type_id, object_id):
         ("#portlets", portlets_inline(request, obj)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": _(u"Portlets have been updated.")},
         cls=LazyEncoder
@@ -2305,7 +2305,7 @@ def edit_portlet(request, portletassignment_id, template_name="lfc/manage/portle
                 "position": pa.position,
             }))
 
-            response = simplejson.dumps({
+            response = json.dumps({
                 "html": html,
                 "message": _(u"An error has been occured."),
                 "success": False},
@@ -2636,7 +2636,7 @@ def update_comments(request, id):
         ("#comments", comments(request, obj)),
     )
 
-    result = simplejson.dumps({
+    result = json.dumps({
         "html": html,
         "message": message,
     }, cls=LazyEncoder)
@@ -4236,7 +4236,7 @@ def change_users(request):
 
     html = (("#users", users_inline(request)), )
 
-    result = simplejson.dumps(
+    result = json.dumps(
         {"html": html, "message": message}, cls=LazyEncoder)
 
     return HttpResponse(result)
@@ -4263,7 +4263,7 @@ def set_users_page(request):
     else:
         html = (("#users", users_inline(request)), )
 
-    result = simplejson.dumps({"html": html}, cls=LazyEncoder)
+    result = json.dumps({"html": html}, cls=LazyEncoder)
     return HttpResponse(result)
 
 
@@ -4291,7 +4291,7 @@ def set_users_filter(request):
     message = _(u"Filter has been set.")
     html = (("#users", users_inline(request)), )
 
-    result = simplejson.dumps(
+    result = json.dumps(
         {"html": html, "message": message}, cls=LazyEncoder)
 
     return HttpResponse(result)
@@ -4318,7 +4318,7 @@ def reset_users_filter(request):
     else:
         html = (("#users", users_inline(request)), )
 
-    result = simplejson.dumps(
+    result = json.dumps(
         {"html": html, "message": message}, cls=LazyEncoder)
 
     return HttpResponse(result)
@@ -4483,7 +4483,7 @@ def save_user_data(request, id):
         ("#username", user.username),
     )
 
-    result = simplejson.dumps(
+    result = json.dumps(
         {"html": html, "message": message}, cls=LazyEncoder)
 
     return HttpResponse(result)
@@ -4515,7 +4515,7 @@ def change_password(request, id):
 
     html = (("#password", user_password(request, id, form)), )
 
-    result = simplejson.dumps(
+    result = json.dumps(
         {"html": html, "message": message}, cls=LazyEncoder)
 
     return HttpResponse(result)
@@ -4625,7 +4625,7 @@ def set_user_page(request):
     user = request.GET.get("user")
 
     html = (("#navigation", user_navigation(request, user)), )
-    result = simplejson.dumps({"html": html}, cls=LazyEncoder)
+    result = json.dumps({"html": html}, cls=LazyEncoder)
     return HttpResponse(result)
 
 
@@ -4649,7 +4649,7 @@ def set_user_filter(request):
     request.session["user_page"] = 1
 
     html = (("#navigation", user_navigation(request, user)), )
-    result = simplejson.dumps({"html": html}, cls=LazyEncoder)
+    result = json.dumps({"html": html}, cls=LazyEncoder)
     return HttpResponse(result)
 
 
@@ -4669,7 +4669,7 @@ def reset_user_filter(request):
 
     user = request.GET.get("user")
     html = (("#navigation", user_navigation(request, user)), )
-    result = simplejson.dumps({"html": html, "message": message}, cls=LazyEncoder)
+    result = json.dumps({"html": html, "message": message}, cls=LazyEncoder)
     return HttpResponse(result)
 
 

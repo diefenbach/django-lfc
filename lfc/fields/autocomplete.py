@@ -1,6 +1,8 @@
+# python imports
+import json
+
 # django imports
 from django import forms
-from django.utils import simplejson
 from django.utils.safestring import mark_safe
 from django.conf import settings
 from django.template.defaultfilters import truncatewords
@@ -24,8 +26,7 @@ class AutoCompleteTagInput(forms.TextInput):
     def render(self, name, value, attrs=None):
         output = super(AutoCompleteTagInput, self).render(name, value, attrs)
         tags = Tag.objects.all()
-        tag_list = simplejson.dumps([tag.name for tag in tags],
-                                    ensure_ascii=False)
+        tag_list = json.dumps([tag.name for tag in tags], ensure_ascii=False)
         return output + mark_safe(u'''<script type="text/javascript">
             jQuery("#id_%s").autocomplete(%s, {
                 width: 150,

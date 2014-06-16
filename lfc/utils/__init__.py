@@ -2,6 +2,7 @@
 
 # python imports
 import datetime
+import json
 import urllib
 import re
 import sys
@@ -19,7 +20,6 @@ from django.http import Http404
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import _get_queryset
-from django.utils import simplejson
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
 from django.utils import translation
@@ -97,7 +97,7 @@ def render_to_json(html, **kwargs):
     data = {"html": html}
     data.update(**kwargs)
 
-    return simplejson.dumps(data, cls=LazyEncoder)
+    return json.dumps(data, cls=LazyEncoder)
 
 
 def return_as_json(html, message):
@@ -109,10 +109,10 @@ def return_as_json(html, message):
 def get_json(html, message):
     """Returns html and message json encoded.
     """
-    return simplejson.dumps({"html": html, "message": message}, cls=LazyEncoder)
+    return json.dumps({"html": html, "message": message}, cls=LazyEncoder)
 
 
-class LazyEncoder(simplejson.JSONEncoder):
+class LazyEncoder(json.JSONEncoder):
     """JSONEncoder which encodes django's lazy i18n strings.
 
     This is mainly used to return status messages along with content to ajax
