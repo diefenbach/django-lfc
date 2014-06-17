@@ -44,7 +44,6 @@ from lfc.interfaces import IBaseContent
 from lfc.interfaces import ITabs
 from lfc.fields.thumbs import ImageWithThumbsField
 from lfc.fields.autocomplete import AutoCompleteTagInput
-from lfc.fields.rich_text import RichTextField
 from lfc.managers import BaseContentManager
 from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
