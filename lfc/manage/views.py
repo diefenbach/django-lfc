@@ -2829,7 +2829,7 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
     )
 
 
-def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_files.html"):
+def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage/filebrowser_files.html"):
     """Displays a file browser.
 
     **Parameters:**
@@ -2989,9 +2989,12 @@ def filebrowser(request, obj_id=None, template_name="lfc/manage/filebrowser_file
         "url": url,
     }))
 
+    if as_string:
+        return html
+
     return HttpJsonResponse(
         content=html,
-        current_view=current_view,
+        current_view="content",
         mimetype="text/plain",
     )
 
@@ -3026,7 +3029,11 @@ def fb_upload_image(request):
         ("#overlay-2 .content", imagebrowser(request, obj_id, as_string=True)),
     )
 
-    return HttpJsonResponse(html)
+    return HttpJsonResponse(
+        content=html,
+        mimetype="text/plain",
+        current_view="dummy",   # prevents that the tinymce is updated
+    )
 
 
 def fb_upload_file(request):
@@ -3058,7 +3065,11 @@ def fb_upload_file(request):
         ("#overlay-2 .content", filebrowser(request, obj_id, as_string=True)),
     )
 
-    return HttpJsonResponse(html)
+    return HttpJsonResponse(
+        content=html,
+        current_view="content",
+        mimetype="text/plain",
+    )
 
 
 # Translations ###############################################################

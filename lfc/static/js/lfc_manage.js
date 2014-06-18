@@ -134,7 +134,7 @@ $(function() {
         var obj_id = $("#obj-id").attr("data");
 
         $(this).parents("form:first").ajaxSubmit({
-            data : {"action" : action, "obj-id" : obj_id  },
+            data : { "action" : action, "obj-id" : obj_id },
             dataType: "json",
             success : function(data) {
                 for (var html in data["html"])
@@ -157,10 +157,21 @@ $(function() {
                 if (data["tab"] != undefined)
                     $('#manage-tabs').tabs('select', parseInt(data["tab"]));
 
+                // if current view is given we upload an image or file to the
+                // current object
+                if (data["current_view"]) {
+                    display_content();
+                }
+                else {
+                    // Don't update the editor when we upload an image or a file,
+                    // Otherwise the selected text is lost within the textarea
+                    // and insert would not work.
+                    update_editor();
+                }
+
                 if (clicked.hasClass("display-loading"))
                     hide_ajax_loading();
 
-                update_editor();
             }
         })
         return false;
