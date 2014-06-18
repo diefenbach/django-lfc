@@ -60,6 +60,20 @@ function addEditor(selector, hide_save) {
    });
 };
 
+
+function update_editor() {
+    /* for each field first detach tinymce and then attach again */
+    $(".wysiwyginput").each(function(idx) {
+        if (typeof(tinyMCE) != 'undefined') {
+            var obj = $(this);
+            if (obj.length > 0){
+                obj.tinymce().remove();
+            }
+        }
+        addEditor(obj, false);
+    });
+}
+
 function save(ed) {
     $("#" + ed.id).parents("form:first").ajaxSubmit({
         dataType: "json",

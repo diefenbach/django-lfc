@@ -19,6 +19,7 @@ from workflows.models import Transition
 
 # lfc imports
 from lfc.fields.readonly import ReadOnlyInput
+from lfc.fields.wysiwyg import WYSIWYGInput
 from lfc.models import BaseContent
 from lfc.models import ContentTypeRegistration
 from lfc.models import File
@@ -45,6 +46,10 @@ class ImageForm(forms.ModelForm):
         model = Image
         exclude = ("image", "content_type", "content_id", "slug", "position")
 
+    def __init__(self, *args, **kwargs):
+        super(ImageForm, self).__init__(*args, **kwargs)
+        self.fields["description"].widget = WYSIWYGInput()
+
 
 class FileForm(forms.ModelForm):
     """Form to edit a File.
@@ -52,6 +57,10 @@ class FileForm(forms.ModelForm):
     class Meta:
         model = File
         exclude = ("file", "content_type", "content_id", "slug", "position")
+
+    def __init__(self, *args, **kwargs):
+        super(FileForm, self).__init__(*args, **kwargs)
+        self.fields["description"].widget = WYSIWYGInput()
 
 
 class WorkflowAddForm(forms.ModelForm):

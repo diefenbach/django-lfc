@@ -91,7 +91,7 @@ function show_message(message) {
 }
 
 $(function() {
-
+    update_editor();
     overlay = $("#overlay").overlay({
         closeOnClick: false,
         oneInstance: false,
@@ -159,6 +159,8 @@ $(function() {
 
                 if (clicked.hasClass("display-loading"))
                     hide_ajax_loading();
+
+                update_editor();
             }
         })
         return false;
@@ -166,6 +168,7 @@ $(function() {
 
     // Generic ajax link
     $(".ajax-link").live("click", function() {
+        update_editor();
         show_ajax_loading();
         var url = $(this).attr("href");
 
@@ -193,6 +196,7 @@ $(function() {
                 create_tabs()
 
             hide_ajax_loading();
+            update_editor();
         });
 
         return false;
