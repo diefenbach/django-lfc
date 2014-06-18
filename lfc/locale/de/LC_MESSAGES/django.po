@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-06-16 10:40-0500\n"
+"POT-Creation-Date: 2014-06-18 10:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:119
+#: models.py:118
 msgid "Subpages columns"
 msgstr "Spalten Unterseiten"
 
-#: models.py:120
+#: models.py:119
 msgid "Images columns"
 msgstr "Spalten Bilder"
 
-#: models.py:168 templates/lfc/manage/filebrowser_files.html:35
+#: models.py:167 templates/lfc/manage/filebrowser_files.html:35
 #: templates/lfc/manage/object_children.html:33
 #: templates/lfc/manage/object_children.html:131
 #: templates/lfc/manage/portal_children.html:30
@@ -36,42 +36,42 @@ msgstr "Spalten Bilder"
 msgid "Type"
 msgstr "Typ"
 
-#: models.py:169 templates/lfc/manage/group.html:55
+#: models.py:168 templates/lfc/manage/group.html:55
 #: templates/lfc/manage/object_comments.html:38
 #: templates/lfc/manage/object_comments.html:123
 #: templates/lfc/manage/role.html:55 templates/lfc/manage/users_inline.html:22
 msgid "Name"
 msgstr "Name"
 
-#: models.py:170
+#: models.py:169
 msgid "Display select standard"
 msgstr "Standard auswählen anzeigen"
 
-#: models.py:171
+#: models.py:170
 msgid "Display position"
 msgstr "Position anzeigen"
 
-#: models.py:173
+#: models.py:172
 msgid "Global addable"
 msgstr "Global hinzufügbar"
 
-#: models.py:175
+#: models.py:174
 msgid "Allowed sub types"
 msgstr "Erlaubte Inhaltstypen"
 
-#: models.py:176
+#: models.py:175
 msgid "Templates"
 msgstr "Schablonen"
 
-#: models.py:177
+#: models.py:176
 msgid "Default template"
 msgstr "Standardschablone"
 
-#: models.py:178 templates/lfc/manage/object_permissions.html:7
+#: models.py:177 templates/lfc/manage/object_permissions.html:7
 msgid "Workflow"
 msgstr "Arbeitsablauf"
 
-#: models.py:229 models.py:468 models.py:1060
+#: models.py:228 models.py:467 models.py:1059
 #: templates/lfc/manage/filebrowser_files.html:175
 #: templates/lfc/manage/object_children.html:27
 #: templates/lfc/manage/object_children.html:125
@@ -92,23 +92,23 @@ msgstr "Arbeitsablauf"
 msgid "Title"
 msgstr "Titel"
 
-#: models.py:230
+#: models.py:229
 msgid "Page"
 msgstr "Seite"
 
-#: models.py:232
+#: models.py:231
 msgid "From e-mail address"
 msgstr "E-Mail Absender"
 
-#: models.py:233
+#: models.py:232
 msgid "Notification email addresses"
 msgstr "Empfänger Benachrichtigungen"
 
-#: models.py:234 templates/lfc/manage/object_comments.html:109
+#: models.py:233 templates/lfc/manage/object_comments.html:109
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
-#: models.py:236 models.py:501 templates/lfc/manage/filebrowser_files.html:149
+#: models.py:235 models.py:500 templates/lfc/manage/filebrowser_files.html:149
 #: templates/lfc/manage/filebrowser_images.html:62
 #: templates/lfc/manage/object_images.html:5
 #: templates/lfc/manage/object_tabs.html:20
@@ -117,7 +117,7 @@ msgstr "Kommentare erlauben"
 msgid "Images"
 msgstr "Bilder"
 
-#: models.py:239 models.py:504 templates/lfc/manage/filebrowser_files.html:5
+#: models.py:238 models.py:503 templates/lfc/manage/filebrowser_files.html:5
 #: templates/lfc/manage/filebrowser_files.html:132
 #: templates/lfc/manage/object_files.html:5
 #: templates/lfc/manage/object_tabs.html:23
@@ -126,20 +126,20 @@ msgstr "Bilder"
 msgid "Files"
 msgstr "Dateien"
 
-#: models.py:466 models.py:1063 models.py:1111
+#: models.py:465 models.py:1062 models.py:1110
 #: templates/lfc/manage/review_objects.html:14
 msgid "Content type"
 msgstr "Inhaltstyp"
 
-#: models.py:469
+#: models.py:468
 msgid "Display title"
 msgstr "Titel anzeigen"
 
-#: models.py:471 models.py:1061
+#: models.py:470 models.py:1060
 msgid "Slug"
 msgstr "URL"
 
-#: models.py:473 models.py:1069 templates/lfc/manage/applications.html:19
+#: models.py:472 models.py:1068 templates/lfc/manage/applications.html:19
 #: templates/lfc/manage/object_files.html:24
 #: templates/lfc/manage/object_images.html:30
 #: templates/lfc/manage/portal_files.html:24
@@ -147,7 +147,7 @@ msgstr "URL"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: models.py:475 models.py:1067 templates/lfc/manage/object_children.html:23
+#: models.py:474 models.py:1066 templates/lfc/manage/object_children.html:23
 #: templates/lfc/manage/object_files.html:27
 #: templates/lfc/manage/object_images.html:33
 #: templates/lfc/manage/portal_children.html:21
@@ -156,96 +156,96 @@ msgstr "Beschreibung"
 msgid "Position"
 msgstr "Position"
 
-#: models.py:477
+#: models.py:476
 msgid "Language"
 msgstr "Sprache"
 
-#: models.py:478
+#: models.py:477
 msgid "Canonical"
 msgstr "Basis"
 
-#: models.py:480
+#: models.py:479
 msgid "Tags"
 msgstr "Tags"
 
-#: models.py:482
+#: models.py:481
 msgid "Parent"
 msgstr "Vorgänger"
 
-#: models.py:483
+#: models.py:482
 msgid "Template"
 msgstr "Schablone"
 
-#: models.py:484
+#: models.py:483
 msgid "Standard"
 msgstr "Standard"
 
-#: models.py:485
+#: models.py:484
 msgid "Order by"
 msgstr "Reihenfolge"
 
-#: models.py:487
+#: models.py:486
 msgid "Exclude from navigation"
 msgstr "Von Navigation ausschliessen"
 
-#: models.py:488
+#: models.py:487
 msgid "Exclude from search results"
 msgstr "Von Suchresultaten ausschliessen"
 
-#: models.py:490 templates/lfc/manage/review_objects.html:20
+#: models.py:489 templates/lfc/manage/review_objects.html:20
 msgid "Creator"
 msgstr "Ersteller"
 
-#: models.py:491 models.py:1070 models.py:1117
+#: models.py:490 models.py:1069 models.py:1116
 #: templates/lfc/manage/object_meta_data.html:16
 #: templates/lfc/manage/object_meta_data.html:44
 #: templates/lfc/manage/portal_files.html:132
 msgid "Creation date"
 msgstr "Erstellungsdatum"
 
-#: models.py:492 templates/lfc/manage/object_meta_data.html:25
+#: models.py:491 templates/lfc/manage/object_meta_data.html:25
 #: templates/lfc/manage/object_meta_data.html:53
 msgid "Modification date"
 msgstr "Änderungsdatum"
 
-#: models.py:493
+#: models.py:492
 msgid "Publication date"
 msgstr "Veröffentlicht am"
 
-#: models.py:494
+#: models.py:493
 msgid "Start date"
 msgstr "Startdatum"
 
-#: models.py:495
+#: models.py:494
 msgid "End date"
 msgstr "Enddatum"
 
-#: models.py:497
+#: models.py:496
 msgid "Meta title"
 msgstr "Metatitel"
 
-#: models.py:498
+#: models.py:497
 msgid "Meta keywords"
 msgstr "Meta Keywords"
 
-#: models.py:499 templates/lfc/manage/object_seo.html:38
+#: models.py:498 templates/lfc/manage/object_seo.html:38
 msgid "Meta description"
 msgstr "Meta Description"
 
-#: models.py:507
+#: models.py:506
 msgid "Commentable"
 msgstr "Kommentare erlauben"
 
-#: models.py:1064 models.py:1112
+#: models.py:1063 models.py:1111
 msgid "Content id"
 msgstr "ID"
 
-#: models.py:1068 templates/lfc/manage/object_images.html:27
+#: models.py:1067 templates/lfc/manage/object_images.html:27
 #: templates/lfc/manage/portal_images.html:27
 msgid "Caption"
 msgstr "Überschrift"
 
-#: models.py:1071 templates/lfc/manage/object_images.html:21
+#: models.py:1070 templates/lfc/manage/object_images.html:21
 #: templates/lfc/manage/object_images.html:143
 #: templates/lfc/manage/portal_images.html:21
 #: templates/lfc/manage/portal_images.html:144
@@ -304,22 +304,22 @@ msgstr ""
 msgid "No Tag found matching \"%s\"."
 msgstr ""
 
-#: manage/forms.py:115 templates/lfc/manage/base.html:82
+#: manage/forms.py:124 templates/lfc/manage/base.html:90
 #: templates/lfc/manage/local_roles.html:52
 #: templates/lfc/manage/local_roles_search_result.html:44
 msgid "Groups"
 msgstr "Gruppen"
 
-#: manage/forms.py:149 manage/forms.py:190 manage/forms.py:229
-#: templates/lfc/manage/base.html:79
+#: manage/forms.py:158 manage/forms.py:199 manage/forms.py:238
+#: templates/lfc/manage/base.html:87
 msgid "Roles"
 msgstr "Rollen"
 
-#: manage/forms.py:230
+#: manage/forms.py:239
 msgid "Password"
 msgstr "Passwort"
 
-#: manage/forms.py:231
+#: manage/forms.py:240
 msgid "Password (again)"
 msgstr "Passwort (noch einmal)"
 
@@ -652,24 +652,24 @@ msgstr "Reinstallieren"
 msgid "Install"
 msgstr "Installieren"
 
-#: templates/lfc/manage/base.html:57
+#: templates/lfc/manage/base.html:65
 msgid "Logout"
 msgstr "Abmelden"
 
-#: templates/lfc/manage/base.html:68
+#: templates/lfc/manage/base.html:76
 #: templates/lfc/manage/filebrowser_files.html:42
 #: templates/lfc/manage/filebrowser_files.html:102
 msgid "Content"
 msgstr "Inhalte"
 
-#: templates/lfc/manage/base.html:73 templates/lfc/manage/group.html:35
+#: templates/lfc/manage/base.html:81 templates/lfc/manage/group.html:35
 #: templates/lfc/manage/group.html.py:49
 #: templates/lfc/manage/local_roles.html:23
 #: templates/lfc/manage/local_roles.html:103
 msgid "User"
 msgstr "Benutzer"
 
-#: templates/lfc/manage/base.html:76 templates/lfc/manage/local_roles.html:16
+#: templates/lfc/manage/base.html:84 templates/lfc/manage/local_roles.html:16
 #: templates/lfc/manage/local_roles.html:97
 #: templates/lfc/manage/local_roles.html:133
 #: templates/lfc/manage/local_roles_search_result.html:17
@@ -677,60 +677,60 @@ msgstr "Benutzer"
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/lfc/manage/base.html:91
+#: templates/lfc/manage/base.html:99
 #: templates/lfc/manage/workflow_state.html:21
 msgid "Review"
 msgstr "Rezension"
 
-#: templates/lfc/manage/base.html:96
+#: templates/lfc/manage/base.html:104
 msgid "Workflows"
 msgstr "Arbeitsabläufe"
 
-#: templates/lfc/manage/base.html:103
+#: templates/lfc/manage/base.html:111
 msgid "Applications"
 msgstr "Anwendungen"
 
-#: templates/lfc/manage/base.html:106
+#: templates/lfc/manage/base.html:114
 msgid "Content Types"
 msgstr "Inhaltstypen"
 
-#: templates/lfc/manage/base.html:109
+#: templates/lfc/manage/base.html:117
 msgid "Installation"
 msgstr "Installation"
 
-#: templates/lfc/manage/base.html:117
+#: templates/lfc/manage/base.html:125
 msgid "Utils"
 msgstr "Werkzeuge"
 
-#: templates/lfc/manage/base.html:122
+#: templates/lfc/manage/base.html:130
 msgid "Languages"
 msgstr "Sprachen"
 
-#: templates/lfc/manage/base.html:154
+#: templates/lfc/manage/base.html:162
 msgid "Powered by"
 msgstr "Powered by"
 
-#: templates/lfc/manage/base.html:156
+#: templates/lfc/manage/base.html:164
 msgid "by"
 msgstr "bei"
 
-#: templates/lfc/manage/base.html:156
+#: templates/lfc/manage/base.html:164
 msgid "and contributors"
 msgstr "und Beitragende"
 
-#: templates/lfc/manage/base.html:156
+#: templates/lfc/manage/base.html:164
 msgid "All rights reserved"
 msgstr "Alle Rechte vorbehalten"
 
-#: templates/lfc/manage/base.html:158
+#: templates/lfc/manage/base.html:166
 msgid "Distributed under the"
 msgstr "Veröffentlicht unter der"
 
-#: templates/lfc/manage/base.html:158
+#: templates/lfc/manage/base.html:166
 msgid "BSD-License"
 msgstr "BSD-Lizenz"
 
-#: templates/lfc/manage/base.html:172
+#: templates/lfc/manage/base.html:180
 msgid "Do you really want to delete this object?"
 msgstr "Wollen Sie diese Objekt wirklich löschen?"
 
@@ -1577,7 +1577,7 @@ msgid "Reject"
 msgstr "Ablehnen"
 
 msgid "Retract"
-msgstr "Zurückweisen"
+msgstr "Zurückziehen"
 
 msgid "Manage portal"
 msgstr "Portal verwalten"
@@ -1605,3 +1605,6 @@ msgstr "Links"
 
 msgid "Right"
 msgstr "Rechts"
+
+msgid "View management"
+msgstr "Management ansehen"
