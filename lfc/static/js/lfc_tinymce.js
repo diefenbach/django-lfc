@@ -9,7 +9,7 @@ function getSelectedNode() {
 }
 
 function getSelectedText() {
-    return editor.selection.getContent();
+    return editor.selection.getContent({format : 'text'});
 }
 
 function addEditor(selector, hide_save) {
