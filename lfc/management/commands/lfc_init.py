@@ -57,6 +57,7 @@ class Command(BaseCommand):
 
         # Register roles
         anonymous = permissions.utils.register_role("Anonymous")
+        author = permissions.utils.register_role("Author")
         owner = permissions.utils.register_role("Owner")
         editor = permissions.utils.register_role("Editor")
         reviewer = permissions.utils.register_role("Reviewer")
@@ -71,13 +72,12 @@ class Command(BaseCommand):
         manage_permissions = permissions.utils.register_permission("Manage permissions", "manage_permissions")
         view_management = permissions.utils.register_permission("View management", "view_management")
 
-        ctype = ContentType.objects.get_for_model(Portal)
-
         publish = permissions.utils.register_permission("Publish", "publish")
         submit = permissions.utils.register_permission("Submit", "submit")
         reject = permissions.utils.register_permission("Reject", "reject")
         retract = permissions.utils.register_permission("Retract", "retract")
 
+        ctype = ContentType.objects.get_for_model(Portal)
         manage_portal = permissions.utils.register_permission("Manage portal", "manage_portal", [ctype])
         review = permissions.utils.register_permission("Review", "review", [ctype])
 
@@ -87,6 +87,9 @@ class Command(BaseCommand):
 
         # Set permissions for portal
         permissions.utils.grant_permission(portal, anonymous, "view")
+
+        permissions.utils.grant_permission(portal, author, "view_management")
+        permissions.utils.grant_permission(portal, author, "add")
 
         permissions.utils.grant_permission(portal, editor, "view_management")
         permissions.utils.grant_permission(portal, editor, "delete")
@@ -230,19 +233,17 @@ class Command(BaseCommand):
         # Add permissions for single states
 
         # Private
-        StatePermissionRelation.objects.create(state=private, permission=add, role=owner)
-        StatePermissionRelation.objects.create(state=private, permission=delete, role=owner)
-        StatePermissionRelation.objects.create(state=private, permission=edit, role=owner)
-        StatePermissionRelation.objects.create(state=private, permission=view, role=owner)
-
+        StatePermissionRelation.objects.create(state=private, permission=add, role=author)
+        StatePermissionRelation.objects.create(state=private, permission=delete, role=editor)
+        StatePermissionRelation.objects.create(state=private, permission=edit, role=editor)
+        StatePermissionRelation.objects.create(state=private, permission=view, role=editor)
         StatePermissionRelation.objects.create(state=private, permission=add, role=manager)
         StatePermissionRelation.objects.create(state=private, permission=delete, role=manager)
         StatePermissionRelation.objects.create(state=private, permission=edit, role=manager)
         StatePermissionRelation.objects.create(state=private, permission=view, role=manager)
-
-        StatePermissionRelation.objects.create(state=private, permission=delete, role=editor)
-        StatePermissionRelation.objects.create(state=private, permission=edit, role=editor)
-        StatePermissionRelation.objects.create(state=private, permission=view, role=editor)
+        StatePermissionRelation.objects.create(state=private, permission=delete, role=owner)
+        StatePermissionRelation.objects.create(state=private, permission=edit, role=owner)
+        StatePermissionRelation.objects.create(state=private, permission=view, role=owner)
 
         StateInheritanceBlock.objects.create(state=private, permission=add)
         StateInheritanceBlock.objects.create(state=private, permission=delete)
@@ -250,17 +251,15 @@ class Command(BaseCommand):
         StateInheritanceBlock.objects.create(state=private, permission=view)
 
         # Submitted
+        StatePermissionRelation.objects.create(state=submitted, permission=add, role=author)
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=owner)
-
         StatePermissionRelation.objects.create(state=submitted, permission=add, role=manager)
         StatePermissionRelation.objects.create(state=submitted, permission=delete, role=manager)
         StatePermissionRelation.objects.create(state=submitted, permission=edit, role=manager)
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=manager)
-
         StatePermissionRelation.objects.create(state=submitted, permission=delete, role=editor)
         StatePermissionRelation.objects.create(state=submitted, permission=edit, role=editor)
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=editor)
-
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=reviewer)
 
         StateInheritanceBlock.objects.create(state=submitted, permission=add)
@@ -269,22 +268,22 @@ class Command(BaseCommand):
         StateInheritanceBlock.objects.create(state=submitted, permission=view)
 
         # Public
-        StatePermissionRelation.objects.create(state=public, permission=add, role=manager)
-        StatePermissionRelation.objects.create(state=public, permission=delete, role=manager)
-        StatePermissionRelation.objects.create(state=public, permission=edit, role=manager)
-        StatePermissionRelation.objects.create(state=public, permission=view, role=manager)
-
+        StatePermissionRelation.objects.create(state=public, permission=add, role=author)
         StatePermissionRelation.objects.create(state=public, permission=delete, role=editor)
         StatePermissionRelation.objects.create(state=public, permission=edit, role=editor)
         StatePermissionRelation.objects.create(state=public, permission=view, role=editor)
-
+        StatePermissionRelation.objects.create(state=public, permission=add, role=manager)
+        StatePermissionRelation.objects.create(state=public, permission=delete, role=manager)
+        StatePermissionRelation.objects.create(state=public, permission=edit, role=manager)
+        StatePermissionRelation.objects.create(state=public, permission=view, role=anonymous)
+        StatePermissionRelation.objects.create(state=public, permission=view, role=manager)
         StatePermissionRelation.objects.create(state=public, permission=view, role=owner)
-
         StatePermissionRelation.objects.create(state=public, permission=view, role=reviewer)
 
         StateInheritanceBlock.objects.create(state=public, permission=add)
         StateInheritanceBlock.objects.create(state=public, permission=delete)
         StateInheritanceBlock.objects.create(state=public, permission=edit)
+        StateInheritanceBlock.objects.create(state=public, permission=view)
 
         # Define public state
         WorkflowStatesInformation.objects.create(state=public, public=True)
