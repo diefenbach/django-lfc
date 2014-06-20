@@ -40,8 +40,6 @@ from permissions.models import Role
 
 # lfc imports
 import lfc.utils
-from lfc.interfaces import IBaseContent
-from lfc.interfaces import ITabs
 from lfc.fields.thumbs import ImageWithThumbsField
 from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.managers import BaseContentManager
@@ -52,8 +50,6 @@ from lfc.settings import LANGUAGE_CHOICES
 from lfc.settings import ORDER_BY_CHOICES
 from lfc.settings import IMAGE_SIZES
 
-# zope imports
-from zope.interface import implements
 
 class Application(models.Model):
     """Represents a LFC application.
@@ -461,7 +457,6 @@ class BaseContent(AbstractBaseContent):
         The content which is searched for this object. This attribute should
         not get directly. Rather the get_searchable_text method should be used.
     """
-    implements(IBaseContent)
     content_type = models.CharField(_(u"Content type"), max_length=100, blank=True)
 
     title = models.CharField(_(u"Title"), max_length=100)
@@ -518,66 +513,34 @@ class BaseContent(AbstractBaseContent):
     def has_meta_data_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_META_DATA", True):
             return False
-        try:
-            return ITabs(self).has_meta_data_tab()
-        except TypeError:
-            return default
 
     def has_children_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_CHILDREN", True):
             return False
-        try:
-            return ITabs(self).has_children_tab()
-        except TypeError:
-            return default
 
     def has_images_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_IMAGES", True):
             return False
-        try:
-            return ITabs(self).has_images_tab()
-        except TypeError:
-            return default
 
     def has_files_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_FILES", True):
             return False
-        try:
-            return ITabs(self).has_files_tab()
-        except TypeError:
-            return default
 
     def has_portlets_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_PORTLETS", True):
             return False
-        try:
-            return ITabs(self).has_portlets_tab()
-        except TypeError:
-            return default
 
     def has_comments_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_COMMENTS", True):
             return False
-        try:
-            return ITabs(self).has_comments_tab()
-        except TypeError:
-            return default
 
     def has_seo_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_SEO", True):
             return False
-        try:
-            return ITabs(self).has_seo_tab()
-        except TypeError:
-            return default
 
     def has_permissions_tab(self, default=True):
         if not getattr(settings, "LFC_MANAGE_PERMISSIONS", True):
             return False
-        try:
-            return ITabs(self).has_permissions_tab()
-        except TypeError:
-            return default
 
     def get_tabs(self, request):
         return []
