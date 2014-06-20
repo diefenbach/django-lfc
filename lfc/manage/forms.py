@@ -27,9 +27,6 @@ from lfc.models import Image
 from lfc.models import Portal
 from lfc.utils.registration import get_info
 
-# lfc_page imports
-from lfc_page.models import Page
-
 
 class AddForm(forms.Form):
     """The default add form for content objects.
@@ -288,7 +285,7 @@ class CommentsForm(forms.ModelForm):
     """Form to update/delete comments.
     """
     class Meta:
-        model = Page
+        model = BaseContent
         fields = ("allow_comments", )
 
 
@@ -296,7 +293,7 @@ class SEOForm(forms.ModelForm):
     """SEO form for objects.
     """
     class Meta:
-        model = Page
+        model = BaseContent
         fields = ("meta_title", "meta_keywords", "meta_description")
 
 
@@ -350,7 +347,7 @@ class MetaDataForm(forms.ModelForm):
             del self.fields["position"]
 
     class Meta:
-        model = Page
+        model = BaseContent
         fields = ("template", "standard", "order_by", "language", "canonical",
             "exclude_from_navigation", "exclude_from_search", "creator",
             "publication_date", "start_date", "end_date")

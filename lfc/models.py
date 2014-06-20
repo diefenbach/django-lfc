@@ -583,7 +583,7 @@ class BaseContent(AbstractBaseContent):
     def get_content_object(self):
         """Returns the specific content object of the instance. This method
         can be called if one has a BaseContent and want the specific content
-        type e.g. Page.
+        type.
         """
         # TODO: Ugly but works. There must be a cleaner way. isinstance doesn't
         # work of course.
