@@ -1,10 +1,8 @@
 # python imports
 import datetime
 import re
-import random
 
 # django imports
-from django import forms
 from django import template
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -18,14 +16,8 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-
 # tagging imports
-import tagging.utils
 from tagging import fields
-from tagging.forms import TagField
-
-# portlets imports
-from portlets.models import Portlet
 
 # workflows imports
 import workflows.utils
@@ -41,7 +33,6 @@ from permissions.models import Role
 # lfc imports
 import lfc.utils
 from lfc.fields.thumbs import ImageWithThumbsField
-from lfc.fields.autocomplete import AutoCompleteTagInput
 from lfc.managers import BaseContentManager
 from lfc.settings import ALLOW_COMMENTS_CHOICES
 from lfc.settings import ALLOW_COMMENTS_DEFAULT
@@ -538,8 +529,8 @@ class BaseContent(AbstractBaseContent):
         return []
 
     def save(self, *args, **kwargs):
-        """Djangos default save method. This is overwritten to do some LFC
-        related stuff if a content object is saved.
+        """Django's default save method. This is overwritten to do some LFC
+        related stuff when a content object is saved.
         """
         self.searchable_text = self.get_searchable_text()
         if self.content_type == "":
@@ -713,9 +704,9 @@ class BaseContent(AbstractBaseContent):
         if self.template is not None:
             return self.template
         else:
-            template = lfc.utils.registration.get_default_template(self)
-            if template is not None:
-                return template
+            default_template = lfc.utils.registration.get_default_template(self)
+            if default_template is not None:
+                return default_template
             else:
                 return lfc.utils.get_portal().get_template()
 
@@ -825,9 +816,7 @@ class BaseContent(AbstractBaseContent):
         # Children
         # CACHE
         children_cache_key = "%s-children-%s-%s-%s" % \
-                                              (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
-                                               self.content_type, self.id,
-                                               request.user.id)
+            (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id, request.user.id)
         sub_objects = cache.get(children_cache_key)
         if sub_objects is None:
             # Get sub objects (as LOL if requested)
@@ -840,9 +829,7 @@ class BaseContent(AbstractBaseContent):
 
         # Images
         # CACHE
-        images_cache_key = "%s-images-%s-%s" % \
-                                              (settings.CACHE_MIDDLEWARE_KEY_PREFIX,
-                                               self.content_type, self.id)
+        images_cache_key = "%s-images-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
         cached_images = cache.get(images_cache_key)
         if cached_images:
             image = cached_images["image"]
@@ -872,7 +859,7 @@ class BaseContent(AbstractBaseContent):
 
         self.context = RequestContext(request, {
             "lfc_context": self,
-            "self" : self,
+            "self": self,
             "images": images,
             "image": image,
             "subimages": subimages,
@@ -890,8 +877,7 @@ class BaseContent(AbstractBaseContent):
             self.context = self.get_context()
 
         # CACHE
-        template_cache_key = "%s-template-%s-%s" % \
-                    (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
+        template_cache_key = "%s-template-%s-%s" % (settings.CACHE_MIDDLEWARE_KEY_PREFIX, self.content_type, self.id)
         obj_template = cache.get(template_cache_key)
         if obj_template is None:
             obj_template = self.get_template()
