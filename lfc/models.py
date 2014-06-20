@@ -213,7 +213,7 @@ class Portal(models.Model, PermissionBase):
 
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Page"), blank=True, null=True)
+    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Standard"), blank=True, null=True)
 
     from_email = models.EmailField(_(u"From e-mail address"))
     notification_emails = models.TextField(_(u"Notification email addresses"))

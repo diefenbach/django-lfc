@@ -127,7 +127,7 @@ class RoleForm(forms.ModelForm):
         super(RoleForm, self).__init__(*args, **kwargs)
         self.fields["groups"].choices = [(g.id, g.name) for g in Group.objects.all()]
         self.initial.update({
-            "groups" : [prr.group.id for prr in PrincipalRoleRelation.objects.filter(role=self.instance).exclude(group=None)]
+            "groups": [prr.group.id for prr in PrincipalRoleRelation.objects.filter(role=self.instance).exclude(group=None)]
         })
 
     def save(self, commit=True):
@@ -149,6 +149,7 @@ class RoleForm(forms.ModelForm):
         del self.fields["groups"]
         return super(RoleForm, self).save(commit)
 
+
 class GroupForm(forms.ModelForm):
     """Form to add/edit a Group.
     """
@@ -165,7 +166,7 @@ class GroupForm(forms.ModelForm):
         self.fields["roles"].choices = [(r.id, r.name) for r in roles]
 
         self.initial.update({
-            "roles" : [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance, content_id=None)]
+            "roles": [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance, content_id=None)]
         })
 
     def save(self, commit=True):
