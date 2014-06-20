@@ -1,17 +1,5 @@
 var editor;
 
-function insertHTML(html) {
-    editor.selection.setContent(html);
-}
-
-function getSelectedNode() {
-    return editor.selection.getNode();
-}
-
-function getSelectedText() {
-    return editor.selection.getContent({format : 'text'});
-}
-
 function addEditor(selector, hide_save) {
     if (hide_save == true) {
         buttons = "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,forecolor,backcolor,styleselect,formatselect,image,|,link,mylink,unlink,|,removeformat,code,|,fullscreen"
@@ -60,6 +48,23 @@ function addEditor(selector, hide_save) {
    });
 };
 
+function insertHTML(html) {
+    editor.selection.setContent(html);
+}
+
+function getSelectedNode() {
+    return editor.selection.getNode();
+}
+
+function getSelectedText() {
+    content = editor.selection.getContent();
+    if (content.indexOf("<img") != -1) {
+        return content;
+    }
+    else {
+        return editor.selection.getContent({format : 'text'});
+    }
+}
 
 function update_editor() {
     /* for each field first detach tinymce and then attach again */
