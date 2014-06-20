@@ -510,37 +510,29 @@ class BaseContent(AbstractBaseContent):
     def __unicode__(self):
         return unicode(self.title)
 
-    def has_meta_data_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_META_DATA", True):
-            return False
+    def has_meta_data_tab(self):
+        return getattr(settings, "LFC_MANAGE_META_DATA", True)
 
-    def has_children_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_CHILDREN", True):
-            return False
+    def has_children_tab(self):
+        return getattr(settings, "LFC_MANAGE_CHILDREN", True)
 
-    def has_images_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_IMAGES", True):
-            return False
+    def has_images_tab(self):
+        return getattr(settings, "LFC_MANAGE_IMAGES", True)
 
-    def has_files_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_FILES", True):
-            return False
+    def has_files_tab(self):
+        return getattr(settings, "LFC_MANAGE_FILES", True)
 
-    def has_portlets_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_PORTLETS", True):
-            return False
+    def has_portlets_tab(self):
+        return getattr(settings, "LFC_MANAGE_PORTLETS", True)
 
-    def has_comments_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_COMMENTS", True):
-            return False
+    def has_comments_tab(self):
+        return getattr(settings, "LFC_MANAGE_COMMENTS", True)
 
-    def has_seo_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_SEO", True):
-            return False
+    def has_seo_tab(self):
+        return getattr(settings, "LFC_MANAGE_SEO", True)
 
-    def has_permissions_tab(self, default=True):
-        if not getattr(settings, "LFC_MANAGE_PERMISSIONS", True):
-            return False
+    def has_permissions_tab(self):
+        return getattr(settings, "LFC_MANAGE_PERMISSIONS", True)
 
     def get_tabs(self, request):
         return []
