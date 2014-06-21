@@ -15,6 +15,7 @@ from lfc.models import ContentTypeRegistration
 # lfc_page imports
 from lfc_page.models import Page
 
+
 class RegistrationTestCase(TestCase):
     """Tests for registration related stuff.
     """
@@ -33,7 +34,7 @@ class RegistrationTestCase(TestCase):
     def test_default_portlets(self):
         """Portlets which have to be registered at least.
         """
-        portlets = ["Pages", "Random", "Text", "Navigation"]
+        portlets = [u"Content", u"Random", u"Text", u"Navigation"]
         registered_portlets = [p.name for p in PortletRegistration.objects.all()]
 
         for portlet in portlets:
@@ -61,7 +62,7 @@ class RegistrationTestCase(TestCase):
         """Registering a new template.
         """
         lfc.utils.registration.register_template("New", "/path/to/nowhere.html", 23, 42)
-        template = Template.objects.get(name="New")
+        Template.objects.get(name="New")
 
     def test_register_content_type(self):
         """Registering a new content type.
