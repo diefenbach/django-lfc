@@ -12,13 +12,15 @@
 
         </a>
     </h3>
-    {% for transition in state.transitions.all %}
-        <div style="padding: 0 0 10px 20px">
-            <a class="ajax-link" href="{% url 'lfc_manage_transition' transition.id %}">
-                {% trans transition.name %}
-            </a>
-        </div>
-    {% endfor %}
+    <div style="padding: 0 0 10px 0">
+        {% for transition in state.transitions.all %}
+            <div style="padding: 0 0 1px 20px">
+                <a class="ajax-link" href="{% url 'lfc_manage_transition' transition.id %}">
+                    {% trans transition.name %}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
 {% endfor %}
 
 <h2 class="middle-heading">{% trans "Add state" %}</h2>

@@ -9,8 +9,9 @@ from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
 # permissions imports
-from permissions.models import Role
+from permissions.models import Permission
 from permissions.models import PrincipalRoleRelation
+from permissions.models import Role
 
 # workflows imports
 from workflows.models import Workflow
@@ -25,6 +26,7 @@ from lfc.models import ContentTypeRegistration
 from lfc.models import File
 from lfc.models import Image
 from lfc.models import Portal
+from lfc.models import Template
 from lfc.utils.registration import get_info
 
 
@@ -76,7 +78,7 @@ class WorkflowForm(forms.ModelForm):
 
         instance = kwargs.get("instance")
         if instance:
-            self.fields["initial_state"].choices = [(s.id, s.name) for s in instance.states.all()]
+            self.fields["initial_state"].choices = [(s.id, _(s.name)) for s in instance.states.all()]
 
     class Meta:
         model = Workflow
@@ -91,7 +93,7 @@ class StateForm(forms.ModelForm):
 
         instance = kwargs.get("instance")
         if instance:
-            self.fields["transitions"].choices = [(t.id, t.name) for t in Transition.objects.filter(workflow=instance.workflow)]
+            self.fields["transitions"].choices = [(t.id, _(t.name)) for t in Transition.objects.filter(workflow=instance.workflow)]
 
     class Meta:
         model = State
@@ -106,9 +108,13 @@ class TransitionForm(forms.ModelForm):
 
         instance = kwargs.get("instance")
         if instance:
-            choices = [("", "---------")]
-            choices.extend([(s.id, s.name) for s in State.objects.filter(workflow=instance.workflow)])
-            self.fields["destination"].choices = choices
+            states = [("", "---------")]
+            states.extend([(s.id, _(s.name)) for s in State.objects.filter(workflow=instance.workflow)])
+            self.fields["destination"].choices = states
+
+            permissions = [("", "---------")]
+            permissions.extend([(p.id, _(p.name)) for p in Permission.objects.all()])
+            self.fields["permission"].choices = permissions
 
     class Meta:
         model = Transition
@@ -163,7 +169,7 @@ class GroupForm(forms.ModelForm):
         super(GroupForm, self).__init__(*args, **kwargs)
 
         roles = Role.objects.exclude(name__in=("Anonymous", "Owner"))
-        self.fields["roles"].choices = [(r.id, r.name) for r in roles]
+        self.fields["roles"].choices = [(r.id, _(r.name)) for r in roles]
 
         self.initial.update({
             "roles": [prr.role.id for prr in PrincipalRoleRelation.objects.filter(group=self.instance, content_id=None)]
@@ -200,7 +206,7 @@ class UserForm(forms.ModelForm):
         super(UserForm, self).__init__(*args, **kwargs)
 
         roles = Role.objects.exclude(name__in=("Anonymous", "Owner"))
-        self.fields["roles"].choices = [(r.id, r.name) for r in roles]
+        self.fields["roles"].choices = [(r.id, _(r.name)) for r in roles]
 
         self.initial.update({
             "roles": [prr.role.id for prr in PrincipalRoleRelation.objects.filter(user=self.instance)]})
@@ -269,6 +275,14 @@ class UserAddForm(forms.ModelForm):
 class ContentTypeRegistrationForm(forms.ModelForm):
     """Form to display content type registration.
     """
+    def __init__(self, *args, **kwargs):
+        super(ContentTypeRegistrationForm, self).__init__(*args, **kwargs)
+        templates = [(s.id, _(s.name)) for s in Template.objects.all()]
+        self.fields["templates"].choices = templates
+        self.fields["default_template"].choices = templates
+        self.fields["subtypes"].choices = [(s.id, _(s.name)) for s in ContentTypeRegistration.objects.all()]
+        self.fields["workflow"].choices = [(s.id, _(s.name)) for s in Workflow.objects.all()]
+
     class Meta:
         model = ContentTypeRegistration
         exclude = ("type", "name")

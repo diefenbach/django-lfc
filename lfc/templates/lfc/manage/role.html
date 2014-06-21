@@ -7,7 +7,7 @@
             <div>
                 <a {% ifequal role.id current_role_id %}class="selected"{% endifequal %}
                    href="{% url 'lfc_manage_role' role.id %}">
-                    {{ role.name }}
+                    {% trans role.name %}
                 </a>
             </div>
         {% endfor %}

@@ -13,7 +13,7 @@
             <tr>
                 <th class="middle">{% trans "Permission" %}</th>
                 {% for role in roles %}
-                    <th class="middle">{{ role.name }}</th>
+                    <th class="middle">{% trans role.name %}</th>
                 {% endfor %}
             </tr>
             {% for permission in permissions %}

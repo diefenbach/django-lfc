@@ -13,13 +13,13 @@ def initialize():
     """Registers default portlets, templates and content types.
     """
     # Portlets
-    register_portlet(NavigationPortlet, "Navigation")
-    register_portlet(ContentPortlet, "Pages")
-    register_portlet(RandomPortlet, "Random")
-    register_portlet(TextPortlet, "Text")
+    register_portlet(NavigationPortlet, u"Navigation")
+    register_portlet(ContentPortlet, u"Content")
+    register_portlet(RandomPortlet, u"Random")
+    register_portlet(TextPortlet, u"Text")
 
     # Register Templates
-    register_template(name="Plain", path="lfc/templates/plain.html")
-    register_template(name="Article", path="lfc/templates/article.html")
-    register_template(name="Gallery", path="lfc/templates/gallery.html", images_columns=3)
-    register_template(name="Overview", path="lfc/templates/overview.html")
+    register_template(name=u"Plain", path=u"lfc/templates/plain.html")
+    register_template(name=u"Article", path=u"lfc/templates/article.html")
+    register_template(name=u"Gallery", path=u"lfc/templates/gallery.html", images_columns=3)
+    register_template(name=u"Overview", path=u"lfc/templates/overview.html")

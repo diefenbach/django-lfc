@@ -8,7 +8,7 @@
                     <th></th>
                     {% for role in roles %}
                         <th class="label">
-                            {{ role.name }}
+                            {% trans role.name %}
                         </th>
                     {% endfor %}
                 </tr>

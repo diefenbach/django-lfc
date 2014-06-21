@@ -2,7 +2,7 @@
 
 <div style="width:400px; height:400px">
     <h1 class="first-heading">
-        {% trans "Edit transition:" %} "{{ transition.name }}"
+        {% trans "Edit transition:" %} "{% trans transition.name %}"
     </h1>
     <form action="{% url 'lfc_manage_save_workflow_transition' transition.id %}"
           method="POST">

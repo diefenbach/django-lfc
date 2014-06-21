@@ -162,7 +162,7 @@
             <select name="portlet_type">
                 {% for portlet_type in portlet_types %}
                     <option value="{{ portlet_type.type }}">
-                        {{ portlet_type.name }}
+                        {% trans portlet_type.name %}
                     </option>
                 {% endfor %}
             </select>

@@ -34,7 +34,7 @@
                 </td>
                 <td>
                     {% if transition.permission %}
-                        {{ transition.permission.name }}
+                        {% trans transition.permission.name %}
                     {% else %}
                         {% trans "None" %}
                     {% endif %}

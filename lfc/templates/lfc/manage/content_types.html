@@ -14,7 +14,7 @@
 {% block content %}
     <div class="alone" id="manage-tabs">
         <ul>
-            <li><a href="#data">{{ ctr.name }}</a></li>
+            <li><a href="#data">{% trans ctr.name %}</a></li>
         </ul>
         <div id="data">
             <form action="{% url 'lfc_content_type' ctr.id %}"
