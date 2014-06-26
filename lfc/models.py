@@ -903,6 +903,11 @@ class BaseContent(AbstractBaseContent):
         """Overwrites django-permissions' has_permission in order to add LFC
         specific groups.
         """
+        try:
+            return user.permissions[str(self.id)][codename]
+        except:
+            pass
+
         # Every user is also anonymous user
         try:
             roles = [Role.objects.get(name="Anonymous")]
@@ -917,6 +922,14 @@ class BaseContent(AbstractBaseContent):
             pass
 
         result = super(BaseContent, self).has_permission(user, codename, roles)
+
+        if not getattr(user, "permissions", False):
+            user.permissions = {}
+
+        if not user.permissions.get(str(self.id), False):
+            user.permissions[str(self.id)] = {}
+
+        user.permissions[str(self.id)][codename] = result
 
         return result
 
