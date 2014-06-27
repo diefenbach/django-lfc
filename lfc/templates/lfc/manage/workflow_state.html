@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div style="width:600px; height:500px">
+<div>
     <h1 class="first-heading">
         {% trans "Edit state:" %} "{% trans state.name %}"
     </h1>
@@ -20,15 +20,12 @@
                 <input type="checkbox" name="review" {% if review %}checked="checked"{% endif %} />
                 <label> {% trans "Review" %}</label>
             </div>
-
         </div>
-
         <div class="field">
             <div class="label">
                 <label>{% trans "Permissions" %}:</label>
             </div>
-            <div style="max-height:200px; width:600px; overflow:auto">
-
+            <div>
                 <table class="lfs-manage-table" width="100%">
                     <tr>
                         <th>{% trans "Inherit" %}</th>

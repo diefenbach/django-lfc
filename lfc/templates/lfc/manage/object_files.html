@@ -88,39 +88,18 @@
     <form id="files-form"
           action="{% url 'lfc_add_files' obj.id %}"
           method="post"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data"
+          data="{% url 'lfc_load_object_files' obj.id %}">
         {% csrf_token %}
-        <input class="button" type="file" name="file" multiple />
+        <input class="button" type="file" name="file" multiple id="fileupload" />
     </form>
-    <table id="files-table" data="{% url 'lfc_load_object_files' obj.id %}" msg='{% trans "Uploading files:" %}'></table>
-    <script>
-        $(function () {
-            $('#files-form').fileUploadUI({
-                uploadTable: $('#files-table'),
-                multiFileRequest : true,
-                buildUploadRow: function (files) {
-                    var fileNames = '';
-                    for (i = 0; i < files.length; i += 1) {
-                        fileNames = fileNames + files[i].name + '<br>';
-                    }
-                    var msg = $("#files-table").attr("msg");
-                    return $(
-                        '<tr>' +
-                        '<td><div style="font-weight:bold; padding-bottom:10px">' + msg + '<img src="/static/img/ajax-loader.gif" style="padding:8px 0 0 10px" /></div>' + fileNames + '<\/td>' +
-                        '<\/tr>'
-                    );
-                },
-                onLoadAll: function(files) {
-                    var url = $("#files-table").attr("data");
-                    $.get(url, function(data) {
-                        data = $.parseJSON(data);
-                        $("#files").html(data["html"]);
-                        $.jGrowl(data["message"]);
-                    });
-                }
-            });
-        });
-    </script>
+    <div class="file-progress-title">{% trans "Uploading files ..." %}</div>
+    <div class="file-progress-title-2">{% trans "Processing files. Please wait!" %}</div>
+    <div id="file-progress"></div>
+    <div id="file-progressall"><div class="progress-label"></div></div>
+
+    <script>$(function () { bind_fileupload("file") });</script>
+
 {% else %}
     {% if obj.files.all %}
         <table class="lfs-manage-table half">

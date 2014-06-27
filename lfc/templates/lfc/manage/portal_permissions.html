@@ -43,9 +43,9 @@
                 {% for role in permission.roles %}
                     <td>
                         {% if role.has_permission %}
-                            <img src="{{ STATIC_URL }}icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}'/>
+                            <img src="{{ STATIC_URL }}lfc/icons/tick.png" alt='{% trans "Yes" %}' title='{% trans "Yes" %}'/>
                         {# {% else %} #}
-                        {#     <img src="{{ STATIC_URL }}icons/cross.png" alt='{% trans "No" %}'  title='{% trans "No" %}' /> #}
+                        {#     <img src="{{ STATIC_URL }}lfc/icons/cross.png" alt='{% trans "No" %}'  title='{% trans "No" %}' /> #}
                         {% endif %}
                     </td>
                 {% endfor %}

@@ -18,7 +18,7 @@
 <script type="text/javascript">
 
     $(function() {
-        $("#id_add-title").live("keyup", function() {
+        $(document).on("keyup", "#id_add-title", function() {
             var slug = $("#id_add-title").val()
             slug = URLify(slug, 200)
             $("#id_add-slug").val(slug);

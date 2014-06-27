@@ -101,40 +101,21 @@
         <form id="images-form"
               action="{% url 'lfc_add_images' obj.id %}"
               method="post"
-              enctype="multipart/form-data">
+              enctype="multipart/form-data"
+              data="{% url 'lfc_load_object_images' obj.id %}">
               {% csrf_token %}
-              <input class="button" type="file" name="file" multiple />
+              <input class="button" type="file" name="file" id="imageupload" multiple />
         </form>
-        <table id="images-table" data="{% url 'lfc_load_object_images' obj.id %}" msg='{% trans "Uploading images:" %}'></table>
+
+        <div class="image-progress-title">{% trans "Uploading images ..." %}</div>
+        <div class="image-progress-title-2">{% trans "Processing images. Please wait!" %}
+            <img class="image-ajax-loader" src="{{ STATIC_URL }}lfc/img/ajax-loader.gif" alt="ajax-loader" />
+        </div>
+        <div id="image-progress"></div>
+        <div id="image-progressall"><div class="progress-label"></div></div>
+
     </div>
-    <script>
-        $(function () {
-            $('#images-form').fileUploadUI({
-                uploadTable: $('#images-table'),
-                multiFileRequest : true,
-                buildUploadRow: function (files) {
-                    var fileNames = '';
-                    for (i = 0; i < files.length; i += 1) {
-                        fileNames = fileNames + files[i].name + '<br>';
-                    }
-                    var msg = $("#images-table").attr("msg");
-                    return $(
-                        '<tr>' +
-                        '<td><div style="font-weight:bold; padding-bottom:10px">' + msg + '<img src="/static/img/ajax-loader.gif" style="padding:8px 0 0 10px" /></div>' + fileNames + '<\/td>' +
-                        '<\/tr>'
-                    );
-                },
-                onLoadAll: function(files) {
-                    var url = $("#images-table").attr("data");
-                    $.get(url, function(data) {
-                        data = $.parseJSON(data);
-                        $("#images").html(data["html"]);
-                        $.jGrowl(data["message"]);
-                    });
-                }
-            });
-        });
-    </script>
+    <script>$(function () { bind_fileupload("image") });</script>
 {% else %}
     {% if obj.images.all %}
         <table class="lfs-manage-table half">

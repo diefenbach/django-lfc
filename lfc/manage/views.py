@@ -786,7 +786,7 @@ def add_portal_files(request):
         file.position = (i + 1) * 10
         file.save()
 
-    return HttpResponse("")
+    return HttpResponse("result")
 
 
 def load_portal_files(request):
@@ -1850,7 +1850,16 @@ def add_object_images(request, id):
 
     lfc.utils.clear_cache()
 
-    return HttpResponse("")
+    files = []
+    files.append({
+        "name": "hurz"
+    })
+
+    result = json.dumps({
+        "files": files
+    }, cls=LazyEncoder)
+
+    return HttpResponse(result)
 
 
 def update_object_images(request, id):
@@ -3026,7 +3035,7 @@ def fb_upload_image(request):
         image.save()
 
     html = (
-        ("#overlay-2 .content", imagebrowser(request, obj_id, as_string=True)),
+        ("#overlay .content", imagebrowser(request, obj_id, as_string=True)),
     )
 
     return HttpJsonResponse(
@@ -3062,7 +3071,7 @@ def fb_upload_file(request):
         file.save()
 
     html = (
-        ("#overlay-2 .content", filebrowser(request, obj_id, as_string=True)),
+        ("#overlay .content", filebrowser(request, obj_id, as_string=True)),
     )
 
     return HttpJsonResponse(
