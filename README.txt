@@ -21,6 +21,14 @@ Code
 Changes
 =======
 
+1.1.1 (2014-06-27)
+------------------
+
+* Adds Pillow to ``install_requires``
+* Adds django-compressor to ``install_requires``
+* Fixes german translation for lfc-contact-form
+
+
 1.1 (2014-06-26)
 ----------------
 
