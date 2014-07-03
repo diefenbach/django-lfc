@@ -1,3 +1,7 @@
+#manage-tabs {
+    display: none;
+}
+
 table.lfc-compositor-default {
     width: 100%;
 }
