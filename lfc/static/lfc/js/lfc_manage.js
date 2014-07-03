@@ -102,6 +102,26 @@ String.prototype.hashCode = function() {
     return Math.abs(hash);
 };
 
+function bind_datetime_picker(language) {
+    $(".vDateField").datepicker({
+      showWeek: true,
+      firstDay: 1,
+      dateFormat: "yy-mm-dd",
+    });
+
+    $(".vTimeField").timepicker({
+        timeFormat: "H:i",
+        maxTime: "23:30",
+        scrollDefaultNow: true,
+    });
+
+    if (language != "en") {
+        $.getScript("/static/lfc/jquery-ui-1.11.0/i18n/datepicker-" + language + ".js", function(){
+            $(".vDateField").datepicker($.datepicker.regional[language]);
+        });
+    };
+};
+
 function bind_fileupload(prefix) {
     $('#' + prefix + 'upload').fileupload({
         dataType: 'xml',
