@@ -6,11 +6,11 @@ README = open(os.path.join(here, 'README.txt')).read()
 
 setup(
     name='django-lfc',
-    version="1.1.1",
+    version="1.2b1",
     description='A CMS based on Django.',
     long_description=README,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
         'Framework :: Django',
         'License :: OSI Approved :: BSD License',

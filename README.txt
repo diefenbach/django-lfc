@@ -21,6 +21,16 @@ Code
 Changes
 =======
 
+1.2b1 (2014-07-04)
+------------------
+
+* Updates 3rd party javascripts (jquery, jquery ui, tinymce, superfish, etc.)
+* Adds progress bar to image uploads
+* Removes dependencies from django admin (uses own date/time picker)
+* Improves manage tabs (removes flicker)
+* Fixes lightbox for django-compressor (unicode decode error)
+* Moves static files to own namespaces (folders)
+
 1.1.1 (2014-06-27)
 ------------------
 
