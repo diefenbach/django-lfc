@@ -65,6 +65,8 @@ class PortalTestCase(TestCase):
         self.assertEqual(len(children), 2)
 
         permissions.utils.grant_permission(self.p1, self.anonymous, "view")
+        delattr(request.user, "permissions")
+
         children = self.p.get_children(request)
         self.assertEqual(len(children), 1)
 

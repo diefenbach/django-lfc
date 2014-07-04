@@ -246,6 +246,7 @@ class PageTestCase(TestCase):
 
         # Grant view permission to self.p11
         permissions.utils.grant_permission(self.p11, self.anonymous, "view")
+        delattr(request.user, "permissions")
 
         result = self.p11.has_permission(request.user, "view")
         self.assertEqual(result, True)
