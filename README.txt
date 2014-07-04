@@ -1,7 +1,17 @@
-What is it?
-===========
+Introduction
+============
 
 LFC is a Content Manangement System based on Django
+
+Documentation
+=============
+
+* http://lightning-fast-cms.readthedocs.org
+
+Code
+====
+
+* http://github.com/diefenbach/django-lfc
 
 Demo
 ====
@@ -12,11 +22,6 @@ Group
 =====
 
 * http://groups.google.com/group/django-lfc
-
-Code
-====
-
-* http://github.com/diefenbach/django-lfc
 
 Changes
 =======
