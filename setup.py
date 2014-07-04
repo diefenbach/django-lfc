@@ -29,7 +29,7 @@ setup(
         'setuptools',
         'django-compressor == 1.4',
         'django-pagination == 1.0.7',
-        'django-workflows == 1.1',
+        'django-workflows == 1.1.1',
         'lfc-contact-form == 1.0.1',
         'lfc-page == 1.0.1',
         'lfc-portlets == 1.0.1',
