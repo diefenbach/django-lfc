@@ -33,7 +33,7 @@ setup(
         'lfc-contact-form == 1.0.1',
         'lfc-page == 1.0.1',
         'lfc-portlets == 1.0.1',
-        'lfc-theme == 1.1b1',
+        'lfc-theme == 1.2',
         'Pillow == 2.4.0',
         'tagging == 0.5',
     ],
