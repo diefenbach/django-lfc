@@ -41,10 +41,18 @@ function set_tab() {
     }
 
     $('#manage-tabs').tabs('option', "active", index)
-}
+};
+
+function create_buttons() {
+    $("input[type=submit], .overlay-close").button();
+};
 
 function create_tabs() {
-    $('#manage-tabs').tabs();
+    $('#manage-tabs').tabs({
+        load: function(event, ui) {
+            create_buttons();
+        }
+    });
     $('#manage-tabs').css("display", "block");
 
     $('#manage-tabs').on('tabsactivate', function(event, ui) {
@@ -357,6 +365,15 @@ $(function() {
         $("#yesno").dialog("open");
         return false;
     });
+
+    $(document).on("click", ".overlay-close", function() {
+        $("#overlay").dialog("close");
+    });
+
+    $(document).ajaxStop(function() {
+        create_buttons();
+    });
+
 });
 
 $(document).ajaxSend(function(event, xhr, settings) {
