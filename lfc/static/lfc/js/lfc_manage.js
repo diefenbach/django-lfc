@@ -10,9 +10,11 @@ function set_focus() {
 }
 
 function create_menu() {
-    $('ul.sf-menu').superfish({
-        speed: "fast",
-        delay: "200"
+    $('ul.sf-menu').each(function(index) {
+        $(this).superfish({
+            speed: "fast",
+            delay: "200"
+        });
     });
 };
 
@@ -186,6 +188,8 @@ $(function() {
     create_tabs();
     create_buttons();
     update_editor();
+    create_menu();
+
     $("#overlay").dialog({
         autoOpen: false,
         resizable: false,
@@ -202,8 +206,6 @@ $(function() {
     var message = $.cookie("message");
     if (message)
         show_message(message);
-
-    create_menu();
 
     // Generic ajax save button
     $(document).on("click", ".ajax-submit", function() {
