@@ -26,6 +26,11 @@ Group
 Changes
 =======
 
+1.2b2 (2014-07-05)
+------------------
+* Formats buttons and select boxes with jquery.ui
+* Fixes superfish menu after ajax call
+
 1.2b1 (2014-07-04)
 ------------------
 
@@ -42,7 +47,6 @@ Changes
 * Adds Pillow to ``install_requires``
 * Adds django-compressor to ``install_requires``
 * Fixes german translation for lfc-contact-form
-
 
 1.1 (2014-06-26)
 ----------------

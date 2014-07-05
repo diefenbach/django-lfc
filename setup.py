@@ -6,7 +6,7 @@ README = open(os.path.join(here, 'README.txt')).read()
 
 setup(
     name='django-lfc',
-    version="1.2b1",
+    version="1.2b2",
     description='A CMS based on Django.',
     long_description=README,
     classifiers=[
