@@ -44,7 +44,8 @@ function set_tab() {
 };
 
 function create_buttons() {
-    $("input[type=submit], .overlay-close").button();
+    $("input[type=submit], input[type=file], .overlay-close").button();
+    $("select").selectmenu();
 };
 
 function create_tabs() {
@@ -183,6 +184,7 @@ function bind_fileupload(prefix) {
 
 $(function() {
     create_tabs();
+    create_buttons();
     update_editor();
     $("#overlay").dialog({
         autoOpen: false,
