@@ -21,7 +21,7 @@ Code
 Demo
 ====
 
-* http://demo.django-lfc.com
+* http://demo.lfcproject.com
 
 Group
 =====
