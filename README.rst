@@ -1,7 +1,12 @@
 Introduction
 ============
 
-LFC is a Content Manangement System based on Django
+LFC is a Content Management System (CMS) based on widely used software: Python, Django and jQuery. It is easy to use, easy to customize, fast, free and open source.
+
+.. image:: https://travis-ci.org/diefenbach/lfc-installer.svg?branch=version%2F1.2
+    :alt: Build Status
+    :target: http://travis-ci.org/django-lfc/django-lfc
+
 
 Documentation
 =============
