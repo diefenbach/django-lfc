@@ -8,5 +8,6 @@ from portlets_tests import *
 from registration_tests import *
 from utils_tests import *
 
-# from permissions.tests import *
-# from workflows.tests import *
+from permissions.tests import *
+from portlets.tests import *
+from workflows.tests import *

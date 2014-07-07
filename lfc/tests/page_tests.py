@@ -312,13 +312,10 @@ class PageTestCase(TestCase):
         if translation:
             self.assertEqual(translation, self.p2de)
 
-
     def test_i18n_view_set_language(self):
         request = create_request()
         from lfc.views import set_language
 
-        self.assertEqual(set_language(request, 'en', self.p2en.id)['Location'],
-                         '/page-2')
         self.assertEqual(set_language(request, 'de', self.p2en.id)['Location'],
                          '/de/page-2')
         self.assertEqual(set_language(request, 'fr', self.p2en.id)['Location'],
@@ -326,3 +323,5 @@ class PageTestCase(TestCase):
 
         self.assertEqual(set_language(request, 'fr', self.p2de.id)['Location'],
                          '/fr/page-2')
+        self.assertEqual(set_language(request, 'en', self.p2en.id)['Location'],
+                         '/page-2')
