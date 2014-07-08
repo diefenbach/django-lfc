@@ -2,11 +2,11 @@ from setuptools import setup, find_packages
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.txt')).read()
+README = open(os.path.join(here, 'README.rst')).read()
 
 setup(
     name='django-lfc',
-    version="1.2b2",
+    version="1.2b3",
     description='A CMS based on Django.',
     long_description=README,
     classifiers=[
@@ -32,9 +32,9 @@ setup(
         'django-workflows == 1.1.1',
         'lfc-contact-form == 1.0.1',
         'lfc-page == 1.0.1',
-        'lfc-portlets == 1.0.1',
-        'lfc-theme == 1.2',
-        'Pillow == 2.4.0',
+        'lfc-portlets == 1.2',
+        'lfc-theme == 1.2.1',
+        'Pillow == 2.5.0',
         'tagging == 0.5',
     ],
 )

@@ -31,6 +31,16 @@ Group
 Changes
 =======
 
+1.2b3 (2014-07-08)
+------------------
+
+* Updates django-portlets to 1.3
+* Updates lfc-theme to 1.2.1
+* Updates Pillow to 2.5.0
+* Updates Docs
+* Adds tests of dependencies
+
+
 1.2b2 (2014-07-05)
 ------------------
 * Formats buttons and select boxes with jquery.ui
