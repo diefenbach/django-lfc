@@ -32,7 +32,7 @@ setup(
         'django-workflows == 1.1.1',
         'lfc-contact-form == 1.0.1',
         'lfc-page == 1.0.1',
-        'lfc-portlets == 1.2',
+        'lfc-portlets == 1.0.2',
         'lfc-theme == 1.2.1',
         'Pillow == 2.5.0',
         'tagging == 0.5',
