@@ -70,6 +70,6 @@ LFC_THEME_WIDTH_SLOT_LEFT, LFC_THEME_WIDTH_SLOT_RIGHT
     Changes the width of the left and right slot. Default is 5 units for each
     slot.
 
-    .. note:: The theme is based on a CSS grid (`<http://www.blueprintcss.org>`_).
+    .. note:: The lfc-theme is based on a CSS grid (`<http://www.blueprintcss.org>`_).
               The total width of the grid is 24 units. Based on these settings,
               the width of the content is calculated automatically.
