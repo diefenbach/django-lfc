@@ -14,18 +14,23 @@
 import sys
 import os
 
+on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
-sys.path.append(os.path.abspath("../../../lfc_project"))
-sys.path.append(os.path.abspath("../../../parts/lfc"))
-sys.path.append(os.path.abspath("../../../parts/django"))
-sys.path.append(os.path.abspath("../../../parts/tagging"))
-sys.path.append(os.path.abspath("../../../parts/portlets"))
-sys.path.append(os.path.abspath("../../../parts/permissions"))
-sys.path.append(os.path.abspath("../../../parts/workflows"))
-sys.path.append(os.path.abspath("../../../parts/resources"))
+os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
+
+if not on_rtd:
+    sys.path.append(os.path.abspath("../../../lfc_project"))
+    sys.path.append(os.path.abspath("../../../src/lfc"))
+    sys.path.append(os.path.abspath("../../../eggs/Django-1.6.5-py2.7.egg/"))
+    sys.path.append(os.path.abspath("../../../eggs/Pillow-2.5.0-py2.7-macosx-10.4-x86_64.egg"))
+    sys.path.append(os.path.abspath("../../../src/tagging"))
+    sys.path.append(os.path.abspath("../../../src/portlets"))
+    sys.path.append(os.path.abspath("../../../src/permissions"))
+    sys.path.append(os.path.abspath("../../../src/workflows"))
 
 # -- General configuration -----------------------------------------------------
 
