@@ -22,7 +22,9 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
 
-if not on_rtd:
+if on_rtd:
+    sys.path.insert(0, os.path.abspath('../../latest'))
+else:
     sys.path.append(os.path.abspath("../../../lfc_project"))
     sys.path.append(os.path.abspath("../../../src/lfc"))
     sys.path.append(os.path.abspath("../../../eggs/Django-1.6.5-py2.7.egg/"))
