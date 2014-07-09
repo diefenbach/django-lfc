@@ -61,6 +61,7 @@ select.users-active-filter {
     width: 100px;
 }
 
+input[type='number'],
 input[type='text'] {
     width: 200px;
 }
