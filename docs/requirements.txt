@@ -1,3 +1,4 @@
+--find-links http://pypi.iqpp.de/
 django==1.6.5
 django-compressor==1.4
 django-pagination==1.0.7
