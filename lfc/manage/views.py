@@ -245,9 +245,27 @@ def delete_object(request, id):
         # TODO: Delete tags for deleted object
         Tag.objects.get_for_object(obj).delete()
 
-        # Deletes files on file system
-        obj.images.all().delete()
-        obj.files.all().delete()
+        # Deletes images
+        for image in obj.images.all():
+            try:
+                image.image.delete()
+            except AttributeError:
+                pass
+            try:
+                image.delete()
+            except AssertionError:
+                pass
+
+        # Delete files
+        for myfile in obj.files.all():
+            try:
+                myfile.file.delete()
+            except AttributeError:
+                pass
+            try:
+                myfile.delete()
+            except AssertionError:
+                pass
 
         # Delete workflows stuff
         StateObjectRelation.objects.filter(content_id=obj.id, content_type=ctype).delete()
@@ -5099,24 +5117,29 @@ def _update_images(request, obj):
         message = _(u"Images has been deleted.")
         for id in request.POST.getlist("delete-images"):
             try:
-                image = Image.objects.get(pk=id).delete()
-            except (IndexError, Image.DoesNotExist):
-                pass
-
+                image = Image.objects.get(pk=id)
+            except Image.DoesNotExist:
+                message = _(u"The image doesn't exist anymore.")
+            else:
+                try:
+                    image.image.delete()
+                except AttributeError:
+                    pass
+                try:
+                    image.delete()
+                except AssertionError:
+                    pass
     elif action == "update":
         message = _(u"Images has been updated.")
-
         for image in obj.images.all():
             image.title = request.POST.get("title-%s" % image.id)
             image.position = request.POST.get("position-%s" % image.id)
             image.caption = request.POST.get("caption-%s" % image.id)
             image.save()
-
     # Refresh positions
     for i, image in enumerate(obj.images.all()):
         image.position = (i + 1) * 10
         image.save()
-
     return message
 
 
@@ -5129,22 +5152,28 @@ def _update_files(request, obj):
         message = _(u"Files has been deleted.")
         for id in request.POST.getlist("delete-files"):
             try:
-                file = File.objects.get(pk=id).delete()
+                file = File.objects.get(pk=id)
             except (IndexError, File.DoesNotExist):
-                pass
+                message = _(u"The file doesn't exist anymore.")
+            else:
+                try:
+                    file.file.delete()
+                except AttributeError:
+                    pass
+                try:
+                    file.delete()
+                except AssertionError:
+                    pass
     elif action == "update":
         message = _(u"Files has been updated.")
-
         for file in obj.files.all():
             file.title = request.POST.get("title-%s" % file.id)
             file.position = request.POST.get("position-%s" % file.id)
             file.save()
-
     # Refresh positions
     for i, file in enumerate(obj.files.all()):
         file.position = (i + 1) * 10
         file.save()
-
     return message
 
 
