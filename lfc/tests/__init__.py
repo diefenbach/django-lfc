@@ -8,6 +8,7 @@ from portal_tests import *
 from portlets_tests import *
 from registration_tests import *
 from utils_tests import *
+from working_copy_tests import *
 
 from permissions.tests import *
 from portlets.tests import *

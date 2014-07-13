@@ -47,11 +47,14 @@ class RequestFactory(Client):
         return WSGIRequest(environ)
 
 
-def create_request():
+def create_request(path="/", params=None):
     """
     """
+    if params is None:
+        params = {}
+
     rf = RequestFactory()
-    request = rf.get('/')
+    request = rf.get(path, params)
     request.session = SessionStore()
 
     user = User()

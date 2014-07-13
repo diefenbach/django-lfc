@@ -1,5 +1,5 @@
 {% extends "lfc/manage/base.html" %}
-{% load i18n %}
+{% load i18n lfc_tags %}
 
 {% block left-slot-wrapper %}{% endblock %}
 
@@ -18,12 +18,14 @@
                             {% trans "Reindex Objects" %}
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'lfc_manage_update_all_permissions' %}">
-                            {% trans "Update Permissions" %}
-                        </a>
-                    </li>
-                </ul>
+                    {% ifportalhasperm manage_portal %}
+                        <li>
+                            <a href="{% url 'lfc_manage_update_all_permissions' %}">
+                                {% trans "Update Permissions" %}
+                            </a>
+                        </li>
+                    {% endifportalhasperm %}
+                    </ul>
             </div>
         </div>
     </div>

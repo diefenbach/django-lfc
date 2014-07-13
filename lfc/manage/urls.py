@@ -157,9 +157,9 @@ urlpatterns = patterns('lfc.manage.views',
     url(r'^utils$', "manage_utils", name="lfc_manage_utils"),
     url(r'^reindex-objects$', "reindex_objects", name="lfc_reindex_objects"),
 
-    # Utils
-    url(r'^utils$', "manage_utils", name="lfc_manage_utils"),
-    url(r'^reindex-objects$', "reindex_objects", name="lfc_reindex_objects"),
+    # Workingcopy
+    url(r'^checkout/(?P<id>\d+)$', "checkout", name="lfc_checkout"),
+    url(r'^checkin/(?P<id>\d+)$', "checkin", name="lfc_checkin"),
 
     # content
     url(r'^$', "portal", name="lfc_manage_portal"),

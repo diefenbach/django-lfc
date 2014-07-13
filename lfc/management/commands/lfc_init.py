@@ -71,6 +71,8 @@ class Command(BaseCommand):
         manage_local_roles = permissions.utils.register_permission("Manage local roles", "manage_local_roles")
         manage_permissions = permissions.utils.register_permission("Manage permissions", "manage_permissions")
         view_management = permissions.utils.register_permission("View management", "view_management")
+        checkin = permissions.utils.register_permission("Check in", "checkin")
+        checkin = permissions.utils.register_permission("Check out", "checkout")
 
         publish = permissions.utils.register_permission("Publish", "publish")
         submit = permissions.utils.register_permission("Submit", "submit")
@@ -85,45 +87,50 @@ class Command(BaseCommand):
         left_slot, created = Slot.objects.get_or_create(name="Left")
         right_slot, created = Slot.objects.get_or_create(name="Right")
 
-        # Set permissions for portal
-        permissions.utils.grant_permission(portal, anonymous, "view")
-
-        permissions.utils.grant_permission(portal, author, "view_management")
+        # Set permissions for the portal (all permissions for the portal and
+        # which are independent of the workflow state)
         permissions.utils.grant_permission(portal, author, "add")
+        permissions.utils.grant_permission(portal, author, "checkout")
+        permissions.utils.grant_permission(portal, author, "view")
+        permissions.utils.grant_permission(portal, author, "view_management")
 
-        permissions.utils.grant_permission(portal, editor, "view_management")
+        permissions.utils.grant_permission(portal, editor, "checkout")
         permissions.utils.grant_permission(portal, editor, "delete")
-        permissions.utils.grant_permission(portal, editor, "view")
         permissions.utils.grant_permission(portal, editor, "edit")
-        permissions.utils.grant_permission(portal, editor, "retract")
         permissions.utils.grant_permission(portal, editor, "submit")
+        permissions.utils.grant_permission(portal, editor, "view")
+        permissions.utils.grant_permission(portal, editor, "view_management")
 
-        permissions.utils.grant_permission(portal, manager, "view_management")
         permissions.utils.grant_permission(portal, manager, "add", )
+        permissions.utils.grant_permission(portal, manager, "checkin")
+        permissions.utils.grant_permission(portal, manager, "checkout")
         permissions.utils.grant_permission(portal, manager, "delete")
         permissions.utils.grant_permission(portal, manager, "edit")
         permissions.utils.grant_permission(portal, manager, "manage_local_roles")
         permissions.utils.grant_permission(portal, manager, "manage_permissions")
         permissions.utils.grant_permission(portal, manager, "manage_portal")
-        permissions.utils.grant_permission(portal, manager, "view")
-        permissions.utils.grant_permission(portal, manager, "submit")
-        permissions.utils.grant_permission(portal, manager, "reject")
-        permissions.utils.grant_permission(portal, manager, "review")
         permissions.utils.grant_permission(portal, manager, "publish")
+        permissions.utils.grant_permission(portal, manager, "reject")
+        permissions.utils.grant_permission(portal, manager, "retract")
+        permissions.utils.grant_permission(portal, manager, "submit")
+        permissions.utils.grant_permission(portal, manager, "review")
+        permissions.utils.grant_permission(portal, manager, "view")
+        permissions.utils.grant_permission(portal, manager, "view_management")
 
-        permissions.utils.grant_permission(portal, owner, "add")
+        permissions.utils.grant_permission(portal, owner, "checkout")
         permissions.utils.grant_permission(portal, owner, "delete")
         permissions.utils.grant_permission(portal, owner, "edit")
         permissions.utils.grant_permission(portal, owner, "manage_local_roles")
-        permissions.utils.grant_permission(portal, owner, "retract")
         permissions.utils.grant_permission(portal, owner, "submit")
         permissions.utils.grant_permission(portal, owner, "view")
 
-        permissions.utils.grant_permission(portal, reviewer, "view_management")
-        permissions.utils.grant_permission(portal, reviewer, "view")
+        permissions.utils.grant_permission(portal, reviewer, "checkin")
+        permissions.utils.grant_permission(portal, reviewer, "checkout")
         permissions.utils.grant_permission(portal, reviewer, "publish")
         permissions.utils.grant_permission(portal, reviewer, "reject")
         permissions.utils.grant_permission(portal, reviewer, "review")
+        permissions.utils.grant_permission(portal, reviewer, "view")
+        permissions.utils.grant_permission(portal, reviewer, "view_management")
 
         # Simple Workflow
         ##########################################################################
@@ -213,34 +220,38 @@ class Command(BaseCommand):
         make_public = Transition.objects.create(name="Make public", workflow=portal_workflow, destination=public, permission=publish)
         make_private = Transition.objects.create(name="Make private", workflow=portal_workflow, destination=private, permission=review)
         reject_t = Transition.objects.create(name="Reject", workflow=portal_workflow, destination=private, permission=reject)
-        retract = Transition.objects.create(name="Retract", workflow=portal_workflow, destination=private, permission=retract)
+        retract_t = Transition.objects.create(name="Retract", workflow=portal_workflow, destination=private, permission=retract)
 
         # Add transitions
         private.transitions.add(submit_t)
         private.transitions.add(make_public)
         submitted.transitions.add(make_public)
         submitted.transitions.add(reject_t)
-        submitted.transitions.add(retract)
+        submitted.transitions.add(retract_t)
         public.transitions.add(make_private)
-        public.transitions.add(retract)
+        public.transitions.add(retract_t)
 
         # Add all permissions which are managed by the workflow
         WorkflowPermissionRelation.objects.create(workflow=portal_workflow, permission=add)
         WorkflowPermissionRelation.objects.create(workflow=portal_workflow, permission=delete)
         WorkflowPermissionRelation.objects.create(workflow=portal_workflow, permission=edit)
+        WorkflowPermissionRelation.objects.create(workflow=portal_workflow, permission=retract)
         WorkflowPermissionRelation.objects.create(workflow=portal_workflow, permission=view)
 
         # Add permissions for single states
 
         # Private
         StatePermissionRelation.objects.create(state=private, permission=add, role=author)
+
         StatePermissionRelation.objects.create(state=private, permission=delete, role=editor)
         StatePermissionRelation.objects.create(state=private, permission=edit, role=editor)
         StatePermissionRelation.objects.create(state=private, permission=view, role=editor)
+
         StatePermissionRelation.objects.create(state=private, permission=add, role=manager)
         StatePermissionRelation.objects.create(state=private, permission=delete, role=manager)
         StatePermissionRelation.objects.create(state=private, permission=edit, role=manager)
         StatePermissionRelation.objects.create(state=private, permission=view, role=manager)
+
         StatePermissionRelation.objects.create(state=private, permission=delete, role=owner)
         StatePermissionRelation.objects.create(state=private, permission=edit, role=owner)
         StatePermissionRelation.objects.create(state=private, permission=view, role=owner)
@@ -248,41 +259,56 @@ class Command(BaseCommand):
         StateInheritanceBlock.objects.create(state=private, permission=add)
         StateInheritanceBlock.objects.create(state=private, permission=delete)
         StateInheritanceBlock.objects.create(state=private, permission=edit)
+        StateInheritanceBlock.objects.create(state=private, permission=retract)
         StateInheritanceBlock.objects.create(state=private, permission=view)
 
         # Submitted
         StatePermissionRelation.objects.create(state=submitted, permission=add, role=author)
+
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=owner)
+        StatePermissionRelation.objects.create(state=submitted, permission=retract, role=owner)
+
         StatePermissionRelation.objects.create(state=submitted, permission=add, role=manager)
         StatePermissionRelation.objects.create(state=submitted, permission=delete, role=manager)
         StatePermissionRelation.objects.create(state=submitted, permission=edit, role=manager)
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=manager)
+        StatePermissionRelation.objects.create(state=submitted, permission=retract, role=manager)
+
         StatePermissionRelation.objects.create(state=submitted, permission=delete, role=editor)
         StatePermissionRelation.objects.create(state=submitted, permission=edit, role=editor)
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=editor)
+
         StatePermissionRelation.objects.create(state=submitted, permission=view, role=reviewer)
 
         StateInheritanceBlock.objects.create(state=submitted, permission=add)
         StateInheritanceBlock.objects.create(state=submitted, permission=delete)
         StateInheritanceBlock.objects.create(state=submitted, permission=edit)
+        StateInheritanceBlock.objects.create(state=submitted, permission=retract)
         StateInheritanceBlock.objects.create(state=submitted, permission=view)
 
         # Public
+        StatePermissionRelation.objects.create(state=public, permission=view, role=anonymous)
+
         StatePermissionRelation.objects.create(state=public, permission=add, role=author)
+
         StatePermissionRelation.objects.create(state=public, permission=delete, role=editor)
         StatePermissionRelation.objects.create(state=public, permission=edit, role=editor)
+        StatePermissionRelation.objects.create(state=public, permission=retract, role=editor)
         StatePermissionRelation.objects.create(state=public, permission=view, role=editor)
+
         StatePermissionRelation.objects.create(state=public, permission=add, role=manager)
         StatePermissionRelation.objects.create(state=public, permission=delete, role=manager)
         StatePermissionRelation.objects.create(state=public, permission=edit, role=manager)
-        StatePermissionRelation.objects.create(state=public, permission=view, role=anonymous)
         StatePermissionRelation.objects.create(state=public, permission=view, role=manager)
+
         StatePermissionRelation.objects.create(state=public, permission=view, role=owner)
+
         StatePermissionRelation.objects.create(state=public, permission=view, role=reviewer)
 
         StateInheritanceBlock.objects.create(state=public, permission=add)
         StateInheritanceBlock.objects.create(state=public, permission=delete)
         StateInheritanceBlock.objects.create(state=public, permission=edit)
+        StateInheritanceBlock.objects.create(state=public, permission=retract)
         StateInheritanceBlock.objects.create(state=public, permission=view)
 
         # Define public state

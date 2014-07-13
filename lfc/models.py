@@ -213,7 +213,7 @@ class Portal(models.Model, PermissionBase):
 
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Standard"), blank=True, null=True)
+    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Standard"), blank=True, null=True, on_delete=models.SET_NULL)
 
     from_email = models.EmailField(_(u"From e-mail address"))
     notification_emails = models.TextField(_(u"Notification email addresses"))
@@ -466,7 +466,7 @@ class BaseContent(AbstractBaseContent):
 
     parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="children")
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
-    standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
+    standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True, on_delete=models.SET_NULL)
     order_by = models.CharField(_(u"Order by"), max_length=20, default="position", choices=ORDER_BY_CHOICES)
 
     exclude_from_navigation = models.BooleanField(_(u"Exclude from navigation"), default=False)
@@ -493,6 +493,10 @@ class BaseContent(AbstractBaseContent):
         choices=ALLOW_COMMENTS_CHOICES, default=ALLOW_COMMENTS_DEFAULT)
 
     searchable_text = models.TextField(blank=True)
+
+    working_copy_base = models.ForeignKey("self", verbose_name=_(u"Working copy base"), related_name="working_copies", blank=True, null=True, on_delete=models.SET_NULL)
+
+    version = models.PositiveSmallIntegerField(blank=True, null=True)
 
     class Meta:
         ordering = ["position"]
@@ -990,6 +994,31 @@ class BaseContent(AbstractBaseContent):
         """
         self.searchable_text = self.get_searchable_text()
         self.save()
+
+    def is_working_copy(self):
+        """
+        Returns True if the object is a working copy.
+        """
+        try:
+            return bool(self.working_copy_base)
+        except BaseContent.DoesNotExist:
+            return False
+
+    def has_working_copy(self):
+        """
+        Returns True if the object has a working copy.
+        """
+        return self.working_copies.count() > 0
+
+    def get_working_copy(self):
+        """
+        Returns the working copy of the object. If there is none, it returns
+        None.
+        """
+        try:
+            return self.working_copies.all()[0]
+        except IndexError:
+            return None
 
     # django-workflows
     def get_allowed_transitions(self, user):

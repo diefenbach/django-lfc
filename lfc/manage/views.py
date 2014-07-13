@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.comments.models import Comment
+from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404
@@ -4963,8 +4964,6 @@ def save_role(request, id, template_name="lfc/manage/role_add.html"):
             "current_role_id": int(id),
         }))
 
-<<<<<<< HEAD
-=======
 
 def checkin(request, id):
     """
@@ -5011,8 +5010,14 @@ def checkin(request, id):
 def checkout(request, id):
     """
     Checks out a working copy for the object with the passed id.
+
+    **Parameters:**
+
+        id
+            The id of the object for which a working copy is created.
     """
     source_obj = lfc.utils.get_content_object(pk=id)
+    source_obj.check_permission(request.user, "checkout")
 
     if source_obj.has_working_copy():
         url = reverse("lfc_manage_object", kwargs={"id": source_obj.id})
@@ -5049,12 +5054,12 @@ def checkout(request, id):
 
     return HttpResponseRedirect(reverse("lfc_manage_object", kwargs={"id": new_obj.id}))
 
+
 # Utils
 def manage_utils(request, template_name="lfc/manage/utils.html"):
     """Displays the overview over all utils.
     """
-    return render_to_response(template_name, RequestContext(request, {
-    }))
+    return render_to_response(template_name, RequestContext(request, {}))
 
 def reindex_objects(request):
     """Reindexes the searchable text of all content objects.
@@ -5300,10 +5305,11 @@ def _display_paste(request, obj):
 def _display_action_menu(request, obj):
     """Returns true if the action menu should be displayed.
     """
-    if obj.has_permission(request.user, "add"):
-        return True
-    elif obj.has_permission(request.user, "delete"):
-        return True
+    if obj.has_permission(request.user, "add") or \
+        obj.has_permission(request.user, "delete") or \
+        obj.has_permission(request.user, "checkout") or \
+        obj.has_permission(request.user, "checkin"):
+            return True
     else:
         return False
 

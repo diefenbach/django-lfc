@@ -51,6 +51,20 @@
                         <a class="delete-link" href="{% url 'lfc_delete_object' obj.id %}">{% trans 'Delete' %}</a>
                     </li>
                 {% endifhasperm %}
+                {% if not obj.is_working_copy and not obj.has_working_copy %}
+                    {% ifhasperm checkout %}
+                        <li>
+                            <a href="{% url 'lfc_checkout' obj.id %}">{% trans 'Checkout' %}</a>
+                        </li>
+                    {% endifhasperm %}
+                {% endif %}
+                {% if obj.is_working_copy %}
+                    {% ifhasperm checkin %}
+                        <li>
+                            <a href="{% url 'lfc_checkin' obj.id %}">{% trans 'Checkin' %}</a>
+                        </li>
+                    {% endifhasperm %}
+                {% endif %}
             </ul>
         </li>
     {% endif %}
@@ -120,6 +134,16 @@
                     {% endfor %}
                 </ul>
             {% endif %}
+        </li>
+    {% endif %}
+    {% if obj.has_working_copy %}
+        <li>
+            <a class="attention" href="{% url 'lfc_manage_object' obj.get_working_copy.id %}">{% trans "Working Copy Base" %}</a>
+        </li>
+    {% endif %}
+    {% if obj.is_working_copy %}
+        <li>
+            <a class="attention" href="{% url 'lfc_manage_object' obj.working_copy_base.id %}">{% trans "Working Copy" %}</a>
         </li>
     {% endif %}
     <li>

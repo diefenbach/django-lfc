@@ -801,3 +801,7 @@ ul.timelist, .timelist li {
     position: relative; top: 4px;
     padding-left: 5px;
 }
+
+.sf-menu .attention {
+    color: red;
+}
