@@ -1,0 +1,31 @@
+{% load i18n %}
+
+<h2 class="first-heading">
+    {% trans "History" context "LFC" %}
+</h2>
+
+<table class="lfs-manage-table">
+    <tr>
+        <th>{% trans "Action" %}</th>
+        <th>{% trans "User" %}</th>
+        <th>{% trans "Date" %}</th>
+    </tr>
+    {% for history_entry in history %}
+        <tr>
+            <td nowrap="nowrap">
+                {{ history_entry.action }}
+            </td>
+            <td nowrap="nowrap">
+                {% if history_entry.user.get_full_name %}
+                    {{ history_entry.user.get_full_name }} / {{ history_entry.user.username }}
+                {% else %}
+                    {{ history_entry.user.username }}
+                {% endif %}
+            </td>
+            <td width="20%"
+                nowrap="nowrap">
+                {{ history_entry.creation_date|date:"d.m.Y - H:i:s" }}
+            </td>
+        </tr>
+    {% endfor %}
+</table>

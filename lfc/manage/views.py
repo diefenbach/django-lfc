@@ -82,6 +82,7 @@ from lfc.manage.forms import WorkflowForm
 from lfc.manage.forms import WorkflowAddForm
 from lfc.models import Application
 from lfc.models import File
+from lfc.models import History
 from lfc.models import Image
 from lfc.settings import COPY, CUT, IMAGE_SIZES
 from lfc.utils import LazyEncoder
@@ -1339,6 +1340,29 @@ def object_seo_data(request, obj=None, id=None, template_name="lfc/manage/object
             "form": form,
             "obj": obj,
         }))
+
+
+def object_history(request, id, template_name="lfc/manage/object_history.html"):
+    """Displays the history of the object with the passed id.
+
+    **Parameters:**
+
+        id
+            the id of the object for which the history should be displayed.
+
+    **Permission:**
+
+        View
+
+    """
+    obj = lfc.utils.get_content_object(pk=id)
+    base_obj = obj.get_base_object()
+
+    obj.check_permission(request.user, "view")
+
+    return render_to_response(template_name, RequestContext(request, {
+        "history": History.objects.filter(obj=base_obj),
+    }))
 
 
 def load_object_permissions(request, id):
@@ -3342,6 +3366,9 @@ def do_transition(request, id):
                 obj.publication_date = datetime.datetime.now()
                 obj.save()
 
+        # Add history entry
+        obj.add_history(request, action="Workflow state changes to: %s" % obj.get_state().name)
+
     html = (
         ("#menu", object_menu(request, obj)),
         ("#navigation", navigation(request, obj)),
@@ -4936,6 +4963,92 @@ def save_role(request, id, template_name="lfc/manage/role_add.html"):
             "current_role_id": int(id),
         }))
 
+<<<<<<< HEAD
+=======
+
+def checkin(request, id):
+    """
+    Checks in the working copy with passed id.
+    """
+    working_copy = lfc.utils.get_content_object(pk=id)
+
+    if not working_copy.is_working_copy():
+        url = reverse("lfc_manage_object", kwargs={"id": working_copy.id})
+        return MessageHttpResponseRedirect(url, _(u"Object is not a working copy."))
+
+    working_copy.check_permission(request.user, "checkin")
+
+    # Save some values of the base for later use.
+    base = working_copy.working_copy_base
+    base_id = base.id
+    base_slug = base.slug
+    base_parent = base.parent
+    base_parent_standard = base.parent.standard if base.parent else None
+    base_state = base.get_content_object().get_state()
+    base_position = base.position
+    base.delete()
+
+    # Set default values
+    working_copy.slug = base_slug
+    working_copy.set_state(base_state)
+    working_copy.position = base_position
+    working_copy.save()
+
+    # Point to wc if the base was standard object of the parent
+    if not base_parent:
+        base_parent = lfc.utils.get_portal()
+
+    if base_parent_standard and (base_parent_standard.id == base_id):
+        base_parent.standard = working_copy.basecontent_ptr
+        base_parent.save()
+        lfc.utils.clear_cache()
+
+    _update_positions(working_copy.parent)
+
+    return HttpResponseRedirect(reverse("lfc_manage_object", kwargs={"id": working_copy.id}))
+
+
+def checkout(request, id):
+    """
+    Checks out a working copy for the object with the passed id.
+    """
+    source_obj = lfc.utils.get_content_object(pk=id)
+
+    if source_obj.has_working_copy():
+        url = reverse("lfc_manage_object", kwargs={"id": source_obj.id})
+        return MessageHttpResponseRedirect(url, _(u"Object has already a working copy."))
+
+    new_obj = copy.deepcopy(source_obj)
+    new_obj.pk = None
+    new_obj.id = None
+    new_obj.parent = source_obj.parent
+    new_obj.position = source_obj.position + 1
+
+    new_obj.slug = _generate_slug(new_obj, source_obj.parent)
+
+    # Workaround for django-tagging
+    try:
+        new_obj.save()
+    except IntegrityError:
+        pass
+
+    _copy_images(source_obj, new_obj)
+    _copy_files(source_obj, new_obj)
+    _copy_portlets(source_obj, new_obj)
+    _copy_translations(source_obj, new_obj)
+    _copy_history(source_obj, new_obj)
+
+    # Prevent recursion
+    if (new_obj not in source_obj.get_descendants()) and (new_obj != source_obj):
+        _copy_descendants(source_obj, new_obj)
+
+    new_obj.working_copy_base = source_obj
+    new_obj.save()
+
+    _update_positions(new_obj.parent)
+
+    return HttpResponseRedirect(reverse("lfc_manage_object", kwargs={"id": new_obj.id}))
+
 # Utils
 def manage_utils(request, template_name="lfc/manage/utils.html"):
     """Displays the overview over all utils.
@@ -5510,3 +5623,18 @@ def _copy_translations(source_obj, target_obj):
         _copy_files(translation, new_translation)
         _copy_portlets(translation, new_translation)
         _copy_descendants(translation, new_translation)
+
+
+def _copy_history(source_obj, target_obj):
+    """Copies the history from source_obj to target_obj.
+
+        source_obj
+            The object from which the translations will be copied.
+
+        target_obj
+            The object to which the translations will be copied.
+    """
+    for history in source_obj.content_objects.all():
+        new_history = History.objects.create(obj=target_obj, action=history.action, user=history.user)
+        new_history.creation_date = history.creation_date
+        new_history.save()

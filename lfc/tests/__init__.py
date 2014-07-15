@@ -1,5 +1,6 @@
 from copy_tests import *
 from general_tests import *
+from history_tests import *
 from manager_tests import *
 from page_tests import *
 from permission_tests import *

@@ -42,25 +42,75 @@ LANGUAGES
 LFC settings
 ============
 
-LFC_MANAGE_WORKFLOWS
+LFC_MANAGE_APPLICATIONS
 
-    If True the management screens for workflows are displayed within LFC's
-    management interface.
+    If ``True`` the management screens for ``Applications`` are displayed within
+    LFC's management interface. Default is ``True``.
+
+LFC_MANAGE_CHILDREN
+
+    If ``True`` the ``Children`` tabs are displayed within LFC's management
+    interface. Default is ``True``.
+
+LFC_MANAGE_COMMENTS
+
+    If ``True`` the ``Comments`` tabs are displayed within LFC's
+    management interface. Default is ``True``.
+
+LFC_MANAGE_FILES
+
+    If ``True`` the Files tabs are displayed within LFC's management interface.
+    Default is ``True``.
+
+LFC_MANAGE_HISTORY
+
+    If ``True`` the history tab for the content objects are displayed within
+    LFC's management interface. Default is ``True``.
+
+LFC_MANAGE_IMAGES
+
+    If ``True`` the ``Images`` tabs are displayed within LFC's management
+    interface. Default is ``True``.
+
+LFC_MANAGE_META_DATA
+
+    If ``True`` the meta data tabs are displayed within LFC's management interface.
+    Default is ``True``.
 
 LFC_MANAGE_PERMISSIONS
 
-    If True the management screens for permissions are displayed within LFC's
-    management interface.
+    If ``True`` the ``Permissions`` tabs are displayed within LFC's management
+    interface. Default is ``True``.
 
-LFC_MANAGE_APPLICATIONS
+LFC_MANAGE_PORTLETS
 
-    If True the management screens for applications are displayed within LFC's
-    management interface.
+    If ``True`` the ``Portlets`` tabs are displayed within LFC's management
+    interface. Default is ``True``.
+
+LFC_MANAGE_SEO
+
+    If ``True`` the ``SEO`` tab for the portal and the content objects are
+    displayed within LFC's management interface. Default is ``True``.
 
 LFC_MANAGE_USERS
 
-    If True the management screens for users are displayed within LFC's
-    management interface.
+    If ``True`` the management screens for users, groups and roles are displayed
+    within LFC's management interface. Default is ``True``.
+
+LFC_MANAGE_UTILS
+
+    If ``True`` the management screens for utils are displayed. Default is ``True``.
+
+LFC_MANAGE_WORKFLOWS
+
+    If ``True`` the management screens for workflows are displayed within LFC's
+    management interface. Default is ``True``.
+
+LFC_MULTILANGUAGE
+
+    If ``True`` the management screens for translations and languages are
+    displayed. Default is: ``len(LANGUAGES) > 1``.
+
 
 LFC THEME settings
 ==================

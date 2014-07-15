@@ -522,6 +522,9 @@ class BaseContent(AbstractBaseContent):
     def has_seo_tab(self):
         return getattr(settings, "LFC_MANAGE_SEO", True)
 
+    def has_history_tab(self):
+        return getattr(settings, "LFC_MANAGE_HISTORY", True)
+
     def has_permissions_tab(self):
         return getattr(settings, "LFC_MANAGE_PERMISSIONS", True)
 
@@ -580,6 +583,20 @@ class BaseContent(AbstractBaseContent):
 
     get_absolute_url = models.permalink(get_absolute_url)
 
+    def add_history(self, request, action):
+        """
+        Adds a new history entry to the object.
+
+        **Paramenters:**
+
+        request
+            The current request.
+
+        action
+            A string which describes what has been changed.
+        """
+        History.objects.create(obj=self.get_base_object(), action=action, user=request.user)
+
     def get_content_object(self):
         """Returns the specific content object of the instance. This method
         can be called if one has a BaseContent and want the specific content
@@ -591,6 +608,14 @@ class BaseContent(AbstractBaseContent):
             return getattr(self, self.content_type)
         else:
             return self
+
+    def get_base_object(self):
+        """Returns the base content object of a specific content object.
+        """
+        if self.__class__.__name__.lower() == "basecontent":
+            return self
+        else:
+            return self.basecontent_ptr
 
     def get_searchable_text(self):
         """Returns the searchable text of this content type. By default it
@@ -1078,3 +1103,16 @@ class File(models.Model):
 
     def get_absolute_url(self):
         return reverse("lfc_file", kwargs={"id": self.id})
+
+
+class History(models.Model):
+    """
+    Stores some history about a content object.
+    """
+    obj = models.ForeignKey(BaseContent, verbose_name=_(u"Content object"), related_name="content_objects")
+    action = models.CharField(_(u"Action"), max_length=100)
+    user = models.ForeignKey(User, verbose_name=_(u"User"), related_name="user")
+    creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
+
+    class Meta:
+        ordering = ("-creation_date", )

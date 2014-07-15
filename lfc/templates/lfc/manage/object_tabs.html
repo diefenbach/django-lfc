@@ -31,6 +31,9 @@
         {% if seo_data %}
             <li><a href="#seo_data">{% trans 'SEO' %}</a></li>
         {% endif %}
+        {% if obj.has_history_tab %}
+            <li><a href="{% url 'lfc_object_history' obj.id %}">{% trans 'History' context "LFC" %}</a></li>
+        {% endif %}
         {% if obj.has_permissions_tab %}
             <li class="ui-tabs-nav-item"><a href="{% url 'lfc_load_object_permissions' obj.id %}">{% trans 'Permissions' %}</a></li>
         {% endif %}

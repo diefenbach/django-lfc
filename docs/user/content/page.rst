@@ -192,6 +192,11 @@ You can use several placeholders within both fields, which are:
 <description>
     This includes the description of the content object.
 
+History
+=======
+
+Displays the workflow state history of the page.
+
 Permissions
 ===========
 
@@ -236,7 +241,7 @@ roles"-section
 
 To change local roles proceed as following:
 
-1. Deselect the checkboxes for the roles you want to remove from users and 
+1. Deselect the checkboxes for the roles you want to remove from users and
    groups.
 2. Click the *Save local roles*-button
 
@@ -249,6 +254,6 @@ To change local roles proceed as following:
 
 To remove users or groups from the "Local roles"-section proceed as following:
 
-1. Select the checkbox on the left side of the users or groups you want to 
+1. Select the checkbox on the left side of the users or groups you want to
    remove.
 2. Click the *Delete local roles*-button.
