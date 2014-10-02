@@ -47,7 +47,7 @@ function set_tab() {
 
 function create_buttons() {
     $("input[type=submit], input[type=file], .overlay-close").button();
-    $("select").selectmenu();
+    $("select[multiple!=multiple]").selectmenu();
 };
 
 function create_tabs() {
