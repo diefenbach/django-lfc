@@ -216,7 +216,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
     return HttpJsonResponse(
         content=html,
         open_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -611,7 +611,7 @@ def load_portal_images(request):
     return HttpJsonResponse(
         content=portal_images(request, get_portal()),
         message=_(u"Images have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -648,7 +648,7 @@ def update_portal_images(request):
     return HttpJsonResponse(
         content=[["#images", portal_images(request, portal)]],
         message=message,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -725,7 +725,7 @@ def move_image(request, id):
 
     return HttpJsonResponse(
         content=[["#images", images]],
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -758,7 +758,7 @@ def edit_image(request, id):
         return HttpJsonResponse(
             content=[["#overlay .content", html]],
             open_overlay=True,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
     else:
         form = ImageForm(prefix="image", instance=image, data=request.POST)
@@ -779,7 +779,7 @@ def edit_image(request, id):
 
             return HttpJsonResponse(
                 content=[["#overlay .content", html]],
-                mimetype="text/plain",
+                content_type="text/plain",
             )
 
 
@@ -820,7 +820,7 @@ def load_portal_files(request):
     return HttpJsonResponse(
         content=portal_files(request, get_portal()),
         message=_(u"Files have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -893,7 +893,7 @@ def move_file(request, id):
 
     return HttpJsonResponse(
         content=[["#files", files]],
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -923,7 +923,7 @@ def edit_file(request, id):
         return HttpJsonResponse(
             content=[["#overlay .content", html]],
             open_overlay=True,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
     else:
         form = FileForm(prefix="file", instance=file, data=request.POST)
@@ -944,7 +944,7 @@ def edit_file(request, id):
 
             return HttpJsonResponse(
                 content=[["#overlay .content", html]],
-                mimetype="text/plain",
+                content_type="text/plain",
             )
 
 
@@ -1146,7 +1146,7 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
         return HttpJsonResponse(
             content=html,
             message=message,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
 
     else:
@@ -1233,7 +1233,7 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
         return HttpJsonResponse(
             content=html,
             message=message,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
 
     else:
@@ -1834,7 +1834,7 @@ def load_object_images(request, id):
     return HttpJsonResponse(
         content=object_images(request, obj),
         message=_(u"Images have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -1937,7 +1937,7 @@ def load_object_files(request, id):
     return HttpJsonResponse(
         content=object_files(request, obj),
         message=_(u"Files have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -2699,7 +2699,7 @@ def edit_comment(request, id, template_name="lfc/manage/comment.html"):
         return HttpJsonResponse(
             content=[["#overlay .content", html]],
             open_overlay=True,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
     else:
         form = CommentForm(instance=comment, data=request.POST)
@@ -2720,7 +2720,7 @@ def edit_comment(request, id, template_name="lfc/manage/comment.html"):
 
             return HttpJsonResponse(
                 content=[["#overlay .content", html]],
-                mimetype="text/plain",
+                content_type="text/plain",
             )
 
 
@@ -2852,7 +2852,7 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
 
     return HttpJsonResponse(
         content=html,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3022,7 +3022,7 @@ def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage
     return HttpJsonResponse(
         content=html,
         current_view="content",
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3058,7 +3058,7 @@ def fb_upload_image(request):
 
     return HttpJsonResponse(
         content=html,
-        mimetype="text/plain",
+        content_type="text/plain",
         current_view="dummy",   # prevents that the tinymce is updated
     )
 
@@ -3095,7 +3095,7 @@ def fb_upload_file(request):
     return HttpJsonResponse(
         content=html,
         current_view="content",
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3352,7 +3352,7 @@ def do_transition(request, id):
         content=html,
         message=_(u"The state has been changed."),
         tabs=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3674,7 +3674,7 @@ def manage_state(request, id, template_name="lfc/manage/workflow_state.html"):
     return HttpJsonResponse(
         content=[["#overlay .content", content]],
         open_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3739,7 +3739,7 @@ def save_workflow_state(request, id):
         content=content,
         message=_(u"State has been saved."),
         close_overlay=True,
-        mimetype="text/plain"
+        content_type="text/plain"
     )
 
 
@@ -3829,7 +3829,7 @@ def manage_transition(request, id, template_name="lfc/manage/workflow_transition
     return HttpJsonResponse(
         content=[["#overlay .content", content]],
         open_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3861,7 +3861,7 @@ def save_workflow_transition(request, id):
         content=content,
         message=_(u"Transition has been saved."),
         close_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
