@@ -29,10 +29,6 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-# tagging imports
-from tagging.models import Tag
-from tagging.models import TaggedItem
-
 # portlets imports
 from portlets.utils import get_slots
 from portlets.models import PortletAssignment
@@ -52,7 +48,6 @@ from permissions.models import Role
 import workflows.utils
 from workflows.models import State
 from workflows.models import StateInheritanceBlock
-from workflows.models import StateObjectRelation
 from workflows.models import StatePermissionRelation
 from workflows.models import Transition
 from workflows.models import Workflow
@@ -239,50 +234,7 @@ def delete_object(request, id):
         message = _(u"The object couldn't been deleted.")
     else:
         obj.check_permission(request.user, "delete")
-
-        ctype = ContentType.objects.get_for_model(obj)
-
-        # Delete tag-item-relations for object
-        TaggedItem.objects.filter(object_id=obj.id, content_type=ctype).delete()
         
-        # Delete tags without any relations to items left
-        Tag.objects.annotate(item_count=Count('items')).filter(item_count=0).delete()
-
-        # Deletes images
-        for image in obj.images.all():
-            try:
-                image.image.delete()
-            except AttributeError:
-                pass
-            try:
-                image.delete()
-            except AssertionError:
-                pass
-
-        # Delete files
-        for myfile in obj.files.all():
-            try:
-                myfile.file.delete()
-            except AttributeError:
-                pass
-            try:
-                myfile.delete()
-            except AssertionError:
-                pass
-
-        # Delete workflows stuff
-        StateObjectRelation.objects.filter(content_id=obj.id, content_type=ctype).delete()
-
-        # Delete permissions stuff
-        ObjectPermission.objects.filter(content_id=obj.id, content_type=ctype).delete()
-        ObjectPermissionInheritanceBlock.objects.filter(content_id=obj.id, content_type=ctype).delete()
-
-        # Delete portlets stuff
-        for pa in PortletAssignment.objects.filter(content_id=obj.id, content_type=ctype):
-            pa.portlet.delete()
-            pa.delete()
-        PortletBlocking.objects.filter(content_id=obj.id, content_type=ctype).delete()
-
         logger.info("Deleted Object: User: %s, ID: %s, Type: %s" % (request.user.username, obj.id, obj.get_content_type()))
 
         obj.delete()
@@ -5015,31 +4967,9 @@ def _update_children(request, obj):
                     if not child.has_permission(request.user, "delete"):
                         not_deleted_objs = True
                     else:
-                        ctype = ContentType.objects.get_for_model(child)
-                        
-                        # Delete tag-item-relations for object
-                        TaggedItem.objects.filter(object_id=obj.id, content_type=ctype).delete()
-
-                        # Deletes files on file system
-                        child.images.all().delete()
-                        child.files.all().delete()
-
-                        # Delete workflows stuff
-                        StateObjectRelation.objects.filter(
-                            content_id=child.id, content_type=ctype).delete()
-
-                        # Delete permissions stuff
-                        ObjectPermission.objects.filter(
-                            content_id=child.id, content_type=ctype).delete()
-                        ObjectPermissionInheritanceBlock.objects.filter(
-                            content_id=child.id, content_type=ctype).delete()
-
                         child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
-                
-        # Delete tags without any relations to items left
-        Tag.objects.annotate(item_count=Count('items')).filter(item_count=0).delete()
 
         if not_deleted_objs:
             message = _(u"Objects have been deleted. (Note: Some objects are not deleted because you haven't the permission to do that).")
