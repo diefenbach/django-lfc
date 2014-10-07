@@ -240,7 +240,6 @@ def delete_object(request, id):
         obj.check_permission(request.user, "delete")
 
         ctype = ContentType.objects.get_for_model(obj)
-        _remove_fks(obj)
 
         # TODO: Delete tags for deleted object
         Tag.objects.get_for_object(obj).delete()
@@ -5013,7 +5012,6 @@ def _update_children(request, obj):
                         not_deleted_objs = True
                     else:
                         ctype = ContentType.objects.get_for_model(child)
-                        _remove_fks(child)
 
                         # Deletes files on file system
                         child.images.all().delete()
@@ -5193,32 +5191,6 @@ def _display_action_menu(request, obj):
         return True
     else:
         return False
-
-
-def _remove_fks(obj):
-    """Removes the objects from foreign key fields (in order to not delete
-    these related objects).
-
-    **Parameters:**
-
-        obj
-            The obj for which the foreign keys should be removes.
-    """
-    try:
-        parent = obj.parent
-    except ObjectDoesNotExist:
-        parent = None
-    if parent is None:
-        parent = get_portal()
-
-    if parent.standard and parent.standard.get_content_object() == obj:
-        parent.standard = None
-        parent.save()
-
-    if obj.is_canonical():
-        for t in obj.translations.all():
-            t.canonical = None
-            t.save()
 
 
 def _update_positions(obj, take_parent=False):

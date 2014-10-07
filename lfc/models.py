@@ -213,7 +213,7 @@ class Portal(models.Model, PermissionBase):
 
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Standard"), blank=True, null=True)
+    standard = models.ForeignKey("BaseContent", verbose_name=_(u"Standard"), blank=True, null=True, on_delete=models.SET_NULL)
 
     from_email = models.EmailField(_(u"From e-mail address"))
     notification_emails = models.TextField(_(u"Notification email addresses"))
@@ -460,13 +460,13 @@ class BaseContent(AbstractBaseContent):
     position = models.PositiveSmallIntegerField(_(u"Position"), default=1)
 
     language = models.CharField(_(u"Language"), max_length=10, choices=LANGUAGE_CHOICES, default="0")
-    canonical = models.ForeignKey("self", verbose_name=_(u"Canonical"), related_name="translations", blank=True, null=True)
+    canonical = models.ForeignKey("self", verbose_name=_(u"Canonical"), related_name="translations", blank=True, null=True, on_delete=models.SET_NULL)
 
     tags = fields.TagField(_(u"Tags"))
 
     parent = models.ForeignKey("self", verbose_name=_(u"Parent"), blank=True, null=True, related_name="children")
     template = models.ForeignKey("Template", verbose_name=_(u"Template"), blank=True, null=True)
-    standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True)
+    standard = models.ForeignKey("self", verbose_name=_(u"Standard"), blank=True, null=True, on_delete=models.SET_NULL)
     order_by = models.CharField(_(u"Order by"), max_length=20, default="position", choices=ORDER_BY_CHOICES)
 
     exclude_from_navigation = models.BooleanField(_(u"Exclude from navigation"), default=False)
