@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
 from tagging.models import Tag
+from tagging.models import TaggedItem
 
 # portlets imports
 from portlets.utils import get_slots
@@ -241,8 +242,11 @@ def delete_object(request, id):
 
         ctype = ContentType.objects.get_for_model(obj)
 
-        # TODO: Delete tags for deleted object
-        Tag.objects.get_for_object(obj).delete()
+        # Delete tag-item-relations for object
+        TaggedItem.objects.filter(object_id=obj.id, content_type=ctype).delete()
+        
+        # Delete tags without any relations to items left
+        Tag.objects.annotate(item_count=Count('items')).filter(item_count=0).delete()
 
         # Deletes images
         for image in obj.images.all():
@@ -5012,6 +5016,9 @@ def _update_children(request, obj):
                         not_deleted_objs = True
                     else:
                         ctype = ContentType.objects.get_for_model(child)
+                        
+                        # Delete tag-item-relations for object
+                        TaggedItem.objects.filter(object_id=obj.id, content_type=ctype).delete()
 
                         # Deletes files on file system
                         child.images.all().delete()
@@ -5030,6 +5037,9 @@ def _update_children(request, obj):
                         child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
+                
+        # Delete tags without any relations to items left
+        Tag.objects.annotate(item_count=Count('items')).filter(item_count=0).delete()
 
         if not_deleted_objs:
             message = _(u"Objects have been deleted. (Note: Some objects are not deleted because you haven't the permission to do that).")
