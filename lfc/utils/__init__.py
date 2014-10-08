@@ -51,15 +51,21 @@ def get_cached_object(klass, *args, **kwargs):
 
 
 class HttpJsonResponse(HttpResponse):
-    def __init__(self, content, mimetype=None, status=None, content_type=None, **kwargs):
+    """HttpResponse subclass that renders a json dict.
+    The content given is nested inside the 'html' key of the dict,
+    any kwargs given are also appended as key-value-pairs to the result.
+    
+    TODO: Subclass Djangos JsonResponse when updating to Django 1.7 
+    """
+    def __init__(self, content, status=None, content_type=None, **kwargs):
 
-        if mimetype is None:
-            mimetype = "application/json"
+        if content_type is None:
+            content_type = "application/json"
 
         content = render_to_json(content, **kwargs)
 
-        HttpResponse.__init__(self, content=content,
-            mimetype=mimetype, status=status, content_type=content_type)
+        HttpResponse.__init__(self, content=content, status=status,
+            content_type=content_type)
 
 
 # TODO: Checkout Django's new message feature
