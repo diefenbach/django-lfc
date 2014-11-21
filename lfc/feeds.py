@@ -1,6 +1,5 @@
 # django imports
 from django.contrib.syndication.views import Feed
-from django.core.exceptions import ObjectDoesNotExist
 
 # tagging imports
 from tagging.managers import ModelTaggedItemManager
