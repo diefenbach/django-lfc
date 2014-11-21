@@ -18,17 +18,26 @@ from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
 from tagging import fields
+from tagging.models import Tag 
+from tagging.models import TaggedItem
+
+# portlets imports
+from portlets.models import PortletAssignment
+from portlets.models import PortletBlocking
 
 # workflows imports
 import workflows.utils
 from workflows import WorkflowBase
 from workflows.models import Workflow
 from workflows.models import State
+from workflows.models import StateObjectRelation
 
 # permissions imports
 from permissions import PermissionBase
 from permissions.exceptions import Unauthorized
 from permissions.models import Role
+from permissions.models import ObjectPermission
+from permissions.models import ObjectPermissionInheritanceBlock
 
 # lfc imports
 import lfc.utils
@@ -460,7 +469,7 @@ class BaseContent(AbstractBaseContent):
     position = models.PositiveSmallIntegerField(_(u"Position"), default=1)
 
     language = models.CharField(_(u"Language"), max_length=10, choices=LANGUAGE_CHOICES, default="0")
-    canonical = models.ForeignKey("self", verbose_name=_(u"Canonical"), related_name="translations", blank=True, null=True)
+    canonical = models.ForeignKey("self", verbose_name=_(u"Canonical"), related_name="translations", blank=True, null=True, on_delete=models.SET_NULL)
 
     tags = fields.TagField(_(u"Tags"))
 
@@ -551,6 +560,59 @@ class BaseContent(AbstractBaseContent):
             workflows.utils.set_initial_state(co)
 
         lfc.utils.clear_cache()
+
+    def delete(self, *args, **kwargs):
+        """Djangos default delete method. This is overwritten to take care
+        of generic relations that won't get deleted by django automatically.
+        Note: if you delete objects via djangos bulk delete 
+        (e.g. BaseContent.filter(foo=bar).delete()) this method will not get
+        called. You have to delete this objects yourself.
+        """
+        ctype = ContentType.objects.get_for_model(self)
+
+        # Delete tag-item-relations for object
+        TaggedItem.objects.filter(object_id=self.id, content_type=ctype).delete()
+        
+        # Delete tags without any relations to items left
+        Tag.objects.annotate(item_count=models.Count('items')).filter(item_count=0).delete()
+
+        # Deletes images
+        for image in self.images.all():
+            try:
+                image.image.delete()
+            except AttributeError:
+                pass
+            try:
+                image.delete()
+            except AssertionError:
+                pass
+
+        # Delete files
+        for myfile in self.files.all():
+            try:
+                myfile.file.delete()
+            except AttributeError:
+                pass
+            try:
+                myfile.delete()
+            except AssertionError:
+                pass
+
+        # Delete workflows stuff
+        StateObjectRelation.objects.filter(content_id=self.id, content_type=ctype).delete()
+
+        # Delete permissions stuff
+        ObjectPermission.objects.filter(content_id=self.id, content_type=ctype).delete()
+        ObjectPermissionInheritanceBlock.objects.filter(content_id=self.id, content_type=ctype).delete()
+
+        # Delete portlets stuff
+        for pa in PortletAssignment.objects.filter(content_id=self.id, content_type=ctype):
+            pa.portlet.delete()
+            pa.delete()
+        PortletBlocking.objects.filter(content_id=self.id, content_type=ctype).delete()
+        
+        # call Djangos delete method
+        super(BaseContent, self).delete(*args, **kwargs)
 
     def get_absolute_url(self):
         """Returns the absolute url of the instance. Takes care of nested

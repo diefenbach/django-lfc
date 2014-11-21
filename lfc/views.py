@@ -105,7 +105,7 @@ def file(request, language=None, id=None):
     """Delivers files to the browser.
     """
     file = get_object_or_404(File, pk=id)
-    response = HttpResponse(file.file, mimetype='application/binary')
+    response = HttpResponse(file.file, content_type='application/binary')
     response['Content-Disposition'] = 'attachment; filename=%s' % file.title
 
     return response

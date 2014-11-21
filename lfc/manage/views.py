@@ -30,9 +30,6 @@ from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 
-# tagging imports
-from tagging.models import Tag
-
 # portlets imports
 from portlets.utils import get_slots
 from portlets.models import PortletAssignment
@@ -52,7 +49,6 @@ from permissions.models import Role
 import workflows.utils
 from workflows.models import State
 from workflows.models import StateInheritanceBlock
-from workflows.models import StateObjectRelation
 from workflows.models import StatePermissionRelation
 from workflows.models import Transition
 from workflows.models import Workflow
@@ -218,7 +214,7 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
     return HttpJsonResponse(
         content=html,
         open_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -240,48 +236,7 @@ def delete_object(request, id):
         message = _(u"The object couldn't been deleted.")
     else:
         obj.check_permission(request.user, "delete")
-
-        ctype = ContentType.objects.get_for_model(obj)
-        _remove_fks(obj)
-
-        # TODO: Delete tags for deleted object
-        Tag.objects.get_for_object(obj).delete()
-
-        # Deletes images
-        for image in obj.images.all():
-            try:
-                image.image.delete()
-            except AttributeError:
-                pass
-            try:
-                image.delete()
-            except AssertionError:
-                pass
-
-        # Delete files
-        for myfile in obj.files.all():
-            try:
-                myfile.file.delete()
-            except AttributeError:
-                pass
-            try:
-                myfile.delete()
-            except AssertionError:
-                pass
-
-        # Delete workflows stuff
-        StateObjectRelation.objects.filter(content_id=obj.id, content_type=ctype).delete()
-
-        # Delete permissions stuff
-        ObjectPermission.objects.filter(content_id=obj.id, content_type=ctype).delete()
-        ObjectPermissionInheritanceBlock.objects.filter(content_id=obj.id, content_type=ctype).delete()
-
-        # Delete portlets stuff
-        for pa in PortletAssignment.objects.filter(content_id=obj.id, content_type=ctype):
-            pa.portlet.delete()
-            pa.delete()
-        PortletBlocking.objects.filter(content_id=obj.id, content_type=ctype).delete()
-
+        
         logger.info("Deleted Object: User: %s, ID: %s, Type: %s" % (request.user.username, obj.id, obj.get_content_type()))
 
         obj.delete()
@@ -613,7 +568,7 @@ def load_portal_images(request):
     return HttpJsonResponse(
         content=portal_images(request, get_portal()),
         message=_(u"Images have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -650,7 +605,7 @@ def update_portal_images(request):
     return HttpJsonResponse(
         content=[["#images", portal_images(request, portal)]],
         message=message,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -727,7 +682,7 @@ def move_image(request, id):
 
     return HttpJsonResponse(
         content=[["#images", images]],
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -760,7 +715,7 @@ def edit_image(request, id):
         return HttpJsonResponse(
             content=[["#overlay .content", html]],
             open_overlay=True,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
     else:
         form = ImageForm(prefix="image", instance=image, data=request.POST)
@@ -781,7 +736,7 @@ def edit_image(request, id):
 
             return HttpJsonResponse(
                 content=[["#overlay .content", html]],
-                mimetype="text/plain",
+                content_type="text/plain",
             )
 
 
@@ -822,7 +777,7 @@ def load_portal_files(request):
     return HttpJsonResponse(
         content=portal_files(request, get_portal()),
         message=_(u"Files have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -895,7 +850,7 @@ def move_file(request, id):
 
     return HttpJsonResponse(
         content=[["#files", files]],
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -925,7 +880,7 @@ def edit_file(request, id):
         return HttpJsonResponse(
             content=[["#overlay .content", html]],
             open_overlay=True,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
     else:
         form = FileForm(prefix="file", instance=file, data=request.POST)
@@ -946,7 +901,7 @@ def edit_file(request, id):
 
             return HttpJsonResponse(
                 content=[["#overlay .content", html]],
-                mimetype="text/plain",
+                content_type="text/plain",
             )
 
 
@@ -1148,7 +1103,7 @@ def object_core_data(request, obj=None, id=None, template_name="lfc/manage/objec
         return HttpJsonResponse(
             content=html,
             message=message,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
 
     else:
@@ -1235,7 +1190,7 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
         return HttpJsonResponse(
             content=html,
             message=message,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
 
     else:
@@ -1859,7 +1814,7 @@ def load_object_images(request, id):
     return HttpJsonResponse(
         content=object_images(request, obj),
         message=_(u"Images have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -1962,7 +1917,7 @@ def load_object_files(request, id):
     return HttpJsonResponse(
         content=object_files(request, obj),
         message=_(u"Files have been added."),
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -2724,7 +2679,7 @@ def edit_comment(request, id, template_name="lfc/manage/comment.html"):
         return HttpJsonResponse(
             content=[["#overlay .content", html]],
             open_overlay=True,
-            mimetype="text/plain",
+            content_type="text/plain",
         )
     else:
         form = CommentForm(instance=comment, data=request.POST)
@@ -2745,7 +2700,7 @@ def edit_comment(request, id, template_name="lfc/manage/comment.html"):
 
             return HttpJsonResponse(
                 content=[["#overlay .content", html]],
-                mimetype="text/plain",
+                content_type="text/plain",
             )
 
 
@@ -2877,7 +2832,7 @@ def imagebrowser(request, obj_id=None, as_string=False, template_name="lfc/manag
 
     return HttpJsonResponse(
         content=html,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3047,7 +3002,7 @@ def filebrowser(request, obj_id=None, as_string=False, template_name="lfc/manage
     return HttpJsonResponse(
         content=html,
         current_view="content",
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3083,7 +3038,7 @@ def fb_upload_image(request):
 
     return HttpJsonResponse(
         content=html,
-        mimetype="text/plain",
+        content_type="text/plain",
         current_view="dummy",   # prevents that the tinymce is updated
     )
 
@@ -3120,7 +3075,7 @@ def fb_upload_file(request):
     return HttpJsonResponse(
         content=html,
         current_view="content",
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3380,7 +3335,7 @@ def do_transition(request, id):
         content=html,
         message=_(u"The state has been changed."),
         tabs=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3702,7 +3657,7 @@ def manage_state(request, id, template_name="lfc/manage/workflow_state.html"):
     return HttpJsonResponse(
         content=[["#overlay .content", content]],
         open_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3767,7 +3722,7 @@ def save_workflow_state(request, id):
         content=content,
         message=_(u"State has been saved."),
         close_overlay=True,
-        mimetype="text/plain"
+        content_type="text/plain"
     )
 
 
@@ -3857,7 +3812,7 @@ def manage_transition(request, id, template_name="lfc/manage/workflow_transition
     return HttpJsonResponse(
         content=[["#overlay .content", content]],
         open_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -3889,7 +3844,7 @@ def save_workflow_transition(request, id):
         content=content,
         message=_(u"Transition has been saved."),
         close_overlay=True,
-        mimetype="text/plain",
+        content_type="text/plain",
     )
 
 
@@ -5130,23 +5085,6 @@ def _update_children(request, obj):
                     if not child.has_permission(request.user, "delete"):
                         not_deleted_objs = True
                     else:
-                        ctype = ContentType.objects.get_for_model(child)
-                        _remove_fks(child)
-
-                        # Deletes files on file system
-                        child.images.all().delete()
-                        child.files.all().delete()
-
-                        # Delete workflows stuff
-                        StateObjectRelation.objects.filter(
-                            content_id=child.id, content_type=ctype).delete()
-
-                        # Delete permissions stuff
-                        ObjectPermission.objects.filter(
-                            content_id=child.id, content_type=ctype).delete()
-                        ObjectPermissionInheritanceBlock.objects.filter(
-                            content_id=child.id, content_type=ctype).delete()
-
                         child.delete()
                 except (IndexError, BaseContent.DoesNotExist):
                     pass
@@ -5312,32 +5250,6 @@ def _display_action_menu(request, obj):
             return True
     else:
         return False
-
-
-def _remove_fks(obj):
-    """Removes the objects from foreign key fields (in order to not delete
-    these related objects).
-
-    **Parameters:**
-
-        obj
-            The obj for which the foreign keys should be removes.
-    """
-    try:
-        parent = obj.parent
-    except ObjectDoesNotExist:
-        parent = None
-    if parent is None:
-        parent = get_portal()
-
-    if parent.standard and parent.standard.get_content_object() == obj:
-        parent.standard = None
-        parent.save()
-
-    if obj.is_canonical():
-        for t in obj.translations.all():
-            t.canonical = None
-            t.save()
 
 
 def _update_positions(obj, take_parent=False):
