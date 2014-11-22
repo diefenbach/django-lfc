@@ -1,5 +1,3 @@
-from StringIO import StringIO
-
 # PIL imports
 import PIL.ImageFile
 import PIL
@@ -86,10 +84,8 @@ def scale_to_height(image, target_height):
     proportional.
     """
     width, height = image.size
-
     prop_height = float(target_height) / height
-    new_width = int(prop_height * width)
-
+    new_height = int(prop_height * width)
     image = image.resize((new_height, target_height), PIL.Image.ANTIALIAS)
 
     return image
