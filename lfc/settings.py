@@ -33,3 +33,4 @@ ORDER_BY_CHOICES = (
 )
 
 IMAGE_SIZES = ((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800))
+UPLOAD_FOLDER  = getattr(settings, 'LFC_UPLOAD_FOLDER', 'uploads')
