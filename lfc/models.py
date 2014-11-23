@@ -462,7 +462,7 @@ class BaseContent(AbstractBaseContent):
     title = models.CharField(_(u"Title"), max_length=100)
     display_title = models.BooleanField(_(u"Display title"), default=True)
 
-    slug = models.SlugField(_(u"Slug"))
+    slug = models.SlugField(_(u"Slug"), max_length=100)
 
     description = models.TextField(_(u"Description"), blank=True)
 
@@ -1127,7 +1127,7 @@ class Image(models.Model):
         The image file.
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    slug = models.SlugField(_(u"Slug"),)
+    slug = models.SlugField(_(u"Slug"), max_length=100)
 
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="images", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
@@ -1175,7 +1175,7 @@ class File(models.Model):
         The binary file.
     """
     title = models.CharField(blank=True, max_length=100)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=100)
 
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="files", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
