@@ -32,4 +32,4 @@ ORDER_BY_CHOICES = (
     ("-publication_date", _(u"Publication date descending")),
 )
 
-IMAGE_SIZES = ((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800))
+IMAGE_SIZES = getattr(settings, 'LFC_IMAGE_SIZES', ((60, 60), (100, 100), (200, 200), (400, 400), (600, 600), (800, 800)))
