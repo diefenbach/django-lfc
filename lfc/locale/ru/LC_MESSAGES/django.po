@@ -1,0 +1,1685 @@
+# Russian translations for LFC
+# Copyright (C) 2014 Vitaly Korenkov
+# This file is distributed under the same license as the LFC package.
+# Kai Diefenbach <kai.diefenbach@iqpp.de>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-22 19:59-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: models.py:114
+msgid "Subpages columns"
+msgstr "Столбцы подстраниц"
+
+#: models.py:115
+msgid "Images columns"
+msgstr "Столбцы изображений"
+
+#: models.py:163 templates/lfc/manage/filebrowser_files.html:35
+#: templates/lfc/manage/object_children.html:33
+#: templates/lfc/manage/object_children.html:131
+#: templates/lfc/manage/portal_children.html:30
+#: templates/lfc/manage/portal_children.html:121
+#: templates/lfc/manage/portlets_inline.html:19
+#: templates/lfc/manage/portlets_inline.html:105
+#: templates/lfc/manage/portlets_inline.html:213
+#: templates/lfc/manage/workflow_state.html:13
+msgid "Type"
+msgstr "Тип"
+
+#: models.py:164 templates/lfc/manage/group.html:55
+#: templates/lfc/manage/object_comments.html:38
+#: templates/lfc/manage/object_comments.html:123
+#: templates/lfc/manage/role.html:55 templates/lfc/manage/users_inline.html:22
+msgid "Name"
+msgstr "Имя"
+
+#: models.py:165
+msgid "Display select standard"
+msgstr "Отображать выбранный стандарт"
+
+#: models.py:166
+msgid "Display position"
+msgstr "Отображать позицию"
+
+#: models.py:168
+msgid "Global addable"
+msgstr "Добавляемая глобально"
+
+#: models.py:170
+msgid "Allowed sub types"
+msgstr "Разрешённые подтипы"
+
+#: models.py:171
+msgid "Templates"
+msgstr "Шаблоны"
+
+#: models.py:172
+msgid "Default template"
+msgstr "Шаблон по-умолчанию"
+
+#: models.py:173 templates/lfc/manage/object_permissions.html:7
+msgid "Workflow"
+msgstr "Процесс"
+
+#: models.py:224 models.py:462 models.py:1129
+#: templates/lfc/manage/filebrowser_files.html:175
+#: templates/lfc/manage/object_children.html:27
+#: templates/lfc/manage/object_children.html:125
+#: templates/lfc/manage/object_files.html:21
+#: templates/lfc/manage/object_files.html:108
+#: templates/lfc/manage/object_images.html:24
+#: templates/lfc/manage/object_images.html:127
+#: templates/lfc/manage/portal_children.html:24
+#: templates/lfc/manage/portal_children.html:115
+#: templates/lfc/manage/portal_files.html:21
+#: templates/lfc/manage/portal_files.html:108
+#: templates/lfc/manage/portal_images.html:24
+#: templates/lfc/manage/portal_images.html:128
+#: templates/lfc/manage/portlets_inline.html:22
+#: templates/lfc/manage/portlets_inline.html:108
+#: templates/lfc/manage/portlets_inline.html:216
+#: templates/lfc/manage/review_objects.html:11
+msgid "Title"
+msgstr "Заголовок"
+
+#: models.py:225 models.py:478
+msgid "Standard"
+msgstr "Стандарт"
+
+#: models.py:227
+msgid "From e-mail address"
+msgstr "Электронная почта"
+
+#: models.py:228
+msgid "Notification email addresses"
+msgstr "Адреса для уведомлений"
+
+#: models.py:229 templates/lfc/manage/object_comments.html:109
+msgid "Allow comments"
+msgstr "Разрешить комментарии"
+
+#: models.py:231 models.py:495 templates/lfc/manage/filebrowser_files.html:149
+#: templates/lfc/manage/filebrowser_images.html:62
+#: templates/lfc/manage/object_images.html:5
+#: templates/lfc/manage/object_tabs.html:20
+#: templates/lfc/manage/portal_images.html:5
+#: templates/lfc/manage/portal_tabs.html:8
+msgid "Images"
+msgstr "Изображения"
+
+#: models.py:234 models.py:498 templates/lfc/manage/filebrowser_files.html:5
+#: templates/lfc/manage/filebrowser_files.html:132
+#: templates/lfc/manage/object_files.html:5
+#: templates/lfc/manage/object_tabs.html:23
+#: templates/lfc/manage/portal_files.html:5
+#: templates/lfc/manage/portal_tabs.html:9
+msgid "Files"
+msgstr "Файлы"
+
+#: models.py:460 models.py:1132 models.py:1180
+#: templates/lfc/manage/review_objects.html:14
+msgid "Content type"
+msgstr "Тип страницы"
+
+#: models.py:463
+msgid "Display title"
+msgstr "Отображать заголовок"
+
+#: models.py:465 models.py:1130
+msgid "Slug"
+msgstr "Строка URL"
+
+#: models.py:467 models.py:1138 templates/lfc/manage/applications.html:19
+#: templates/lfc/manage/object_files.html:24
+#: templates/lfc/manage/object_images.html:30
+#: templates/lfc/manage/portal_files.html:24
+#: templates/lfc/manage/portal_images.html:30
+msgid "Description"
+msgstr "Описание"
+
+#: models.py:469 models.py:1136 templates/lfc/manage/object_children.html:23
+#: templates/lfc/manage/object_files.html:27
+#: templates/lfc/manage/object_images.html:33
+#: templates/lfc/manage/portal_children.html:21
+#: templates/lfc/manage/portal_files.html:27
+#: templates/lfc/manage/portal_images.html:33
+msgid "Position"
+msgstr "Позиция"
+
+#: models.py:471
+msgid "Language"
+msgstr "Язык"
+
+#: models.py:472
+msgid "Canonical"
+msgstr "Связанный объект"
+
+#: models.py:474
+msgid "Tags"
+msgstr "Тэги"
+
+#: models.py:476
+msgid "Parent"
+msgstr "Родитель"
+
+#: models.py:477
+msgid "Template"
+msgstr "Шаблон"
+
+#: models.py:479
+msgid "Order by"
+msgstr "Сортировать по"
+
+#: models.py:481
+msgid "Exclude from navigation"
+msgstr "Исключить из навигации"
+
+#: models.py:482
+msgid "Exclude from search results"
+msgstr "Исключить из поиска"
+
+#: models.py:484 templates/lfc/manage/review_objects.html:20
+msgid "Creator"
+msgstr "Автор"
+
+#: models.py:485 models.py:1139 models.py:1186 models.py:1206
+#: templates/lfc/manage/object_meta_data.html:16
+#: templates/lfc/manage/object_meta_data.html:44
+#: templates/lfc/manage/portal_files.html:111
+msgid "Creation date"
+msgstr "Дата создания"
+
+#: models.py:486 templates/lfc/manage/object_meta_data.html:25
+#: templates/lfc/manage/object_meta_data.html:53
+msgid "Modification date"
+msgstr "Дата модификации"
+
+#: models.py:487
+msgid "Publication date"
+msgstr "Дата публикации"
+
+#: models.py:488
+msgid "Start date"
+msgstr "Дата начала"
+
+#: models.py:489
+msgid "End date"
+msgstr "Дата окончания"
+
+#: models.py:491
+msgid "Meta title"
+msgstr "Мета заголовок"
+
+#: models.py:492
+msgid "Meta keywords"
+msgstr "Мета ключевые слова"
+
+#: models.py:493 templates/lfc/manage/object_seo.html:38
+msgid "Meta description"
+msgstr "Мета описание"
+
+#: models.py:501
+msgid "Commentable"
+msgstr "Комментарии включены"
+
+#: models.py:506
+msgid "Working copy base"
+msgstr "Основа рабочей копии"
+
+#: models.py:1133 models.py:1181
+msgid "Content id"
+msgstr "Номер страница"
+
+#: models.py:1137 templates/lfc/manage/object_images.html:27
+#: templates/lfc/manage/portal_images.html:27
+msgid "Caption"
+msgstr "Подпись"
+
+#: models.py:1140 templates/lfc/manage/object_images.html:21
+#: templates/lfc/manage/object_images.html:124
+#: templates/lfc/manage/portal_images.html:21
+#: templates/lfc/manage/portal_images.html:125
+msgid "Image"
+msgstr "Изображение"
+
+#: models.py:1203
+msgid "Content object"
+msgstr "Объект"
+
+#: models.py:1204 templates/lfc/manage/object_history.html:9
+msgid "Action"
+msgstr "Действие"
+
+#: models.py:1205 templates/lfc/manage/base.html:71
+#: templates/lfc/manage/group.html:35 templates/lfc/manage/group.html.py:49
+#: templates/lfc/manage/local_roles.html:23
+#: templates/lfc/manage/local_roles.html:103
+#: templates/lfc/manage/object_history.html:10
+msgid "User"
+msgstr "Пользователь"
+
+#: settings.py:8
+msgid "Default"
+msgstr "По-умолчанию"
+
+#: settings.py:9 templates/lfc/manage/local_roles.html:121
+#: templates/lfc/manage/local_roles.html:156
+#: templates/lfc/manage/object_comments.html:136
+#: templates/lfc/manage/object_permissions.html:65
+#: templates/lfc/manage/object_permissions.html:74
+#: templates/lfc/manage/portal_permissions.html:46
+#: templates/lfc/manage/portlets_inline.html:191
+#: templates/lfc/manage/users_inline.html:72 templatetags/lfc_tags.py:428
+msgid "Yes"
+msgstr "Да"
+
+#: settings.py:10 templates/lfc/manage/local_roles.html:123
+#: templates/lfc/manage/local_roles.html:158
+#: templates/lfc/manage/object_comments.html:138
+#: templates/lfc/manage/portlets_inline.html:193
+#: templates/lfc/manage/users_inline.html:73 templatetags/lfc_tags.py:426
+msgid "No"
+msgstr "Нет"
+
+#: settings.py:13
+msgid "Neutral"
+msgstr "Нейтральный"
+
+#: settings.py:29
+msgid "Position ascending"
+msgstr "По-возрастанию позиции"
+
+#: settings.py:30
+msgid "Position descending"
+msgstr "По-убыванию позиции"
+
+#: settings.py:31
+msgid "Publication date ascending"
+msgstr "По-возрастанию даты публикации"
+
+#: settings.py:32
+msgid "Publication date descending"
+msgstr "По-убыванию даты публикации"
+
+#: views.py:245
+msgid "tagged_object_list must be called with a tag."
+msgstr ""
+
+#: views.py:249
+#, python-format
+msgid "No Tag found matching \"%s\"."
+msgstr "Тэг не найден: \"%s\""
+
+#: manage/forms.py:127 templates/lfc/manage/base.html:80
+#: templates/lfc/manage/local_roles.html:52
+#: templates/lfc/manage/local_roles_search_result.html:44
+msgid "Groups"
+msgstr "Группы"
+
+#: manage/forms.py:162 manage/forms.py:203 manage/forms.py:242
+#: templates/lfc/manage/base.html:77
+msgid "Roles"
+msgstr "Роли"
+
+#: manage/forms.py:243
+msgid "Password"
+msgstr "Пароль"
+
+#: manage/forms.py:244
+msgid "Password (again)"
+msgstr "Пароль (еще раз)"
+
+#: manage/views.py:182
+msgid "Object has been added."
+msgstr "Объект добавлен."
+
+#: manage/views.py:194 manage/views.py:418 manage/views.py:1065
+#: manage/views.py:1167 manage/views.py:2203 manage/views.py:2317
+msgid "An error has been occured."
+msgstr "Произошла ошибка."
+
+#: manage/views.py:236
+msgid "The object couldn't been deleted."
+msgstr "Объект не может быть удалён."
+
+#: manage/views.py:243
+msgid "The object has been deleted."
+msgstr "Объект удалён."
+
+#: manage/views.py:347 manage/views.py:2025
+msgid "Permissions have been saved."
+msgstr "Права доступа сохранены."
+
+#: manage/views.py:415
+msgid "Portal data has been saved."
+msgstr "Портал сохранен."
+
+#: manage/views.py:570 manage/views.py:1816
+msgid "Images have been added."
+msgstr "Изображения добавлены."
+
+#: manage/views.py:729
+msgid "Image has been saved."
+msgstr "Изображение сохранено."
+
+#: manage/views.py:779 manage/views.py:1919
+msgid "Files have been added."
+msgstr "Файлы добавлены."
+
+#: manage/views.py:894
+msgid "File has been saved."
+msgstr "Файл добавлен."
+
+#: manage/views.py:1074
+msgid "Data has been saved."
+msgstr "Данные сохранены."
+
+#: manage/views.py:1076
+msgid "An object with this slug already exists."
+msgstr "Объект с таким URL уже существуют."
+
+#: manage/views.py:1163
+msgid "Meta data has been saved."
+msgstr "Мета данные сохранены."
+
+#: manage/views.py:1288
+msgid "SEO has been saved."
+msgstr "SEO сохранен."
+
+#: manage/views.py:1603
+msgid "Local roles has been added"
+msgstr "Локальные роли добавлены"
+
+#: manage/views.py:1657
+msgid "Local roles has been deleted"
+msgstr "Локальные роли удалены"
+
+#: manage/views.py:1677
+msgid "Local roles has been saved"
+msgstr "Локальные роли сохранены"
+
+#: manage/views.py:2119
+msgid "Portlets have been updated."
+msgstr "Портлеты обновлены."
+
+#: manage/views.py:2186
+msgid "Portlet has been added."
+msgstr "Портлеты добавлены."
+
+#: manage/views.py:2240
+msgid "Portlet has been deleted."
+msgstr "Портлеты удалены."
+
+#: manage/views.py:2302
+msgid "Portlet has been saved."
+msgstr "Портлет сохранен."
+
+#: manage/views.py:2545
+msgid "Tree language has been changed."
+msgstr "Дерево языков изменено."
+
+#: manage/views.py:2618
+msgid "Allow comments state has been saved."
+msgstr "Комментирование сохранено."
+
+#: manage/views.py:2620
+msgid "Comments has been deleted."
+msgstr "Комментарии удалены."
+
+#: manage/views.py:2630
+msgid "Comments has been updated."
+msgstr "Комментарии обновлены."
+
+#: manage/views.py:2693
+msgid "Comment has been saved."
+msgstr "Комментарий сохранен."
+
+#: manage/views.py:3164
+msgid "Translation has been canceled."
+msgstr "Перевод отменён."
+
+#: manage/views.py:3172
+msgid "Translation has been updated."
+msgstr "Перевод обновлеён."
+
+#: manage/views.py:3176
+msgid "Translation has been added."
+msgstr "Перевод добавлён."
+
+#: manage/views.py:3336
+msgid "The state has been changed."
+msgstr "Состояние изменено."
+
+#: manage/views.py:3518
+msgid "Workflow data has been saved."
+msgstr "Процесс сохранён."
+
+#: manage/views.py:3538
+msgid "Workflow has been added."
+msgstr "Процесс добавлен."
+
+#: manage/views.py:3574
+msgid "Workflow has been deleted."
+msgstr "Процесс удалён."
+
+#: manage/views.py:3582
+msgid "Permissions have been updated."
+msgstr "Права доступа обновлены."
+
+#: manage/views.py:3723
+msgid "State has been saved."
+msgstr "Состояние сохранено."
+
+#: manage/views.py:3752
+msgid "State has been added."
+msgstr "Состояние добавлено."
+
+#: manage/views.py:3785
+msgid "State has been deleted."
+msgstr "Состояние удалено."
+
+#: manage/views.py:3845
+msgid "Transition has been saved."
+msgstr "Переход сохранен."
+
+#: manage/views.py:3875
+msgid "Transition has been added."
+msgstr "Переход добавлен."
+
+#: manage/views.py:3904
+msgid "Transition has been deleted."
+msgstr "Переход удалён."
+
+#: manage/views.py:3933 manage/views.py:3961
+msgid "The object has been put to the clipboard."
+msgstr "Объект скопирован в буфер."
+
+#: manage/views.py:4042
+msgid "Content type has been saved."
+msgstr "Тип сохранен."
+
+#: manage/views.py:4246
+msgid "Users have been deleted."
+msgstr "Пользователь удалён."
+
+#: manage/views.py:4248
+msgid "Users have been updated."
+msgstr "Пользователи обновлены."
+
+#: manage/views.py:4312
+msgid "Filter has been set."
+msgstr "Фильтр установлен."
+
+#: manage/views.py:4334 manage/views.py:4689
+msgid "Filter has been reset."
+msgstr "Фильтр онулен."
+
+#: manage/views.py:4496
+msgid "User has been saved"
+msgstr "Пользователь сохранен."
+
+#: manage/views.py:4498 manage/views.py:4535
+msgid "An error occured."
+msgstr "Произошла ошибка."
+
+#: manage/views.py:4533
+msgid "Password has been changed."
+msgstr "Пароль изменен."
+
+#: manage/views.py:4587
+msgid "User has been added."
+msgstr "Пользователь добавлен."
+
+#: manage/views.py:4621
+msgid "User couldn't deleted."
+msgstr "Пользователь не может быть удалён."
+
+#: manage/views.py:4624
+msgid "User has been deleted."
+msgstr "Пользователь удалён."
+
+#: manage/views.py:4931
+msgid "Object is not a working copy."
+msgstr "Объект не является рабочей копией."
+
+#: manage/views.py:4979
+msgid "Object has already a working copy."
+msgstr "Объект уже имеет рабочюю копию."
+
+#: manage/views.py:5025
+msgid "Objects have been reindexed."
+msgstr "Объект индексирован."
+
+#: manage/views.py:5093
+msgid ""
+"Objects have been deleted. (Note: Some objects are not deleted because you "
+"haven't the permission to do that)."
+msgstr ""
+"Объект удалён (Внимание: Некоторые объекты не удалены потому что у "
+"Васнедостаточно прав)."
+
+#: manage/views.py:5095
+msgid "Objects have been deleted."
+msgstr "Объект удалён."
+
+#: manage/views.py:5115 manage/views.py:5133
+msgid ""
+"Objects have been put to the clipboard. (Note: Some objects are not put into "
+"clipboard because you haven't the permission to do that)."
+msgstr ""
+"Объект помещён в буфер (Внимание: Некоторые объекты не тронутыпотому что у "
+"Вас недостаточно прав)."
+
+#: manage/views.py:5117 manage/views.py:5135
+msgid "Objects have been put to the clipboard."
+msgstr "Объект помещён в буфер."
+
+#: manage/views.py:5139
+msgid "You are not allowed to paste to this object."
+msgstr "Нет прав для вставки объекта."
+
+#: manage/views.py:5143
+msgid "Objects has been updated."
+msgstr "Объект обновлен."
+
+#: manage/views.py:5173
+msgid "Images has been deleted."
+msgstr "Изображение удалено."
+
+#: manage/views.py:5178
+msgid "The image doesn't exist anymore."
+msgstr "Изображение больше не существует."
+
+#: manage/views.py:5189
+msgid "Images has been updated."
+msgstr "Изображения обновлены."
+
+#: manage/views.py:5208
+msgid "Files has been deleted."
+msgstr "Файлы удалёны."
+
+#: manage/views.py:5213
+msgid "The file doesn't exist anymore."
+msgstr "Файл больше не существует."
+
+#: manage/views.py:5224
+msgid "Files has been updated."
+msgstr "Файлы обновлены."
+
+#: manage/views.py:5316
+msgid "An error has been occured. Please try again."
+msgstr "Произошла ошибка. Попробуйте ещё раз."
+
+#: manage/views.py:5334
+msgid "Some cut/copied objects has been deleted in the meanwhile."
+msgstr "Некоторые скопированные объекты удалены."
+
+#: manage/views.py:5346
+msgid "Some objects are not allowed here."
+msgstr "Некоторые объекты не допустимы здесь."
+
+#: manage/views.py:5354
+msgid "The objects can't be pasted in own descendants."
+msgstr "Нельзя вставлять объекты в их потомков."
+
+#: manage/views.py:5400
+msgid "The object has been pasted."
+msgstr "Объект вставлен."
+
+#: templates/lfc/manage/applications.html:10
+msgid "Install Applications"
+msgstr "Установка Приложений"
+
+#: templates/lfc/manage/applications.html:16
+msgid "Application"
+msgstr "Приложения"
+
+#: templates/lfc/manage/applications.html:22
+msgid "Status"
+msgstr "Статус"
+
+#: templates/lfc/manage/applications.html:25
+#: templates/lfc/manage/object_children.html:36
+#: templates/lfc/manage/object_children.html:134
+#: templates/lfc/manage/object_files.html:30
+#: templates/lfc/manage/object_images.html:36
+#: templates/lfc/manage/portal_children.html:33
+#: templates/lfc/manage/portal_children.html:124
+#: templates/lfc/manage/portal_files.html:30
+#: templates/lfc/manage/portal_images.html:36
+#: templates/lfc/manage/portlets_inline.html:25
+#: templates/lfc/manage/portlets_inline.html:111
+#: templates/lfc/manage/review_objects.html:23
+msgid "Manage"
+msgstr "Редактировать"
+
+#: templates/lfc/manage/applications.html:40
+msgid "Installed"
+msgstr "Установлено"
+
+#: templates/lfc/manage/applications.html:42
+msgid "Not Installed"
+msgstr "Не установлено"
+
+#: templates/lfc/manage/applications.html:47
+msgid "Uninstall"
+msgstr "Удалить"
+
+#: templates/lfc/manage/applications.html:48
+msgid "Reinstall"
+msgstr "Переустановить"
+
+#: templates/lfc/manage/applications.html:50
+msgid "Install"
+msgstr "Установить"
+
+#: templates/lfc/manage/base.html:55
+msgid "Logout"
+msgstr "Выйти"
+
+#: templates/lfc/manage/base.html:66
+#: templates/lfc/manage/filebrowser_files.html:42
+#: templates/lfc/manage/filebrowser_files.html:102
+msgid "Content"
+msgstr "Содержимое"
+
+#: templates/lfc/manage/base.html:74 templates/lfc/manage/local_roles.html:16
+#: templates/lfc/manage/local_roles.html:97
+#: templates/lfc/manage/local_roles.html:133
+#: templates/lfc/manage/local_roles_search_result.html:17
+#: templates/lfc/manage/role.html:35 templates/lfc/manage/role.html.py:48
+msgid "Users"
+msgstr "Пользователи"
+
+#: templates/lfc/manage/base.html:89
+#: templates/lfc/manage/workflow_state.html:21
+msgid "Review"
+msgstr "Рецензия"
+
+#: templates/lfc/manage/base.html:94
+msgid "Workflows"
+msgstr "Процессы"
+
+#: templates/lfc/manage/base.html:101
+msgid "Applications"
+msgstr "Приложения"
+
+#: templates/lfc/manage/base.html:104
+msgid "Content Types"
+msgstr "Типы"
+
+#: templates/lfc/manage/base.html:107
+msgid "Installation"
+msgstr "Установка"
+
+#: templates/lfc/manage/base.html:115
+msgid "Utils"
+msgstr "Утилиты"
+
+#: templates/lfc/manage/base.html:120
+msgid "Languages"
+msgstr "Язык"
+
+#: templates/lfc/manage/base.html:152
+msgid "Powered by"
+msgstr "Основано на"
+
+#: templates/lfc/manage/base.html:154
+msgid "by"
+msgstr ""
+
+#: templates/lfc/manage/base.html:154
+msgid "and contributors"
+msgstr "и другие разработчики"
+
+#: templates/lfc/manage/base.html:154
+msgid "All rights reserved"
+msgstr "Все права защищены"
+
+#: templates/lfc/manage/base.html:156
+msgid "Distributed under the"
+msgstr "Распространяется под"
+
+#: templates/lfc/manage/base.html:156
+msgid "BSD-License"
+msgstr "лицензией BSD"
+
+#: templates/lfc/manage/base.html:166
+msgid "Do you really want to delete this object?"
+msgstr "Вы действительно хотите удалить этот объект?"
+
+#: templates/lfc/manage/comment.html:3
+msgid "Edit Comment"
+msgstr "Редактировать комментарий"
+
+#: templates/lfc/manage/comment.html:11 templates/lfc/manage/file.html:11
+#: templates/lfc/manage/image.html:11 templates/lfc/manage/object_add.html:14
+#: templates/lfc/manage/object_comments.html:17
+#: templates/lfc/manage/object_translate.html:78
+#: templates/lfc/manage/workflow_state.html:66
+#: templates/lfc/manage/workflow_transition.html:13
+msgid "Save"
+msgstr "Сохранить"
+
+#: templates/lfc/manage/comment.html:12 templates/lfc/manage/file.html:12
+#: templates/lfc/manage/image.html:12 templates/lfc/manage/object_add.html:15
+#: templates/lfc/manage/object_translate.html:79
+#: templates/lfc/manage/portlet_add.html:40
+msgid "Cancel"
+msgstr "Отменить"
+
+#: templates/lfc/manage/content_types.html:25
+msgid "Save content type"
+msgstr "Сохранить Тип"
+
+#: templates/lfc/manage/file.html:3
+msgid "Edit File"
+msgstr "Редактировать файл"
+
+#: templates/lfc/manage/filebrowser_files.html:11
+#: templates/lfc/manage/filebrowser_images.html:11
+msgid "Your are here"
+msgstr "Путь"
+
+#: templates/lfc/manage/filebrowser_files.html:13
+#: templates/lfc/manage/filebrowser_images.html:13
+#: templates/lfc/manage/navigation.html:24
+#: templates/lfc/manage/portal_tabs.html:6
+msgid "Portal"
+msgstr "Портал"
+
+#: templates/lfc/manage/filebrowser_files.html:23
+#: templates/lfc/manage/filebrowser_images.html:23
+msgid "Current Object"
+msgstr "Текущая страница"
+
+#: templates/lfc/manage/filebrowser_files.html:46
+msgid "Extern"
+msgstr "Внешняя"
+
+#: templates/lfc/manage/filebrowser_files.html:50
+msgid "Mail"
+msgstr "E-Mail"
+
+#: templates/lfc/manage/filebrowser_files.html:64
+#: templates/lfc/manage/users_inline.html:106
+msgid "E-Mail"
+msgstr "E-Mail"
+
+#: templates/lfc/manage/filebrowser_files.html:70
+msgid "E-mail"
+msgstr "E-Mail"
+
+#: templates/lfc/manage/filebrowser_files.html:81
+msgid "External Link"
+msgstr "Внешняя Ссылка"
+
+#: templates/lfc/manage/filebrowser_files.html:108
+#: templates/lfc/manage/filebrowser_images.html:35
+#: templates/lfc/manage/object_children.html:6
+#: templates/lfc/manage/object_tabs.html:17
+#: templates/lfc/manage/portal_children.html:5
+#: templates/lfc/manage/portal_tabs.html:7
+msgid "Children"
+msgstr "Потомки"
+
+#: templates/lfc/manage/filebrowser_files.html:169
+msgid "Attributes"
+msgstr "Атрибуты"
+
+#: templates/lfc/manage/filebrowser_files.html:183
+msgid "Target"
+msgstr "Цель"
+
+#: templates/lfc/manage/filebrowser_files.html:186
+msgid "Same window"
+msgstr "То же самое окно"
+
+#: templates/lfc/manage/filebrowser_files.html:187
+msgid "New window"
+msgstr "Новое окно"
+
+#: templates/lfc/manage/filebrowser_files.html:196
+#: templates/lfc/manage/filebrowser_images.html:124
+msgid "Insert"
+msgstr "Вставить"
+
+#: templates/lfc/manage/filebrowser_files.html:199
+msgid "Upload file to"
+msgstr "Загрузить файл в"
+
+#: templates/lfc/manage/filebrowser_files.html:211
+#: templates/lfc/manage/filebrowser_images.html:144
+msgid "You have to save content object before you can upload images for it."
+msgstr "Вы должны сохранить объект перед тем как загружать изображения."
+
+#: templates/lfc/manage/filebrowser_files_children.html:5
+msgid "Select File"
+msgstr "Выбрать Файл"
+
+#: templates/lfc/manage/filebrowser_images.html:5
+msgid "Local images"
+msgstr "Локальные изображения"
+
+#: templates/lfc/manage/filebrowser_images.html:52
+#: templates/lfc/manage/object_children.html:109
+#: templates/lfc/manage/object_children.html:164
+#: templates/lfc/manage/portal_children.html:100
+#: templates/lfc/manage/portal_children.html:152
+msgid "There are no children"
+msgstr "Нет потомков"
+
+#: templates/lfc/manage/filebrowser_images.html:78
+msgid "There are no local images yet"
+msgstr "Нет изображений"
+
+#: templates/lfc/manage/filebrowser_images.html:89
+msgid "Preview"
+msgstr "Просмотр"
+
+#: templates/lfc/manage/filebrowser_images.html:96
+msgid "Prview"
+msgstr "Просмотр"
+
+#: templates/lfc/manage/filebrowser_images.html:98
+msgid "No image selected"
+msgstr "Изображение не выбрано"
+
+#: templates/lfc/manage/filebrowser_images.html:115
+msgid "Original"
+msgstr "Оригинал"
+
+#: templates/lfc/manage/filebrowser_images.html:132
+msgid "Upload image to current object: "
+msgstr "Загрузить изображение:"
+
+#: templates/lfc/manage/group.html:24 templates/lfc/manage/group_add.html:24
+#: templates/lfc/manage/group_none.html:13
+msgid "Add Group"
+msgstr "Добавить Группу"
+
+#: templates/lfc/manage/group.html:27
+msgid "Delete group"
+msgstr "Удалить Группу"
+
+#: templates/lfc/manage/group.html:34 templates/lfc/manage/group.html.py:39
+#: templates/lfc/manage/group_add.html:36
+#: templates/lfc/manage/group_none.html:19 templates/lfc/manage/links.html:20
+#: templates/lfc/manage/object_data.html:5
+#: templates/lfc/manage/portal_core.html:5 templates/lfc/manage/role.html:34
+#: templates/lfc/manage/role.html.py:39 templates/lfc/manage/role_add.html:29
+#: templates/lfc/manage/user.html:27 templates/lfc/manage/user.html.py:32
+#: templates/lfc/manage/user_add.html:32 templates/lfc/manage/workflow.html:18
+#: templates/lfc/manage/workflow_add.html:17
+#: templates/lfc/manage/workflow_data.html:5
+msgid "Data"
+msgstr "Данные"
+
+#: templates/lfc/manage/group.html:44
+msgid "Save group"
+msgstr "Сохранить Группу"
+
+#: templates/lfc/manage/group.html:52 templates/lfc/manage/role.html:52
+#: templates/lfc/manage/users_inline.html:103
+msgid "Username"
+msgstr "Пользователь"
+
+#: templates/lfc/manage/group_add.html:28
+#: templates/lfc/manage/user_menu.html:10
+msgid "Delete User"
+msgstr "Удалить Пользователя"
+
+#: templates/lfc/manage/group_add.html:44
+msgid "Add group"
+msgstr "Добавить Группу"
+
+#: templates/lfc/manage/group_none.html:23
+#: templates/lfc/manage/local_roles_search_result.html:62
+msgid "There are no groups."
+msgstr "Нет групп."
+
+#: templates/lfc/manage/image.html:3
+msgid "Edit Image"
+msgstr "Редактировать Изображение"
+
+#: templates/lfc/manage/links.html:21 templates/lfc/manage/workflow.html:19
+#: templates/lfc/manage/workflow_states.html:3
+msgid "States"
+msgstr "Состояния"
+
+#: templates/lfc/manage/links.html:22 templates/lfc/manage/workflow.html:20
+#: templates/lfc/manage/workflow_transitions.html:3
+msgid "Transitions"
+msgstr "Переходы"
+
+#: templates/lfc/manage/local_roles.html:6
+#: templates/lfc/manage/local_roles.html:93
+#: templates/lfc/manage/local_roles_add.html:3
+msgid "Local roles"
+msgstr "Локальные Роли"
+
+#: templates/lfc/manage/local_roles.html:58
+#: templates/lfc/manage/local_roles.html:138
+msgid "Group"
+msgstr "Группа"
+
+#: templates/lfc/manage/local_roles.html:85
+msgid "Delete local roles"
+msgstr "Удалить лоокальные роли"
+
+#: templates/lfc/manage/local_roles.html:86
+msgid "Save local roles"
+msgstr "Сохранить локальные роли"
+
+#: templates/lfc/manage/local_roles.html:89
+#: templates/lfc/manage/local_roles.html:167
+msgid "This object has no local roles."
+msgstr "У этого объекта нет локальных ролей."
+
+#: templates/lfc/manage/local_roles_add.html:6
+msgid "User/Group Name"
+msgstr "Имя Пользователя/Группы"
+
+#: templates/lfc/manage/local_roles_add.html:7
+msgid "Search"
+msgstr "Поиск"
+
+#: templates/lfc/manage/local_roles_search_result.html:38
+msgid "There are no users"
+msgstr "Нет пользователей"
+
+#: templates/lfc/manage/local_roles_search_result.html:69
+#: templates/lfc/manage/object_add.html:3
+#: templates/lfc/manage/object_menu.html:8
+#: templates/lfc/manage/object_menu.html:20
+#: templates/lfc/manage/portal_menu.html:7
+#: templates/lfc/manage/portal_menu.html:19
+#: templates/lfc/manage/workflow_add.html:25
+msgid "Add"
+msgstr "Добавить"
+
+#: templates/lfc/manage/object_children.html:30
+#: templates/lfc/manage/object_children.html:128
+#: templates/lfc/manage/portal_children.html:27
+#: templates/lfc/manage/portal_children.html:118
+msgid "State"
+msgstr "Состояние"
+
+#: templates/lfc/manage/object_children.html:73
+#: templates/lfc/manage/object_files.html:55
+#: templates/lfc/manage/object_images.html:71
+#: templates/lfc/manage/portal_files.html:55
+msgid "Move Up"
+msgstr "Переместить Вверх"
+
+#: templates/lfc/manage/object_children.html:78
+#: templates/lfc/manage/object_files.html:60
+#: templates/lfc/manage/object_images.html:76
+#: templates/lfc/manage/portal_children.html:70
+#: templates/lfc/manage/portal_files.html:60
+#: templates/lfc/manage/portlets_inline.html:135
+msgid "Move Down"
+msgstr "Переместить Вниз"
+
+#: templates/lfc/manage/object_children.html:85
+#: templates/lfc/manage/object_children.html:155
+#: templates/lfc/manage/object_comments.html:50
+#: templates/lfc/manage/object_comments.html:90
+#: templates/lfc/manage/object_files.html:68
+#: templates/lfc/manage/object_files.html:70
+#: templates/lfc/manage/object_images.html:81
+#: templates/lfc/manage/portal_files.html:68
+#: templates/lfc/manage/portal_files.html:70
+#: templates/lfc/manage/portal_images.html:82
+#: templates/lfc/manage/portlets_inline.html:44
+#: templates/lfc/manage/portlets_inline.html:139
+#: templates/lfc/manage/review_objects.html:48
+#: templates/lfc/manage/review_objects.html:51
+#: templates/lfc/manage/users_inline.html:113
+#: templates/lfc/manage/users_inline.html:145
+#: templates/lfc/manage/users_inline.html:146
+msgid "Edit"
+msgstr "Редактировать"
+
+#: templates/lfc/manage/object_children.html:88
+#: templates/lfc/manage/object_children.html:158
+#: templates/lfc/manage/object_view_link.html:3
+#: templates/lfc/manage/portal_menu.html:31
+msgid "View"
+msgstr "Перейти"
+
+#: templates/lfc/manage/object_children.html:95
+#: templates/lfc/manage/object_files.html:77
+#: templates/lfc/manage/object_images.html:89
+#: templates/lfc/manage/portal_children.html:85
+#: templates/lfc/manage/portal_files.html:77
+#: templates/lfc/manage/portal_images.html:90
+#: templates/lfc/manage/users_inline.html:153
+msgid "Update"
+msgstr "Обновить"
+
+#: templates/lfc/manage/object_children.html:97
+#: templates/lfc/manage/object_files.html:79
+#: templates/lfc/manage/object_images.html:91
+#: templates/lfc/manage/object_menu.html:51
+#: templates/lfc/manage/portal_children.html:87
+#: templates/lfc/manage/portal_files.html:79
+#: templates/lfc/manage/portal_images.html:92
+#: templates/lfc/manage/portlets_inline.html:143
+#: templates/lfc/manage/users_inline.html:152
+msgid "Delete"
+msgstr "Удалить"
+
+#: templates/lfc/manage/object_children.html:99
+#: templates/lfc/manage/object_menu.html:32
+#: templates/lfc/manage/portal_children.html:89
+msgid "Copy"
+msgstr "Копировать"
+
+#: templates/lfc/manage/object_children.html:101
+#: templates/lfc/manage/object_menu.html:38
+#: templates/lfc/manage/portal_children.html:91
+msgid "Cut"
+msgstr "Вырезать"
+
+#: templates/lfc/manage/object_children.html:105
+#: templates/lfc/manage/object_children.html:114
+#: templates/lfc/manage/object_menu.html:45
+#: templates/lfc/manage/portal_children.html:95
+#: templates/lfc/manage/portal_children.html:105
+#: templates/lfc/manage/portal_menu.html:27
+msgid "Paste"
+msgstr "Вставить"
+
+#: templates/lfc/manage/object_comments.html:23
+#: templates/lfc/manage/object_comments.html:116
+#: templates/lfc/manage/object_tabs.html:29
+msgid "Comments"
+msgstr "Комментарии"
+
+#: templates/lfc/manage/object_comments.html:41
+msgid "URL"
+msgstr "URL"
+
+#: templates/lfc/manage/object_comments.html:44
+msgid "Comment"
+msgstr "Комментаровать"
+
+#: templates/lfc/manage/object_comments.html:47
+#: templates/lfc/manage/object_comments.html:126
+#: templates/lfc/manage/workflow_state.html:17
+msgid "Public"
+msgstr "Опубликован"
+
+#: templates/lfc/manage/object_comments.html:91
+msgid "Edit object"
+msgstr "Редактировать объект"
+
+#: templates/lfc/manage/object_comments.html:99
+msgid "Update comments"
+msgstr "Обновить комментарий"
+
+#: templates/lfc/manage/object_comments.html:101
+msgid "Delete comments"
+msgstr "Удалить комментарий"
+
+#: templates/lfc/manage/object_comments.html:105
+#: templates/lfc/manage/object_comments.html:145
+msgid "There are no comments"
+msgstr "Нет комментариев"
+
+#: templates/lfc/manage/object_data.html:21
+#: templates/lfc/manage/portal_core.html:16
+msgid "Save core data"
+msgstr "Сохранить данные"
+
+#: templates/lfc/manage/object_files.html:66
+#: templates/lfc/manage/portal_files.html:66
+msgid "Download"
+msgstr "Скачать"
+
+#: templates/lfc/manage/object_files.html:83
+#: templates/lfc/manage/object_files.html:120
+#: templates/lfc/manage/portal_files.html:83
+#: templates/lfc/manage/portal_files.html:126
+msgid "There are no files"
+msgstr "Нет файлов"
+
+#: templates/lfc/manage/object_files.html:86
+#: templates/lfc/manage/portal_files.html:86
+msgid "Add files"
+msgstr "Добавить файлы"
+
+#: templates/lfc/manage/object_files.html:96
+#: templates/lfc/manage/portal_files.html:97
+msgid "Uploading files ..."
+msgstr "Файлы загружаются..."
+
+#: templates/lfc/manage/object_files.html:97
+#: templates/lfc/manage/portal_files.html:98
+msgid "Processing files. Please wait!"
+msgstr "Файлы обрабатываются."
+
+#: templates/lfc/manage/object_history.html:4
+#: templates/lfc/manage/object_tabs.html:35
+msgctxt "LFC"
+msgid "History"
+msgstr "История"
+
+#: templates/lfc/manage/object_history.html:11
+msgid "Date"
+msgstr "Дата"
+
+#: templates/lfc/manage/object_images.html:95
+#: templates/lfc/manage/object_images.html:146
+#: templates/lfc/manage/portal_images.html:96
+#: templates/lfc/manage/portal_images.html:147
+msgid "There are no images"
+msgstr "Нет изображений"
+
+#: templates/lfc/manage/object_images.html:98
+#: templates/lfc/manage/portal_images.html:99
+msgid "Add images"
+msgstr "Добавить изображения"
+
+#: templates/lfc/manage/object_images.html:110
+#: templates/lfc/manage/portal_images.html:111
+msgid "Uploading images ..."
+msgstr "Изображения загружаются..."
+
+#: templates/lfc/manage/object_images.html:111
+#: templates/lfc/manage/portal_images.html:112
+msgid "Processing images. Please wait!"
+msgstr "Изображения обрабатываются."
+
+#: templates/lfc/manage/object_menu.html:27
+msgid "Actions"
+msgstr "Действия"
+
+#: templates/lfc/manage/object_menu.html:57
+msgid "Checkout"
+msgstr "Начать редактирование"
+
+#: templates/lfc/manage/object_menu.html:64
+msgid "Checkin"
+msgstr "Закончить редактирование"
+
+#: templates/lfc/manage/object_menu.html:96
+#: templates/lfc/manage/object_menu.html:106
+msgid "Translate to"
+msgstr "Перевести на"
+
+#: templates/lfc/manage/object_menu.html:141
+msgid "Working Copy Base"
+msgstr "Рабочая Копия Оригинал"
+
+#: templates/lfc/manage/object_menu.html:146
+msgid "Working Copy"
+msgstr "Рабочая Копия"
+
+#: templates/lfc/manage/object_meta_data.html:5
+#: templates/lfc/manage/object_tabs.html:14
+msgid "Metadata"
+msgstr "Метаданные"
+
+#: templates/lfc/manage/object_meta_data.html:35
+msgid "Save metadata"
+msgstr "Сохранить Метаданные"
+
+#: templates/lfc/manage/object_permissions.html:10
+#: templates/lfc/manage/object_permissions.html:47
+msgid "The current workflow is"
+msgstr "Текущий процесс"
+
+#: templates/lfc/manage/object_permissions.html:13
+#: templates/lfc/manage/object_permissions.html:50
+#: templates/lfc/manage/object_tabs.html:38
+#: templates/lfc/manage/portal_permissions.html:5
+#: templates/lfc/manage/portal_tabs.html:12
+#: templates/lfc/manage/workflow_data.html:9
+#: templates/lfc/manage/workflow_permissions.html:3
+#: templates/lfc/manage/workflow_state.html:26
+msgid "Permissions"
+msgstr "Права доступа"
+
+#: templates/lfc/manage/object_permissions.html:21
+#: templates/lfc/manage/workflow_state.html:31
+msgid "Inherit"
+msgstr "Унаследовать"
+
+#: templates/lfc/manage/object_permissions.html:22
+#: templates/lfc/manage/object_permissions.html:56
+#: templates/lfc/manage/portal_permissions.html:14
+#: templates/lfc/manage/portal_permissions.html:35
+#: templates/lfc/manage/workflow_state.html:32
+#: templates/lfc/manage/workflow_transitions.html:33
+msgid "Permission"
+msgstr "Право доступа"
+
+#: templates/lfc/manage/object_permissions.html:39
+#: templates/lfc/manage/portal_permissions.html:30
+#: templates/lfc/manage/workflow_permissions.html:16
+msgid "Save permissions"
+msgstr "Сохранить права доступа"
+
+#: templates/lfc/manage/object_permissions.html:44
+msgid "Worflow"
+msgstr "Процесс"
+
+#: templates/lfc/manage/object_permissions.html:55
+msgid "Inherited"
+msgstr "Унаследовано"
+
+#: templates/lfc/manage/object_quick_view_link.html:4
+msgid "Quick View"
+msgstr "Просмотр"
+
+#: templates/lfc/manage/object_seo.html:5
+#: templates/lfc/manage/object_tabs.html:32
+msgid "SEO"
+msgstr "SEO"
+
+#: templates/lfc/manage/object_seo.html:15
+msgid "Save SEO"
+msgstr "Сохранить SEO"
+
+#: templates/lfc/manage/object_seo.html:20
+#: templates/lfc/manage/object_seo.html:29
+msgid "Meta Keywords"
+msgstr "Мета ключевые слова"
+
+#: templates/lfc/manage/object_tabs.html:26
+#: templates/lfc/manage/portal_tabs.html:10
+msgid "Portlets"
+msgstr "Портлеты"
+
+#: templates/lfc/manage/object_translate.html:21
+msgid "Translate object"
+msgstr "Перевести объект"
+
+#: templates/lfc/manage/portlet_add.html:7
+#: templates/lfc/manage/portlets_inline.html:156
+msgid "Add new portlet"
+msgstr "Добавить новый Портлет "
+
+#: templates/lfc/manage/portlet_add.html:12
+#: templates/lfc/manage/portlet_edit.html:9
+#: templates/lfc/manage/portlets_inline.html:67
+#: templates/lfc/manage/portlets_inline.html:179
+#: templates/lfc/manage/portlets_inline.html:205
+msgid "Slot"
+msgstr "Слот"
+
+#: templates/lfc/manage/portlet_add.html:35
+#: templates/lfc/manage/portlet_edit.html:32
+msgid "Save portlet"
+msgstr "Сохранить Портлет"
+
+#: templates/lfc/manage/portlet_edit.html:5
+msgid "Edit portlet"
+msgstr "Редактировать Портлет"
+
+#: templates/lfc/manage/portlets_inline.html:8
+msgid "Inhertited portlets"
+msgstr "Унаследованные Портлеты"
+
+#: templates/lfc/manage/portlets_inline.html:51
+#: templates/lfc/manage/portlets_inline.html:150
+#: templates/lfc/manage/portlets_inline.html:231
+msgid "There are no portlets assigend"
+msgstr "Портлеты не установлены"
+
+#: templates/lfc/manage/portlets_inline.html:59
+#: templates/lfc/manage/portlets_inline.html:176
+msgid "Blocked parent slots"
+msgstr "Заблокированные родительские слоты"
+
+#: templates/lfc/manage/portlets_inline.html:64
+#: templates/lfc/manage/portlets_inline.html:182
+msgid "Blocked"
+msgstr "Заблокирован"
+
+#: templates/lfc/manage/portlets_inline.html:87
+msgid "Save blocked parent slots"
+msgstr "Сохранить заблокированные родительские слоты"
+
+#: templates/lfc/manage/portlets_inline.html:93
+#: templates/lfc/manage/portlets_inline.html:201
+msgid "Slots"
+msgstr "Слоты"
+
+#: templates/lfc/manage/portlets_inline.html:172
+msgid "Add portlet"
+msgstr "Добавить Портлет"
+
+#: templates/lfc/manage/review_objects.html:6
+msgid "Review Content"
+msgstr "Рецензировать"
+
+#: templates/lfc/manage/review_objects.html:17
+msgid "Creation Date"
+msgstr "Дата Создания"
+
+#: templates/lfc/manage/review_objects.html:59
+msgid "There are no objects to review"
+msgstr "Нет объектов для рецензии"
+
+#: templates/lfc/manage/role.html:24 templates/lfc/manage/role_add.html:23
+msgid "Add Role"
+msgstr "Добавить Роль"
+
+#: templates/lfc/manage/role.html:27
+msgid "Delete Role"
+msgstr "Удалить Роль"
+
+#: templates/lfc/manage/role.html:44
+msgid "Save role"
+msgstr "Сохранить Роль"
+
+#: templates/lfc/manage/role_add.html:36
+msgid "Add role"
+msgstr "Добавить Роль"
+
+#: templates/lfc/manage/templates.html:15
+#: templates/lfc/manage/users_inline.html:77
+msgid "Go!"
+msgstr "Вперед!"
+
+#: templates/lfc/manage/user.html:9 templates/lfc/manage/users_inline.html:29
+msgid "Reset"
+msgstr "Сбросить"
+
+#: templates/lfc/manage/user.html:28 templates/lfc/manage/user.html.py:37
+#: templates/lfc/manage/user_password.html:10
+msgid "Change password"
+msgstr "Сменить пароль"
+
+#: templates/lfc/manage/user_add.html:9
+#: templates/lfc/manage/user_navigation.html:29
+#: templates/lfc/manage/user_navigation.html:33
+#: templates/lfc/manage/users_inline.html:59
+#: templates/lfc/manage/users_inline.html:63
+#: templates/lfc/manage/users_inline.html:82
+msgid "Last"
+msgstr "Последний"
+
+#: templates/lfc/manage/user_add.html:25
+#: templates/lfc/manage/user_menu.html:14
+msgid "Overview"
+msgstr "Обзор"
+
+#: templates/lfc/manage/user_add.html:41
+#: templates/lfc/manage/user_data.html:10
+msgid "Save user"
+msgstr "Сохранить пользователя"
+
+#: templates/lfc/manage/user_menu.html:6
+#: templates/lfc/manage/users_inline.html:7
+msgid "Add User"
+msgstr "Добавить пользователя"
+
+#: templates/lfc/manage/user_navigation.html:7
+#: templates/lfc/manage/user_navigation.html:15
+#: templates/lfc/manage/users_inline.html:37
+#: templates/lfc/manage/users_inline.html:45
+msgid "First"
+msgstr "Первый"
+
+#: templates/lfc/manage/user_navigation.html:12
+#: templates/lfc/manage/user_navigation.html:16
+#: templates/lfc/manage/users_inline.html:42
+#: templates/lfc/manage/users_inline.html:46
+msgid "Previous"
+msgstr "Предыдущий"
+
+#: templates/lfc/manage/user_navigation.html:19
+#: templates/lfc/manage/users_inline.html:49
+msgid "of"
+msgstr ""
+
+#: templates/lfc/manage/user_navigation.html:24
+#: templates/lfc/manage/user_navigation.html:32
+#: templates/lfc/manage/users_inline.html:54
+#: templates/lfc/manage/users_inline.html:62
+msgid "Next"
+msgstr "Следующий"
+
+#: templates/lfc/manage/users_inline.html:19
+msgid "Pages"
+msgstr "Страницы"
+
+#: templates/lfc/manage/users_inline.html:25
+#: templates/lfc/manage/users_inline.html:110
+msgid "Active"
+msgstr "Активный"
+
+#: templates/lfc/manage/users_inline.html:100
+msgid "Fullname"
+msgstr "Имя"
+
+#: templates/lfc/manage/utils.html:10 templates/lfc/manage/utils.html.py:14
+msgid "Utilities"
+msgstr "Утилиты"
+
+#: templates/lfc/manage/utils.html:18
+msgid "Reindex Objects"
+msgstr "Индексировать объекты"
+
+#: templates/lfc/manage/utils.html:24
+msgid "Update Permissions"
+msgstr "Обновить права доступа"
+
+#: templates/lfc/manage/workflow_data.html:21
+msgid "Save workflow"
+msgstr "Сохранить процесс"
+
+#: templates/lfc/manage/workflow_menu.html:6
+msgid "Add workflow"
+msgstr "Добавить процесс"
+
+#: templates/lfc/manage/workflow_menu.html:10
+msgid "Delete workflow"
+msgstr "Удалить процесс"
+
+#: templates/lfc/manage/workflow_state.html:5
+msgid "Edit state:"
+msgstr "Редактировать статус:"
+
+#: templates/lfc/manage/workflow_states.html:26
+#: templates/lfc/manage/workflow_states.html:33
+msgid "Add state"
+msgstr "Добавить статус"
+
+#: templates/lfc/manage/workflow_transition.html:5
+msgid "Edit transition:"
+msgstr "Редактировать переход"
+
+#: templates/lfc/manage/workflow_transitions.html:19
+msgid "Destination state"
+msgstr "Состояние цели"
+
+#: templates/lfc/manage/workflow_transitions.html:27
+#: templates/lfc/manage/workflow_transitions.html:39
+#: templates/lfc/manage/workflow_transitions.html:51
+msgid "None"
+msgstr "Ничего"
+
+#: templates/lfc/manage/workflow_transitions.html:45
+msgid "Condition"
+msgstr "Условие"
+
+#: templates/lfc/manage/workflow_transitions.html:59
+#: templates/lfc/manage/workflow_transitions.html:66
+msgid "Add transition"
+msgstr "Добавить переход"
+
+#: templatetags/lfc_tags.py:103
+#, python-format
+msgid "%s tag needs no argument"
+msgstr "Тэг %s не требует аргументов"
+
+msgid "Page"
+msgstr "Страница"
+
+msgid "Text"
+msgstr "Текст"
+
+msgid "State has been changed."
+msgstr "Состояние изменено."
+
+msgid "is a product of"
+msgstr "продукт"
+
+msgid "Page has been added."
+msgstr "Страница добавлена."
+
+msgid "Select content"
+msgstr "Выбрать контент"
+
+msgid "Local files"
+msgstr "Локальные файлы"
+
+msgid "There are no local files yet."
+msgstr "Нет локальных файлов."
+
+msgid "Global files"
+msgstr "Глобальные файлы"
+
+msgid "There are no global files yet."
+msgstr "Нет глобальных файлов."
+
+msgid "Global images"
+msgstr "Глобальные Изображения"
+
+msgid "Sizes"
+msgstr "Размеры"
+
+msgid "There are no global images."
+msgstr "Нет глобальных изображений."
+
+msgid "Processing ..."
+msgstr "Обработка ..."
+
+msgid "SNR"
+msgstr "Сигнал/шум"
+
+msgid "Select Files"
+msgstr "Выбрать Файлы"
+
+msgid "Select Images"
+msgstr "Выбрать Изображения"
+
+msgid "Save &amp; close"
+msgstr "Сохранить &amp; закрыть"
+
+msgid "Page has been deleted."
+msgstr "Страница удалёна."
+
+msgid "File"
+msgstr "Файл"
+
+msgid "Workflow permissions have been saved."
+msgstr "Права доступа для процессы сохранены"
+
+msgid "Modify"
+msgstr "Изменить"
+
+msgid "Delete?"
+msgstr "Удалить?"
+
+msgid "Save state"
+msgstr "Сохранить состояние "
+
+msgid "Save transition"
+msgstr "Сохранить переход"
+
+msgid "Submit"
+msgstr "Отправить"
+
+msgid "Anonymous"
+msgstr "Аноним"
+
+msgid "Editor"
+msgstr "Редактор"
+
+msgid "Manager"
+msgstr "Менеджер"
+
+msgid "Owner"
+msgstr "Владелец"
+
+msgid "Reviewer"
+msgstr "Рецензент"
+
+msgid "Author"
+msgstr "Автор"
+
+msgid "Private"
+msgstr "Черновик"
+
+msgid "Submitted"
+msgstr "Отравлено"
+
+msgid "Make private"
+msgstr "В черновики"
+
+msgid "Make public"
+msgstr "Опубликовать"
+
+msgid "Reject"
+msgstr "Отклонить"
+
+msgid "Retract"
+msgstr "Отозвать"
+
+msgid "Manage portal"
+msgstr "Редактировать портал "
+
+msgid "Manage content"
+msgstr "Редактировать содержимое"
+
+msgid "German"
+msgstr "Немецкий"
+
+msgid "Manage local roles"
+msgstr "Редактировать локальные роли"
+
+msgid "Manage permissions"
+msgstr "Редактировать права доступа"
+
+msgid "Publish"
+msgstr "Опубликовать"
+
+msgid "Initial state"
+msgstr "Начальное состояние"
+
+msgid "Left"
+msgstr "Левый"
+
+msgid "Right"
+msgstr "Правый"
+
+msgid "View management"
+msgstr "Редактировать вид"
+
+msgid "Random"
+msgstr "Случайный"
+
+msgid "Article"
+msgstr "Статья"
+
+msgid "Gallery"
+msgstr "Галерея"
+
+msgid "Plain"
+msgstr "Простая"

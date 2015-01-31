@@ -49,6 +49,7 @@ from lfc.settings import ALLOW_COMMENTS_TRUE
 from lfc.settings import LANGUAGE_CHOICES
 from lfc.settings import ORDER_BY_CHOICES
 from lfc.settings import IMAGE_SIZES
+from lfc.settings import UPLOAD_FOLDER
 
 
 class Application(models.Model):
@@ -462,7 +463,7 @@ class BaseContent(AbstractBaseContent):
     title = models.CharField(_(u"Title"), max_length=100)
     display_title = models.BooleanField(_(u"Display title"), default=True)
 
-    slug = models.SlugField(_(u"Slug"))
+    slug = models.SlugField(_(u"Slug"), max_length=100)
 
     description = models.TextField(_(u"Description"), blank=True)
 
@@ -1127,7 +1128,7 @@ class Image(models.Model):
         The image file.
     """
     title = models.CharField(_(u"Title"), blank=True, max_length=100)
-    slug = models.SlugField(_(u"Slug"),)
+    slug = models.SlugField(_(u"Slug"), max_length=100)
 
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="images", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
@@ -1137,7 +1138,7 @@ class Image(models.Model):
     caption = models.CharField(_(u"Caption"), blank=True, max_length=100)
     description = models.TextField(_(u"Description"), blank=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
-    image = ImageWithThumbsField(_(u"Image"), upload_to="uploads", sizes=IMAGE_SIZES)
+    image = ImageWithThumbsField(_(u"Image"), upload_to=UPLOAD_FOLDER, sizes=IMAGE_SIZES)
 
     class Meta:
         ordering = ("position", )
@@ -1175,7 +1176,7 @@ class File(models.Model):
         The binary file.
     """
     title = models.CharField(blank=True, max_length=100)
-    slug = models.SlugField()
+    slug = models.SlugField(max_length=100)
 
     content_type = models.ForeignKey(ContentType, verbose_name=_(u"Content type"), related_name="files", blank=True, null=True)
     content_id = models.PositiveIntegerField(_(u"Content id"), blank=True, null=True)
