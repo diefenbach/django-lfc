@@ -19,7 +19,6 @@ from django.utils.translation import ugettext_lazy as _
 
 # lfc imports
 import lfc.utils
-from lfc.utils import MessageHttpResponseRedirect
 from lfc.models import File
 from lfc.models import BaseContent
 from lfc.models import Portal
@@ -92,7 +91,7 @@ def base_view(request, language=None, slug=None, obj=None):
         return HttpResponseRedirect(reverse("lfc_login"))
 
     # Redirect to standard object unless superuser is asking
-    if obj.standard and request.user.is_superuser == False:
+    if obj.standard and request.user.is_superuser is False:
         url = obj.get_absolute_url()
         return HttpResponseRedirect(url)
 
@@ -221,7 +220,6 @@ def set_language(request, language, id=None):
                 else:
                     url = "/" + language
     else:
-        portal = lfc.utils.get_portal()
         if language == settings.LANGUAGE_CODE:
             url = "/"
         else:

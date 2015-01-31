@@ -17,7 +17,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.comments.models import Comment
-from django.core.cache import cache
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404
@@ -96,6 +95,7 @@ from lfc.utils.registration import get_info
 import logging
 logger = logging.getLogger("default")
 
+
 # Global #####################################################################
 ##############################################################################
 def add_object(request, language=None, id=None, template_name="lfc/manage/object_add.html"):
@@ -172,10 +172,13 @@ def add_object(request, language=None, id=None, template_name="lfc/manage/object
             # request method is POST.
             request.method = "GET"
 
-            result = json.dumps({
-                "tab": 0,
-                "url": reverse("lfc_manage_object", kwargs={"id": new_object.id}),
-                }, cls=LazyEncoder)
+            result = json.dumps(
+                {
+                    "tab": 0,
+                    "url": reverse("lfc_manage_object", kwargs={"id": new_object.id}),
+                },
+                cls=LazyEncoder
+            )
 
             logger.info("Created New Object: User: %s, ID: %s, Type: %s" % (request.user.username, new_object.id, new_object.get_content_type()))
             return lfc.utils.set_message_to_reponse(
@@ -236,7 +239,7 @@ def delete_object(request, id):
         message = _(u"The object couldn't been deleted.")
     else:
         obj.check_permission(request.user, "delete")
-        
+
         logger.info("Deleted Object: User: %s, ID: %s, Type: %s" % (request.user.username, obj.id, obj.get_content_type()))
 
         obj.delete()
@@ -282,7 +285,7 @@ def portal_permissions(request, portal, template_name="lfc/manage/portal_permiss
     for op in ObjectPermission.objects.filter(content_type=ct, content_id=portal.id).values("role_id", "permission_id"):
         role_id = op["role_id"]
         permission_id = op["permission_id"]
-        if not permissions_dict.has_key(role_id):
+        if role_id not in permissions_dict:
             permissions_dict[role_id] = {}
         permissions_dict[role_id][permission_id] = 1
     all_roles = Role.objects.all().values("id", "name")
@@ -363,9 +366,9 @@ def portal_tabs(request, portal, template_name="lfc/manage/portal_tabs.html"):
         None (as this is not called from outside)
     """
     if settings.LFC_MANAGE_PERMISSIONS:
-        permissions = portal_permissions(request, portal)
+        my_permissions = portal_permissions(request, portal)
     else:
-        permissions = ""
+        my_permissions = ""
 
     return render_to_string(template_name, RequestContext(request, {
         "core_data": portal_core(request, portal),
@@ -373,7 +376,7 @@ def portal_tabs(request, portal, template_name="lfc/manage/portal_tabs.html"):
         "portlets": portlets_inline(request, portal),
         "images": portal_images(request, portal),
         "files": portal_files(request, portal),
-        "permissions": permissions,
+        "permissions": my_permissions,
     }))
 
 
@@ -1037,7 +1040,7 @@ def object_tabs(request, obj, template_name="lfc/manage/object_tabs.html"):
         "files": files,
         "comments": object_comments,
         "content_type_name": get_info(obj).name,
-        "tabs" : obj.get_tabs(request),
+        "tabs": obj.get_tabs(request),
     }))
 
 
@@ -1202,12 +1205,14 @@ def object_meta_data(request, obj=None, id=None, template_name="lfc/manage/objec
             "obj": obj,
         }))
 
+
 def load_object_children(request, child_id):
     """Loads the object children tab per ajax.
     """
     obj = lfc.utils.get_content_object(pk=child_id)
     obj.check_permission(request.user, "view")
     return HttpResponse(object_children(request, obj))
+
 
 def object_children(request, obj, template_name="lfc/manage/object_children.html"):
     """Displays the children tab of the passed content object.
@@ -1221,7 +1226,7 @@ def object_children(request, obj, template_name="lfc/manage/object_children.html
         "obj": obj,
         "children": obj.get_children(request),
         "display_paste": _display_paste(request, obj),
-        "display_positions" : obj.order_by.find("position") != -1,
+        "display_positions": obj.order_by.find("position") != -1,
     }))
 
 
@@ -1358,7 +1363,7 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
     for op in ObjectPermission.objects.filter(content_type=ctype, content_id=obj.id).values("role_id", "permission_id"):
         role_id = op["role_id"]
         permission_id = op["permission_id"]
-        if not permissions_dict.has_key(role_id):
+        if role_id not in permissions_dict:
             permissions_dict[role_id] = {}
         permissions_dict[role_id][permission_id] = 1
     all_roles = Role.objects.all().values("id", "name")
@@ -1391,7 +1396,7 @@ def object_permissions(request, obj, template_name="lfc/manage/object_permission
         # Find out whether the permission is inherited or not
         try:
             ObjectPermissionInheritanceBlock.objects.get(
-                content_type=ctype, content_id=obj.id, permission__codename = permission["codename"])
+                content_type=ctype, content_id=obj.id, permission__codename=permission["codename"])
         except ObjectDoesNotExist:
             is_inherited = True
         else:
@@ -3180,7 +3185,7 @@ def save_translation(request):
     # 2. If not, take the parent of the canonical if it's in neutral language
     # 3. If not, don't take a parent at all
     parent = canonical.parent
-    if parent == None:
+    if parent is None:
         parent_translation = None
     else:
         try:
@@ -3573,6 +3578,7 @@ def delete_workflow(request, id):
     return MessageHttpResponseRedirect(
         reverse("lfc_manage_workflow"), _(u"Workflow has been deleted."))
 
+
 def update_all_permissions(request):
     """Updates the permissions of all objects to their current workflow state
     """
@@ -3698,7 +3704,7 @@ def save_workflow_state(request, id):
     role_permssion_ids = request.POST.getlist("role_permission_id")
     inherited_ids = request.POST.getlist("inherited_id")
 
-    workflow_permissions = [wpr.permission for wpr in WorkflowPermissionRelation.objects.filter(workflow = state.workflow)]
+    workflow_permissions = [wpr.permission for wpr in WorkflowPermissionRelation.objects.filter(workflow=state.workflow)]
     StateInheritanceBlock.objects.filter(state=state).delete()
     StatePermissionRelation.objects.filter(state=state).delete()
 
@@ -4722,7 +4728,7 @@ def manage_group(request, id=None, template_name="lfc/manage/group.html"):
         "group": group,
         "groups": Group.objects.all(),
         "current_group_id": group.id,
-        "users" : group.user_set.all(),
+        "users": group.user_set.all(),
     }))
 
 
@@ -4839,7 +4845,7 @@ def manage_role(request, id=None, template_name="lfc/manage/role.html"):
         "form": form,
         "role": role,
         "roles": Role.objects.exclude(name__in=("Anonymous", "Owner")),
-        "users" : role.get_users(),
+        "users": role.get_users(),
         "current_role_id": int(id),
     }))
 
@@ -5016,6 +5022,7 @@ def manage_utils(request, template_name="lfc/manage/utils.html"):
     """
     return render_to_response(template_name, RequestContext(request, {}))
 
+
 def reindex_objects(request):
     """Reindexes the searchable text of all content objects.
     """
@@ -5023,6 +5030,7 @@ def reindex_objects(request):
         obj.reindex()
 
     return MessageHttpResponseRedirect(reverse("lfc_manage_utils"), _(u"Objects have been reindexed."))
+
 
 # Private Methods ############################################################
 ##############################################################################
@@ -5256,7 +5264,7 @@ def _update_positions(obj, take_parent=False):
     """Updates position of given object's children. If take_parent is True
     the children of the given object's parent are updated.
     """
-    if take_parent == True:
+    if take_parent:
         parent = obj.parent
     else:
         parent = obj
