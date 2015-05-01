@@ -1,0 +1,32 @@
+{
+  "name": "LFC",
+  "version": "0.0.1",
+  "description": "Lighting Fast CMS",
+  "main": "style.css",
+  "authors": [
+    "Kai Diefenbach"
+  ],
+  "license": "",
+  "homepage": "http://getlfs.com",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "superfish": "~1.7.5",
+    "jquery": "~1.11.1",
+    "jquery-ui": "1.11.0",
+    "jquery-form": "~3.46.0",
+    "jgrowl": "1.3.0",
+    "jquery-cookie": "~1.4.1",
+    "jquery-file-upload": "~9.9.3",
+    "jquery-timepicker": "*",
+    "normalize.css": "~3.0.3"
+  },
+  "resolutions": {
+    "jquery": "~1.11.1"
+  }
+}
