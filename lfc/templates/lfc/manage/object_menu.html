@@ -117,24 +117,23 @@
         {% endifhasperm %}
     {% endif %}
     {% if LFC_MANAGE_WORKFLOWS %}
-
-    {% endif %}
-    {% if state %}
-        <li>
-            <a>{% trans state.name %}</a>
-            {% if transitions %}
-                <ul>
-                    {% for transition in transitions %}
-                        <li>
-                            <a class="ajax-link"
-                                href="{% url 'lfc_manage_do_transition' obj.id %}?transition={{ transition.id }}">
-                                {% trans transition.name %}
-                            </a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </li>
+        {% if state %}
+            <li>
+                <a>{% trans state.name %}</a>
+                {% if transitions %}
+                    <ul>
+                        {% for transition in transitions %}
+                            <li>
+                                <a class="ajax-link"
+                                    href="{% url 'lfc_manage_do_transition' obj.id %}?transition={{ transition.id }}">
+                                    {% trans transition.name %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+        {% endif %}
     {% endif %}
     {% if obj.has_working_copy %}
         <li>

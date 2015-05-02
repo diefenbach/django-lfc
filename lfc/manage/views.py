@@ -367,17 +367,32 @@ def portal_tabs(request, portal, template_name="lfc/manage/portal_tabs.html"):
 
         None (as this is not called from outside)
     """
-    if settings.LFC_MANAGE_PERMISSIONS:
+    if getattr(settings, "LFC_MANAGE_PERMISSIONS", True):
         my_permissions = portal_permissions(request, portal)
     else:
         my_permissions = ""
 
+    if getattr(settings, "LFC_MANAGE_PORTLETS", True):
+        my_portlets = portlets_inline(request, portal)
+    else:
+        my_portlets = ""
+
+    if getattr(settings, "LFC_MANAGE_IMAGES", True):
+        my_images = portal_images(request, portal)
+    else:
+        my_images = ""
+
+    if getattr(settings, "LFC_MANAGE_FILES", True):
+        my_files = portal_files(request, portal)
+    else:
+        my_files = ""
+
     return render_to_string(template_name, RequestContext(request, {
         "core_data": portal_core(request, portal),
         "children": portal_children(request, portal),
-        "portlets": portlets_inline(request, portal),
-        "images": portal_images(request, portal),
-        "files": portal_files(request, portal),
+        "portlets": my_portlets,
+        "images": my_images,
+        "files": my_files,
         "permissions": my_permissions,
     }))
 
@@ -5536,7 +5551,6 @@ def _copy_translations(source_obj, target_obj):
             The object to which the translations will be copied.
     """
     for translation in source_obj.translations.all().get_content_objects():
-
         new_translation = copy.deepcopy(translation)
         new_translation.pk = None
         new_translation.id = None
