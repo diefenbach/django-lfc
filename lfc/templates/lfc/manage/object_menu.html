@@ -54,14 +54,14 @@
                 {% if not obj.is_working_copy and not obj.has_working_copy %}
                     {% ifhasperm checkout %}
                         <li>
-                            <a href="{% url 'lfc_checkout' obj.id %}">{% trans 'Checkout' %}</a>
+                            <a href="{% url 'lfc_checkout' obj.id %}">{% trans 'Check out' %}</a>
                         </li>
                     {% endifhasperm %}
                 {% endif %}
                 {% if obj.is_working_copy %}
                     {% ifhasperm checkin %}
                         <li>
-                            <a href="{% url 'lfc_checkin' obj.id %}">{% trans 'Checkin' %}</a>
+                            <a href="{% url 'lfc_checkin' obj.id %}">{% trans 'Check in' %}</a>
                         </li>
                     {% endifhasperm %}
                 {% endif %}
