@@ -13,9 +13,9 @@
         <form action="{% url 'lfc_manage_save_local_roles' obj.id %}"
               method="POST">
 
-            <h3 class="discreet">{% trans "Users" %}</h3>
-
             {% if users %}
+                <h3 class="discreet">{% trans "Users" %}</h3>
+
                 <table class="lfs-manage-table full">
                     <tr>
                         <th width="60px"><input type="checkbox" class="select-all" value="1" /></th>
