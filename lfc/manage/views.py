@@ -2579,14 +2579,16 @@ def set_language(request, language):
 
     **Permission:**
 
-        login_required (This need to be checked).
+        edit
     """
+    get_portal().check_permission(request.user, "view_management")
+
     translation.activate(language)
     response = HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
     if translation.check_for_language(language):
         if hasattr(request, 'session'):
-            request.session['django_language'] = language
+            request.session[translation.LANGUAGE_SESSION_KEY] = language
         else:
             response.set_cookie(settings.LANGUAGE_COOKIE_NAME, language)
 
