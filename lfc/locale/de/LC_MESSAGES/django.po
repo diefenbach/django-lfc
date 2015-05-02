@@ -1646,6 +1646,12 @@ msgstr "Rechts"
 msgid "View management"
 msgstr "Management ansehen"
 
+msgid "Check in"
+msgstr "Einchecken"
+
+msgid "Check out"
+msgstr "Auschecken"
+
 msgid "Random"
 msgstr "Zufall"
 
