@@ -18,7 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 
 # tagging imports
 from tagging import fields
-from tagging.models import Tag 
+from tagging.models import Tag
 from tagging.models import TaggedItem
 
 # portlets imports
@@ -168,7 +168,7 @@ class ContentTypeRegistration(models.Model):
 
     global_addable = models.BooleanField(_(u"Global addable"), default=True)
 
-    subtypes = models.ManyToManyField("self", verbose_name=_(u"Allowed sub types"), symmetrical=False, blank=True, null=True)
+    subtypes = models.ManyToManyField("self", verbose_name=_(u"Allowed sub types"), symmetrical=False, blank=True)
     templates = models.ManyToManyField("Template", verbose_name=_(u"Templates"), related_name="content_type_registrations")
     default_template = models.ForeignKey("Template", verbose_name=_(u"Default template"), blank=True, null=True)
     workflow = models.ForeignKey(Workflow, verbose_name=_(u"Workflow"), blank=True, null=True)
@@ -484,7 +484,7 @@ class BaseContent(AbstractBaseContent):
 
     creator = models.ForeignKey(User, verbose_name=_(u"Creator"), null=True)
     creation_date = models.DateTimeField(_(u"Creation date"), auto_now_add=True)
-    modification_date = models.DateTimeField(_(u"Modification date"), auto_now=True, auto_now_add=True)
+    modification_date = models.DateTimeField(_(u"Modification date"), auto_now=True)
     publication_date = models.DateTimeField(_(u"Publication date"), null=True, blank=True)
     start_date = models.DateTimeField(_(u"Start date"), null=True, blank=True)
     end_date = models.DateTimeField(_(u"End date"), null=True, blank=True)
@@ -565,7 +565,7 @@ class BaseContent(AbstractBaseContent):
     def delete(self, *args, **kwargs):
         """Djangos default delete method. This is overwritten to take care
         of generic relations that won't get deleted by django automatically.
-        Note: if you delete objects via djangos bulk delete 
+        Note: if you delete objects via djangos bulk delete
         (e.g. BaseContent.filter(foo=bar).delete()) this method will not get
         called. You have to delete this objects yourself.
         """
@@ -573,7 +573,7 @@ class BaseContent(AbstractBaseContent):
 
         # Delete tag-item-relations for object
         TaggedItem.objects.filter(object_id=self.id, content_type=ctype).delete()
-        
+
         # Delete tags without any relations to items left
         Tag.objects.annotate(item_count=models.Count('items')).filter(item_count=0).delete()
 
@@ -611,7 +611,7 @@ class BaseContent(AbstractBaseContent):
             pa.portlet.delete()
             pa.delete()
         PortletBlocking.objects.filter(content_id=self.id, content_type=ctype).delete()
-        
+
         # call Djangos delete method
         super(BaseContent, self).delete(*args, **kwargs)
 

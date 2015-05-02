@@ -16,7 +16,6 @@ from django.contrib.auth.forms import AdminPasswordChangeForm
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.comments.models import Comment
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404
@@ -28,6 +27,9 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
+
+# django_comments imports
+from django_comments.models import Comment
 
 # portlets imports
 from portlets.utils import get_slots

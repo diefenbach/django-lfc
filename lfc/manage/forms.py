@@ -4,9 +4,11 @@ from django.conf import settings
 from django.contrib.admin import widgets
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from django.contrib.comments.models import Comment
 from django.forms.util import ErrorList
 from django.utils.translation import ugettext_lazy as _
+
+# django_comments imports
+from django_comments.models import Comment
 
 # permissions imports
 from permissions.models import Permission
@@ -128,6 +130,7 @@ class RoleForm(forms.ModelForm):
 
     class Meta:
         model = Role
+        exclude = ()
 
     def __init__(self, *args, **kwargs):
         super(RoleForm, self).__init__(*args, **kwargs)
@@ -382,3 +385,4 @@ class PortalCoreForm(forms.ModelForm):
 
     class Meta:
         model = Portal
+        exclude = ()

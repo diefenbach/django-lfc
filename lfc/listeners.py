@@ -1,8 +1,8 @@
 # django imports
 from django.conf import settings
 from django.contrib.sites.models import Site
-from django.contrib.comments.signals import comment_was_posted
 from django.core.mail import EmailMessage
+from django_comments.signals import comment_was_posted
 
 # lfc imports
 import lfc.signals

@@ -14,7 +14,7 @@ urlpatterns = patterns("lfc.views",
 
 # Comments
 urlpatterns += patterns("",
-    (r'^comments/', include('django.contrib.comments.urls')),
+    (r'^comments/', include('django_comments.urls')),
 )
 
 # Login / Logout
