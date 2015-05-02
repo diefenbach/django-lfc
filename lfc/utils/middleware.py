@@ -8,7 +8,7 @@ from permissions.exceptions import Unauthorized
 import lfc.utils
 
 # Load logger
-logger = logging.getLogger("default")
+logger = logging.getLogger(__name__)
 
 
 class LFCMiddleware:

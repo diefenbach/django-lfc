@@ -95,7 +95,7 @@ from lfc.utils.registration import get_info
 
 # Load logger
 import logging
-logger = logging.getLogger("default")
+logger = logging.getLogger(__name__)
 
 
 # Global #####################################################################
