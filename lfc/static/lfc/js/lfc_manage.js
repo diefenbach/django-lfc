@@ -127,7 +127,7 @@ function bind_datetime_picker(language) {
     });
 
     if (language != "en") {
-        $.getScript("/static/lfc/jquery-ui-1.11.0/i18n/datepicker-" + language + ".js", function(){
+        $.getScript("/static/lfc/bower_components/jquery-ui/i18n/datepicker-" + language + ".js", function(){
             $(".vDateField").datepicker($.datepicker.regional[language]);
         });
     };
