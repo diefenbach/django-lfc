@@ -54,8 +54,8 @@ class HttpJsonResponse(HttpResponse):
     """HttpResponse subclass that renders a json dict.
     The content given is nested inside the 'html' key of the dict,
     any kwargs given are also appended as key-value-pairs to the result.
-    
-    TODO: Subclass Djangos JsonResponse when updating to Django 1.7 
+
+    TODO: Subclass Djangos JsonResponse when updating to Django 1.7
     """
     def __init__(self, content, status=None, content_type=None, **kwargs):
 
@@ -68,7 +68,6 @@ class HttpJsonResponse(HttpResponse):
             content_type=content_type)
 
 
-# TODO: Checkout Django's new message feature
 class MessageHttpResponseRedirect(HttpResponseRedirect):
     """Specific HttpResponseRedirect to set a cookie with a message.
     """
@@ -342,7 +341,7 @@ def import_module(module):
     return module
 
 
-def getLOL(objects, objects_per_row=3):
+def get_lol(objects, objects_per_row=3):
     """Returns a list of list of given objects.
     """
     result = []

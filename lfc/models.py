@@ -915,7 +915,7 @@ class BaseContent(AbstractBaseContent):
             if obj_template.children_columns == 0:
                 sub_objects = self.get_children(request)
             else:
-                sub_objects = lfc.utils.getLOL(self.get_children(request), obj_template.children_columns)
+                sub_objects = lfc.utils.get_lol(self.get_children(request), obj_template.children_columns)
 
             cache.set(children_cache_key, sub_objects)
 
@@ -935,8 +935,8 @@ class BaseContent(AbstractBaseContent):
                     image = images[0]
                     subimages = temp_images[1:]
                 else:
-                    images = lfc.utils.getLOL(temp_images, obj_template.images_columns)
-                    subimages = lfc.utils.getLOL(temp_images[1:], obj_template.images_columns)
+                    images = lfc.utils.get_lol(temp_images, obj_template.images_columns)
+                    subimages = lfc.utils.get_lol(temp_images[1:], obj_template.images_columns)
                     image = images[0][0]
             else:
                 image = None
