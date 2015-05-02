@@ -212,7 +212,11 @@ class UserForm(forms.ModelForm):
         self.fields["roles"].choices = [(r.id, _(r.name)) for r in roles]
 
         self.initial.update({
-            "roles": [prr.role.id for prr in PrincipalRoleRelation.objects.filter(user=self.instance)]})
+            "roles": [prr.role.id for prr in PrincipalRoleRelation.objects.filter(
+                user=self.instance,
+                content_id=None,
+            )]
+        })
 
     def save(self, commit=True):
         role_ids = self.data.getlist("roles")
