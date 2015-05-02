@@ -693,7 +693,7 @@ msgstr "Benutzer"
 #: templates/lfc/manage/base.html:89
 #: templates/lfc/manage/workflow_state.html:21
 msgid "Review"
-msgstr "Rezension"
+msgstr "Rezensieren"
 
 #: templates/lfc/manage/base.html:94
 msgid "Workflows"
