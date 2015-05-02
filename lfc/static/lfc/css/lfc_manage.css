@@ -805,3 +805,10 @@ ul.timelist, .timelist li {
 .sf-menu .attention {
     color: red;
 }
+
+.jGrowl .ui-state-highlight {
+    background-image: none;
+    background-color: #000;
+    color: white;
+    opacity: 1;
+}
