@@ -22,7 +22,7 @@ class BaseContentQuerySet(QuerySet):
 class BaseContentManager(models.Manager):
     """Custom manager for BaseContent.
     """
-    def get_query_set(self):
+    def get_queryset(self):
         """Overwritten to return BaseContentQuerySet.
         """
         return BaseContentQuerySet(self.model)
