@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-07-15 06:36+0000\n"
+"POT-Creation-Date: 2015-05-03 05:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,15 +16,332 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: models.py:105
+#: manage/forms.py:129 templates/lfc/manage/base.html:81
+#: templates/lfc/manage/local_roles.html:52
+#: templates/lfc/manage/local_roles_search_result.html:44
+msgid "Groups"
+msgstr "Gruppen"
+
+#: manage/forms.py:165 manage/forms.py:206 manage/forms.py:249
+#: templates/lfc/manage/base.html:78
+msgid "Roles"
+msgstr "Rollen"
+
+#: manage/forms.py:250
+msgid "Password"
+msgstr "Passwort"
+
+#: manage/forms.py:251
+msgid "Password (again)"
+msgstr "Passwort (noch einmal)"
+
+#: manage/views.py:187
+msgid "Object has been added."
+msgstr "Objekt wurde hinzugefügt."
+
+#: manage/views.py:199 manage/views.py:456 manage/views.py:1106
+#: manage/views.py:1208 manage/views.py:2246 manage/views.py:2360
+msgid "An error has been occured."
+msgstr "Es ist ein Fehler aufgetreten."
+
+#: manage/views.py:241
+msgid "The object couldn't been deleted."
+msgstr "Das Objekt konnte nicht gelöscht werden."
+
+#: manage/views.py:248
+msgid "The object has been deleted."
+msgstr "Objekte wurden gelöscht."
+
+#: manage/views.py:370 manage/views.py:2068
+msgid "Permissions have been saved."
+msgstr "Rechte wurde gespeichert"
+
+#: manage/views.py:453
+msgid "Portal data has been saved."
+msgstr "Portaldaten wurden gespeichert."
+
+#: manage/views.py:608 manage/views.py:1859
+msgid "Images have been added."
+msgstr "Bilder wurden hinzugefügt."
+
+#: manage/views.py:767
+msgid "Image has been saved."
+msgstr "Das Bild wurde gespeichert."
+
+#: manage/views.py:817 manage/views.py:1962
+msgid "Files have been added."
+msgstr "Dateien wurden hinzugefügt."
+
+#: manage/views.py:932
+msgid "File has been saved."
+msgstr "Die Datei wurden gespeichert."
+
+#: manage/views.py:1115
+msgid "Data has been saved."
+msgstr "Daten wurden gespeichert."
+
+#: manage/views.py:1117
+msgid "An object with this slug already exists."
+msgstr "Ein Objekt mit dieser URL existiert bereits"
+
+#: manage/views.py:1204
+msgid "Meta data has been saved."
+msgstr "Metadaten wurden gespeichert."
+
+#: manage/views.py:1331
+msgid "SEO has been saved."
+msgstr "SEO Daten wurden gespeichert."
+
+#: manage/views.py:1646
+msgid "Local roles has been added"
+msgstr "Lokale Rollen wurde hinzugefügt."
+
+#: manage/views.py:1700
+msgid "Local roles has been deleted"
+msgstr "Lokale Rollen wurden gelöscht"
+
+#: manage/views.py:1720
+msgid "Local roles has been saved"
+msgstr "Lokale Rollen wurden gespeichert"
+
+#: manage/views.py:2162
+msgid "Portlets have been updated."
+msgstr "Portlets wurden aktualisiert."
+
+#: manage/views.py:2229
+msgid "Portlet has been added."
+msgstr "Das Portlet wurde hinzugefügt."
+
+#: manage/views.py:2283
+msgid "Portlet has been deleted."
+msgstr "Portlet wurde gelöscht"
+
+#: manage/views.py:2345
+msgid "Portlet has been saved."
+msgstr "Portlet wurde gespeichert"
+
+#: manage/views.py:2588
+msgid "Tree language has been changed."
+msgstr "Die Sprache der Navigation wurde."
+
+#: manage/views.py:2663
+msgid "Allow comments state has been saved."
+msgstr "Kommentarstatus wurden gespeichert."
+
+#: manage/views.py:2665
+msgid "Comments has been deleted."
+msgstr "Kommentare wurden gelöscht."
+
+#: manage/views.py:2675
+msgid "Comments has been updated."
+msgstr "Kommentare wurden aktualisiert."
+
+#: manage/views.py:2738
+msgid "Comment has been saved."
+msgstr "Kommentar wurde gespeichert."
+
+#: manage/views.py:3209
+msgid "Translation has been canceled."
+msgstr "Übersetzung wurden abgebrochen."
+
+#: manage/views.py:3217
+msgid "Translation has been updated."
+msgstr "Übersetzung wurde aktualisiert."
+
+#: manage/views.py:3221
+msgid "Translation has been added."
+msgstr "Übersetzung wurde hinzugefügt."
+
+#: manage/views.py:3381
+msgid "The state has been changed."
+msgstr "Status wurde geändert."
+
+#: manage/views.py:3563
+msgid "Workflow data has been saved."
+msgstr "Arbeitsablauf wurden gespeichert."
+
+#: manage/views.py:3583
+msgid "Workflow has been added."
+msgstr "Arbeitsablauf wurden hinzugefügt."
+
+#: manage/views.py:3619
+msgid "Workflow has been deleted."
+msgstr "Workflow wurde gelöscht"
+
+#: manage/views.py:3628
+msgid "Permissions have been updated."
+msgstr "Rechte wurde aktualisiert"
+
+#: manage/views.py:3769
+msgid "State has been saved."
+msgstr "Status wurde gespeichert."
+
+#: manage/views.py:3798
+msgid "State has been added."
+msgstr "Status wurde hinzugefügt."
+
+#: manage/views.py:3831
+msgid "State has been deleted."
+msgstr "Status wurde gelöscht."
+
+#: manage/views.py:3891
+msgid "Transition has been saved."
+msgstr "Übersetzung wurde gespeichert."
+
+#: manage/views.py:3921
+msgid "Transition has been added."
+msgstr "Übergang wurde hinzugefügt."
+
+#: manage/views.py:3950
+msgid "Transition has been deleted."
+msgstr "Übergang wurde gelöscht."
+
+#: manage/views.py:3979 manage/views.py:4007
+msgid "The object has been put to the clipboard."
+msgstr "Das Objekt wurden in Zwischenablage eingefügt."
+
+#: manage/views.py:4088
+msgid "Content type has been saved."
+msgstr "Inhaltstyp wurde gespeichert"
+
+#: manage/views.py:4292
+msgid "Users have been deleted."
+msgstr "Benutzer wurden gelöscht."
+
+#: manage/views.py:4294
+msgid "Users have been updated."
+msgstr "Benutzer wurden aktualisiert."
+
+#: manage/views.py:4358
+msgid "Filter has been set."
+msgstr "Filter wurden gesetzt."
+
+#: manage/views.py:4380 manage/views.py:4735
+msgid "Filter has been reset."
+msgstr "Filter wurden resettet."
+
+#: manage/views.py:4542
+msgid "User has been saved"
+msgstr "Benutzer wurde gespeichert."
+
+#: manage/views.py:4544 manage/views.py:4581
+msgid "An error occured."
+msgstr "Es ist ein Fehler aufgetreten."
+
+#: manage/views.py:4579
+msgid "Password has been changed."
+msgstr "Passwort wurde geändert."
+
+#: manage/views.py:4633
+msgid "User has been added."
+msgstr "Benutzer wurde hinzugefügt."
+
+#: manage/views.py:4667
+msgid "User couldn't deleted."
+msgstr "Der Benutzer konnte nicht gelöscht werden."
+
+#: manage/views.py:4670
+msgid "User has been deleted."
+msgstr "Benutzer wurde gelöscht."
+
+#: manage/views.py:4977
+msgid "Object is not a working copy."
+msgstr ""
+
+#: manage/views.py:5025
+msgid "Object has already a working copy."
+msgstr ""
+
+#: manage/views.py:5072
+msgid "Objects have been reindexed."
+msgstr "Objekte wurden neu indexiert."
+
+#: manage/views.py:5141
+msgid ""
+"Objects have been deleted. (Note: Some objects are not deleted because you "
+"haven't the permission to do that)."
+msgstr ""
+"Objekte wurden gelöscht (Bitte beachten: einige Objekte konnten mangels "
+"Zugriffsrechte nicht gelöscht werden)."
+
+#: manage/views.py:5143
+msgid "Objects have been deleted."
+msgstr "Objekte wurden gelöscht."
+
+#: manage/views.py:5163 manage/views.py:5181
+msgid ""
+"Objects have been put to the clipboard. (Note: Some objects are not put into "
+"clipboard because you haven't the permission to do that)."
+msgstr ""
+"Objekte wurden in die Zwischenablage kopiert (Bitte beachten: Einige Object "
+"konnten mangels Zugriffsrechte nicht in die Zwischenablage kopiert werden)."
+
+#: manage/views.py:5165 manage/views.py:5183
+msgid "Objects have been put to the clipboard."
+msgstr "Objekte wurden in Zwischenablage eingefügt."
+
+#: manage/views.py:5187
+msgid "You are not allowed to paste to this object."
+msgstr "Objekt einfügen ist nicht erlaubt."
+
+#: manage/views.py:5191
+msgid "Objects has been updated."
+msgstr "Objekte wurden aktualisiert."
+
+#: manage/views.py:5221
+msgid "Images has been deleted."
+msgstr "Bilder wurden gelöscht."
+
+#: manage/views.py:5226
+msgid "The image doesn't exist anymore."
+msgstr "Das Bild existiert nicht mehr."
+
+#: manage/views.py:5237
+msgid "Images has been updated."
+msgstr "Bilder wurden aktualisiert."
+
+#: manage/views.py:5256
+msgid "Files has been deleted."
+msgstr "Dateien wurden gelöscht."
+
+#: manage/views.py:5261
+msgid "The file doesn't exist anymore."
+msgstr "Die Datei existiert nicht mehr."
+
+#: manage/views.py:5272
+msgid "Files has been updated."
+msgstr "Dateien wurden aktualisiert."
+
+#: manage/views.py:5364
+msgid "An error has been occured. Please try again."
+msgstr "Ein Fehler ist aufgetreten, bitte nocheinmal versuchen."
+
+#: manage/views.py:5382
+msgid "Some cut/copied objects has been deleted in the meanwhile."
+msgstr ""
+"Einige ausgeschnitte/kopierte Objekte wurden zwischenzeitlich gelöscht."
+
+#: manage/views.py:5394
+msgid "Some objects are not allowed here."
+msgstr "Einige Objekte sind hier nicht erlaubt."
+
+#: manage/views.py:5402
+msgid "The objects can't be pasted in own descendants."
+msgstr "Objekte können nicht in eigene Unterobjekte eingefügt werden."
+
+#: manage/views.py:5448
+msgid "The object has been pasted."
+msgstr "Objekte wurden eingefügt."
+
+#: models.py:115
 msgid "Subpages columns"
 msgstr "Spalten Unterseiten"
 
-#: models.py:106
+#: models.py:116
 msgid "Images columns"
 msgstr "Spalten Bilder"
 
-#: models.py:154 templates/lfc/manage/filebrowser_files.html:35
+#: models.py:164 templates/lfc/manage/filebrowser_files.html:35
 #: templates/lfc/manage/object_children.html:33
 #: templates/lfc/manage/object_children.html:131
 #: templates/lfc/manage/portal_children.html:30
@@ -36,42 +353,42 @@ msgstr "Spalten Bilder"
 msgid "Type"
 msgstr "Typ"
 
-#: models.py:155 templates/lfc/manage/group.html:55
+#: models.py:165 templates/lfc/manage/group.html:55
 #: templates/lfc/manage/object_comments.html:38
 #: templates/lfc/manage/object_comments.html:123
 #: templates/lfc/manage/role.html:55 templates/lfc/manage/users_inline.html:22
 msgid "Name"
 msgstr "Name"
 
-#: models.py:156
+#: models.py:166
 msgid "Display select standard"
 msgstr "Standard auswählen anzeigen"
 
-#: models.py:157
+#: models.py:167
 msgid "Display position"
 msgstr "Position anzeigen"
 
-#: models.py:159
+#: models.py:169
 msgid "Global addable"
 msgstr "Global hinzufügbar"
 
-#: models.py:161
+#: models.py:171
 msgid "Allowed sub types"
 msgstr "Erlaubte Inhaltstypen"
 
-#: models.py:162
+#: models.py:172
 msgid "Templates"
 msgstr "Schablonen"
 
-#: models.py:163
+#: models.py:173
 msgid "Default template"
 msgstr "Standardschablone"
 
-#: models.py:164 templates/lfc/manage/object_permissions.html:7
+#: models.py:174 templates/lfc/manage/object_permissions.html:7
 msgid "Workflow"
 msgstr "Arbeitsablauf"
 
-#: models.py:215 models.py:453 models.py:1035
+#: models.py:225 models.py:463 models.py:1130
 #: templates/lfc/manage/filebrowser_files.html:175
 #: templates/lfc/manage/object_children.html:27
 #: templates/lfc/manage/object_children.html:125
@@ -92,54 +409,54 @@ msgstr "Arbeitsablauf"
 msgid "Title"
 msgstr "Titel"
 
-#: models.py:216 models.py:469
+#: models.py:226 models.py:479
 msgid "Standard"
 msgstr "Standard"
 
-#: models.py:218
+#: models.py:228
 msgid "From e-mail address"
 msgstr "E-Mail Absender"
 
-#: models.py:219
+#: models.py:229
 msgid "Notification email addresses"
 msgstr "Empfänger Benachrichtigungen"
 
-#: models.py:220 templates/lfc/manage/object_comments.html:109
+#: models.py:230 templates/lfc/manage/object_comments.html:109
 msgid "Allow comments"
 msgstr "Kommentare erlauben"
 
-#: models.py:222 models.py:486 templates/lfc/manage/filebrowser_files.html:149
+#: models.py:232 models.py:496 templates/lfc/manage/filebrowser_files.html:149
 #: templates/lfc/manage/filebrowser_images.html:62
 #: templates/lfc/manage/object_images.html:5
 #: templates/lfc/manage/object_tabs.html:20
 #: templates/lfc/manage/portal_images.html:5
-#: templates/lfc/manage/portal_tabs.html:8
+#: templates/lfc/manage/portal_tabs.html:10
 msgid "Images"
 msgstr "Bilder"
 
-#: models.py:225 models.py:489 templates/lfc/manage/filebrowser_files.html:5
+#: models.py:235 models.py:499 templates/lfc/manage/filebrowser_files.html:5
 #: templates/lfc/manage/filebrowser_files.html:132
 #: templates/lfc/manage/object_files.html:5
 #: templates/lfc/manage/object_tabs.html:23
 #: templates/lfc/manage/portal_files.html:5
-#: templates/lfc/manage/portal_tabs.html:9
+#: templates/lfc/manage/portal_tabs.html:13
 msgid "Files"
 msgstr "Dateien"
 
-#: models.py:451 models.py:1038 models.py:1086
+#: models.py:461 models.py:1133 models.py:1181
 #: templates/lfc/manage/review_objects.html:14
 msgid "Content type"
 msgstr "Inhaltstyp"
 
-#: models.py:454
+#: models.py:464
 msgid "Display title"
 msgstr "Titel anzeigen"
 
-#: models.py:456 models.py:1036
+#: models.py:466 models.py:1131
 msgid "Slug"
 msgstr "URL"
 
-#: models.py:458 models.py:1044 templates/lfc/manage/applications.html:19
+#: models.py:468 models.py:1139 templates/lfc/manage/applications.html:19
 #: templates/lfc/manage/object_files.html:24
 #: templates/lfc/manage/object_images.html:30
 #: templates/lfc/manage/portal_files.html:24
@@ -147,7 +464,7 @@ msgstr "URL"
 msgid "Description"
 msgstr "Beschreibung"
 
-#: models.py:460 models.py:1042 templates/lfc/manage/object_children.html:23
+#: models.py:470 models.py:1137 templates/lfc/manage/object_children.html:23
 #: templates/lfc/manage/object_files.html:27
 #: templates/lfc/manage/object_images.html:33
 #: templates/lfc/manage/portal_children.html:21
@@ -156,111 +473,115 @@ msgstr "Beschreibung"
 msgid "Position"
 msgstr "Position"
 
-#: models.py:462
+#: models.py:472
 msgid "Language"
 msgstr "Sprache"
 
-#: models.py:463
+#: models.py:473
 msgid "Canonical"
 msgstr "Basis"
 
-#: models.py:465
+#: models.py:475
 msgid "Tags"
 msgstr "Tags"
 
-#: models.py:467
+#: models.py:477
 msgid "Parent"
 msgstr "Vorgänger"
 
-#: models.py:468
+#: models.py:478
 msgid "Template"
 msgstr "Schablone"
 
-#: models.py:470
+#: models.py:480
 msgid "Order by"
 msgstr "Reihenfolge"
 
-#: models.py:472
+#: models.py:482
 msgid "Exclude from navigation"
 msgstr "Von Navigation ausschliessen"
 
-#: models.py:473
+#: models.py:483
 msgid "Exclude from search results"
 msgstr "Von Suchresultaten ausschliessen"
 
-#: models.py:475 templates/lfc/manage/review_objects.html:20
+#: models.py:485 templates/lfc/manage/review_objects.html:20
 msgid "Creator"
 msgstr "Ersteller"
 
-#: models.py:476 models.py:1045 models.py:1092 models.py:1112
+#: models.py:486 models.py:1140 models.py:1187 models.py:1207
 #: templates/lfc/manage/object_meta_data.html:16
 #: templates/lfc/manage/object_meta_data.html:44
 #: templates/lfc/manage/portal_files.html:111
 msgid "Creation date"
 msgstr "Erstellungsdatum"
 
-#: models.py:477 templates/lfc/manage/object_meta_data.html:25
+#: models.py:487 templates/lfc/manage/object_meta_data.html:25
 #: templates/lfc/manage/object_meta_data.html:53
 msgid "Modification date"
 msgstr "Änderungsdatum"
 
-#: models.py:478
+#: models.py:488
 msgid "Publication date"
 msgstr "Veröffentlicht am"
 
-#: models.py:479
+#: models.py:489
 msgid "Start date"
 msgstr "Startdatum"
 
-#: models.py:480
+#: models.py:490
 msgid "End date"
 msgstr "Enddatum"
 
-#: models.py:482
+#: models.py:492
 msgid "Meta title"
 msgstr "Metatitel"
 
-#: models.py:483
+#: models.py:493
 msgid "Meta keywords"
 msgstr "Meta Keywords"
 
-#: models.py:484 templates/lfc/manage/object_seo.html:38
+#: models.py:494 templates/lfc/manage/object_seo.html:38
 msgid "Meta description"
 msgstr "Meta Description"
 
-#: models.py:492
+#: models.py:502
 msgid "Commentable"
 msgstr "Kommentare erlauben"
 
-#: models.py:1039 models.py:1087
+#: models.py:507
+msgid "Working copy base"
+msgstr ""
+
+#: models.py:1134 models.py:1182
 msgid "Content id"
 msgstr "ID"
 
-#: models.py:1043 templates/lfc/manage/object_images.html:27
+#: models.py:1138 templates/lfc/manage/object_images.html:27
 #: templates/lfc/manage/portal_images.html:27
 msgid "Caption"
 msgstr "Überschrift"
 
-#: models.py:1046 templates/lfc/manage/object_images.html:21
+#: models.py:1141 templates/lfc/manage/object_images.html:21
 #: templates/lfc/manage/object_images.html:124
 #: templates/lfc/manage/portal_images.html:21
 #: templates/lfc/manage/portal_images.html:125
 msgid "Image"
 msgstr "Bild"
 
-#: models.py:1109
+#: models.py:1204
 msgid "Content object"
 msgstr "Inhaltsobjekt"
 
-#: models.py:1110 templates/lfc/manage/object_history.html:9
+#: models.py:1205 templates/lfc/manage/object_history.html:10
 msgid "Action"
 msgstr "Aktion"
 
-#: models.py:1111 templates/lfc/manage/base.html:71
+#: models.py:1206 templates/lfc/manage/base.html:72
 #: templates/lfc/manage/group.html:35 templates/lfc/manage/group.html.py:49
 #: templates/lfc/manage/local_roles.html:23
 #: templates/lfc/manage/local_roles.html:103
-#: templates/lfc/manage/object_history.html:10
+#: templates/lfc/manage/object_history.html:11
 msgid "User"
 msgstr "Benutzer"
 
@@ -306,324 +627,6 @@ msgstr "Veröffentlichungsdatum aufsteigend"
 #: settings.py:32
 msgid "Publication date descending"
 msgstr "Veröffentlichungsdatum absteigend"
-
-#: views.py:245
-msgid "tagged_object_list must be called with a tag."
-msgstr ""
-
-#: views.py:249
-#, python-format
-msgid "No Tag found matching \"%s\"."
-msgstr ""
-
-#: manage/forms.py:127 templates/lfc/manage/base.html:80
-#: templates/lfc/manage/local_roles.html:52
-#: templates/lfc/manage/local_roles_search_result.html:44
-msgid "Groups"
-msgstr "Gruppen"
-
-#: manage/forms.py:162 manage/forms.py:203 manage/forms.py:242
-#: templates/lfc/manage/base.html:77
-msgid "Roles"
-msgstr "Rollen"
-
-#: manage/forms.py:243
-msgid "Password"
-msgstr "Passwort"
-
-#: manage/forms.py:244
-msgid "Password (again)"
-msgstr "Passwort (noch einmal)"
-
-#: manage/views.py:185
-msgid "Object has been added."
-msgstr "Objekt wurde hinzugefügt."
-
-#: manage/views.py:197 manage/views.py:462 manage/views.py:1109
-#: manage/views.py:1211 manage/views.py:2235 manage/views.py:2349
-msgid "An error has been occured."
-msgstr "Es ist ein Fehler aufgetreten."
-
-#: manage/views.py:239
-msgid "The object couldn't been deleted."
-msgstr "Das Objekt konnte nicht gelöscht werden."
-
-#: manage/views.py:287
-msgid "The object has been deleted."
-msgstr "Objekte wurden gelöscht."
-
-#: manage/views.py:391 manage/views.py:2057
-msgid "Permissions have been saved."
-msgstr "Rechte wurde gespeichert"
-
-#: manage/views.py:459
-msgid "Portal data has been saved."
-msgstr "Portaldaten wurden gespeichert."
-
-#: manage/views.py:614 manage/views.py:1848
-msgid "Images have been added."
-msgstr "Bilder wurden hinzugefügt."
-
-#: manage/views.py:773
-msgid "Image has been saved."
-msgstr "Das Bild wurde gespeichert."
-
-#: manage/views.py:823 manage/views.py:1951
-msgid "Files have been added."
-msgstr "Dateien wurden hinzugefügt."
-
-#: manage/views.py:938
-msgid "File has been saved."
-msgstr "Die Datei wurden gespeichert."
-
-#: manage/views.py:1118
-msgid "Data has been saved."
-msgstr "Daten wurden gespeichert."
-
-#: manage/views.py:1120
-msgid "An object with this slug already exists."
-msgstr "Ein Objekt mit dieser URL existiert bereits"
-
-#: manage/views.py:1207
-msgid "Meta data has been saved."
-msgstr "Metadaten wurden gespeichert."
-
-#: manage/views.py:1332
-msgid "SEO has been saved."
-msgstr "SEO Daten wurden gespeichert."
-
-#: manage/views.py:1635
-msgid "Local roles has been added"
-msgstr "Lokale Rollen wurde hinzugefügt."
-
-#: manage/views.py:1689
-msgid "Local roles has been deleted"
-msgstr "Lokale Rollen wurden gelöscht"
-
-#: manage/views.py:1709
-msgid "Local roles has been saved"
-msgstr "Lokale Rollen wurden gespeichert"
-
-#: manage/views.py:2151
-msgid "Portlets have been updated."
-msgstr "Portlets wurden aktualisiert."
-
-#: manage/views.py:2218
-msgid "Portlet has been added."
-msgstr "Das Portlet wurde hinzugefügt."
-
-#: manage/views.py:2272
-msgid "Portlet has been deleted."
-msgstr "Portlet wurde gelöscht"
-
-#: manage/views.py:2334
-msgid "Portlet has been saved."
-msgstr "Portlet wurde gespeichert"
-
-#: manage/views.py:2577
-msgid "Tree language has been changed."
-msgstr "Die Sprache der Navigation wurde."
-
-#: manage/views.py:2650
-msgid "Allow comments state has been saved."
-msgstr "Kommentarstatus wurden gespeichert."
-
-#: manage/views.py:2652
-msgid "Comments has been deleted."
-msgstr "Kommentare wurden gelöscht."
-
-#: manage/views.py:2662
-msgid "Comments has been updated."
-msgstr "Kommentare wurden aktualisiert."
-
-#: manage/views.py:2725
-msgid "Comment has been saved."
-msgstr "Kommentar wurde gespeichert."
-
-#: manage/views.py:3196
-msgid "Translation has been canceled."
-msgstr "Übersetzung wurden abgebrochen."
-
-#: manage/views.py:3204
-msgid "Translation has been updated."
-msgstr "Übersetzung wurde aktualisiert."
-
-#: manage/views.py:3208
-msgid "Translation has been added."
-msgstr "Übersetzung wurde hinzugefügt."
-
-#: manage/views.py:3368
-msgid "The state has been changed."
-msgstr "Status wurde geändert."
-
-#: manage/views.py:3550
-msgid "Workflow data has been saved."
-msgstr "Arbeitsablauf wurden gespeichert."
-
-#: manage/views.py:3570
-msgid "Workflow has been added."
-msgstr "Arbeitsablauf wurden hinzugefügt."
-
-#: manage/views.py:3606
-msgid "Workflow has been deleted."
-msgstr "Workflow wurde gelöscht"
-
-#: manage/views.py:3614
-msgid "Permissions have been updated."
-msgstr "Rechte wurde aktualisiert"
-
-#: manage/views.py:3755
-msgid "State has been saved."
-msgstr "Status wurde gespeichert."
-
-#: manage/views.py:3784
-msgid "State has been added."
-msgstr "Status wurde hinzugefügt."
-
-#: manage/views.py:3817
-msgid "State has been deleted."
-msgstr "Status wurde gelöscht."
-
-#: manage/views.py:3877
-msgid "Transition has been saved."
-msgstr "Übersetzung wurde gespeichert."
-
-#: manage/views.py:3907
-msgid "Transition has been added."
-msgstr "Übergang wurde hinzugefügt."
-
-#: manage/views.py:3936
-msgid "Transition has been deleted."
-msgstr "Übergang wurde gelöscht."
-
-#: manage/views.py:3965 manage/views.py:3993
-msgid "The object has been put to the clipboard."
-msgstr "Das Objekt wurden in Zwischenablage eingefügt."
-
-#: manage/views.py:4074
-msgid "Content type has been saved."
-msgstr "Inhaltstyp wurde gespeichert"
-
-#: manage/views.py:4278
-msgid "Users have been deleted."
-msgstr "Benutzer wurden gelöscht."
-
-#: manage/views.py:4280
-msgid "Users have been updated."
-msgstr "Benutzer wurden aktualisiert."
-
-#: manage/views.py:4344
-msgid "Filter has been set."
-msgstr "Filter wurden gesetzt."
-
-#: manage/views.py:4366 manage/views.py:4721
-msgid "Filter has been reset."
-msgstr "Filter wurden resettet."
-
-#: manage/views.py:4528
-msgid "User has been saved"
-msgstr "Benutzer wurde gespeichert."
-
-#: manage/views.py:4530 manage/views.py:4567
-msgid "An error occured."
-msgstr "Es ist ein Fehler aufgetreten."
-
-#: manage/views.py:4565
-msgid "Password has been changed."
-msgstr "Passwort wurde geändert."
-
-#: manage/views.py:4619
-msgid "User has been added."
-msgstr "Benutzer wurde hinzugefügt."
-
-#: manage/views.py:4653
-msgid "User couldn't deleted."
-msgstr "Der Benutzer konnte nicht gelöscht werden."
-
-#: manage/views.py:4656
-msgid "User has been deleted."
-msgstr "Benutzer wurde gelöscht."
-
-#: manage/views.py:4967
-msgid "Objects have been reindexed."
-msgstr "Objekte wurden neu indexiert."
-
-#: manage/views.py:5052
-msgid ""
-"Objects have been deleted. (Note: Some objects are not deleted because you "
-"haven't the permission to do that)."
-msgstr ""
-"Objekte wurden gelöscht (Bitte beachten: einige Objekte konnten mangels "
-"Zugriffsrechte nicht gelöscht werden)."
-
-#: manage/views.py:5054
-msgid "Objects have been deleted."
-msgstr "Objekte wurden gelöscht."
-
-#: manage/views.py:5074 manage/views.py:5092
-msgid ""
-"Objects have been put to the clipboard. (Note: Some objects are not put into "
-"clipboard because you haven't the permission to do that)."
-msgstr ""
-"Objekte wurden in die Zwischenablage kopiert (Bitte beachten: Einige Object "
-"konnten mangels Zugriffsrechte nicht in die Zwischenablage kopiert werden)."
-
-#: manage/views.py:5076 manage/views.py:5094
-msgid "Objects have been put to the clipboard."
-msgstr "Objekte wurden in Zwischenablage eingefügt."
-
-#: manage/views.py:5098
-msgid "You are not allowed to paste to this object."
-msgstr "Objekt einfügen ist nicht erlaubt."
-
-#: manage/views.py:5102
-msgid "Objects has been updated."
-msgstr "Objekte wurden aktualisiert."
-
-#: manage/views.py:5132
-msgid "Images has been deleted."
-msgstr "Bilder wurden gelöscht."
-
-#: manage/views.py:5137
-msgid "The image doesn't exist anymore."
-msgstr "Das Bild existiert nicht mehr."
-
-#: manage/views.py:5148
-msgid "Images has been updated."
-msgstr "Bilder wurden aktualisiert."
-
-#: manage/views.py:5167
-msgid "Files has been deleted."
-msgstr "Dateien wurden gelöscht."
-
-#: manage/views.py:5172
-msgid "The file doesn't exist anymore."
-msgstr "Die Datei existiert nicht mehr."
-
-#: manage/views.py:5183
-msgid "Files has been updated."
-msgstr "Dateien wurden aktualisiert."
-
-#: manage/views.py:5300
-msgid "An error has been occured. Please try again."
-msgstr "Ein Fehler ist aufgetreten, bitte nocheinmal versuchen."
-
-#: manage/views.py:5318
-msgid "Some cut/copied objects has been deleted in the meanwhile."
-msgstr ""
-"Einige ausgeschnitte/kopierte Objekte wurden zwischenzeitlich gelöscht."
-
-#: manage/views.py:5330
-msgid "Some objects are not allowed here."
-msgstr "Einige Objekte sind hier nicht erlaubt."
-
-#: manage/views.py:5338
-msgid "The objects can't be pasted in own descendants."
-msgstr "Objekte können nicht in eigene Unterobjekte eingefügt werden."
-
-#: manage/views.py:5384
-msgid "The object has been pasted."
-msgstr "Objekte wurden eingefügt."
 
 #: templates/lfc/manage/applications.html:10
 msgid "Install Applications"
@@ -672,17 +675,17 @@ msgstr "Reinstallieren"
 msgid "Install"
 msgstr "Installieren"
 
-#: templates/lfc/manage/base.html:55
+#: templates/lfc/manage/base.html:56
 msgid "Logout"
 msgstr "Abmelden"
 
-#: templates/lfc/manage/base.html:66
+#: templates/lfc/manage/base.html:67
 #: templates/lfc/manage/filebrowser_files.html:42
 #: templates/lfc/manage/filebrowser_files.html:102
 msgid "Content"
 msgstr "Inhalte"
 
-#: templates/lfc/manage/base.html:74 templates/lfc/manage/local_roles.html:16
+#: templates/lfc/manage/base.html:75 templates/lfc/manage/local_roles.html:17
 #: templates/lfc/manage/local_roles.html:97
 #: templates/lfc/manage/local_roles.html:133
 #: templates/lfc/manage/local_roles_search_result.html:17
@@ -690,60 +693,60 @@ msgstr "Inhalte"
 msgid "Users"
 msgstr "Benutzer"
 
-#: templates/lfc/manage/base.html:89
+#: templates/lfc/manage/base.html:90
 #: templates/lfc/manage/workflow_state.html:21
 msgid "Review"
 msgstr "Rezensieren"
 
-#: templates/lfc/manage/base.html:94
+#: templates/lfc/manage/base.html:95
 msgid "Workflows"
 msgstr "Arbeitsabläufe"
 
-#: templates/lfc/manage/base.html:101
+#: templates/lfc/manage/base.html:102
 msgid "Applications"
 msgstr "Anwendungen"
 
-#: templates/lfc/manage/base.html:104
+#: templates/lfc/manage/base.html:105
 msgid "Content Types"
 msgstr "Inhaltstypen"
 
-#: templates/lfc/manage/base.html:107
+#: templates/lfc/manage/base.html:108
 msgid "Installation"
 msgstr "Installation"
 
-#: templates/lfc/manage/base.html:115
+#: templates/lfc/manage/base.html:116
 msgid "Utils"
 msgstr "Werkzeuge"
 
-#: templates/lfc/manage/base.html:120
+#: templates/lfc/manage/base.html:121
 msgid "Languages"
 msgstr "Sprachen"
 
-#: templates/lfc/manage/base.html:152
+#: templates/lfc/manage/base.html:153
 msgid "Powered by"
 msgstr "Powered by"
 
-#: templates/lfc/manage/base.html:154
+#: templates/lfc/manage/base.html:155
 msgid "by"
 msgstr "bei"
 
-#: templates/lfc/manage/base.html:154
+#: templates/lfc/manage/base.html:155
 msgid "and contributors"
 msgstr "und Beitragende"
 
-#: templates/lfc/manage/base.html:154
+#: templates/lfc/manage/base.html:155
 msgid "All rights reserved"
 msgstr "Alle Rechte vorbehalten"
 
-#: templates/lfc/manage/base.html:156
+#: templates/lfc/manage/base.html:157
 msgid "Distributed under the"
 msgstr "Veröffentlicht unter der"
 
-#: templates/lfc/manage/base.html:156
+#: templates/lfc/manage/base.html:157
 msgid "BSD-License"
 msgstr "BSD-Lizenz"
 
-#: templates/lfc/manage/base.html:166
+#: templates/lfc/manage/base.html:167
 msgid "Do you really want to delete this object?"
 msgstr "Wollen Sie diese Objekt wirklich löschen?"
 
@@ -782,7 +785,7 @@ msgstr "Sie sind hier"
 
 #: templates/lfc/manage/filebrowser_files.html:13
 #: templates/lfc/manage/filebrowser_images.html:13
-#: templates/lfc/manage/navigation.html:24
+#: templates/lfc/manage/navigation.html:25
 #: templates/lfc/manage/portal_tabs.html:6
 msgid "Portal"
 msgstr "Portal"
@@ -1166,9 +1169,13 @@ msgctxt "LFC"
 msgid "History"
 msgstr "Historie"
 
-#: templates/lfc/manage/object_history.html:11
+#: templates/lfc/manage/object_history.html:12
 msgid "Date"
 msgstr "Datum"
+
+#: templates/lfc/manage/object_history.html:34
+msgid "The object has no history yet."
+msgstr "Das Objekt hat noch keine Historie."
 
 #: templates/lfc/manage/object_images.html:95
 #: templates/lfc/manage/object_images.html:146
@@ -1196,10 +1203,26 @@ msgstr "Bilder werden erzeugt. Bitte warten!"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: templates/lfc/manage/object_menu.html:82
-#: templates/lfc/manage/object_menu.html:92
+#: templates/lfc/manage/object_menu.html:57
+msgid "Check out"
+msgstr "Auschecken"
+
+#: templates/lfc/manage/object_menu.html:64
+msgid "Check in"
+msgstr "Einchecken"
+
+#: templates/lfc/manage/object_menu.html:96
+#: templates/lfc/manage/object_menu.html:108
 msgid "Translate to"
 msgstr "Übersetzen zu"
+
+#: templates/lfc/manage/object_menu.html:144
+msgid "Working Copy Base"
+msgstr "Basis Arbeitskopie"
+
+#: templates/lfc/manage/object_menu.html:149
+msgid "Working Copy"
+msgstr "Arbeitskopie"
 
 #: templates/lfc/manage/object_meta_data.html:5
 #: templates/lfc/manage/object_tabs.html:14
@@ -1219,7 +1242,7 @@ msgstr "Der aktuelle Arbeitsablauf ist"
 #: templates/lfc/manage/object_permissions.html:50
 #: templates/lfc/manage/object_tabs.html:38
 #: templates/lfc/manage/portal_permissions.html:5
-#: templates/lfc/manage/portal_tabs.html:12
+#: templates/lfc/manage/portal_tabs.html:19
 #: templates/lfc/manage/workflow_data.html:9
 #: templates/lfc/manage/workflow_permissions.html:3
 #: templates/lfc/manage/workflow_state.html:26
@@ -1273,7 +1296,7 @@ msgid "Meta Keywords"
 msgstr "Meta Keywords"
 
 #: templates/lfc/manage/object_tabs.html:26
-#: templates/lfc/manage/portal_tabs.html:10
+#: templates/lfc/manage/portal_tabs.html:16
 msgid "Portlets"
 msgstr "Portlets"
 
@@ -1449,7 +1472,7 @@ msgstr "Werkzeuge"
 msgid "Reindex Objects"
 msgstr "Objekte redindexieren"
 
-#: templates/lfc/manage/utils.html:23
+#: templates/lfc/manage/utils.html:24
 msgid "Update Permissions"
 msgstr "Rechte aktualisieren"
 
@@ -1500,6 +1523,15 @@ msgstr "Übergang hinzufügen"
 #: templatetags/lfc_tags.py:103
 #, python-format
 msgid "%s tag needs no argument"
+msgstr ""
+
+#: views.py:243
+msgid "tagged_object_list must be called with a tag."
+msgstr ""
+
+#: views.py:247
+#, python-format
+msgid "No Tag found matching \"%s\"."
 msgstr ""
 
 msgid "Page"
@@ -1645,12 +1677,6 @@ msgstr "Rechts"
 
 msgid "View management"
 msgstr "Management ansehen"
-
-msgid "Check in"
-msgstr "Einchecken"
-
-msgid "Check out"
-msgstr "Auschecken"
 
 msgid "Random"
 msgstr "Zufall"
