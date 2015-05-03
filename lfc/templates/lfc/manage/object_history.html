@@ -4,28 +4,32 @@
     {% trans "History" context "LFC" %}
 </h2>
 
-<table class="lfs-manage-table">
-    <tr>
-        <th>{% trans "Action" %}</th>
-        <th>{% trans "User" %}</th>
-        <th>{% trans "Date" %}</th>
-    </tr>
-    {% for history_entry in history %}
+{% if history %}
+    <table class="lfs-manage-table">
         <tr>
-            <td nowrap="nowrap">
-                {{ history_entry.action }}
-            </td>
-            <td nowrap="nowrap">
-                {% if history_entry.user.get_full_name %}
-                    {{ history_entry.user.get_full_name }} / {{ history_entry.user.username }}
-                {% else %}
-                    {{ history_entry.user.username }}
-                {% endif %}
-            </td>
-            <td width="20%"
-                nowrap="nowrap">
-                {{ history_entry.creation_date|date:"d.m.Y - H:i:s" }}
-            </td>
+            <th>{% trans "Action" %}</th>
+            <th>{% trans "User" %}</th>
+            <th>{% trans "Date" %}</th>
         </tr>
-    {% endfor %}
-</table>
+        {% for history_entry in history %}
+            <tr>
+                <td nowrap="nowrap">
+                    {{ history_entry.action }}
+                </td>
+                <td nowrap="nowrap">
+                    {% if history_entry.user.get_full_name %}
+                        {{ history_entry.user.get_full_name }} / {{ history_entry.user.username }}
+                    {% else %}
+                        {{ history_entry.user.username }}
+                    {% endif %}
+                </td>
+                <td width="20%"
+                    nowrap="nowrap">
+                    {{ history_entry.creation_date|date:"d.m.Y - H:i:s" }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% else %}
+    {% trans "The object has no history yet." %}
+{% endif %}
