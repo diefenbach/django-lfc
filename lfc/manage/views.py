@@ -266,6 +266,18 @@ def portal(request, template_name="lfc/manage/portal.html"):
         view_management
     """
     portal = get_portal()
+
+    # Redirect to last managed object if the user has no permission to
+    # view the portal
+    if not portal.has_permission(request.user, "view_management") and \
+       request.session.get("last-managed"):
+        return HttpResponseRedirect(
+            reverse(
+                "lfc_manage_object",
+                kwargs={"id": request.session.get("last-managed")}
+            )
+        )
+
     portal.check_permission(request.user, "view_management")
 
     return render_to_response(template_name, RequestContext(request, {
@@ -953,6 +965,9 @@ def manage_object(request, id, template_name="lfc/manage/object.html"):
         return HttpResponseRedirect(url)
 
     obj.check_permission(request.user, "view_management")
+
+    # Save for later use (see def portal)
+    request.session["last-managed"] = obj.id
 
     if not lfc.utils.registration.get_info(obj):
         raise Http404()

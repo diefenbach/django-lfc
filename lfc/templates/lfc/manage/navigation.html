@@ -20,8 +20,10 @@
 <div class="navigation-manage" style="clear:both">
     <ul class="level-1">
         <li {% if is_portal %}class="current"{% endif %}>
-            <a class="manage-portal"
-               href="{% url 'lfc_manage_portal' %}">{% trans 'Portal' %}</a>
+            {% ifportalhasperm view-management %}
+                <a class="manage-portal"
+                   href="{% url 'lfc_manage_portal' %}">{% trans 'Portal' %}</a>
+            {% endifportalhasperm %}
         </li>
         <li>
             <ul class="level-{{ level }}">

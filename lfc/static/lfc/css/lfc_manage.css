@@ -324,6 +324,8 @@ table.users-navigation img {
     list-style: none;
 }
 
+
+.no-portal-rights,
 .navigation-manage a {
     color: black;
     text-decoration: none;
