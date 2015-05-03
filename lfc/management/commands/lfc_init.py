@@ -70,7 +70,7 @@ class Command(BaseCommand):
         view = permissions.utils.register_permission("View", "view")
         manage_local_roles = permissions.utils.register_permission("Manage local roles", "manage_local_roles")
         manage_permissions = permissions.utils.register_permission("Manage permissions", "manage_permissions")
-        view_management = permissions.utils.register_permission("View management", "view_management")
+        view_management = permissions.utils.register_permission("View management", "view_management", [Portal])
         checkin = permissions.utils.register_permission("Check in", "checkin")
         checkin = permissions.utils.register_permission("Check out", "checkout")
 
@@ -79,9 +79,8 @@ class Command(BaseCommand):
         reject = permissions.utils.register_permission("Reject", "reject")
         retract = permissions.utils.register_permission("Retract", "retract")
 
-        ctype = ContentType.objects.get_for_model(Portal)
-        manage_portal = permissions.utils.register_permission("Manage portal", "manage_portal", [ctype])
-        review = permissions.utils.register_permission("Review", "review", [ctype])
+        manage_portal = permissions.utils.register_permission("Manage portal", "manage_portal", [Portal])
+        review = permissions.utils.register_permission("Review", "review", [Portal])
 
         # Create slots
         left_slot, created = Slot.objects.get_or_create(name="Left")
