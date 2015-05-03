@@ -2600,10 +2600,8 @@ def set_language(request, language):
 
     **Permission:**
 
-        edit
+        login required
     """
-    get_portal().check_permission(request.user, "view_management")
-
     translation.activate(language)
     response = HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
