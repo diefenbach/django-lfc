@@ -116,12 +116,14 @@ class Command(BaseCommand):
         permissions.utils.grant_permission(portal, manager, "view")
         permissions.utils.grant_permission(portal, manager, "view_management")
 
+        permissions.utils.grant_permission(portal, owner, "add")
         permissions.utils.grant_permission(portal, owner, "checkout")
         permissions.utils.grant_permission(portal, owner, "delete")
         permissions.utils.grant_permission(portal, owner, "edit")
         permissions.utils.grant_permission(portal, owner, "manage_local_roles")
         permissions.utils.grant_permission(portal, owner, "submit")
         permissions.utils.grant_permission(portal, owner, "view")
+        permissions.utils.grant_permission(portal, owner, "view_management")
 
         permissions.utils.grant_permission(portal, reviewer, "checkin")
         permissions.utils.grant_permission(portal, reviewer, "checkout")
