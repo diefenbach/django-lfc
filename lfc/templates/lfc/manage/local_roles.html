@@ -30,7 +30,7 @@
                     </tr>
                         {% for user in users %}
                             <tr>
-                                <td>
+                                <td class="center">
                                     <input type="checkbox" name="to_delete_user" value="{{ user.id }}" class="select-1" />
                                 </td>
                                 <td>
@@ -39,7 +39,7 @@
                                     </a>
                                 </td>
                                 {% for role in user.roles %}
-                                    <td>
+                                    <td class="center">
                                         <input type="checkbox" {% if role.has_local_role %}checked="checked"{% endif %} name="user_role" value="{{ user.id }}|{{ role.id }}" />
                                     </td>
                                 {% endfor %}

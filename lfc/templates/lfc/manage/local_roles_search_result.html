@@ -2,7 +2,7 @@
 <div style="padding-top:20px">
     <form action="{% url 'lfc_manage_add_local_roles' obj_id %}"
           method="POST">
-        <div style="height:480px; overflow: auto">
+        <div style="overflow: auto">
             <table width="100%">
                 <tr>
                     <th></th>
@@ -27,7 +27,7 @@
                             {% endif %}
                         </td>
                         {% for role in roles %}
-                            <td>
+                            <td class="center">
                                 <input type="checkbox" name="user_role" value="{{ user.id }}|{{ role.id }}" />
                             </td>
                         {% endfor %}
@@ -51,7 +51,7 @@
                             {{ group.name }}
                         </td>
                         {% for role in roles %}
-                            <td>
+                            <td class="center">
                                 <input type="checkbox" name="group_role" value="{{ group.id }}|{{ role.id }}" />
                             </td>
                         {% endfor %}

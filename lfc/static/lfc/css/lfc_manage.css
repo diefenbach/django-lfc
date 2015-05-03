@@ -250,6 +250,10 @@ table.lfs-manage-table {
     width: 1px;
 }
 
+.center {
+    text-align: center;
+}
+
 .lfs-manage-table .padding {
     padding: 0 10px;
 }
