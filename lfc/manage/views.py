@@ -293,7 +293,7 @@ def portal_permissions(request, portal, template_name="lfc/manage/portal_permiss
     all_roles = Role.objects.all().values("id", "name")
 
     my_permissions = []
-    for permission in Permission.objects.order_by("name").values("id", "name", "codename"):
+    for permission in Permission.objects.order_by("name").values("id", "name", "codename", "content_types"):
         roles = []
         for role in all_roles:
             try:
@@ -309,10 +309,16 @@ def portal_permissions(request, portal, template_name="lfc/manage/portal_permiss
                 "has_permission": has_permission,
             })
 
+        if isinstance(permission["content_types"], (tuple, list)):
+            is_portal_permission = ct.id in permission["content_types"]
+        else:
+            is_portal_permission = ct.id == permission["content_types"]
+
         my_permissions.append({
             "name": permission["name"],
             "codename": permission["codename"],
             "roles": roles,
+            "is_portal_permission": is_portal_permission,
         })
 
     return render_to_string(template_name, RequestContext(request, {

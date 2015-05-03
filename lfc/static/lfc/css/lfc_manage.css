@@ -812,3 +812,7 @@ ul.timelist, .timelist li {
     color: white;
     opacity: 1;
 }
+
+.portal-permission {
+    color: blue;
+}
